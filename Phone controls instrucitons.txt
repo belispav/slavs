@@ -1,0 +1,40 @@
+This document details the targeted control system designed for a fast-paced, twin-stick action-platformer (e.g., *Metal Slug* style) with high enemy density, constrained strictly to a two-thumb control scheme.
+
+## Core Philosophy: Zero Thumb-Lifting
+
+The primary goal of this control scheme is to allow the player to move, aim, shoot, and jump simultaneously without ever lifting either thumb from the screen. It achieves this by treating the "Jump" command not as a button press, but as a spatial zone.
+
+---
+
+## The Setup
+
+*   **Right Thumb (Aiming & Combat):** Manages a virtual joystick dedicated to aiming. Auto-attack is engaged while aiming.
+*   **Left Thumb (Movement & Jumping):** Manages horizontal movement *and* vertical jumping via a Continuous Y-Axis Threshold (an "Up-to-Jump" Virtual Joystick).
+
+## How the Left Thumb Works
+
+The left half of the screen is invisibly split into two horizontal regions: a bottom "Run Zone" and an upper "Jump Zone."
+
+1.  **Running:** As long as the left thumb slides left and right within the lower threshold, the character runs.
+2.  **Jumping:** When the left thumb slides upward past the invisible threshold line into the upper zone, the character instantly jumps.
+3.  **Mid-Air Control:** While the thumb is in the upper "Jump Zone," sliding left and right steers the character's trajectory in the air.
+4.  **Landing:** To return to ground movement (and to prepare for a subsequent jump), the thumb must slide back down into the lower "Run Zone."
+
+---
+
+## Critical UX Requirements for Implementation
+
+To prevent this system from feeling clunky or causing accidental misinputs, the following physiological behaviors must be accounted for in the programming:
+
+### 1. The "Windshield Wiper" Arc Boundary
+*   **The Problem:** The human thumb pivoting from the base joint naturally moves in an arc, not a straight line. If the boundary between the Run and Jump zones is a straight horizontal line, running to the far left or right will naturally push the thumb upward, causing accidental jumps.
+*   **The Solution:** The invisible threshold dividing the lower and upper zones must be a **curved arch** (higher on the far left and right edges) to grant the thumb vertical "forgiveness" at the extremes of its extension.
+
+### 2. State Reset / Jump Delay
+*   **The Problem:** Jumping is an impulse action. If the thumb remains in the Jump Zone when the character lands, the game might trigger an immediate, unwanted second jump.
+*   **The Solution:** The system must require the player to drag their thumb back down into the Run Zone to "reset" the jump capability. This downward drag distance should be extremely short to maintain a fast, fluid feeling.
+
+### 3. Dynamic Center Point (Floating Anchor)
+*   **The Problem:** Forcing the player to find a static threshold line on a flat glass screen without looking is impossible.
+*   **The Solution:** The threshold must be dynamic. The exact point where the player initially drops their left thumb onto the screen becomes the "center" of the Run Zone. The curved Jump threshold is then dynamically drawn relative to (slightly above) that exact resting point.
+"""
