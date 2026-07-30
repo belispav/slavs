@@ -221,6 +221,15 @@ func _run_axis(dx_mm: float) -> float:
 func _update_right() -> void:
 	var v: Vector2 = right_pos - right_anchor
 	var mm: float = v.length() / px_per_mm
+
+	# Sliding anchor: the stick never runs away from the thumb, so a full 180
+	# degree turn is a short flick instead of a drag across the anchor.
+	if mm > config.aim_recenter_mm and mm > 0.0:
+		var limit: float = config.aim_recenter_mm * px_per_mm
+		right_anchor = right_pos - v.normalized() * limit
+		v = right_pos - right_anchor
+		mm = config.aim_recenter_mm
+
 	if mm > config.aim_deadzone_mm:
 		aim_dir = v.normalized()
 		aim_active = true

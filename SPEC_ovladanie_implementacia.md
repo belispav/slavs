@@ -48,7 +48,9 @@ States: `NO_TOUCH` → `GROUNDED_INPUT` → `JUMP_HELD` (→ back via re-arm).
 - **On touch down (left half):** store `anchor = touch_pos`. State = `GROUNDED_INPUT`.
 - **GROUNDED_INPUT:** `dx = touch.x − anchor.x`; run velocity = `clamp(dx / RUN_SATURATION_MM, −1, 1)` with dead zone `RUN_DEADZONE_MM`. Check jump condition each drag event.
 - **Jump condition (arc threshold):** jump fires when the thumb's upward travel exceeds the arc:
-  `anchor.y − touch.y > J(dx)` where `J(dx) = J0_MM + K_ARC × dx²` (dx in mm). The quadratic gives the "windshield wiper" forgiveness — the farther sideways the thumb is, the more upward travel is required.
+  `anchor.y − touch.y > J(dx)` where `J(dx) = max(J0_MM + K_ARC × dx², J_MIN_MM)` (dx in mm).
+  **`K_ARC` is NEGATIVE — the curve is a dome, not a valley.** The thumb pivots around its joint, so when it is extended sideways it physically cannot reach as far up; the required travel must therefore DROP at the extremes. This is the "vertical forgiveness at the extremes" of A1. `K_ARC = −1/(2R)` where R is the thumb's pivot radius, so −0.012 corresponds to R ≈ 40 mm. `J_MIN_MM` is the floor that stops the dome from reaching zero and self-firing at full extension.
+  *(Corrected during F1 on-device testing — the original spec's parenthetical "higher at the far left/right" contradicted both "arch" and "forgiveness", and the first implementation followed the parenthetical. On hardware the shape was immediately wrong.)*
 - **On jump fire:** emit `jump_pressed` ONCE, state = `JUMP_HELD`.
 - **JUMP_HELD:** `dx` steers air trajectory (`air_steer`). A second jump is impossible in this state (single jump; if a double-jump upgrade exists later, it re-uses the same re-arm rule).
 - **Re-arm:** state returns to `GROUNDED_INPUT` only when `anchor.y − touch.y < J(dx) − HYSTERESIS_MM` (a short drag down). Hysteresis prevents flutter at the boundary.
@@ -59,6 +61,7 @@ States: `NO_TOUCH` → `GROUNDED_INPUT` → `JUMP_HELD` (→ back via re-arm).
 
 - Floating anchor identical to left: touch-down point = stick center.
 - `aim_vector = touch_pos − anchor`; active (auto-fire ON) when `|aim_vector| > AIM_DEADZONE_MM`; direction = normalized vector (free 360° aim; snap assist optional later, off by default).
+- **Sliding anchor:** when `|aim_vector| > AIM_RECENTER_MM`, the anchor is pulled along so the distance stays exactly `AIM_RECENTER_MM`. Without this, a fixed anchor forces the thumb to travel across and past the anchor to reverse direction, which reads as sluggish aiming even though the code has zero smoothing. *(Added during F1 on-device testing.)*
 - Releasing the thumb stops firing; last aim direction is retained for character facing.
 
 ### B4. Starting tunables (exported vars, single config resource `ControlConfig.tres`)
@@ -66,11 +69,13 @@ States: `NO_TOUCH` → `GROUNDED_INPUT` → `JUMP_HELD` (→ back via re-arm).
 | Constant | Start value | Meaning |
 |---|---|---|
 | `J0_MM` | 9.0 | Upward travel to jump at dx = 0 |
-| `K_ARC` | 0.012 /mm | Arc steepness (≈ +7.5 mm extra at dx = 25 mm) |
+| `K_ARC` | **−0.012** /mm | Dome curvature (≈ −7.5 mm at dx = 25 mm; negative = forgiving at extremes) |
+| `J_MIN_MM` | 3.0 | Floor of the dome, prevents self-firing at full extension |
 | `HYSTERESIS_MM` | 2.0 | Drag-down below threshold to re-arm |
 | `RUN_DEADZONE_MM` | 1.5 | Ignore micro-jitter |
 | `RUN_SATURATION_MM` | 11.0 | dx for full run speed |
 | `AIM_DEADZONE_MM` | 2.5 | Min stick deflection to fire |
+| `AIM_RECENTER_MM` | 9.0 | Radius beyond which the aim anchor slides after the thumb |
 
 These are guesses to be tuned on-device in F1 — that is the point of F1.
 

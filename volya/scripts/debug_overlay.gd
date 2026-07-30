@@ -78,12 +78,17 @@ func _build_panel() -> void:
 
 	_add_slider("J0_MM", 3.0, 20.0, 0.5, Touch.config.j0_mm,
 		func(v: float) -> void: Touch.config.j0_mm = v)
-	_add_slider("K_ARC", 0.0, 0.05, 0.001, Touch.config.k_arc,
+	# zaporne = kupola (prah klesa do stran), kladne = udolie
+	_add_slider("K_ARC", -0.04, 0.04, 0.001, Touch.config.k_arc,
 		func(v: float) -> void: Touch.config.k_arc = v)
+	_add_slider("J_MIN_MM", 1.0, 10.0, 0.5, Touch.config.j_min_mm,
+		func(v: float) -> void: Touch.config.j_min_mm = v)
 	_add_slider("HYSTEREZA_MM", 0.5, 8.0, 0.25, Touch.config.hysteresis_mm,
 		func(v: float) -> void: Touch.config.hysteresis_mm = v)
 	_add_slider("RUN_SAT_MM", 3.0, 30.0, 0.5, Touch.config.run_saturation_mm,
 		func(v: float) -> void: Touch.config.run_saturation_mm = v)
+	_add_slider("AIM_RECENTER_MM", 3.0, 30.0, 0.5, Touch.config.aim_recenter_mm,
+		func(v: float) -> void: Touch.config.aim_recenter_mm = v)
 
 	var reset := Button.new()
 	reset.text = "RESET POČÍTADLA SKOKOV"
@@ -116,7 +121,7 @@ func _add_slider(label_text: String, lo: float, hi: float, step: float,
 
 
 func _fmt(v: float) -> String:
-	if v < 0.1:
+	if absf(v) < 0.1:
 		return "%.3f" % v
 	return "%.2f" % v
 
@@ -175,6 +180,9 @@ func _draw_right() -> void:
 	var p: Vector2 = Touch.right_pos
 	draw_layer.draw_arc(a, Touch.config.aim_deadzone_mm * Touch.px_per_mm,
 		0.0, TAU, 32, Color(COL_RIGHT.r, COL_RIGHT.g, COL_RIGHT.b, 0.5), 2.0)
+	# outer ring = point where the anchor starts sliding after the thumb
+	draw_layer.draw_arc(a, Touch.config.aim_recenter_mm * Touch.px_per_mm,
+		0.0, TAU, 48, Color(COL_RIGHT.r, COL_RIGHT.g, COL_RIGHT.b, 0.22), 2.0)
 	draw_layer.draw_circle(a, 8.0, COL_RIGHT)
 	draw_layer.draw_line(a, p, COL_RIGHT, 2.0)
 	draw_layer.draw_arc(p, 26.0, 0.0, TAU, 24, COL_RIGHT, 3.0)

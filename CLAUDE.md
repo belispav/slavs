@@ -38,9 +38,11 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 
 - [x] Plan complete (`VOLYA_plan_hry.md`)
 - [x] Control implementation spec complete
-- [x] F1 control prototype WRITTEN (`volya/`) — not yet run on hardware
-- [ ] F0: Godot installed, project runs on PC, APK on device (`SETUP_F0.md` is the step-by-step guide; Google Play account deferred ~1 month before testing)
+- [x] F1 control prototype WRITTEN (`volya/`)
+- [x] F0: Godot runs, APK builds and runs on a Samsung SM-S731B. One-click deploy in the editor never appeared despite a provably correct setup (possible engine bug); the working loop is `tools/deploy_android.ps1` — export, install, launch, live logcat.
 - [ ] F1: control prototype VALIDATED on device (GO/NO-GO milestone — acceptance criteria in SPEC PART C)
+  - First on-device session: logic confirmed working. Two corrections made, both recorded in the SPEC: `K_ARC` sign flipped (the threshold is a DOME, not a valley), and a sliding anchor added to the aim stick (fixed apparent aim sluggishness).
+  - Google Play account deferred ~1 month before testing.
 - [ ] F2: vertical slice
 - [ ] F3: content production
 - [ ] F4: polish + closed testing (12 testers / 14 days — mandatory for new personal Google Play accounts)

@@ -114,8 +114,14 @@ nie je červený výkričník.
 ### 2d. Export preset
 
 1. **Project → Export… → Add… → Android**.
-2. V sekcii **Package → Unique Name** nastav `sk.pavel.volya`.
-3. Nič iné zatiaľ nemeň. Zavri okno (preset sa uloží sám).
+2. Vpravo, hneď vedľa poľa **Name**, zaškrtni **Runnable**.
+   **Bez tohto sa ikona telefónu v editore nikdy neobjaví.** Jeden preset na
+   platformu môže byť runnable.
+3. V sekcii **Package → Unique Name** nastav `sk.pavel.volya`.
+4. Pozri sa **naspodok okna** — ak je tam červený text alebo červená ikona pri
+   názve presetu, nabehni na ňu myšou a povie ti, čo chýba (najčastejšie
+   export šablóny alebo keystore). Kým je tam chyba, one-click deploy nepôjde.
+5. Nič iné zatiaľ nemeň. Zavri okno (preset sa uloží sám).
 
 ---
 
@@ -133,8 +139,15 @@ nie je červený výkričník.
 → vypíše riadok so sériovým číslom a slovom `device`
 (ak píše `unauthorized`, nepotvrdil si dialóg v telefóne).
 
-5. V Godote sa vpravo hore, vedľa tlačidla Play, objaví **ikona Androidu**
-   s názvom tvojho telefónu. Klikni na ňu.
+5. V Godote sa **v pravom hornom rohu, v tom istom riadku ako tlačidlá
+   Play / Pause / Stop**, objaví malá **ikona telefónu**. Po nabehnutí myšou
+   ukáže názov tvojho zariadenia. Klikni na ňu.
+
+   Ak tam nie je, chýba niektorá z týchto štyroch vecí: preset nie je
+   **Runnable** (krok 2d), preset má červenú chybu, `adb devices` nevypisuje
+   `device`, alebo je zlá **Android SDK Path** v Editor Settings — Godot spúšťa
+   `adb` odtiaľ, takže mu nestačí, že `adb` funguje v PowerShelli. Po zmene
+   nastavení reštartuj editor.
 
 **Kontrola:** hra sa sama nainštaluje a spustí v telefóne. V paneli
 **Output** v Godote bežia logy priamo z telefónu — `print()` z kódu,
@@ -200,12 +213,37 @@ skokov → zastavujeme a prerábame ovládanie, nie level dizajn.
 
 | Symptóm | Príčina / riešenie |
 |---|---|
-| `adb devices` píše `unauthorized` | Nepotvrdený dialóg v telefóne. Odpoj/pripoj kábel. |
-| Ikona Androidu sa v Godote neobjaví | Zlá cesta k SDK v Editor Settings, alebo telefón nie je v `adb devices`. |
+| `adb devices` píše `unauthorized` | Viď sekciu 6a nižšie — má to šesť možných príčin. |
+| Ikona telefónu sa v Godote neobjaví | V poradí: preset nie je **Runnable**, preset má červenú chybu, telefón nie je v `adb devices`, zlá **Android SDK Path** v Editor Settings. Potom reštart editora. |
+| Ani po všetkom sa ikona neobjaví | Použi záložný cyklus: `tools/deploy_android.ps1` — vyexportuje APK cez príkazový riadok a nainštaluje ho. Nemá live logy v editore, ale funguje vždy. |
 | Build padne na Gradle chybe | Skoro vždy zlá verzia JDK. Over `java -version` = 17. |
 | Hra beží, ale ovládanie nereaguje | Pošli mi obsah panelu Output. |
 | Skoky sa počítajú, ale postava neskáče | Postava nie je na zemi — správanie je zámerné, skok vo vzduchu neexistuje. |
 | Nízke FPS | Napíš mi číslo z debug HUD a model telefónu. |
+
+### 6a. `adb devices` píše `unauthorized`
+
+Znamená to jedinú vec: telefón nepotvrdil RSA kľúč tvojho PC. Poradie riešení
+od najčastejšieho:
+
+1. **Odomkni telefón a nechaj ho odomknutý.** Dialóg „Povoliť ladenie cez USB?"
+   sa na zamknutej obrazovke nezobrazí. Odpoj kábel, odomkni displej, zapoj
+   znova a pozeraj sa na telefón. Zaškrtni „Vždy povoliť z tohto počítača".
+2. **Prepni USB režim na Prenos súborov (MTP).** V režime „len nabíjanie"
+   niektoré telefóny výzvu nezobrazia vôbec.
+3. **Vynúť si dialóg.** V Možnostiach pre vývojárov: **Odvolať autorizácie
+   ladenia cez USB**, potom vypni a zapni **Ladenie cez USB**. Predtým
+   `adb kill-server` a `adb start-server`.
+4. **Zmaž kľúč PC.** Vymaž `adbkey` a `adbkey.pub` z `C:\Users\belis\.android\`,
+   potom `adb kill-server` a zapoj telefón. Vygeneruje sa nový kľúč, takže
+   telefón sa musí spýtať znova.
+5. **Vymeň kábel.** Časť káblov je len nabíjacia, bez dátových vodičov. Skús
+   USB port priamo na základnej doske, nie cez hub.
+6. **Xiaomi / Redmi / POCO:** zapni navyše **Inštalácia cez USB** a **Ladenie
+   cez USB (nastavenia zabezpečenia)**. Druhá voľba vyžaduje prihlásenie do Mi
+   účtu, niekedy aj SIM kartu. Na týchto telefónoch je to najčastejšia príčina.
+
+Keď `adb devices` vypíše `device`, reštartuj Godot.
 
 ---
 
