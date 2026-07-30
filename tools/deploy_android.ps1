@@ -58,6 +58,8 @@ $size = [math]::Round((Get-Item $Apk).Length / 1MB, 1)
 Write-Host ("      OK: $size MB za " + [math]::Round($sw.Elapsed.TotalSeconds, 1) + " s")
 
 Write-Host "3/4  Instalacia..." -ForegroundColor Cyan
+# Ukonci bezianu instanciu, inak by sa po instalacii len prepol na stary proces.
+& $Adb shell am force-stop $Package 2>$null | Out-Null
 & $Adb install -r $Apk
 if ($LASTEXITCODE -ne 0) {
     Write-Host "CHYBA: instalacia zlyhala." -ForegroundColor Red

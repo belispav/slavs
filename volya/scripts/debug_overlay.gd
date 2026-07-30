@@ -5,6 +5,8 @@ extends CanvasLayer
 ## and gives three on-device sliders so the feel can be tuned WITHOUT rebuilds.
 
 const FONT_SIZE := 22
+const PANEL_W := 330.0
+const PANEL_MARGIN := 16.0
 const COL_TEXT := Color(0.92, 0.94, 1.0)
 const COL_LEFT := Color(0.35, 0.85, 1.0)
 const COL_RIGHT := Color(1.0, 0.72, 0.30)
@@ -48,12 +50,12 @@ func _process(_delta: float) -> void:
 func _build_panel() -> void:
 	panel = PanelContainer.new()
 	panel.name = "TunePanel"
+	# Grow LEFT and DOWN, so the panel can never run off the right edge.
+	panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	panel.grow_vertical = Control.GROW_DIRECTION_END
 	add_child(panel)
-	panel.set_anchors_and_offsets_preset(
-		Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 12)
 
 	var vb := VBoxContainer.new()
-	vb.custom_minimum_size = Vector2(300, 0)
 	panel.add_child(vb)
 
 	var head := HBoxContainer.new()
@@ -65,36 +67,67 @@ func _build_panel() -> void:
 	head.add_child(title)
 
 	var toggle := Button.new()
-	toggle.text = "–"
-	toggle.custom_minimum_size = Vector2(48, 48)
+	toggle.text = "-"
+	toggle.custom_minimum_size = Vector2(56, 56)
 	head.add_child(toggle)
 	toggle.pressed.connect(func() -> void:
 		rows.visible = not rows.visible
-		toggle.text = "–" if rows.visible else "+"
+		toggle.text = "-" if rows.visible else "+"
 	)
 
 	rows = VBoxContainer.new()
 	vb.add_child(rows)
 
-	_add_slider("J0_MM", 3.0, 20.0, 0.5, Touch.config.j0_mm,
+	# Kratke nazvy, aby sa panel zmestil na displej telefonu.
+	_add_slider("PRAH", 3.0, 20.0, 0.5, Touch.config.j0_mm,
 		func(v: float) -> void: Touch.config.j0_mm = v)
 	# zaporne = kupola (prah klesa do stran), kladne = udolie
-	_add_slider("K_ARC", -0.04, 0.04, 0.001, Touch.config.k_arc,
+	_add_slider("OBLUK", -0.04, 0.04, 0.001, Touch.config.k_arc,
 		func(v: float) -> void: Touch.config.k_arc = v)
-	_add_slider("J_MIN_MM", 1.0, 10.0, 0.5, Touch.config.j_min_mm,
+	_add_slider("DNO", 1.0, 10.0, 0.5, Touch.config.j_min_mm,
 		func(v: float) -> void: Touch.config.j_min_mm = v)
-	_add_slider("HYSTEREZA_MM", 0.5, 8.0, 0.25, Touch.config.hysteresis_mm,
+	_add_slider("REARM", 0.5, 8.0, 0.25, Touch.config.hysteresis_mm,
 		func(v: float) -> void: Touch.config.hysteresis_mm = v)
-	_add_slider("RUN_SAT_MM", 3.0, 30.0, 0.5, Touch.config.run_saturation_mm,
+	_add_slider("BEH", 3.0, 30.0, 0.5, Touch.config.run_saturation_mm,
 		func(v: float) -> void: Touch.config.run_saturation_mm = v)
-	_add_slider("AIM_RECENTER_MM", 3.0, 30.0, 0.5, Touch.config.aim_recenter_mm,
+	_add_slider("MIER", 3.0, 30.0, 0.5, Touch.config.aim_recenter_mm,
 		func(v: float) -> void: Touch.config.aim_recenter_mm = v)
 
 	var reset := Button.new()
-	reset.text = "RESET POČÍTADLA SKOKOV"
+	reset.text = "RESET SKOKOV"
 	reset.custom_minimum_size = Vector2(0, 52)
 	rows.add_child(reset)
 	reset.pressed.connect(func() -> void: Touch.jump_count = 0)
+
+	_layout_panel()
+	get_viewport().size_changed.connect(_layout_panel)
+
+
+## Explicitne ukotvenie vpravo hore, s odsadenim podla bezpecnej zony displeja
+## (vyrez kamery, zaoblene rohy). Preset s MINSIZE tu nefungoval, lebo sa
+## pocital skor, nez panel poznal svoju sirku.
+func _layout_panel() -> void:
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var right_inset: float = 0.0
+	var top_inset: float = 0.0
+
+	var win: Vector2i = DisplayServer.window_get_size()
+	if win.x > 0 and view.x > 0.0:
+		var s: float = view.x / float(win.x)
+		var safe: Rect2i = DisplayServer.get_display_safe_area()
+		if safe.size.x > 0:
+			right_inset = maxf(float(win.x - (safe.position.x + safe.size.x)) * s, 0.0)
+			top_inset = maxf(float(safe.position.y) * s, 0.0)
+
+	var w: float = minf(PANEL_W, view.x * 0.45)
+	panel.anchor_left = 1.0
+	panel.anchor_right = 1.0
+	panel.anchor_top = 0.0
+	panel.anchor_bottom = 0.0
+	panel.offset_right = -(PANEL_MARGIN + right_inset)
+	panel.offset_left = panel.offset_right - w
+	panel.offset_top = PANEL_MARGIN + top_inset
+	panel.offset_bottom = panel.offset_top
 
 
 func _add_slider(label_text: String, lo: float, hi: float, step: float,
