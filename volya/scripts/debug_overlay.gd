@@ -224,6 +224,7 @@ func _draw_right() -> void:
 func _draw_hud() -> void:
 	var state_names := ["NO_TOUCH", "GROUNDED", "JUMP_HELD"]
 	var lines := [
+		"BUILD: %s" % BuildStamp.STAMP,
 		"FPS %d   DPI %d   px/mm %.2f" % [
 			Engine.get_frames_per_second(), int(Touch.raw_dpi), Touch.px_per_mm],
 		"SKOKY: %d" % Touch.jump_count,
