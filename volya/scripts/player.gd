@@ -4,8 +4,14 @@ extends CharacterBody2D
 ## Reads only the TouchController API, never raw touches.
 
 signal fire_requested(from: Vector2, dir: Vector2)
+signal health_changed(hp: int)
+signal died()
 
 const SIZE := Vector2(30, 54)
+
+var hp: int = Tuning.PLAYER_MAX_HP
+var _iframes: float = 0.0
+var _hurtbox: Area2D
 
 var aim_dir: Vector2 = Vector2.RIGHT
 var facing: int = 1
@@ -37,6 +43,18 @@ func _ready() -> void:
 	_cam.offset = Vector2(0, -60)
 	add_child(_cam)
 
+	# Contact damage from enemy bodies.
+	_hurtbox = Area2D.new()
+	_hurtbox.collision_layer = 0
+	_hurtbox.collision_mask = Tuning.LAYER_ENEMY
+	add_child(_hurtbox)
+	var hs := CollisionShape2D.new()
+	var hrect := RectangleShape2D.new()
+	hrect.size = SIZE * 0.8           # small hurtbox, favours the player
+	hs.shape = hrect
+	_hurtbox.add_child(hs)
+	_hurtbox.body_entered.connect(_on_body_touched)
+
 	_use_keyboard = OS.has_feature("pc")
 	Touch.jump_pressed.connect(_on_jump)
 
@@ -51,6 +69,31 @@ func set_camera_limits(left: float, right: float, top: float, bottom: float) -> 
 func respawn() -> void:
 	global_position = spawn_point
 	velocity = Vector2.ZERO
+	hp = Tuning.PLAYER_MAX_HP
+	_iframes = 0.0
+	health_changed.emit(hp)
+
+
+func _on_body_touched(_body: Node) -> void:
+	take_damage(Tuning.ENEMY_CONTACT_DAMAGE, Vector2.ZERO)
+
+
+## Called by enemy bodies on contact and by enemy projectiles.
+func take_damage(amount: int, from_pos: Vector2) -> void:
+	if _iframes > 0.0 or hp <= 0:
+		return
+	hp -= amount
+	_iframes = Tuning.PLAYER_IFRAMES
+	var away: float = 1.0
+	if from_pos != Vector2.ZERO:
+		away = signf(global_position.x - from_pos.x)
+		if is_zero_approx(away):
+			away = 1.0
+	velocity.x = away * Tuning.PLAYER_KNOCKBACK.x
+	velocity.y = Tuning.PLAYER_KNOCKBACK.y
+	health_changed.emit(hp)
+	if hp <= 0:
+		died.emit()
 
 
 ## A jump gesture never fails outright — it is buffered and fires as soon as
@@ -84,6 +127,7 @@ func _physics_process(delta: float) -> void:
 		_coyote = maxf(_coyote - delta, 0.0)
 		velocity.y = minf(velocity.y + Tuning.GRAVITY * delta, Tuning.MAX_FALL_SPEED)
 
+	_iframes = maxf(_iframes - delta, 0.0)
 	_consume_jump_buffer(delta)
 	move_and_slide()
 	_update_aim(delta)
@@ -149,7 +193,11 @@ func _update_aim(delta: float) -> void:
 # --------------------------------------------------------------- visuals ---
 
 func _draw() -> void:
-	draw_rect(Rect2(-SIZE * 0.5, SIZE), Color(0.78, 0.80, 0.85))
+	var body := Color(0.78, 0.80, 0.85)
+	if _iframes > 0.0:
+		# blink while invulnerable
+		body = body.lerp(Color(1.0, 0.4, 0.4), 0.5 + 0.5 * sin(_iframes * 45.0))
+	draw_rect(Rect2(-SIZE * 0.5, SIZE), body)
 	# facing marker
 	draw_rect(Rect2(Vector2(float(facing) * 6.0 - 4.0, -SIZE.y * 0.5 + 8.0),
 		Vector2(8, 8)), Color(0.15, 0.16, 0.2))

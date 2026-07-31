@@ -9,7 +9,13 @@ const LEVEL_RIGHT := 2400.0
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
+var enemies: Array = []
 var _bullet_next: int = 0
+var _spawn_cd: float = 0.0
+
+var kills: int = 0
+var deaths: int = 0
+var hud: Label
 
 
 func _ready() -> void:
@@ -17,13 +23,17 @@ func _ready() -> void:
 	_build_player()
 	_build_targets()
 	_build_bullet_pool()
+	_build_enemy_pool()
+	_build_hud()
 	var overlay_script: GDScript = load("res://scripts/debug_overlay.gd")
 	add_child(overlay_script.new())
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if player.global_position.y > Tuning.RESPAWN_Y:
-		player.respawn()
+		_restart()
+	_spawn_tick(delta)
+	_update_hud()
 
 
 # ---------------------------------------------------------------- level ---
@@ -78,6 +88,7 @@ func _build_player() -> void:
 	player.spawn_point = player.global_position
 	player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0, -500.0, GROUND_Y + 200.0)
 	player.fire_requested.connect(_on_fire_requested)
+	player.died.connect(_restart)
 
 
 func _build_targets() -> void:
@@ -110,11 +121,100 @@ func _build_bullet_pool() -> void:
 		bullets.append(b)
 
 
+func _build_enemy_pool() -> void:
+	var holder := Node2D.new()
+	holder.name = "Enemies"
+	add_child(holder)
+	var enemy_script: GDScript = load("res://scripts/enemy.gd")
+	for i in Tuning.ENEMY_POOL_SIZE:
+		var e = CharacterBody2D.new()
+		e.set_script(enemy_script)
+		holder.add_child(e)
+		e.died.connect(_on_enemy_died)
+		e.throw_requested.connect(_on_enemy_throw)
+		enemies.append(e)
+
+
+func _build_hud() -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 50
+	add_child(layer)
+	hud = Label.new()
+	hud.position = Vector2(20, 640)
+	layer.add_child(hud)
+
+
+# --------------------------------------------------------------- spawning ---
+
+func _alive_count() -> int:
+	var n: int = 0
+	for e in enemies:
+		if e.active:
+			n += 1
+	return n
+
+
+func _spawn_tick(delta: float) -> void:
+	_spawn_cd -= delta
+	if _spawn_cd > 0.0:
+		return
+	_spawn_cd = Tuning.SPAWN_INTERVAL
+	if _alive_count() >= Tuning.ENEMY_MAX_ALIVE:
+		return
+
+	var free_enemy = null
+	for e in enemies:
+		if not e.active:
+			free_enemy = e
+			break
+	if free_enemy == null:
+		return
+
+	# Appear just off either side of the camera, on the ground.
+	var side: float = 1.0 if randf() < 0.65 else -1.0
+	var x: float = clampf(
+		player.global_position.x + side * (640.0 + Tuning.SPAWN_MARGIN),
+		LEVEL_LEFT + 60.0, LEVEL_RIGHT - 60.0)
+	var kind: int = 1 if randf() < Tuning.THROWER_RATIO else 0
+	free_enemy.spawn(Vector2(x, GROUND_Y - 120.0), kind, player)
+
+
+func _on_enemy_died(_at: Vector2) -> void:
+	kills += 1
+
+
+func _on_enemy_throw(from: Vector2, dir: Vector2) -> void:
+	_fire(from, dir, true, Tuning.THROWER_SHOT_SPEED)
+
+
+func _restart() -> void:
+	deaths += 1
+	for e in enemies:
+		if e.active:
+			e.despawn()
+	for b in bullets:
+		if b.active:
+			b.despawn()
+	_spawn_cd = 1.2
+	player.respawn()
+
+
+func _update_hud() -> void:
+	hud.text = "ZIVOTY %d/%d    ZABITI %d    NA SCENE %d    SMRTI %d" % [
+		player.hp, Tuning.PLAYER_MAX_HP, kills, _alive_count(), deaths]
+
+
+# --------------------------------------------------------------- shooting ---
+
 func _on_fire_requested(from: Vector2, dir: Vector2) -> void:
+	_fire(from, dir, false, 0.0)
+
+
+func _fire(from: Vector2, dir: Vector2, hostile: bool, shot_speed: float) -> void:
 	for i in bullets.size():
 		var idx: int = (_bullet_next + i) % bullets.size()
 		var b = bullets[idx]
 		if not b.active:
-			b.spawn(from, dir)
+			b.spawn(from, dir, hostile, shot_speed)
 			_bullet_next = (idx + 1) % bullets.size()
 			return
