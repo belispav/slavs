@@ -216,7 +216,9 @@ func _run_axis(dx_mm: float) -> float:
 	var mag: float = absf(dx_mm)
 	if mag <= config.run_deadzone_mm:
 		return 0.0
-	var span: float = maxf(config.run_saturation_mm - config.run_deadzone_mm, 0.1)
+	var sat: float = config.run_saturation_left_mm if dx_mm < 0.0 \
+		else config.run_saturation_right_mm
+	var span: float = maxf(sat - config.run_deadzone_mm, 0.1)
 	return signf(dx_mm) * clampf((mag - config.run_deadzone_mm) / span, 0.0, 1.0)
 
 

@@ -51,8 +51,18 @@ class_name ControlConfig
 ## Sideways movement smaller than this is ignored (micro-jitter).
 @export_range(0.0, 6.0, 0.1) var run_deadzone_mm: float = 1.5
 
-## Sideways offset that produces full run speed.
-@export_range(3.0, 30.0, 0.5) var run_saturation_mm: float = 11.0
+## Sideways offset that produces full run speed — SEPARATE PER SIDE.
+##
+## F1 finding: the anchor lands where the thumb first touches, which is near
+## the left edge of the screen. There is a whole screen of travel available to
+## the right and only a few millimetres to the left, so demanding the same
+## distance in both directions makes backing up physically impossible.
+##
+## Setting a value close to the dead zone makes that direction effectively
+## digital (any push = full speed), which is how Metal Slug and the rest of the
+## genre actually behave. That is a legitimate setting, not a degenerate one.
+@export_range(2.0, 30.0, 0.5) var run_saturation_left_mm: float = 5.0
+@export_range(2.0, 30.0, 0.5) var run_saturation_right_mm: float = 15.0
 
 ## Minimum right-stick deflection before auto-fire engages.
 @export_range(0.5, 12.0, 0.1) var aim_deadzone_mm: float = 2.5

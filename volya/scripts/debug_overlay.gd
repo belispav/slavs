@@ -104,8 +104,11 @@ func _build_panel() -> void:
 		func(v: float) -> void: Touch.config.j_min_mm = v)
 	_add_slider("REARM", 0.0, 8.0, 0.25, Touch.config.hysteresis_mm,
 		func(v: float) -> void: Touch.config.hysteresis_mm = v)
-	_add_slider("BEH", 3.0, 30.0, 0.5, Touch.config.run_saturation_mm,
-		func(v: float) -> void: Touch.config.run_saturation_mm = v)
+	# Samostatne pre kazdy smer - dozadu nie je kam palcom ist.
+	_add_slider("BEH_L", 2.0, 30.0, 0.5, Touch.config.run_saturation_left_mm,
+		func(v: float) -> void: Touch.config.run_saturation_left_mm = v)
+	_add_slider("BEH_P", 2.0, 30.0, 0.5, Touch.config.run_saturation_right_mm,
+		func(v: float) -> void: Touch.config.run_saturation_right_mm = v)
 	_add_slider("MIER", 3.0, 60.0, 0.5, Touch.config.aim_recenter_mm,
 		func(v: float) -> void: Touch.config.aim_recenter_mm = v)
 
@@ -189,23 +192,38 @@ func _add_slider(label_text: String, lo: float, hi: float, step: float,
 ## V termináli ich vidis v zivom logcate a mozes ich rovno skopirovat.
 func _dump_values() -> void:
 	var c: ControlConfig = Touch.config
+	var lines: Array[String] = [
+		"=== VOLYA ladenie ovladania ===",
+		"build                   = %s" % BuildStampScript.STAMP,
+		"j0_mm                   = %s" % c.j0_mm,
+		"reach_mm                = %s" % c.reach_mm,
+		"rise_left_mm            = %s" % c.rise_left_mm,
+		"drop_right_mm           = %s" % c.drop_right_mm,
+		"j_min_mm                = %s" % c.j_min_mm,
+		"hysteresis_mm           = %s" % c.hysteresis_mm,
+		"run_deadzone_mm         = %s" % c.run_deadzone_mm,
+		"run_saturation_left_mm  = %s" % c.run_saturation_left_mm,
+		"run_saturation_right_mm = %s" % c.run_saturation_right_mm,
+		"aim_deadzone_mm         = %s" % c.aim_deadzone_mm,
+		"aim_recenter_mm         = %s" % c.aim_recenter_mm,
+		"gest / vykonane         = %d / %d" % [Touch.jump_count, Touch.jumps_performed],
+		"dpi = %s   px_per_mm = %s" % [Touch.raw_dpi, Touch.px_per_mm],
+		"===============================",
+	]
 	print("")
-	print("=== VOLYA ladenie ovladania ===")
-	print("build            = ", BuildStampScript.STAMP)
-	print("j0_mm            = ", c.j0_mm)
-	print("reach_mm         = ", c.reach_mm)
-	print("rise_left_mm     = ", c.rise_left_mm)
-	print("drop_right_mm    = ", c.drop_right_mm)
-	print("j_min_mm         = ", c.j_min_mm)
-	print("hysteresis_mm    = ", c.hysteresis_mm)
-	print("run_deadzone_mm  = ", c.run_deadzone_mm)
-	print("run_saturation_mm= ", c.run_saturation_mm)
-	print("aim_deadzone_mm  = ", c.aim_deadzone_mm)
-	print("aim_recenter_mm  = ", c.aim_recenter_mm)
-	print("gest / vykonane  = ", Touch.jump_count, " / ", Touch.jumps_performed)
-	print("dpi = ", Touch.raw_dpi, "  px_per_mm = ", Touch.px_per_mm)
-	print("===============================")
+	for l in lines:
+		print(l)
 	print("")
+
+	# Zapis aj do suboru, aby sa hodnoty nestratili, ked nebezi logcat.
+	# Vytiahnes ich cez tools/get_tuning.ps1
+	var f := FileAccess.open("user://tuning.txt", FileAccess.WRITE)
+	if f != null:
+		f.store_string("\n".join(lines) + "\n")
+		f.close()
+		print("ulozene do user://tuning.txt")
+	else:
+		push_warning("Nepodarilo sa zapisat user://tuning.txt")
 
 
 func _fmt(v: float) -> String:
