@@ -13,6 +13,7 @@ var spawn_point: Vector2 = Vector2.ZERO
 
 var _fire_cooldown: float = 0.0
 var _coyote: float = 0.0
+var _jump_buffer: float = 0.0
 var _use_keyboard: bool = false
 var _kb_jump_was_down: bool = false
 var _cam: Camera2D
@@ -52,14 +53,21 @@ func respawn() -> void:
 	velocity = Vector2.ZERO
 
 
+## A jump gesture never fails outright — it is buffered and fires as soon as
+## the character can actually jump.
 func _on_jump() -> void:
-	_try_jump()
+	_jump_buffer = Tuning.JUMP_BUFFER
 
 
-func _try_jump() -> void:
+func _consume_jump_buffer(delta: float) -> void:
+	_jump_buffer = maxf(_jump_buffer - delta, 0.0)
+	if _jump_buffer <= 0.0:
+		return
 	if is_on_floor() or _coyote > 0.0:
 		velocity.y = Tuning.JUMP_VELOCITY
 		_coyote = 0.0
+		_jump_buffer = 0.0
+		Touch.jumps_performed += 1
 
 
 func _physics_process(delta: float) -> void:
@@ -76,6 +84,7 @@ func _physics_process(delta: float) -> void:
 		_coyote = maxf(_coyote - delta, 0.0)
 		velocity.y = minf(velocity.y + Tuning.GRAVITY * delta, Tuning.MAX_FALL_SPEED)
 
+	_consume_jump_buffer(delta)
 	move_and_slide()
 	_update_aim(delta)
 	queue_redraw()
@@ -93,7 +102,7 @@ func _move_axis() -> float:
 		var jump_down: bool = Input.is_physical_key_pressed(KEY_SPACE) \
 			or Input.is_physical_key_pressed(KEY_W)
 		if jump_down and not _kb_jump_was_down:
-			_try_jump()
+			_on_jump()
 		_kb_jump_was_down = jump_down
 		if not is_zero_approx(kx):
 			return kx

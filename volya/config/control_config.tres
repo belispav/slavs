@@ -4,12 +4,15 @@
 
 ; Hodnoty namerane Pavlom na Samsungu SM-S731B pocas F1, 2026-07-31.
 ; Nemenit odhadom - menit len podla dalsieho merania na zariadeni.
+; Prepocet zo starej parametrizacie: k_left +0.04 a k_right -0.031 pri
+; rozsahu palca 12 mm zodpoveda rise 5.75 mm a drop 4.5 mm.
 
 [resource]
 script = ExtResource("1_cfg")
 j0_mm = 7.5
-k_arc_left = 0.004
-k_arc_right = -0.031
+reach_mm = 12.0
+rise_left_mm = 6.0
+drop_right_mm = 4.5
 j_min_mm = 1.0
 hysteresis_mm = 0.0
 run_deadzone_mm = 1.5

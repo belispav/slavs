@@ -20,6 +20,7 @@ const COL_FAINT := Color(1, 1, 1, 0.12)
 
 var draw_layer: Control
 var panel: PanelContainer
+var scroll: ScrollContainer
 var rows: VBoxContainer
 var value_labels: Dictionary = {}
 var _font: Font
@@ -75,22 +76,30 @@ func _build_panel() -> void:
 	toggle.custom_minimum_size = Vector2(56, 56)
 	head.add_child(toggle)
 	toggle.pressed.connect(func() -> void:
-		rows.visible = not rows.visible
-		toggle.text = "-" if rows.visible else "+"
+		scroll.visible = not scroll.visible
+		toggle.text = "-" if scroll.visible else "+"
 	)
 
+	# Posuvniky su v scrollovacom okne, aby panel nikdy nepretiekol mimo displej,
+	# ani ked ich pribudne.
+	scroll = ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	vb.add_child(scroll)
+
 	rows = VBoxContainer.new()
-	vb.add_child(rows)
+	rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(rows)
 
 	# Kratke nazvy, aby sa panel zmestil na displej telefonu.
 	_add_slider("PRAH", 3.0, 20.0, 0.5, Touch.config.j0_mm,
 		func(v: float) -> void: Touch.config.j0_mm = v)
-	# zaporne = kupola (prah klesa do stran), kladne = udolie
-	# Lava a prava strana su samostatne - palec nema na obe strany rovnaky dosah.
-	_add_slider("OBLUK_L", -0.04, 0.04, 0.001, Touch.config.k_arc_left,
-		func(v: float) -> void: Touch.config.k_arc_left = v)
-	_add_slider("OBLUK_P", -0.04, 0.04, 0.001, Touch.config.k_arc_right,
-		func(v: float) -> void: Touch.config.k_arc_right = v)
+	# Vsetko v milimetroch, vztiahnute na skutocny rozsah palca.
+	_add_slider("ROZSAH", 5.0, 35.0, 0.5, Touch.config.reach_mm,
+		func(v: float) -> void: Touch.config.reach_mm = v)
+	_add_slider("VLAVO+", 0.0, 20.0, 0.25, Touch.config.rise_left_mm,
+		func(v: float) -> void: Touch.config.rise_left_mm = v)
+	_add_slider("VPRAVO-", 0.0, 20.0, 0.25, Touch.config.drop_right_mm,
+		func(v: float) -> void: Touch.config.drop_right_mm = v)
 	_add_slider("DNO", 0.0, 10.0, 0.25, Touch.config.j_min_mm,
 		func(v: float) -> void: Touch.config.j_min_mm = v)
 	_add_slider("REARM", 0.0, 8.0, 0.25, Touch.config.hysteresis_mm,
@@ -100,17 +109,24 @@ func _build_panel() -> void:
 	_add_slider("MIER", 3.0, 60.0, 0.5, Touch.config.aim_recenter_mm,
 		func(v: float) -> void: Touch.config.aim_recenter_mm = v)
 
+	var buttons := HBoxContainer.new()
+	vb.add_child(buttons)
+
 	var dump := Button.new()
-	dump.text = "VYPIS HODNOTY DO LOGU"
+	dump.text = "VYPIS DO LOGU"
 	dump.custom_minimum_size = Vector2(0, 52)
-	rows.add_child(dump)
+	dump.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	buttons.add_child(dump)
 	dump.pressed.connect(_dump_values)
 
 	var reset := Button.new()
-	reset.text = "RESET SKOKOV"
+	reset.text = "RESET"
 	reset.custom_minimum_size = Vector2(0, 52)
-	rows.add_child(reset)
-	reset.pressed.connect(func() -> void: Touch.jump_count = 0)
+	buttons.add_child(reset)
+	reset.pressed.connect(func() -> void:
+		Touch.jump_count = 0
+		Touch.jumps_performed = 0
+	)
 
 	_layout_panel()
 	get_viewport().size_changed.connect(_layout_panel)
@@ -131,6 +147,9 @@ func _layout_panel() -> void:
 		if safe.size.x > 0:
 			right_inset = maxf(float(win.x - (safe.position.x + safe.size.x)) * s, 0.0)
 			top_inset = maxf(float(safe.position.y) * s, 0.0)
+
+	# Vyska scrollovacieho okna: co zostane pod hlavickou, nikdy nie viac.
+	scroll.custom_minimum_size = Vector2(0, maxf(view.y * 0.62, 120.0))
 
 	var w: float = minf(PANEL_W, view.x * 0.45)
 	panel.anchor_left = 1.0
@@ -174,15 +193,16 @@ func _dump_values() -> void:
 	print("=== VOLYA ladenie ovladania ===")
 	print("build            = ", BuildStampScript.STAMP)
 	print("j0_mm            = ", c.j0_mm)
-	print("k_arc_left       = ", c.k_arc_left)
-	print("k_arc_right      = ", c.k_arc_right)
+	print("reach_mm         = ", c.reach_mm)
+	print("rise_left_mm     = ", c.rise_left_mm)
+	print("drop_right_mm    = ", c.drop_right_mm)
 	print("j_min_mm         = ", c.j_min_mm)
 	print("hysteresis_mm    = ", c.hysteresis_mm)
 	print("run_deadzone_mm  = ", c.run_deadzone_mm)
 	print("run_saturation_mm= ", c.run_saturation_mm)
 	print("aim_deadzone_mm  = ", c.aim_deadzone_mm)
 	print("aim_recenter_mm  = ", c.aim_recenter_mm)
-	print("skokov spolu     = ", Touch.jump_count)
+	print("gest / vykonane  = ", Touch.jump_count, " / ", Touch.jumps_performed)
 	print("dpi = ", Touch.raw_dpi, "  px_per_mm = ", Touch.px_per_mm)
 	print("===============================")
 	print("")
@@ -262,7 +282,9 @@ func _draw_hud() -> void:
 		"BUILD: %s" % BuildStampScript.STAMP,
 		"FPS %d   DPI %d   px/mm %.2f" % [
 			Engine.get_frames_per_second(), int(Touch.raw_dpi), Touch.px_per_mm],
-		"SKOKY: %d" % Touch.jump_count,
+		"SKOKY: gesto %d / vykonane %d  (prehltnute %d)" % [
+			Touch.jump_count, Touch.jumps_performed,
+			maxi(Touch.jump_count - Touch.jumps_performed, 0)],
 		"stav: %s" % state_names[Touch.left_state],
 	]
 	if Touch.left_index != -1:

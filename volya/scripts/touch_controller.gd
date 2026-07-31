@@ -23,7 +23,11 @@ var move_x: float = 0.0
 var aim_dir: Vector2 = Vector2.RIGHT
 var aim_active: bool = false
 var left_state: int = LeftState.NO_TOUCH
+## Gestures that crossed the threshold.
 var jump_count: int = 0
+## Jumps the character actually performed. The gap between the two is the
+## number of gestures the game swallowed — the single most useful F1 number.
+var jumps_performed: int = 0
 
 # --- left thumb ---
 var left_index: int = -1

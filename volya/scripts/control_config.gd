@@ -8,21 +8,28 @@ class_name ControlConfig
 ## Upward thumb travel required to jump when the thumb is exactly above the anchor.
 @export_range(2.0, 25.0, 0.1) var j0_mm: float = 9.0
 
-## Curvature of the "windshield wiper" threshold, SEPARATE PER SIDE:
-##   J(dx) = j0_mm + (dx < 0 ? k_arc_left : k_arc_right) * dx^2
+## The player's comfortable sideways thumb sweep, measured from the anchor.
+## The whole threshold curve is expressed relative to THIS, not to an abstract
+## coefficient — so a player with a short thumb reach gets the same shape, just
+## compressed. Beyond this distance the curve stops changing.
 ##
-## NEGATIVE = dome. The thumb pivots around its joint, so extended sideways it
-## physically cannot reach as far up — the threshold must DROP at the extremes.
-## POSITIVE = valley (more travel required at the extremes).
+## F1 finding: parameterising the curve by dx² directly was a mistake. Inside a
+## real thumb sweep the quadratic is almost flat, so the curve felt "too wide"
+## and intended jumps were being missed.
+@export_range(5.0, 35.0, 0.5) var reach_mm: float = 12.0
+
+## How much HIGHER the threshold sits at the far LEFT of that sweep.
+## The thumb reaches up easily on the inward side, so it needs more headroom
+## there or the run gesture starts firing jumps by itself.
+@export_range(0.0, 20.0, 0.25) var rise_left_mm: float = 6.0
+
+## How much LOWER the threshold sits at the far RIGHT of that sweep.
+## The thumb cannot physically reach as high on the outward side, so the
+## requirement must come down to meet it.
 ##
-## The two sides are NOT equal: the thumb grips the phone from one side, so its
-## reach up-and-inward differs from its reach up-and-outward. Measured on device
-## in F1: the left side falls away far less than the right.
-##
-## These defaults assume the phone is held in the LEFT hand with the left thumb
-## on the movement stick. A left/right-handed switch belongs in v1.0 options.
-@export_range(-0.04, 0.04, 0.001) var k_arc_left: float = -0.005
-@export_range(-0.04, 0.04, 0.001) var k_arc_right: float = -0.012
+## Defaults assume the phone is held in the LEFT hand with the left thumb on
+## the movement stick. A left/right-handed switch belongs in v1.0 options.
+@export_range(0.0, 20.0, 0.25) var drop_right_mm: float = 5.0
 
 ## Hard floor for the threshold, so the dome can never reach zero and fire
 ## jumps by itself at full sideways extension.
@@ -58,6 +65,9 @@ class_name ControlConfig
 
 
 ## The arc threshold curve, in millimetres (SPEC B2). Asymmetric by design.
+## Everything is relative to reach_mm, so the shape scales with the player's
+## thumb rather than with an abstract coefficient.
 func jump_threshold_mm(dx_mm: float) -> float:
-	var k: float = k_arc_left if dx_mm < 0.0 else k_arc_right
-	return maxf(j0_mm + k * dx_mm * dx_mm, j_min_mm)
+	var t: float = clampf(absf(dx_mm) / maxf(reach_mm, 0.1), 0.0, 1.0)
+	var delta: float = (rise_left_mm if dx_mm < 0.0 else -drop_right_mm) * t * t
+	return maxf(j0_mm + delta, j_min_mm)
