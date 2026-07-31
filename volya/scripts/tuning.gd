@@ -30,25 +30,29 @@ const PLAYER_IFRAMES: float = 0.9     # invulnerable window after taking a hit
 const PLAYER_KNOCKBACK: Vector2 = Vector2(240.0, -320.0)
 
 # --- Enemies ---
-const ENEMY_POOL_SIZE: int = 48
-const ENEMY_MAX_ALIVE: int = 26       # design pillar: 15-30 on screen
+const ENEMY_POOL_SIZE: int = 64
+const ENEMY_MAX_ALIVE: int = 34       # design pillar: overwhelming numbers
 const ENEMY_GRAVITY: float = 2200.0
 const ENEMY_CONTACT_DAMAGE: int = 1
 
-const RUSHER_HP: int = 2
+## Rushers are chaff. One hit, large numbers — the point is mowing, not duelling.
+const RUSHER_HP: int = 1
 const RUSHER_SPEED: float = 230.0
 
+## Throwers are the rare ones that force you to move. Slow, dodgeable shots:
+## fast projectiles turned the game into a reflex test and killed the mowing.
 const THROWER_HP: int = 2
 const THROWER_SPEED: float = 95.0
 const THROWER_KEEP_DISTANCE: float = 430.0
 const THROWER_RANGE: float = 700.0
-const THROWER_INTERVAL: float = 1.7
-const THROWER_SHOT_SPEED: float = 620.0
+const THROWER_INTERVAL: float = 2.0
+const THROWER_SHOT_SPEED: float = 330.0
 
 # --- Spawning ---
-const SPAWN_INTERVAL: float = 0.5
+const SPAWN_INTERVAL: float = 0.28
 const SPAWN_MARGIN: float = 220.0     # how far off-screen enemies appear
-const THROWER_RATIO: float = 0.3
+const SPAWN_JITTER: float = 260.0
+const THROWER_RATIO: float = 0.16
 
 # --- World ---
 const RESPAWN_Y: float = 1400.0       # falling below this respawns the player

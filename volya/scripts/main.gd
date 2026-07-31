@@ -170,10 +170,13 @@ func _spawn_tick(delta: float) -> void:
 	if free_enemy == null:
 		return
 
-	# Appear just off either side of the camera, on the ground.
-	var side: float = 1.0 if randf() < 0.65 else -1.0
+	# ALWAYS from the right, never from the left.
+	# The left thumb physically covers the left of the screen, so a threat
+	# arriving there is invisible and therefore unfair. The control scheme
+	# dictates the level design, not the other way round.
 	var x: float = clampf(
-		player.global_position.x + side * (640.0 + Tuning.SPAWN_MARGIN),
+		player.global_position.x + 640.0 + Tuning.SPAWN_MARGIN
+			+ randf() * Tuning.SPAWN_JITTER,
 		LEVEL_LEFT + 60.0, LEVEL_RIGHT - 60.0)
 	var kind: int = 1 if randf() < Tuning.THROWER_RATIO else 0
 	free_enemy.spawn(Vector2(x, GROUND_Y - 120.0), kind, player)
