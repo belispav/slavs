@@ -5,10 +5,11 @@
 [resource]
 script = ExtResource("1_cfg")
 j0_mm = 9.0
-k_arc = -0.012
+k_arc_left = -0.005
+k_arc_right = -0.012
 j_min_mm = 3.0
 hysteresis_mm = 2.0
 run_deadzone_mm = 1.5
-run_saturation_mm = 11.0
+run_saturation_mm = 15.0
 aim_deadzone_mm = 2.5
-aim_recenter_mm = 9.0
+aim_recenter_mm = 15.0

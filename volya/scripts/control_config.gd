@@ -8,16 +8,21 @@ class_name ControlConfig
 ## Upward thumb travel required to jump when the thumb is exactly above the anchor.
 @export_range(2.0, 25.0, 0.1) var j0_mm: float = 9.0
 
-## Curvature of the "windshield wiper" threshold: J(dx) = j0_mm + k_arc * dx^2.
+## Curvature of the "windshield wiper" threshold, SEPARATE PER SIDE:
+##   J(dx) = j0_mm + (dx < 0 ? k_arc_left : k_arc_right) * dx^2
 ##
-## NEGATIVE = dome (correct default). The thumb pivots around its joint, so when
-## it is extended sideways it physically cannot reach as far up — the threshold
-## must DROP at the extremes. -0.012 removes ~7.5 mm of required travel at
-## 25 mm sideways, which matches a thumb pivot radius of about 40 mm.
+## NEGATIVE = dome. The thumb pivots around its joint, so extended sideways it
+## physically cannot reach as far up — the threshold must DROP at the extremes.
+## POSITIVE = valley (more travel required at the extremes).
 ##
-## POSITIVE = valley (more travel required at the extremes). Kept reachable on
-## the slider so the shape can be compared on-device instead of argued about.
-@export_range(-0.04, 0.04, 0.001) var k_arc: float = -0.012
+## The two sides are NOT equal: the thumb grips the phone from one side, so its
+## reach up-and-inward differs from its reach up-and-outward. Measured on device
+## in F1: the left side falls away far less than the right.
+##
+## These defaults assume the phone is held in the LEFT hand with the left thumb
+## on the movement stick. A left/right-handed switch belongs in v1.0 options.
+@export_range(-0.04, 0.04, 0.001) var k_arc_left: float = -0.005
+@export_range(-0.04, 0.04, 0.001) var k_arc_right: float = -0.012
 
 ## Hard floor for the threshold, so the dome can never reach zero and fire
 ## jumps by itself at full sideways extension.
@@ -36,11 +41,13 @@ class_name ControlConfig
 @export_range(0.5, 12.0, 0.1) var aim_deadzone_mm: float = 2.5
 
 ## Max distance the aim thumb may get from its anchor before the anchor slides
-## after it. Small value = the stick stays under the thumb, so turning around
-## takes a short flick instead of dragging across the whole anchor.
-@export_range(3.0, 30.0, 0.5) var aim_recenter_mm: float = 9.0
+## after it. SMALL = fast turnaround but twitchy, because a millimetre of thumb
+## jitter swings the aim a long way. LARGE = steady and precise, at the cost of
+## more thumb travel per rotation. There is no CPU cost either way.
+@export_range(3.0, 60.0, 0.5) var aim_recenter_mm: float = 15.0
 
 
-## The arc threshold curve, in millimetres (SPEC B2).
+## The arc threshold curve, in millimetres (SPEC B2). Asymmetric by design.
 func jump_threshold_mm(dx_mm: float) -> float:
-	return maxf(j0_mm + k_arc * dx_mm * dx_mm, j_min_mm)
+	var k: float = k_arc_left if dx_mm < 0.0 else k_arc_right
+	return maxf(j0_mm + k * dx_mm * dx_mm, j_min_mm)

@@ -48,7 +48,8 @@ States: `NO_TOUCH` → `GROUNDED_INPUT` → `JUMP_HELD` (→ back via re-arm).
 - **On touch down (left half):** store `anchor = touch_pos`. State = `GROUNDED_INPUT`.
 - **GROUNDED_INPUT:** `dx = touch.x − anchor.x`; run velocity = `clamp(dx / RUN_SATURATION_MM, −1, 1)` with dead zone `RUN_DEADZONE_MM`. Check jump condition each drag event.
 - **Jump condition (arc threshold):** jump fires when the thumb's upward travel exceeds the arc:
-  `anchor.y − touch.y > J(dx)` where `J(dx) = max(J0_MM + K_ARC × dx², J_MIN_MM)` (dx in mm).
+  `anchor.y − touch.y > J(dx)` where `J(dx) = max(J0_MM + K × dx², J_MIN_MM)`, and `K = K_ARC_LEFT` for `dx < 0`, `K_ARC_RIGHT` otherwise (dx in mm).
+  **The curve is asymmetric.** The thumb grips the phone from one side, so its reach up-and-inward is not the same as up-and-outward. Measured on device in F1: the inward (left) side needs far less fall-off than the outward (right) side. Defaults assume the phone is held in the left hand with the left thumb on the movement stick — **a left/right-handed switch is therefore required in v1.0 options**, not optional polish.
   **`K_ARC` is NEGATIVE — the curve is a dome, not a valley.** The thumb pivots around its joint, so when it is extended sideways it physically cannot reach as far up; the required travel must therefore DROP at the extremes. This is the "vertical forgiveness at the extremes" of A1. `K_ARC = −1/(2R)` where R is the thumb's pivot radius, so −0.012 corresponds to R ≈ 40 mm. `J_MIN_MM` is the floor that stops the dome from reaching zero and self-firing at full extension.
   *(Corrected during F1 on-device testing — the original spec's parenthetical "higher at the far left/right" contradicted both "arch" and "forgiveness", and the first implementation followed the parenthetical. On hardware the shape was immediately wrong.)*
 - **On jump fire:** emit `jump_pressed` ONCE, state = `JUMP_HELD`.
@@ -69,7 +70,8 @@ States: `NO_TOUCH` → `GROUNDED_INPUT` → `JUMP_HELD` (→ back via re-arm).
 | Constant | Start value | Meaning |
 |---|---|---|
 | `J0_MM` | 9.0 | Upward travel to jump at dx = 0 |
-| `K_ARC` | **−0.012** /mm | Dome curvature (≈ −7.5 mm at dx = 25 mm; negative = forgiving at extremes) |
+| `K_ARC_LEFT` | **−0.005** /mm | Dome curvature inward (thumb reaches higher on this side) |
+| `K_ARC_RIGHT` | **−0.012** /mm | Dome curvature outward (≈ −7.5 mm at dx = 25 mm) |
 | `J_MIN_MM` | 3.0 | Floor of the dome, prevents self-firing at full extension |
 | `HYSTERESIS_MM` | 2.0 | Drag-down below threshold to re-arm |
 | `RUN_DEADZONE_MM` | 1.5 | Ignore micro-jitter |

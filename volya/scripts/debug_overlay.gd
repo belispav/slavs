@@ -86,15 +86,18 @@ func _build_panel() -> void:
 	_add_slider("PRAH", 3.0, 20.0, 0.5, Touch.config.j0_mm,
 		func(v: float) -> void: Touch.config.j0_mm = v)
 	# zaporne = kupola (prah klesa do stran), kladne = udolie
-	_add_slider("OBLUK", -0.04, 0.04, 0.001, Touch.config.k_arc,
-		func(v: float) -> void: Touch.config.k_arc = v)
+	# Lava a prava strana su samostatne - palec nema na obe strany rovnaky dosah.
+	_add_slider("OBLUK_L", -0.04, 0.04, 0.001, Touch.config.k_arc_left,
+		func(v: float) -> void: Touch.config.k_arc_left = v)
+	_add_slider("OBLUK_P", -0.04, 0.04, 0.001, Touch.config.k_arc_right,
+		func(v: float) -> void: Touch.config.k_arc_right = v)
 	_add_slider("DNO", 1.0, 10.0, 0.5, Touch.config.j_min_mm,
 		func(v: float) -> void: Touch.config.j_min_mm = v)
 	_add_slider("REARM", 0.5, 8.0, 0.25, Touch.config.hysteresis_mm,
 		func(v: float) -> void: Touch.config.hysteresis_mm = v)
 	_add_slider("BEH", 3.0, 30.0, 0.5, Touch.config.run_saturation_mm,
 		func(v: float) -> void: Touch.config.run_saturation_mm = v)
-	_add_slider("MIER", 3.0, 30.0, 0.5, Touch.config.aim_recenter_mm,
+	_add_slider("MIER", 3.0, 60.0, 0.5, Touch.config.aim_recenter_mm,
 		func(v: float) -> void: Touch.config.aim_recenter_mm = v)
 
 	var reset := Button.new()
@@ -149,7 +152,7 @@ func _add_slider(label_text: String, lo: float, hi: float, step: float,
 	s.max_value = hi
 	s.step = step
 	s.value = start
-	s.custom_minimum_size = Vector2(0, 46)
+	s.custom_minimum_size = Vector2(0, 40)
 	row.add_child(s)
 	s.value_changed.connect(func(v: float) -> void:
 		setter.call(v)
