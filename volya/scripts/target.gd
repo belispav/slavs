@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 	global_position = origin + (Vector2(0.0, off) if vertical else Vector2(off, 0.0))
 	if _flash > 0.0:
 		_flash = maxf(_flash - delta * 5.0, 0.0)
-	queue_redraw()
+		queue_redraw()
 
 
 func hit() -> void:

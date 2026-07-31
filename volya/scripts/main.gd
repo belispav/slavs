@@ -16,6 +16,7 @@ var _spawn_cd: float = 0.0
 var kills: int = 0
 var deaths: int = 0
 var hud: Label
+var _alive: int = 0
 
 
 func _ready() -> void:
@@ -32,6 +33,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if player.global_position.y > Tuning.RESPAWN_Y:
 		_restart()
+	_alive = _count_alive()      # spocitane RAZ za snimku, nie trikrat
 	_spawn_tick(delta)
 	_update_hud()
 
@@ -146,7 +148,7 @@ func _build_hud() -> void:
 
 # --------------------------------------------------------------- spawning ---
 
-func _alive_count() -> int:
+func _count_alive() -> int:
 	var n: int = 0
 	for e in enemies:
 		if e.active:
@@ -159,7 +161,7 @@ func _spawn_tick(delta: float) -> void:
 	if _spawn_cd > 0.0:
 		return
 	_spawn_cd = Tuning.SPAWN_INTERVAL
-	if _alive_count() >= Tuning.ENEMY_MAX_ALIVE:
+	if _alive >= Tuning.ENEMY_MAX_ALIVE:
 		return
 
 	var free_enemy = null
@@ -204,7 +206,7 @@ func _restart() -> void:
 
 func _update_hud() -> void:
 	hud.text = "ZIVOTY %d/%d    ZABITI %d    NA SCENE %d    SMRTI %d" % [
-		player.hp, Tuning.PLAYER_MAX_HP, kills, _alive_count(), deaths]
+		player.hp, Tuning.PLAYER_MAX_HP, kills, _alive, deaths]
 
 
 # --------------------------------------------------------------- shooting ---

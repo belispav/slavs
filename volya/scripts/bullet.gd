@@ -45,6 +45,9 @@ func spawn(pos: Vector2, direction: Vector2, is_hostile: bool = false,
 	show()
 	set_physics_process(true)
 	set_deferred("monitoring", true)
+	# BEZ TOHTO sa strela kresli podla stareho smeru a starej strany:
+	# Godot si drzi zoznam kresliacich prikazov a show() ho neobnovi.
+	queue_redraw()
 
 
 func despawn() -> void:
@@ -83,9 +86,14 @@ func _on_body_entered(body: Node) -> void:
 
 func _draw() -> void:
 	if hostile:
-		# clearly readable, but visibly a thin spear you can slip past
-		draw_line(-dir * 16.0, dir * 16.0, Color(0.98, 0.45, 0.38), 5.0)
-		draw_circle(dir * 16.0, 4.0, Color(1.0, 0.8, 0.7))
+		# Big and loud so it never gets lost in the crowd — but the hitbox
+		# stays small, so it still reads as something you can slip past.
+		var back: Vector2 = -dir * 26.0
+		var tip: Vector2 = dir * 26.0
+		draw_line(back, tip, Color(0.10, 0.05, 0.08, 0.85), 13.0)
+		draw_line(back, tip, Color(1.0, 0.40, 0.30), 8.0)
+		draw_line(back * 0.4, tip, Color(1.0, 0.88, 0.70), 3.0)
+		draw_circle(tip, 7.0, Color(1.0, 0.95, 0.85))
 	else:
 		draw_circle(Vector2.ZERO, RADIUS * 1.6, Color(1.0, 0.75, 0.25, 0.30))
 		draw_circle(Vector2.ZERO, RADIUS, Color(1.0, 0.90, 0.45))

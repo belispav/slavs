@@ -65,6 +65,7 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	set_physics_process(true)
 	set_deferred("monitorable", true)
 	_hurtbox.set_deferred("monitorable", true)
+	queue_redraw()
 
 
 func despawn() -> void:
@@ -100,9 +101,12 @@ func _physics_process(delta: float) -> void:
 				_think_thrower(delta)
 
 	move_and_slide()
+	# Redraw ONLY while the hit flash is fading. Moving a Node2D does not need
+	# a redraw, and 34 pointless redraws per frame cost real frame time on a
+	# phone — which shows up as the controls feeling sticky.
 	if _flash > 0.0:
 		_flash = maxf(_flash - delta * 6.0, 0.0)
-	queue_redraw()
+		queue_redraw()
 
 
 func _think_rusher() -> void:
