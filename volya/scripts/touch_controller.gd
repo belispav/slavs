@@ -38,6 +38,7 @@ var left_pos: Vector2 = Vector2.ZERO
 var right_index: int = -1
 var right_anchor: Vector2 = Vector2.ZERO
 var right_pos: Vector2 = Vector2.ZERO
+var _right_prev: Vector2 = Vector2.ZERO
 
 # --- screen metrics ---
 var px_per_mm: float = 4.0   # in VIEWPORT units, not physical pixels
@@ -163,6 +164,7 @@ func _claim_right(index: int, pos: Vector2) -> void:
 	right_index = index
 	right_anchor = pos
 	right_pos = pos
+	_right_prev = pos
 	aim_active = false
 	aim_input.emit(aim_dir, false)
 
@@ -225,11 +227,22 @@ func _run_axis(dx_mm: float) -> float:
 # ------------------------------------------------ right thumb (SPEC B3) ----
 
 func _update_right() -> void:
+	var motion: Vector2 = right_pos - _right_prev
+	_right_prev = right_pos
+
 	var v: Vector2 = right_pos - right_anchor
+
+	# Turning around: if the thumb moves against the current stick direction,
+	# pull the anchor after it instead of making the thumb walk around it.
+	# Pushing further out is unaffected, so precision at rest is preserved.
+	if config.aim_turn_pull > 0.0 and v.length() > 0.5 and motion.length() > 0.5:
+		if motion.normalized().dot(v.normalized()) < 0.0:
+			right_anchor = right_anchor.lerp(right_pos, config.aim_turn_pull)
+			v = right_pos - right_anchor
+
 	var mm: float = v.length() / px_per_mm
 
-	# Sliding anchor: the stick never runs away from the thumb, so a full 180
-	# degree turn is a short flick instead of a drag across the anchor.
+	# Sliding anchor: the stick never runs away from the thumb.
 	if mm > config.aim_recenter_mm and mm > 0.0:
 		var limit: float = config.aim_recenter_mm * px_per_mm
 		right_anchor = right_pos - v.normalized() * limit

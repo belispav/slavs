@@ -111,6 +111,9 @@ func _build_panel() -> void:
 		func(v: float) -> void: Touch.config.run_saturation_right_mm = v)
 	_add_slider("MIER", 3.0, 60.0, 0.5, Touch.config.aim_recenter_mm,
 		func(v: float) -> void: Touch.config.aim_recenter_mm = v)
+	# 0 = kotva sa len vlecie, 1 = pri otoceni skoci rovno k palcu
+	_add_slider("MIER_OTOC", 0.0, 1.0, 0.05, Touch.config.aim_turn_pull,
+		func(v: float) -> void: Touch.config.aim_turn_pull = v)
 
 	var buttons := HBoxContainer.new()
 	vb.add_child(buttons)
@@ -206,6 +209,7 @@ func _dump_values() -> void:
 		"run_saturation_right_mm = %s" % c.run_saturation_right_mm,
 		"aim_deadzone_mm         = %s" % c.aim_deadzone_mm,
 		"aim_recenter_mm         = %s" % c.aim_recenter_mm,
+		"aim_turn_pull           = %s" % c.aim_turn_pull,
 		"gest / vykonane         = %d / %d" % [Touch.jump_count, Touch.jumps_performed],
 		"dpi = %s   px_per_mm = %s" % [Touch.raw_dpi, Touch.px_per_mm],
 		"===============================",

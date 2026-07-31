@@ -73,6 +73,17 @@ class_name ControlConfig
 ## more thumb travel per rotation. There is no CPU cost either way.
 @export_range(3.0, 60.0, 0.5) var aim_recenter_mm: float = 15.0
 
+## How hard the aim anchor is pulled toward the thumb when the thumb moves
+## AGAINST the current aim direction, i.e. when the player is turning around.
+##
+## F1/F2 finding: with a purely trailing anchor, reversing direction meant
+## walking the thumb all the way around the anchor — twice the stick radius of
+## travel. It read as "aiming just doesn't respond". Holding a direction is
+## unaffected, because a stationary thumb has no motion to react to.
+## 0 = anchor only trails (the old behaviour), 1 = anchor snaps to the thumb
+## the instant you turn.
+@export_range(0.0, 1.0, 0.05) var aim_turn_pull: float = 0.35
+
 
 ## The arc threshold curve, in millimetres (SPEC B2). Asymmetric by design.
 ## Everything is relative to reach_mm, so the shape scales with the player's
