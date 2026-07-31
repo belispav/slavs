@@ -80,9 +80,18 @@ class_name ControlConfig
 ## walking the thumb all the way around the anchor — twice the stick radius of
 ## travel. It read as "aiming just doesn't respond". Holding a direction is
 ## unaffected, because a stationary thumb has no motion to react to.
-## 0 = anchor only trails (the old behaviour), 1 = anchor snaps to the thumb
-## the instant you turn.
-@export_range(0.0, 1.0, 0.05) var aim_turn_pull: float = 0.35
+## 0 = anchor only trails, 1 = anchor snaps to the thumb the instant you turn.
+##
+## DEFAULT 0 — TRIED ON DEVICE AND REJECTED. Pulling the anchor toward the
+## thumb shrinks the stick offset below aim_deadzone_mm, so aim_active drops
+## and AUTO-FIRE STOPS exactly during a turn, which is the worst possible
+## moment in a horde shooter.
+##
+## Do not simply raise this value again. The turn cost is real, but the fix has
+## to separate FIRING from AIM MAGNITUDE — e.g. latch auto-fire on while the
+## right thumb is down and let the offset only decide direction. Left here so
+## the idea and the reason it failed are not lost.
+@export_range(0.0, 1.0, 0.05) var aim_turn_pull: float = 0.0
 
 
 ## The arc threshold curve, in millimetres (SPEC B2). Asymmetric by design.

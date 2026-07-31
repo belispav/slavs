@@ -64,6 +64,8 @@ States: `NO_TOUCH` → `GROUNDED_INPUT` → `JUMP_HELD` (→ back via re-arm).
 - `aim_vector = touch_pos − anchor`; active (auto-fire ON) when `|aim_vector| > AIM_DEADZONE_MM`; direction = normalized vector (free 360° aim; snap assist optional later, off by default).
 - **Sliding anchor:** when `|aim_vector| > AIM_RECENTER_MM`, the anchor is pulled along so the distance stays exactly `AIM_RECENTER_MM`. Without this, a fixed anchor forces the thumb to travel across and past the anchor to reverse direction, which reads as sluggish aiming even though the code has zero smoothing. *(Added during F1 on-device testing.)*
 - Releasing the thumb stops firing; last aim direction is retained for character facing.
+- **Known open cost, and one rejected fix.** Reversing aim 180° requires the thumb to travel roughly twice the stick radius, because the anchor trails behind it. Tried in F2: pulling the anchor toward the thumb whenever the thumb moves against the current aim (`AIM_TURN_PULL`). **Rejected on device** — it shrinks the offset below `AIM_DEADZONE_MM`, so `aim_active` drops and auto-fire cuts out mid-turn, which is worse than the slow turn. The knob is kept, defaulted to 0.
+  Any future attempt must first **decouple firing from stick magnitude**: latch auto-fire on while the right thumb is down, and let the offset decide direction only. Then the anchor may be moved freely.
 
 ### B4. Starting tunables (exported vars, single config resource `ControlConfig.tres`)
 
