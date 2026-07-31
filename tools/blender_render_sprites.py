@@ -31,8 +31,9 @@ DEFAULTS = {
     "name": "anim",
     "height": 96,      # rendered pixel height of one frame
     "step": 3,         # render every Nth frame (30 fps mocap / 3 = 10 fps sprite)
-    "angles": 1,       # 1 = pure side view; 8 = full 45-degree turnaround
-    "start_angle": 0.0,
+    "angles": 1,       # 1 = single view; 8 = full 45-degree turnaround
+    "start_angle": 0.0,  # which way the camera looks; Mixamo rigs need 90 or 270
+    "preview": 0,      # 1 = one frame from 8 angles, to pick the side view
     "margin": 1.35,    # extra room around the rest-pose bounding box
     "engine": "auto",
     "samples": 32,
@@ -239,12 +240,29 @@ def main():
     pivot = build_camera(cfg)
     build_lights(cfg)
 
+    scene = bpy.context.scene
     total = max(1, int(cfg["angles"]))
+
+    # Preview: one frame from eight angles, so the correct side view can be
+    # picked by eye. Mixamo characters are not all facing the same way, so
+    # guessing the camera azimuth is a waste of a render.
+    if int(cfg["preview"]) != 0:
+        total = 8
+        middle = (scene.frame_start + scene.frame_end) // 2
+        scene.frame_start = middle
+        scene.frame_end = middle
+        scene.frame_step = 1
+        print("VOLYA: PREVIEW - 1 frame from 8 angles (a00 = %.0f deg, "
+              "each step +45 deg)" % cfg["start_angle"])
+
     for index in range(total):
         render_angle(cfg, pivot, index, total)
 
-    scene = bpy.context.scene
     count = len(range(scene.frame_start, scene.frame_end + 1, scene.frame_step))
+    if int(cfg["preview"]) != 0:
+        print("VOLYA: pozri sa na subory _a00_ az _a07_ a vyber ten, kde je")
+        print("VOLYA: postava presne z boku. Cislo N pouzi ako --start_angle")
+        print("VOLYA: s hodnotou N*45, a potom renderuj s --angles 1.")
     print("VOLYA: done — %d angle(s) x %d frames = %d PNG files in %s"
           % (total, count, total * count, bpy.path.abspath(cfg["out"])))
 

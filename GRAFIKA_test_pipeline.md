@@ -76,10 +76,29 @@ v bloku `DEFAULTS` hore uprav `out` a `height`, stlač **Run Script**.
 
 | Parameter | Význam |
 |---|---|
-| `--height 96` | výška snímky v pixeloch (postava v hre je teraz 54 px) |
+| `--height 96` | výška snímky v pixeloch |
 | `--step 3` | z 30 fps mocapu spraví 10 fps sprajt — menej snímok, retro cit |
-| `--angles 1` | 1 = bočný pohľad; neskôr 8 = otočka po 45° pre mierenie |
+| `--angles 1` | koľko uhlov renderovať; neskôr 8 = otočka po 45° pre mierenie |
+| `--start_angle 90` | ktorým smerom sa kamera pozerá — **toto potrebuješ nastaviť** |
 | `--name run` | predpona názvov súborov |
+
+### Najprv zisti správny uhol (inak dostaneš pohľad spredu)
+
+Mixamo postavy nie sú všetky natočené rovnako, takže predvolený uhol trafí
+bok len náhodou. Spusti raz tento príkaz — vyrenderuje **jednu snímku z ôsmich
+uhlov** za pár sekúnd:
+
+```
+& "C:\Program Files\Blender Foundation\Blender 4.5\blender.exe" `
+  "D:\2026\Slavs figh back\tools\blender\hero_run.blend" `
+  --background `
+  --python "D:\2026\Slavs figh back\tools\blender_render_sprites.py" `
+  -- --out "D:\2026\Slavs figh back\tools\blender\preview" --preview 1 --height 200
+```
+
+Pozri sa na súbory `_a00_` až `_a07_` a nájdi ten, kde je postava presne
+z boku. Číslo v názve vynásob 45 a použi ako `--start_angle`. Napríklad ak
+sedí `_a02_`, pridaj do normálneho renderu `--start_angle 90`.
 
 **Kontrola:** v `volya/art/hero_run/` je 10–20 PNG súborov s priehľadným
 pozadím, v konzole posledný riadok `VOLYA: done — 1 angle(s) x N frames`.

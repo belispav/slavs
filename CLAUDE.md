@@ -40,9 +40,15 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 - [x] Control implementation spec complete
 - [x] F1 control prototype WRITTEN (`volya/`)
 - [x] F0: Godot runs, APK builds and runs on a Samsung SM-S731B. One-click deploy in the editor never appeared despite a provably correct setup (possible engine bug); the working loop is `tools/deploy_android.ps1` — export, install, launch, live logcat.
-- [ ] F1: control prototype VALIDATED on device (GO/NO-GO milestone — acceptance criteria in SPEC PART C)
-  - First on-device session: logic confirmed working. Two corrections made, both recorded in the SPEC: `K_ARC` sign flipped (the threshold is a DOME, not a valley), and a sliding anchor added to the aim stick (fixed apparent aim sluggishness).
+- [ ] F1: control prototype IN TUNING on device (GO/NO-GO milestone — acceptance criteria in SPEC PART C)
+  - Working loop: `tools/deploy_android.ps1` (build stamp → export → install → launch → live logcat). The in-game panel tunes controls live; `VYPIS DO LOGU` prints all values to logcat. Values measured on device are committed to `control_config.tres` — never change them by guessing.
+  - Corrections found on hardware, all recorded in the SPEC with reasons: threshold is a DOME not a valley; the curve is ASYMMETRIC (thumb reach differs inward vs outward) and is parameterised by real thumb reach in mm, not by a dx² coefficient; sliding anchor on the aim stick; jump buffering (0.14 s) because gestures made just before landing were being discarded.
+  - Open: Pavel still converging on final values. Unintended jumps: none observed. Missed jumps: improving. HUD shows gesture / performed / swallowed counts.
+  - **v1.0 requirement discovered here:** left/right-handed switch, because the arc asymmetry depends on which hand holds the phone.
   - Google Play account deferred ~1 month before testing.
+- [x] Graphics direction decided: 3D in Blender → pre-rendered 2D sprites (see `GRAFIKA_test_pipeline.md`, `tools/blender_render_sprites.py`). Chosen because frame-to-frame consistency is structural, and the budget is 0 €. Pipeline test passed on 2026-07-31: silhouette readable, Pavel comfortable with Blender. Character height should rise from 64 px to ~96 px; the in-game player box (54 units of 720) is also undersized versus the genre (~16 % of screen height ≈ 115) — fix after the F1 gate, not before.
+  - Backgrounds may be generated externally (consistency does not matter there); animation frames may NOT.
+  - Style references go in `ref/`, prompts in `ref/PROMPTY.md`.
 - [ ] F2: vertical slice
 - [ ] F3: content production
 - [ ] F4: polish + closed testing (12 testers / 14 days — mandatory for new personal Google Play accounts)
