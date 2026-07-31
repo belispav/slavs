@@ -11,6 +11,15 @@ scénu 3–4 rôzne štýly — až potom sa dá porovnávať. Príklady na koni
 nedá 2400 × 1080, stačí čokoľvek v pomere 20:9 alebo 21:9.
 
 ---
+***** PAvel pridal popist scen ktore pouzil*****
+at wheat field
+in the wild river which is walkable but wild, full of curves, strong stream, sharp dangerous stones everywhere
+haunted castle
+underground cave with horror atmosphere at night
+old cemetery with horror atmosphere at night
+deep woods with horror atmosphere at night
+
+
 
 ## 1. Herný záber — `gameplay_01.png`
 
@@ -42,6 +51,9 @@ dismemberment, severed limbs, children, civilians, unarmed villagers, religious
 icons, crosses, modern clothing, fantasy monsters, orcs, dragons, text, letters,
 UI, HUD, watermark, signature
 ```
+
+
+
 
 ---
 
@@ -150,15 +162,16 @@ dosiahnuteľné.
 
 | Štýl do promptu | Dosiahnuteľné? |
 |---|---|
-| `cel shaded 3D render, thick dark outlines, flat colour fills` | áno, presne toto |
-| `pre-rendered 3D sprite art in the style of 1990s Donkey Kong Country, soft plastic shading` | áno |
-| `dark pre-rendered 3D art in the style of Diablo 1, muted earth tones, heavy shadow` | áno |
-| `low poly 3D render, flat untextured colour, hard shadows` | áno, najlacnejšie |
-| `clay diorama, matte sculpted figures, soft studio light` | áno |
-| `high contrast silhouette art, black figures against a coloured sky, single accent colour` | áno |
-| `painterly 2D illustration with visible brush strokes` | čiastočne, cez post-processing |
-| `hand drawn 2D animation, inked lines, in the style of Cuphead` | **nie** — to je ručná kresba |
-| `detailed hand placed pixel art, 16 bit, in the style of Metal Slug` | **nie** touto cestou |
+S0 | `style of visual is mix of Metal Slug game serie, Shinobi game serie and Commando game serie, so pixel art extravaggated mass shooter
+S1 | `cel shaded 3D render, thick dark outlines, flat colour fills` | áno, presne toto |
+S2 | `pre-rendered 3D sprite art in the style of 1990s Donkey Kong Country, soft plastic shading` | áno |
+S3 | `dark pre-rendered 3D art in the style of Diablo 1, muted earth tones, heavy shadow` | áno |
+S4 | `low poly 3D render, flat untextured colour, hard shadows` | áno, najlacnejšie |
+S5 | `clay diorama, matte sculpted figures, soft studio light` | áno |
+S6 | `high contrast silhouette art, black figures against a coloured sky, single accent colour` | áno |
+S7 | `painterly 2D illustration with visible brush strokes` | čiastočne, cez post-processing |
+S8 | `hand drawn 2D animation, inked lines, in the style of Cuphead` | **nie** — to je ručná kresba |
+S9 | `detailed hand placed pixel art, 16 bit, in the style of Metal Slug` | **nie** touto cestou |
 
 Tie dva „nie" si aj tak vygeneruj — nech vidíme, o čo presne prichádzame, a či
 sa k tomu nedá priblížiť shaderom.

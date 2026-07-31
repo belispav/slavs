@@ -40,7 +40,10 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 - [x] Control implementation spec complete
 - [x] F1 control prototype WRITTEN (`volya/`)
 - [x] F0: Godot runs, APK builds and runs on a Samsung SM-S731B. One-click deploy in the editor never appeared despite a provably correct setup (possible engine bug); the working loop is `tools/deploy_android.ps1` — export, install, launch, live logcat.
-- [ ] F1: control prototype IN TUNING on device (GO/NO-GO milestone — acceptance criteria in SPEC PART C)
+- [x] F1: GO. Controls work on device and Pavel is satisfied enough to move on.
+  - The formal 10-minute protocol (SPEC PART C §1) was **deliberately waived by Pavel** — he had already played far more than that across tuning sessions. Last measured session: 111 gestures / 103 jumps / 0 unintended.
+  - **Still open:** criterion 5, a second device with a different DPI. All tuning is in millimetres and verified only at 450 dpi. Pavel will test later; until then this is a live risk.
+  - Values may still be revisited; nothing about them is frozen.
   - Working loop: `tools/deploy_android.ps1` (build stamp → export → install → launch → live logcat). The in-game panel tunes controls live; `VYPIS DO LOGU` prints all values to logcat. Values measured on device are committed to `control_config.tres` — never change them by guessing.
   - Corrections found on hardware, all recorded in the SPEC with reasons: threshold is a DOME not a valley; the curve is ASYMMETRIC (thumb reach differs inward vs outward) and is parameterised by real thumb reach in mm, not by a dx² coefficient; sliding anchor on the aim stick; jump buffering (0.14 s) because gestures made just before landing were being discarded.
   - Open: Pavel still converging on final values. Unintended jumps: none observed. Missed jumps: improving. HUD shows gesture / performed / swallowed counts.
