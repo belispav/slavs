@@ -2,14 +2,17 @@
 
 [ext_resource type="Script" path="res://scripts/control_config.gd" id="1_cfg"]
 
+; Hodnoty namerane Pavlom na Samsungu SM-S731B pocas F1, 2026-07-31.
+; Nemenit odhadom - menit len podla dalsieho merania na zariadeni.
+
 [resource]
 script = ExtResource("1_cfg")
-j0_mm = 9.0
-k_arc_left = -0.005
-k_arc_right = -0.012
-j_min_mm = 3.0
-hysteresis_mm = 2.0
+j0_mm = 7.5
+k_arc_left = 0.004
+k_arc_right = -0.031
+j_min_mm = 1.0
+hysteresis_mm = 0.0
 run_deadzone_mm = 1.5
 run_saturation_mm = 15.0
 aim_deadzone_mm = 2.5
-aim_recenter_mm = 15.0
+aim_recenter_mm = 17.0

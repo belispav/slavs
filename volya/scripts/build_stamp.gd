@@ -5,4 +5,4 @@ extends RefCounted
 ##
 ## ZAMERNE tu NIE JE class_name: globalne nazvy tried su v cache, ktoru
 ## headless export neobnovuje, a export by na tom padol.
-const STAMP := "2026-07-31 10:39:32  a1db38d"
+const STAMP := "2026-07-31 10:56:03  c48c7aa"

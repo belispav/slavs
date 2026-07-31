@@ -91,14 +91,20 @@ func _build_panel() -> void:
 		func(v: float) -> void: Touch.config.k_arc_left = v)
 	_add_slider("OBLUK_P", -0.04, 0.04, 0.001, Touch.config.k_arc_right,
 		func(v: float) -> void: Touch.config.k_arc_right = v)
-	_add_slider("DNO", 1.0, 10.0, 0.5, Touch.config.j_min_mm,
+	_add_slider("DNO", 0.0, 10.0, 0.25, Touch.config.j_min_mm,
 		func(v: float) -> void: Touch.config.j_min_mm = v)
-	_add_slider("REARM", 0.5, 8.0, 0.25, Touch.config.hysteresis_mm,
+	_add_slider("REARM", 0.0, 8.0, 0.25, Touch.config.hysteresis_mm,
 		func(v: float) -> void: Touch.config.hysteresis_mm = v)
 	_add_slider("BEH", 3.0, 30.0, 0.5, Touch.config.run_saturation_mm,
 		func(v: float) -> void: Touch.config.run_saturation_mm = v)
 	_add_slider("MIER", 3.0, 60.0, 0.5, Touch.config.aim_recenter_mm,
 		func(v: float) -> void: Touch.config.aim_recenter_mm = v)
+
+	var dump := Button.new()
+	dump.text = "VYPIS HODNOTY DO LOGU"
+	dump.custom_minimum_size = Vector2(0, 52)
+	rows.add_child(dump)
+	dump.pressed.connect(_dump_values)
 
 	var reset := Button.new()
 	reset.text = "RESET SKOKOV"
@@ -158,6 +164,28 @@ func _add_slider(label_text: String, lo: float, hi: float, step: float,
 		setter.call(v)
 		lbl.text = "%s: %s" % [label_text, _fmt(v)]
 	)
+
+
+## Vypise vsetky aktualne hodnoty do logu, aby sa nemuseli opisovat z displeja.
+## V termináli ich vidis v zivom logcate a mozes ich rovno skopirovat.
+func _dump_values() -> void:
+	var c: ControlConfig = Touch.config
+	print("")
+	print("=== VOLYA ladenie ovladania ===")
+	print("build            = ", BuildStampScript.STAMP)
+	print("j0_mm            = ", c.j0_mm)
+	print("k_arc_left       = ", c.k_arc_left)
+	print("k_arc_right      = ", c.k_arc_right)
+	print("j_min_mm         = ", c.j_min_mm)
+	print("hysteresis_mm    = ", c.hysteresis_mm)
+	print("run_deadzone_mm  = ", c.run_deadzone_mm)
+	print("run_saturation_mm= ", c.run_saturation_mm)
+	print("aim_deadzone_mm  = ", c.aim_deadzone_mm)
+	print("aim_recenter_mm  = ", c.aim_recenter_mm)
+	print("skokov spolu     = ", Touch.jump_count)
+	print("dpi = ", Touch.raw_dpi, "  px_per_mm = ", Touch.px_per_mm)
+	print("===============================")
+	print("")
 
 
 func _fmt(v: float) -> String:

@@ -26,10 +26,20 @@ class_name ControlConfig
 
 ## Hard floor for the threshold, so the dome can never reach zero and fire
 ## jumps by itself at full sideways extension.
-@export_range(1.0, 10.0, 0.1) var j_min_mm: float = 3.0
+##
+## F1 finding: this matters far less than expected. The anchor is wherever the
+## thumb first lands, which is almost never the very bottom edge of the screen,
+## so there is normally room below the dome anyway. A high floor only gets in
+## the way. Measured preference: 1.0.
+@export_range(0.0, 10.0, 0.1) var j_min_mm: float = 1.0
 
 ## How far back down (below the arc) the thumb must drag to re-arm the jump.
-@export_range(0.5, 10.0, 0.1) var hysteresis_mm: float = 2.0
+##
+## F1 finding: measured preference is 0 — any required travel reads as the
+## control refusing to respond. Kept as a knob because 0 removes the only
+## protection against flutter at the boundary; if the jump counter starts
+## showing unintended jumps, this is the first value to raise.
+@export_range(0.0, 8.0, 0.1) var hysteresis_mm: float = 0.0
 
 ## Sideways movement smaller than this is ignored (micro-jitter).
 @export_range(0.0, 6.0, 0.1) var run_deadzone_mm: float = 1.5
