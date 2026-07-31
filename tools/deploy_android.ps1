@@ -71,27 +71,52 @@ const STAMP := "$Stamp"
 Write-Host "      $Stamp" -ForegroundColor Yellow
 
 # --------------------------------------------------------------- 2. zariadenie
-Write-Host "2/5  Kontrola zariadenia..." -ForegroundColor Cyan
-$adbList = & $Adb devices
-$devices = $adbList | Where-Object { $_ -match "^\S+\s+device\s*$" }
-if (-not $devices) {
-    $unauth = $adbList | Where-Object { $_ -match "unauthorized" }
-    if ($unauth) {
-        Write-Host "TELEFON JE 'unauthorized' - caka na tvoje potvrdenie." -ForegroundColor Yellow
-        Write-Host ""
-        Write-Host "  1. ODOMKNI telefon a nechaj ho odomknuty" -ForegroundColor Yellow
-        Write-Host "  2. Odpoj a znova zapoj kabel" -ForegroundColor Yellow
-        Write-Host "  3. V telefone potvrd 'Povolit ladenie cez USB'" -ForegroundColor Yellow
-        Write-Host "     a zaskrtni 'Vzdy povolit z tohto pocitaca'" -ForegroundColor Yellow
-        Write-Host ""
-        Write-Host "Stalo sa to preto, lebo sa restartoval adb demon." -ForegroundColor DarkGray
-    } else {
-        Write-Host "CHYBA: ziadne zariadenie. Zapoj telefon." -ForegroundColor Red
+#
+# Ceka, kym je telefon v stave 'device'. Ceka sa preto, lebo Godot si pri
+# headless exporte spusti vlastny adb a po skonceni demona zabije - telefon
+# sa potom pri novom pripojeni moze spytat na povolenie znova, uprostred buildu.
+function Wait-ForDevice {
+    param($AdbPath, [int]$TimeoutSec = 120)
+
+    $deadline = (Get-Date).AddSeconds($TimeoutSec)
+    $warned = $false
+    while ((Get-Date) -lt $deadline) {
+        $list = & $AdbPath devices
+        $ok = $list | Where-Object { $_ -match "^\S+\s+device\s*$" }
+        if ($ok) {
+            if ($warned) { Write-Host "" }
+            return $ok[0]
+        }
+        if (-not $warned) {
+            $warned = $true
+            $unauth = $list | Where-Object { $_ -match "unauthorized" }
+            Write-Host ""
+            if ($unauth) {
+                Write-Host "  Telefon je 'unauthorized' - caka na tvoje potvrdenie:" -ForegroundColor Yellow
+                Write-Host "    1. ODOMKNI telefon a nechaj ho odomknuty" -ForegroundColor Yellow
+                Write-Host "    2. Potvrd dialog 'Povolit ladenie cez USB'" -ForegroundColor Yellow
+                Write-Host "    3. ZASKRTNI 'Vzdy povolit z tohto pocitaca'" -ForegroundColor Yellow
+                Write-Host "       (bez toho sa bude pytat po kazdom restarte adb)" -ForegroundColor DarkGray
+            } else {
+                Write-Host "  Ziadne zariadenie. Zapoj telefon." -ForegroundColor Yellow
+            }
+            Write-Host "  Cakam" -NoNewline -ForegroundColor DarkGray
+        }
+        Write-Host "." -NoNewline -ForegroundColor DarkGray
+        Start-Sleep -Seconds 2
     }
-    $adbList
+    Write-Host ""
+    return $null
+}
+
+Write-Host "2/5  Kontrola zariadenia..." -ForegroundColor Cyan
+$dev = Wait-ForDevice -AdbPath $Adb
+if (-not $dev) {
+    Write-Host "CHYBA: telefon sa neozval do 2 minut." -ForegroundColor Red
+    & $Adb devices
     exit 1
 }
-Write-Host ("      OK: " + ($devices[0] -replace "\s+", "  "))
+Write-Host ("      OK: " + ($dev -replace "\s+", "  "))
 
 # ------------------------------------------------------------------ 3. export
 Write-Host "3/5  Export APK..." -ForegroundColor Cyan
@@ -121,6 +146,14 @@ Write-Host ("      OK: $size MB za " + [math]::Round($sw.Elapsed.TotalSeconds, 1
 
 # ------------------------------------------------------------- 4. instalacia
 Write-Host "4/5  Instalacia..." -ForegroundColor Cyan
+# Godot mohol pocas exportu zhodit adb demona - over znova.
+$dev = Wait-ForDevice -AdbPath $Adb
+if (-not $dev) {
+    Write-Host "CHYBA: telefon sa medzi exportom a instalaciou odpojil." -ForegroundColor Red
+    Write-Host "APK je hotove tu: $Apk" -ForegroundColor Yellow
+    Write-Host "Ked telefon vratis do stavu 'device', staci spustit skript znova." -ForegroundColor Yellow
+    exit 1
+}
 & $Adb shell am force-stop $Package 2>$null | Out-Null
 if ($Clean) {
     Write-Host "      Odinstalovavam staru verziu (-Clean)..."
