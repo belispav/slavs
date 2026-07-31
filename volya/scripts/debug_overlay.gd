@@ -7,6 +7,10 @@ extends CanvasLayer
 const FONT_SIZE := 22
 const PANEL_W := 330.0
 const PANEL_MARGIN := 16.0
+
+## preload namiesto class_name — nezavisi na globalnej cache tried,
+## takze headless export na tom nepadne.
+const BuildStampScript := preload("res://scripts/build_stamp.gd")
 const COL_TEXT := Color(0.92, 0.94, 1.0)
 const COL_LEFT := Color(0.35, 0.85, 1.0)
 const COL_RIGHT := Color(1.0, 0.72, 0.30)
@@ -224,7 +228,7 @@ func _draw_right() -> void:
 func _draw_hud() -> void:
 	var state_names := ["NO_TOUCH", "GROUNDED", "JUMP_HELD"]
 	var lines := [
-		"BUILD: %s" % BuildStamp.STAMP,
+		"BUILD: %s" % BuildStampScript.STAMP,
 		"FPS %d   DPI %d   px/mm %.2f" % [
 			Engine.get_frames_per_second(), int(Touch.raw_dpi), Touch.px_per_mm],
 		"SKOKY: %d" % Touch.jump_count,

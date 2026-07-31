@@ -1,7 +1,8 @@
 extends RefCounted
-class_name BuildStamp
 
-## Tento riadok prepisuje tools/deploy_android.ps1 pri kazdom builde.
-## Zobrazuje sa vlavo hore v hre, aby bolo vidno, ci v telefone bezi
-## naozaj ten build, ktory sme prave nasadili.
+## Tento subor prepisuje tools/deploy_android.ps1 pri kazdom builde.
+## Zobrazuje sa vlavo hore v hre ako prvy riadok.
+##
+## ZAMERNE tu NIE JE class_name: globalne nazvy tried su v cache, ktoru
+## headless export neobnovuje, a export by na tom padol.
 const STAMP := "dev (nebuildovane skriptom)"

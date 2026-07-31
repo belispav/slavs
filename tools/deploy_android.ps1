@@ -27,7 +27,9 @@ $Repo    = "D:\2026\Slavs figh back"
 $Preset  = "Android"
 $Package = "sk.pavel.volya"
 
-$ErrorActionPreference = "Stop"
+# Continue, nie Stop: nativne programy (adb, godot, java) pisu bezne veci na
+# stderr a pri "Stop" by to skript zhodilo. Kontrolujeme exit kody explicitne.
+$ErrorActionPreference = "Continue"
 
 $BuildDir = Join-Path $Project "build"
 $Apk = Join-Path $BuildDir "volya-debug.apk"
@@ -57,10 +59,12 @@ else { $Stamp = "$stampTime  $gitHash" }
 $stampFile = Join-Path $Project "scripts\build_stamp.gd"
 $stampBody = @"
 extends RefCounted
-class_name BuildStamp
 
 ## Tento subor prepisuje tools/deploy_android.ps1 pri kazdom builde.
-## Zobrazuje sa vlavo hore v hre.
+## Zobrazuje sa vlavo hore v hre ako prvy riadok.
+##
+## ZAMERNE tu NIE JE class_name: globalne nazvy tried su v cache, ktoru
+## headless export neobnovuje, a export by na tom padol.
 const STAMP := "$Stamp"
 "@
 [System.IO.File]::WriteAllText($stampFile, $stampBody, (New-Object System.Text.UTF8Encoding($false)))
@@ -68,10 +72,23 @@ Write-Host "      $Stamp" -ForegroundColor Yellow
 
 # --------------------------------------------------------------- 2. zariadenie
 Write-Host "2/5  Kontrola zariadenia..." -ForegroundColor Cyan
-$devices = & $Adb devices | Where-Object { $_ -match "^\S+\s+device\s*$" }
+$adbList = & $Adb devices
+$devices = $adbList | Where-Object { $_ -match "^\S+\s+device\s*$" }
 if (-not $devices) {
-    Write-Host "CHYBA: ziadne autorizovane zariadenie." -ForegroundColor Red
-    & $Adb devices
+    $unauth = $adbList | Where-Object { $_ -match "unauthorized" }
+    if ($unauth) {
+        Write-Host "TELEFON JE 'unauthorized' - caka na tvoje potvrdenie." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "  1. ODOMKNI telefon a nechaj ho odomknuty" -ForegroundColor Yellow
+        Write-Host "  2. Odpoj a znova zapoj kabel" -ForegroundColor Yellow
+        Write-Host "  3. V telefone potvrd 'Povolit ladenie cez USB'" -ForegroundColor Yellow
+        Write-Host "     a zaskrtni 'Vzdy povolit z tohto pocitaca'" -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "Stalo sa to preto, lebo sa restartoval adb demon." -ForegroundColor DarkGray
+    } else {
+        Write-Host "CHYBA: ziadne zariadenie. Zapoj telefon." -ForegroundColor Red
+    }
+    $adbList
     exit 1
 }
 Write-Host ("      OK: " + ($devices[0] -replace "\s+", "  "))
@@ -80,9 +97,23 @@ Write-Host ("      OK: " + ($devices[0] -replace "\s+", "  "))
 Write-Host "3/5  Export APK..." -ForegroundColor Cyan
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 if (Test-Path $Apk) { Remove-Item $Apk -Force }
-& $Godot --headless --path $Project --export-debug $Preset $Apk
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path $Apk)) {
-    Write-Host "CHYBA: export zlyhal. Skontroluj nazov presetu '$Preset'." -ForegroundColor Red
+
+# Obnov import cache. Bez tohto sa novy subor v projekte nemusi dostat
+# do exportu a export skonci parse chybou.
+& $Godot --headless --path $Project --import 2>&1 | Out-Null
+
+$exportLog = Join-Path $BuildDir "export.log"
+& $Godot --headless --path $Project --export-debug $Preset $Apk 2>&1 |
+    Tee-Object -FilePath $exportLog
+$exportCode = $LASTEXITCODE
+
+if ($exportCode -ne 0 -or -not (Test-Path $Apk)) {
+    Write-Host ""
+    Write-Host "CHYBA: export zlyhal (exit $exportCode)." -ForegroundColor Red
+    Write-Host "Posledne riadky z exportu:" -ForegroundColor Yellow
+    if (Test-Path $exportLog) { Get-Content $exportLog -Tail 30 }
+    Write-Host ""
+    Write-Host "Cely vypis: $exportLog" -ForegroundColor DarkGray
     exit 1
 }
 $size = [math]::Round((Get-Item $Apk).Length / 1MB, 1)
