@@ -4,7 +4,8 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 
 ## Key documents in this folder
 
-- `VOLYA_plan_hry.md` — full plan: game design, business case, phase plan (F0–F5), deployment, roadmap, risks. The scope defined there is FIXED.
+- `VOLYA_plan_hry.md` — full plan: game design, business case, phase plan (F0–F5), deployment, roadmap, risks.
+- `DIZAJN_core_loop.md` — **supersedes the plan's §3.2 and §3.5 on game structure.** The game is a run-based score attack, not 12 handcrafted levels. Cage encounters are the core mechanic and the currency source. Read this before designing anything about levels, progression or economy. The plan's §2 (sensitive topic) is untouched and remains absolute.
 - `SPEC_ovladanie_implementacia.md` — the control system spec + implementation addendum. This is the single source of truth for controls. Controls are the product; everything else comes second.
 - `Phone controls instrucitons.txt` — original control philosophy document (superseded by the SPEC file, kept for reference).
 - `F2P Monetization Strategies Analysis.md` — background research only; the game is PREMIUM (5,99 €), no IAP in v1.0, no ads, no gacha. Ever.
