@@ -1,5 +1,5 @@
 """
-VOLYA — Blender sprite renderer.
+VOLYA - Blender sprite renderer.
 
 Renders the animation currently loaded in a .blend / imported FBX into a PNG
 sequence with a transparent background, using an orthographic side view.
@@ -43,6 +43,7 @@ DEFAULTS = {
     "bands": 3,        # how many hard steps of light on a surface
     "shadow": 0.38,    # darkest band, as a fraction of the base colour
     "pixel": 1,        # 1 = no anti-aliasing, so every pixel is a real pixel
+    "material_colours": "",  # "Alpha_Body=C08A6B,Alpha_Joints=6B5540"
 }
 
 
@@ -82,7 +83,7 @@ def parse_args():
 # ------------------------------------------------------------------- engine --
 
 def pick_engine(preferred):
-    """Blender renamed the EEVEE engine id between versions — resolve it safely."""
+    """Blender renamed the EEVEE engine id between versions - resolve it safely."""
     try:
         available = list(
             bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items.keys())
@@ -118,27 +119,101 @@ def visible_mesh_bounds():
                 hi[axis] = max(hi[axis], world[axis])
             found = True
     if not found:
-        raise RuntimeError("No visible mesh in the scene — did the FBX import fail?")
+        raise RuntimeError("No visible mesh in the scene - did the FBX import fail?")
     return lo, hi
 
 
-def side_view_azimuth():
-    """Work out which way to point the camera to get a clean side view.
+def _normalised_bone_names(armature_object):
+    table = {}
+    for bone in armature_object.data.bones:
+        key = "".join(ch for ch in bone.name.lower() if ch.isalnum())
+        table[key] = bone
+    return table
 
-    A human is wide across the shoulders and narrow front-to-back. At azimuth 0
-    the camera looks along +Y, so what it sees as width is the X extent. For a
-    side view we want the narrow axis facing us, so we turn 90 degrees whenever
-    the model is wider in X than in Y.
 
-    This resolves side vs. front. It cannot tell left from right — but that is
-    a horizontal flip in Godot, which costs nothing.
+def _find_bone(table, side, part):
+    for key, bone in table.items():
+        if side in key and part in key:
+            return bone
+    return None
+
+
+def shoulder_axis():
+    """Left-to-right axis of the body, taken from the rig's rest pose.
+
+    Bone rest positions do not move with the animation, which is the whole
+    point: a running character swings its arms and legs far along the direction
+    of travel, so the mesh bounding box says the model is deepest front-to-back
+    and any guess based on it points the camera at the character's face.
     """
-    lo, hi = visible_mesh_bounds()
-    span_x = hi[0] - lo[0]
-    span_y = hi[1] - lo[1]
-    azimuth = 90.0 if span_x > span_y else 0.0
-    print("VOLYA: rozmery modelu X=%.2f Y=%.2f -> bocny pohlad je %.0f stupnov"
-          % (span_x, span_y, azimuth))
+    for obj in bpy.context.scene.objects:
+        if obj.type != "ARMATURE":
+            continue
+        table = _normalised_bone_names(obj)
+        vectors = []
+        for part in ("shoulder", "arm", "upleg", "hand", "leg"):
+            left = _find_bone(table, "left", part)
+            right = _find_bone(table, "right", part)
+            if left is None or right is None:
+                continue
+            head_l = obj.matrix_world @ left.head_local
+            head_r = obj.matrix_world @ right.head_local
+            span = head_r - head_l
+            if span.length > 1e-5:
+                vectors.append(span)
+        if vectors:
+            total = mathutils.Vector((0.0, 0.0, 0.0))
+            for v in vectors:
+                # flip any vector pointing the other way before averaging,
+                # otherwise a mirrored pair cancels the sum out
+                total += v if v.dot(vectors[0]) >= 0 else -v
+            print("VOLYA: os ramien urcena z %d kosti rigu" % len(vectors))
+            return total
+    return None
+
+
+def rest_pose_bounds():
+    """Bounding box with the armature forced back to its rest pose."""
+    changed = []
+    for obj in bpy.context.scene.objects:
+        if obj.type == "ARMATURE" and obj.data.pose_position != "REST":
+            obj.data.pose_position = "REST"
+            changed.append(obj)
+    if changed:
+        bpy.context.view_layer.update()
+    bounds = visible_mesh_bounds()
+    for obj in changed:
+        obj.data.pose_position = "POSE"
+    if changed:
+        bpy.context.view_layer.update()
+    return bounds
+
+
+def side_view_azimuth():
+    """Camera angle that puts the character in profile.
+
+    The camera at azimuth A looks along (-sin A, cos A). A side view means
+    looking straight down the shoulder axis, so A = atan2(-sx, sy).
+
+    Left profile or right profile is not decided here - that is a horizontal
+    flip in Godot and costs nothing.
+    """
+    axis = shoulder_axis()
+    if axis is None:
+        lo, hi = rest_pose_bounds()
+        span_x, span_y = hi[0] - lo[0], hi[1] - lo[1]
+        axis = mathutils.Vector((1.0, 0.0, 0.0) if span_x >= span_y
+                                else (0.0, 1.0, 0.0))
+        print("VOLYA: rig sa nenasiel, os odhadnuta z rozmerov v kludovej poze "
+              "(X=%.2f Y=%.2f)" % (span_x, span_y))
+
+    flat = mathutils.Vector((axis[0], axis[1]))
+    if flat.length < 1e-6:
+        print("VOLYA: os ramien je zvisla, pouzivam 0 stupnov")
+        return 0.0
+    flat.normalize()
+    azimuth = math.degrees(math.atan2(-flat[0], flat[1])) % 360.0
+    print("VOLYA: bocny pohlad je %.0f stupnov" % azimuth)
     return azimuth
 
 
@@ -163,11 +238,76 @@ def average_image_colour(image):
     return [total[c] / max(count, 1) for c in range(3)]
 
 
-def material_base_colour(material):
-    """The one flat colour that stands in for this whole material."""
-    fallback = [0.6, 0.6, 0.6]
+# Provisional test colours, NOT the final palette - that is a separate
+# decision. They exist so an untextured model comes out of the renderer with
+# readable, separated areas instead of one flat grey, which is the only way to
+# judge whether the style works at all.
+SCHEME = [
+    ("skin",    (0.72, 0.54, 0.42), ("skin", "body", "head", "face", "hand",
+                                     "arm", "joint")),
+    ("hair",    (0.26, 0.19, 0.14), ("hair", "beard", "brow")),
+    ("linen",   (0.70, 0.66, 0.55), ("cloth", "shirt", "tunic", "linen",
+                                     "robe", "fabric")),
+    ("leather", (0.42, 0.29, 0.19), ("leather", "belt", "boot", "strap",
+                                     "shoe", "glove", "bag")),
+    ("steel",   (0.60, 0.63, 0.68), ("metal", "armor", "armour", "helmet",
+                                     "steel", "iron", "mail", "blade",
+                                     "sword", "weapon")),
+    ("wool",    (0.34, 0.31, 0.29), ("pant", "trouser", "leg", "skirt")),
+]
+
+GREY = (0.6, 0.6, 0.6)
+
+
+def parse_colour_overrides(text):
+    """--material_colours "Alpha_Body=C08A6B,Alpha_Joints=6B5540" """
+    overrides = {}
+    for chunk in (text or "").split(","):
+        chunk = chunk.strip()
+        if "=" not in chunk:
+            continue
+        name, value = chunk.split("=", 1)
+        value = value.strip().lstrip("#")
+        if len(value) != 6:
+            print("VOLYA: preskakujem farbu '%s' (caka sa 6 hex znakov)" % chunk)
+            continue
+        try:
+            rgb = tuple(int(value[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
+        except ValueError:
+            print("VOLYA: preskakujem farbu '%s' (nie je to hex)" % chunk)
+            continue
+        overrides[name.strip().lower()] = rgb
+    return overrides
+
+
+def scheme_colour(material_name, index):
+    """Pick a flat colour for a material that has none of its own.
+
+    First by what the material is called, because Mixamo names them things
+    like Alpha_Body_MAT. Failing that, by slot order, so at least no two
+    materials end up the same colour.
+    """
+    key = material_name.lower()
+    for label, rgb, tokens in SCHEME:
+        if any(token in key for token in tokens):
+            return rgb, label
+    rgb, label = SCHEME[index % len(SCHEME)][1], SCHEME[index % len(SCHEME)][0]
+    return rgb, label + " (podla poradia)"
+
+
+def material_appearance(material):
+    """What this material actually looks like: a texture, a colour, or nothing.
+
+    Returns (image, colour). If image is not None it must be kept and shaded,
+    not averaged away.
+
+    Averaging was the first design and it was wrong. Mixamo packs the whole
+    character - skin, tunic, mail, boots - into a single texture on a single
+    material. Collapsing that to its mean gives one muddy grey, and the render
+    comes out as a grey statue even though the source model is fully coloured.
+    """
     if not material or not material.use_nodes:
-        return fallback
+        return None, None
     for node in material.node_tree.nodes:
         if node.type != "BSDF_PRINCIPLED":
             continue
@@ -177,25 +317,50 @@ def material_base_colour(material):
         if slot.is_linked:
             source = slot.links[0].from_node
             if source.type == "TEX_IMAGE" and source.image:
-                averaged = average_image_colour(source.image)
-                if averaged:
-                    return averaged
-            return fallback
-        return list(slot.default_value)[:3]
-    return fallback
+                return source.image, None
+            return None, None
+        colour = list(slot.default_value)[:3]
+        # An untouched Principled node sits on a neutral mid grey. Treating
+        # that as a deliberate choice is what leaves a model uncoloured.
+        if max(colour) - min(colour) < 0.02 and colour[0] > 0.45:
+            return None, None
+        return None, colour
+    return None, None
 
 
-def make_toon_material(material, cfg):
-    """Rebuild a material as flat colour with hard bands of light.
+def _new_multiply_node(tree):
+    """Colour multiply, across Blender versions.
 
-    The trick is that the bands are not computed by multiplying a ramp with a
-    colour — the already-multiplied colours are written straight into the ramp
-    stops. Fewer nodes, and it behaves the same on every Blender 4.x.
+    4.x prefers ShaderNodeMix with data_type RGBA; ShaderNodeMixRGB still
+    exists but is deprecated. Returns (node, input_a, input_b).
+    """
+    try:
+        node = tree.nodes.new("ShaderNodeMix")
+        node.data_type = "RGBA"
+        node.blend_type = "MULTIPLY"
+        node.inputs["Factor"].default_value = 1.0
+        colour_inputs = [s for s in node.inputs if s.type == "RGBA"]
+        return node, colour_inputs[0], colour_inputs[1]
+    except Exception:
+        node = tree.nodes.new("ShaderNodeMixRGB")
+        node.blend_type = "MULTIPLY"
+        node.inputs["Fac"].default_value = 1.0
+        return node, node.inputs["Color1"], node.inputs["Color2"]
+
+
+def make_toon_material(material, cfg, image, colour, bands_override=None):
+    """Rebuild a material with hard bands of light instead of smooth shading.
+
+    Two shapes, depending on what the material has:
+
+      texture:  the texture keeps its colours and is multiplied by a greyscale
+                band ramp, so a tunic stays red and a mail shirt stays grey
+      colour:   the band colours are written straight into the ramp stops, so
+                no multiply node is needed at all
 
     Needs EEVEE: 'Shader to RGB' does not exist in Cycles.
     """
-    base = material_base_colour(material)
-    bands = max(2, int(cfg["bands"]))
+    bands = max(2, int(bands_override or cfg["bands"]))
     darkest = float(cfg["shadow"])
 
     material.use_nodes = True
@@ -205,27 +370,28 @@ def make_toon_material(material, cfg):
     diffuse = tree.nodes.new("ShaderNodeBsdfDiffuse")
     diffuse.inputs["Color"].default_value = (1.0, 1.0, 1.0, 1.0)
     diffuse.inputs["Roughness"].default_value = 1.0
-    diffuse.location = (-600, 0)
+    diffuse.location = (-800, 0)
 
     to_rgb = tree.nodes.new("ShaderNodeShaderToRGB")
-    to_rgb.location = (-400, 0)
+    to_rgb.location = (-600, 0)
 
     ramp = tree.nodes.new("ShaderNodeValToRGB")
-    ramp.location = (-200, 0)
+    ramp.location = (-400, 0)
     ramp.color_ramp.interpolation = "CONSTANT"
-
-    # One stop per band. Stop i lights the surface by factor f, and the stop
-    # colour is base * f, so no multiply node is needed.
     while len(ramp.color_ramp.elements) > 1:
         ramp.color_ramp.elements.remove(ramp.color_ramp.elements[-1])
+
     for i in range(bands):
         factor = darkest + (1.0 - darkest) * (i / float(bands - 1))
         position = i / float(bands)
         element = (ramp.color_ramp.elements[0] if i == 0
                    else ramp.color_ramp.elements.new(position))
         element.position = position
-        element.color = (base[0] * factor, base[1] * factor,
-                         base[2] * factor, 1.0)
+        if image is not None:
+            element.color = (factor, factor, factor, 1.0)
+        else:
+            element.color = (colour[0] * factor, colour[1] * factor,
+                             colour[2] * factor, 1.0)
 
     emission = tree.nodes.new("ShaderNodeEmission")
     emission.location = (100, 0)
@@ -236,7 +402,22 @@ def make_toon_material(material, cfg):
 
     tree.links.new(diffuse.outputs["BSDF"], to_rgb.inputs["Shader"])
     tree.links.new(to_rgb.outputs["Color"], ramp.inputs["Fac"])
-    tree.links.new(ramp.outputs["Color"], emission.inputs["Color"])
+
+    if image is not None:
+        tex = tree.nodes.new("ShaderNodeTexImage")
+        tex.image = image
+        tex.interpolation = "Closest"   # no smoothing; this is a 96 px sprite
+        tex.location = (-400, 260)
+
+        mix, slot_a, slot_b = _new_multiply_node(tree)
+        mix.location = (-100, 130)
+        tree.links.new(tex.outputs["Color"], slot_a)
+        tree.links.new(ramp.outputs["Color"], slot_b)
+        tree.links.new(mix.outputs[mix.outputs.keys()[0]],
+                       emission.inputs["Color"])
+    else:
+        tree.links.new(ramp.outputs["Color"], emission.inputs["Color"])
+
     tree.links.new(emission.outputs["Emission"], output.inputs["Surface"])
 
 
@@ -246,23 +427,46 @@ def apply_toon_shading(cfg):
     A photographic texture shrunk to 96 pixels is mud. Large flat areas of one
     colour survive the shrink; detail does not.
     """
+    overrides = parse_colour_overrides(cfg.get("material_colours", ""))
+    seen = []
     done = 0
     for obj in bpy.context.scene.objects:
         if obj.type != "MESH":
             continue
         for slot in obj.material_slots:
-            if slot.material is None:
+            material = slot.material
+            if material is None or material.name in seen:
                 continue
+            seen.append(material.name)
+
+            image, base = None, overrides.get(material.name.lower())
+            source = "rucne zadana"
+            if base is None:
+                image, base = material_appearance(material)
+                source = "textura z modelu" if image else "farba z modelu"
+            if image is None and base is None:
+                base, label = scheme_colour(material.name, len(seen) - 1)
+                source = "nahradna: " + label
+
             try:
-                make_toon_material(slot.material, cfg)
+                make_toon_material(material, cfg, image, base)
                 done += 1
+                if image is not None:
+                    print("VOLYA:   %-28s %-22s (%s)"
+                          % (material.name, image.name, source))
+                else:
+                    print("VOLYA:   %-28s #%02X%02X%02X               (%s)"
+                          % (material.name, int(base[0] * 255),
+                             int(base[1] * 255), int(base[2] * 255), source))
             except Exception as exc:
                 print("VOLYA: material %s sa nepodarilo prerobit (%s)"
-                      % (slot.material.name, exc))
-    print("VOLYA: toon shading nastaveny na %d materialoch, %d pasiem svetla"
+                      % (material.name, exc))
+
+    print("VOLYA: toon shading na %d materialoch, %d pasiem svetla"
           % (done, int(cfg["bands"])))
     if done == 0:
-        print("VOLYA: POZOR - model nema ziadne materialy, ostane sedy")
+        print("VOLYA: POZOR - model nema ziadne materialy, ostane sedy. "
+              "Prirad mu v Blenderi aspon jeden material na cast tela.")
 
 
 def build_camera(cfg):
@@ -293,7 +497,7 @@ def build_camera(cfg):
 
 
 def build_lights(cfg):
-    """Simple 3-point rig parented to nothing — lighting stays fixed in world space."""
+    """Simple 3-point rig parented to nothing - lighting stays fixed in world space."""
     lo, hi = visible_mesh_bounds()
     center = (lo + hi) * 0.5
     height = max(hi[2] - lo[2], 1e-4)
@@ -302,7 +506,7 @@ def build_lights(cfg):
     if int(cfg["toon"]) != 0:
         # Two lights only. A rim light paints a thin gradient along the edge,
         # which at 96 pixels turns into a row of speckles rather than a
-        # highlight — exactly the noise the pixel pass then has to remove.
+        # highlight - exactly the noise the pixel pass then has to remove.
         specs = [
             ("VOLYA_Key", cfg["sun"], (-0.6, -1.0, 0.9)),
             ("VOLYA_Fill", cfg["sun"] * 0.3, (1.0, -0.7, 0.2)),
@@ -326,7 +530,7 @@ def build_lights(cfg):
 # ------------------------------------------------------------------- render --
 
 def sync_frame_range():
-    """FBX import does not always set the scene range — take it from the actions."""
+    """FBX import does not always set the scene range - take it from the actions."""
     lo = None
     hi = None
     for obj in bpy.context.scene.objects:
@@ -449,7 +653,7 @@ def main():
         print("VOLYA: pozri sa na subory _a00_ az _a07_ a vyber ten, kde je")
         print("VOLYA: postava presne z boku. Cislo N pouzi ako --start_angle")
         print("VOLYA: s hodnotou N*45, a potom renderuj s --angles 1.")
-    print("VOLYA: done — %d angle(s) x %d frames = %d PNG files in %s"
+    print("VOLYA: done - %d angle(s) x %d frames = %d PNG files in %s"
           % (total, count, total * count, bpy.path.abspath(cfg["out"])))
 
 

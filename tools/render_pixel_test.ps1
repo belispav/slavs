@@ -1,4 +1,4 @@
-# VOLYA — pixel-art pipeline test, one command.
+﻿# VOLYA - pixel-art pipeline test, one command.
 #
 #   1. renders the .blend with flat cel-banded materials and no anti-aliasing
 #   2. runs the pixel-art pass (palette, despeckle, outline)
@@ -63,6 +63,7 @@ if (-not (Test-Path $Blend)) {
 $rawDir = "volya\art\${Name}_raw"
 $pxDir  = "volya\art\${Name}_px"
 $sheet  = "volya\art\${Name}_sheet.png"
+$gif    = "volya\art\${Name}_anim.gif"
 
 if (Test-Path $rawDir) { Remove-Item $rawDir -Recurse -Force }
 
@@ -123,7 +124,7 @@ if (-not $python) {
 if (-not $python) {
     Write-Host ""
     Write-Host "Python s kniznicami Pillow a numpy sa nenasiel." -ForegroundColor Red
-    Write-Host "Surove snimky su v $rawDir — posli mi ich a dorobim to ja." -ForegroundColor Red
+    Write-Host "Surove snimky su v $rawDir - posli mi ich a dorobim to ja." -ForegroundColor Red
     exit 1
 }
 
@@ -133,7 +134,7 @@ Write-Host ""
 Write-Host "[2/3] Pixel-art prechod ($Colours farieb)..." -ForegroundColor Yellow
 
 & $python "tools\pixelize_sprites.py" `
-    --in $rawDir --out $pxDir --colours $Colours --sheet $sheet
+    --in $rawDir --out $pxDir --colours $Colours --sheet $sheet --gif $gif
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Pixel prechod zlyhal." -ForegroundColor Red
@@ -141,12 +142,19 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host ""
-Write-Host "[3/3] Otvaram prehlad..." -ForegroundColor Yellow
-if (Test-Path $sheet) { Start-Process (Resolve-Path $sheet) }
+Write-Host "[3/3] Otvaram vysledok..." -ForegroundColor Yellow
+# ChangeExtension($path, $null) leaves a trailing dot, which produced
+# run_anim._10fps.gif and quietly failed to open the file Python had written.
+$slowGif = $gif -replace '\.gif$', '_10fps.gif'
+foreach ($f in @($sheet, $gif, $slowGif)) {
+    if (Test-Path $f) { Start-Process (Resolve-Path $f) }
+}
 
 Write-Host ""
 Write-Host "Hotovo." -ForegroundColor Green
-Write-Host "  surove   $rawDir"
-Write-Host "  sprajty  $pxDir"
-Write-Host "  prehlad  $sheet"
+Write-Host "  surove    $rawDir"
+Write-Host "  sprajty   $pxDir"
+Write-Host "  prehlad   $sheet"
+Write-Host "  animacia  $gif"
+Write-Host "  animacia  $slowGif  (herna rychlost 10 fps)"
 Write-Host ""

@@ -8,3 +8,6 @@ Thumbs.db
 # velke referencie sa necommituju, staci preview
 ref/*.png
 !ref/preview/
+
+# python bytecode
+__pycache__/

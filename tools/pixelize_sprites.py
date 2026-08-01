@@ -1,22 +1,22 @@
 """
-VOLYA — turn a rendered PNG sequence into pixel-art sprites.
+VOLYA - turn a rendered PNG sequence into pixel-art sprites.
 
 This is the second half of the graphics pipeline. Blender produces flat,
 cel-banded frames; this script does the final pixel-art pass:
 
-  1. hard alpha       — a pixel is either fully there or not there at all,
+  1. hard alpha       - a pixel is either fully there or not there at all,
                         because pixel art has no soft anti-aliased edges
-  2. shared palette   — ONE palette for the whole animation, so colours do not
+  2. shared palette   - ONE palette for the whole animation, so colours do not
                         flicker between frames
-  3. despeckle        — remove lone pixels that differ from all four neighbours,
+  3. despeckle        - remove lone pixels that differ from all four neighbours,
                         the single biggest "this was rendered, not drawn" tell
-  4. outline          — 1 px dark border around the silhouette
+  4. outline          - 1 px dark border around the silhouette
 
 It also measures pixel crawl (how much of the sprite changes colour between
 consecutive frames) so the shimmer problem can be judged from a number instead
 of a feeling.
 
-Runs on plain Python — no Blender needed.
+Runs on plain Python - no Blender needed.
 
     python tools/pixelize_sprites.py --in volya/art/hero_run --out volya/art/hero_run_px
 
@@ -80,7 +80,7 @@ def band_luminance(im, bands, lift, gain):
     """Cel shading as a safety net: hard steps in brightness, hue preserved.
 
     Hue is preserved on purpose. Posterising each RGB channel separately is the
-    obvious approach and it is wrong — it shifts hues and sprays the sprite with
+    obvious approach and it is wrong - it shifts hues and sprays the sprite with
     yellow and blue speckles.
 
     With a proper toon render from Blender the bands are already there, so
@@ -95,7 +95,7 @@ def band_luminance(im, bands, lift, gain):
     stepped = np.round(lum * (bands - 1)) / (bands - 1)
     stepped = lift + stepped * (1.0 - lift)
     # normalise each pixel to its own brightest channel, then re-apply the
-    # stepped brightness — this keeps the hue and only quantises the value
+    # stepped brightness - this keeps the hue and only quantises the value
     hue = base / np.maximum(base.max(axis=2, keepdims=True), 1e-3)
     out = np.clip(hue * stepped[..., None], 0.0, 1.0)
     result = Image.fromarray((out * 255).astype(np.uint8), "RGB").convert("RGBA")
@@ -160,9 +160,9 @@ def measure_crawl(frames):
 
     Only pixels solid in BOTH frames are counted, so this measures shimmer
     rather than movement of the silhouette. Interpretation:
-        under 15 %  — calm, looks drawn
-        15 to 30 %  — visible shimmer on fast animations, usually acceptable
-        over 30 %   — the sprite boils; needs fewer colours or a lower
+        under 15 %  - calm, looks drawn
+        15 to 30 %  - visible shimmer on fast animations, usually acceptable
+        over 30 %   - the sprite boils; needs fewer colours or a lower
                       render resolution
     Note this number is only meaningful on frames rendered close together
     (--step 1). On a 10 fps run cycle the pose changes so much between frames
@@ -181,11 +181,30 @@ def measure_crawl(frames):
     return rates
 
 
+def write_gif(frames, path, fps=30, scale=6, background=(38, 40, 42)):
+    """Animated preview.
+
+    A still sheet cannot show shimmer, and shimmer is the thing most likely to
+    sink this whole approach. The GIF is put on a solid background rather than
+    left transparent, because a 1 px dark outline is invisible against the
+    checkerboard most image viewers draw behind transparency.
+    """
+    w, h = frames[0].size
+    out = []
+    for f in frames:
+        big = f.resize((w * scale, h * scale), Image.NEAREST)
+        canvas = Image.new("RGB", (w * scale, h * scale), background)
+        canvas.paste(big, (0, 0), big)
+        out.append(canvas.convert("P", palette=Image.ADAPTIVE, colors=64))
+    out[0].save(path, save_all=True, append_images=out[1:],
+                duration=max(10, int(1000 / max(fps, 1))), loop=0, disposal=2)
+
+
 def contact_sheet(frames, path, scale=6, per_row=8, background=(38, 40, 42)):
     """Magnified grid of every frame, plus one row at true game size.
 
     The magnified grid is for judging the pixels. The true-size row is the one
-    that actually decides anything — on a phone the character is about a
+    that actually decides anything - on a phone the character is about a
     centimetre tall, and detail that only survives at 6x does not exist.
     """
     w, h = frames[0].size
@@ -204,7 +223,7 @@ def contact_sheet(frames, path, scale=6, per_row=8, background=(38, 40, 42)):
         y = gap + (i // per_row) * cell_h
         sheet.paste(big, (x, y), big)
 
-    # true size, no magnification — this is what the phone shows
+    # true size, no magnification - this is what the phone shows
     base_y = rows * cell_h + gap * 2
     for i, f in enumerate(frames):
         sheet.paste(f, (gap + i * (w + 6), base_y), f)
@@ -233,6 +252,10 @@ def main():
     ap.add_argument("--no-despeckle", action="store_true")
     ap.add_argument("--sheet", default=None,
                     help="also write a magnified contact sheet here")
+    ap.add_argument("--gif", default=None,
+                    help="also write an animated preview here")
+    ap.add_argument("--fps", type=int, default=30,
+                    help="playback speed of the preview (default 30)")
     cfg = ap.parse_args()
 
     dst = cfg.dst or (cfg.src.rstrip("/\\") + "_px")
@@ -282,7 +305,16 @@ def main():
         contact_sheet(finished, cfg.sheet)
         print("VOLYA: prehlad ulozeny do %s" % cfg.sheet)
 
-    print("VOLYA: hotovo — %d sprajtov v %s" % (len(finished), dst))
+    if cfg.gif:
+        write_gif(finished, cfg.gif, fps=cfg.fps)
+        # 10 fps is the sprite rate the game will actually run at; 30 fps here
+        # is every rendered frame, which is only useful for spotting shimmer
+        slow = os.path.splitext(cfg.gif)[0] + "_10fps.gif"
+        write_gif(finished[::3], slow, fps=10)
+        print("VOLYA: animacia %s (plynula) a %s (herna rychlost)"
+              % (cfg.gif, slow))
+
+    print("VOLYA: hotovo - %d sprajtov v %s" % (len(finished), dst))
 
 
 if __name__ == "__main__":
