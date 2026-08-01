@@ -4,3 +4,7 @@ export_presets.cfg
 *.aab
 *.keystore
 Thumbs.db
+
+# velke referencie sa necommituju, staci preview
+ref/*.png
+!ref/preview/
