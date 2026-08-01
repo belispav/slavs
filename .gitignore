@@ -11,3 +11,6 @@ ref/*.png
 
 # python bytecode
 __pycache__/
+
+# medzivysledky renderu - do gitu ani do APK nepatria
+render/

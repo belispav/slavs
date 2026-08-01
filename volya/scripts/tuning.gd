@@ -17,6 +17,21 @@ const COYOTE_TIME: float = 0.10
 ## silently thrown away and reads as "the game ignored me".
 const JUMP_BUFFER: float = 0.14
 
+# --- Player art ---
+## Where the pixel pass writes the player's frames.
+const PLAYER_ART_DIR: String = "res://art/run_px"
+## The renderer produces every frame of the mocap. 30 was picked over 15 and 10
+## by eye; both lower rates read as choppy on this run cycle.
+const PLAYER_ANIM_FPS: float = 30.0
+## The sprites are rendered facing left.
+const PLAYER_ART_FACES_LEFT: bool = true
+## 1.0 = the rendered 96 px height. The hitbox stays 54 px on purpose: a body
+## narrower than the drawing is what "generous hitboxes favouring the player"
+## means in practice.
+const PLAYER_SPRITE_SCALE: float = 1.0
+## Below this horizontal speed the run cycle stops and the sprite holds a frame.
+const PLAYER_ANIM_MIN_SPEED: float = 20.0
+
 # --- Weapon ---
 const BULLET_SPEED: float = 1400.0
 const BULLET_LIFETIME: float = 1.1

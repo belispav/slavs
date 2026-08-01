@@ -60,12 +60,28 @@ if (-not (Test-Path $Blend)) {
 
 # ------------------------------------------------------------------ render ---
 
-$rawDir = "volya\art\${Name}_raw"
+# Only the finished sprites belong inside the Godot project. Raw renders and
+# preview animations live outside it, or Godot imports them and they end up in
+# the APK - several megabytes of intermediate files shipped to players.
+$rawDir = "render\${Name}_raw"
 $pxDir  = "volya\art\${Name}_px"
-$sheet  = "volya\art\${Name}_sheet.png"
-$gif    = "volya\art\${Name}_anim.gif"
+$sheet  = "render\${Name}_sheet.png"
+$gif    = "render\${Name}_anim.gif"
 
+New-Item -ItemType Directory -Force -Path "render" | Out-Null
 if (Test-Path $rawDir) { Remove-Item $rawDir -Recurse -Force }
+
+# Earlier versions of this script wrote the intermediates into volya\art.
+foreach ($stale in @("volya\art\${Name}_raw", "volya\art\${Name}_sheet.png",
+                     "volya\art\${Name}_anim.gif",
+                     "volya\art\${Name}_anim_10fps.gif",
+                     "volya\art\${Name}_anim_15fps.gif",
+                     "volya\art\${Name}_anim_porovnanie.gif")) {
+    if (Test-Path $stale) {
+        Remove-Item $stale -Recurse -Force
+        Write-Host "      upratane: $stale" -ForegroundColor DarkGray
+    }
+}
 
 Write-Host ""
 Write-Host "[1/3] Renderujem (toon, $Bands pasma, bez antialiasingu)..." -ForegroundColor Yellow

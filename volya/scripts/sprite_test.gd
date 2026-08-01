@@ -36,54 +36,16 @@ func _ready() -> void:
 
 func _reload() -> void:
 	frames.clear()
-	source_dir = _find_sequence_dir(ART_ROOT)
+	# Prefer the folder the game itself uses; fall back to any sequence under
+	# res://art so an older render can still be inspected.
+	source_dir = Tuning.PLAYER_ART_DIR
+	if SpriteSequence.png_files(source_dir).is_empty():
+		source_dir = SpriteSequence.find_sequence_dir(ART_ROOT)
 	if source_dir != "":
-		for file_name in _png_files(source_dir):
-			var tex := load(source_dir.path_join(file_name)) as Texture2D
-			if tex != null:
-				frames.append(tex)
+		frames = SpriteSequence.load_frames(source_dir)
 	_time = 0.0
 	_apply_frame()
 	queue_redraw()
-
-
-## First subfolder of res://art that actually contains PNG files.
-func _find_sequence_dir(root: String) -> String:
-	if not _png_files(root).is_empty():
-		return root
-	var dir := DirAccess.open(root)
-	if dir == null:
-		return ""
-	var names: Array[String] = []
-	dir.list_dir_begin()
-	var entry := dir.get_next()
-	while entry != "":
-		if dir.current_is_dir() and not entry.begins_with("."):
-			names.append(entry)
-		entry = dir.get_next()
-	dir.list_dir_end()
-	names.sort()
-	for sub in names:
-		var candidate := root.path_join(sub)
-		if not _png_files(candidate).is_empty():
-			return candidate
-	return ""
-
-
-func _png_files(path: String) -> PackedStringArray:
-	var result := PackedStringArray()
-	var dir := DirAccess.open(path)
-	if dir == null:
-		return result
-	dir.list_dir_begin()
-	var entry := dir.get_next()
-	while entry != "":
-		if not dir.current_is_dir() and entry.to_lower().ends_with(".png"):
-			result.append(entry)
-		entry = dir.get_next()
-	dir.list_dir_end()
-	result.sort()
-	return result
 
 
 func _process(delta: float) -> void:

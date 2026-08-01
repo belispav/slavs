@@ -30,7 +30,8 @@ DEFAULTS = {
     "out": "//sprites",
     "name": "anim",
     "height": 96,      # rendered pixel height of one frame
-    "step": 3,         # render every Nth frame (30 fps mocap / 3 = 10 fps sprite)
+    "step": 1,         # render every frame; 30 fps was picked on device over
+                       # 15 and 10, which both read as choppy on this cycle
     "angles": 1,       # 1 = single view; 8 = full 45-degree turnaround
     "start_angle": -1.0,  # -1 = work the side view out from the model itself
     "preview": 0,      # 1 = one frame from 8 angles, to pick the side view

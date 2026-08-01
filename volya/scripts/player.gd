@@ -23,6 +23,7 @@ var _jump_buffer: float = 0.0
 var _use_keyboard: bool = false
 var _kb_jump_was_down: bool = false
 var _cam: Camera2D
+var _sprite: AnimatedSprite2D          # null when no frames have been rendered yet
 
 
 func _ready() -> void:
@@ -55,8 +56,42 @@ func _ready() -> void:
 	_hurtbox.add_child(hs)
 	_hurtbox.body_entered.connect(_on_body_touched)
 
+	_build_sprite()
+
 	_use_keyboard = OS.has_feature("pc")
 	Touch.jump_pressed.connect(_on_jump)
+
+
+## The grey box stays as the fallback. If the art folder is empty - a fresh
+## clone, or a render that has not been run yet - the game still starts and
+## plays; it just looks like it did during F1.
+func _build_sprite() -> void:
+	var frames := SpriteSequence.load_frames(Tuning.PLAYER_ART_DIR)
+	if frames.is_empty():
+		push_warning("Player: ziadne sprajty v %s, kreslim sivy box"
+			% Tuning.PLAYER_ART_DIR)
+		return
+
+	_sprite = AnimatedSprite2D.new()
+	_sprite.sprite_frames = SpriteSequence.build_frames(
+		frames, "run", Tuning.PLAYER_ANIM_FPS)
+	_sprite.animation = &"run"
+	# Nearest, or the whole pixel pass is undone by the GPU smoothing it back.
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_sprite.scale = Vector2.ONE * Tuning.PLAYER_SPRITE_SCALE
+	# Behind the node's own _draw(), so the aim line stays visible on top of
+	# the body. The aim line is still the main readout for the controls.
+	_sprite.z_index = -1
+
+	# Sit the drawing's feet on the bottom of the collision box, not the bottom
+	# of the image, which has empty rows above it from the render margin.
+	var height: float = float(frames[0].get_height())
+	var margin: float = float(SpriteSequence.foot_margin(frames))
+	_sprite.position.y = SIZE.y * 0.5 \
+		- (height * 0.5 - margin) * Tuning.PLAYER_SPRITE_SCALE
+
+	add_child(_sprite)
+	_sprite.play()
 
 
 func set_camera_limits(left: float, right: float, top: float, bottom: float) -> void:
@@ -131,6 +166,7 @@ func _physics_process(delta: float) -> void:
 	_consume_jump_buffer(delta)
 	move_and_slide()
 	_update_aim(delta)
+	_update_sprite()
 	queue_redraw()
 
 
@@ -192,15 +228,39 @@ func _update_aim(delta: float) -> void:
 
 # --------------------------------------------------------------- visuals ---
 
-func _draw() -> void:
-	var body := Color(0.78, 0.80, 0.85)
+func _update_sprite() -> void:
+	if _sprite == null:
+		return
+
+	_sprite.flip_h = (facing > 0) if Tuning.PLAYER_ART_FACES_LEFT else (facing < 0)
+
+	# Only a run cycle exists so far. Standing still holds a frame rather than
+	# running on the spot; a real idle animation replaces this later.
+	if absf(velocity.x) > Tuning.PLAYER_ANIM_MIN_SPEED:
+		if not _sprite.is_playing():
+			_sprite.play()
+	elif _sprite.is_playing():
+		_sprite.stop()
+		_sprite.frame = 0
+
+	var tint := Color.WHITE
 	if _iframes > 0.0:
-		# blink while invulnerable
-		body = body.lerp(Color(1.0, 0.4, 0.4), 0.5 + 0.5 * sin(_iframes * 45.0))
-	draw_rect(Rect2(-SIZE * 0.5, SIZE), body)
-	# facing marker
-	draw_rect(Rect2(Vector2(float(facing) * 6.0 - 4.0, -SIZE.y * 0.5 + 8.0),
-		Vector2(8, 8)), Color(0.15, 0.16, 0.2))
-	# gun barrel
+		tint = tint.lerp(Color(1.0, 0.4, 0.4), 0.5 + 0.5 * sin(_iframes * 45.0))
+	_sprite.modulate = tint
+
+
+func _draw() -> void:
+	if _sprite == null:
+		# Fallback for a project with no rendered art yet.
+		var body := Color(0.78, 0.80, 0.85)
+		if _iframes > 0.0:
+			body = body.lerp(Color(1.0, 0.4, 0.4),
+				0.5 + 0.5 * sin(_iframes * 45.0))
+		draw_rect(Rect2(-SIZE * 0.5, SIZE), body)
+		draw_rect(Rect2(Vector2(float(facing) * 6.0 - 4.0, -SIZE.y * 0.5 + 8.0),
+			Vector2(8, 8)), Color(0.15, 0.16, 0.2))
+
+	# The aim line stays either way: it is the only readout of where shots go,
+	# and the controls are still the thing being judged.
 	draw_line(Vector2.ZERO, aim_dir * Tuning.MUZZLE_DISTANCE,
 		Color(1.0, 0.85, 0.35), 5.0)
