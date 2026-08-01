@@ -143,18 +143,22 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host ""
 Write-Host "[3/3] Otvaram vysledok..." -ForegroundColor Yellow
-# ChangeExtension($path, $null) leaves a trailing dot, which produced
-# run_anim._10fps.gif and quietly failed to open the file Python had written.
-$slowGif = $gif -replace '\.gif$', '_10fps.gif'
-foreach ($f in @($sheet, $gif, $slowGif)) {
+
+# Only two windows are opened. Opening one per frame rate meant Windows merged
+# them and only the first was ever actually seen.
+$compare = $gif -replace '\.gif$', '_porovnanie.gif'
+foreach ($f in @($sheet, $compare)) {
     if (Test-Path $f) { Start-Process (Resolve-Path $f) }
 }
 
 Write-Host ""
 Write-Host "Hotovo." -ForegroundColor Green
-Write-Host "  surove    $rawDir"
-Write-Host "  sprajty   $pxDir"
-Write-Host "  prehlad   $sheet"
-Write-Host "  animacia  $gif"
-Write-Host "  animacia  $slowGif  (herna rychlost 10 fps)"
+Write-Host "  surove      $rawDir"
+Write-Host "  sprajty     $pxDir"
+Write-Host "  prehlad     $sheet"
+Write-Host "  porovnanie  $compare   <- 30 / 15 / 10 fps vedla seba"
+foreach ($rate in @(30, 15, 10)) {
+    $f = if ($rate -eq 30) { $gif } else { $gif -replace '\.gif$', "_${rate}fps.gif" }
+    if (Test-Path $f) { Write-Host "  $rate fps      $f" }
+}
 Write-Host ""

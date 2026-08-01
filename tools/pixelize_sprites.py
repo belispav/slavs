@@ -32,7 +32,7 @@ import sys
 
 try:
     import numpy as np
-    from PIL import Image, ImageFilter
+    from PIL import Image, ImageDraw, ImageFilter
 except ImportError:
     sys.exit("VOLYA: chyba kniznica. Spusti:  pip install pillow numpy")
 
@@ -200,6 +200,42 @@ def write_gif(frames, path, fps=30, scale=6, background=(38, 40, 42)):
                 duration=max(10, int(1000 / max(fps, 1))), loop=0, disposal=2)
 
 
+def write_rate_comparison(frames, path, rates=((30, 1), (15, 2), (10, 3)),
+                          scale=5, background=(38, 40, 42)):
+    """All candidate sprite rates in one animation, side by side.
+
+    Three separate GIF files meant three viewer windows, and whichever one the
+    viewer decided to show first was the only one actually seen. One file with
+    the lanes running in sync is the only version that gets looked at.
+    """
+    w, h = frames[0].size
+    lanes = [(rate, stride) for rate, stride in rates
+             if len(frames[::stride]) >= 2]
+    if not lanes:
+        return
+    label_h = 26
+    cell = w * scale + 24
+    size = (cell * len(lanes) + 24, h * scale + label_h + 24)
+
+    out = []
+    for tick in range(len(frames) * 3):
+        canvas = Image.new("RGB", size, background)
+        draw = ImageDraw.Draw(canvas)
+        for i, (rate, stride) in enumerate(lanes):
+            lane = frames[::stride]
+            frame = lane[(tick // stride) % len(lane)]
+            big = frame.resize((w * scale, h * scale), Image.NEAREST)
+            x = 12 + i * cell + 12
+            canvas.paste(big, (x, 12), big)
+            draw.text((x, h * scale + 18),
+                      "%d fps  /  %d snimok" % (rate, len(lane)),
+                      fill=(220, 220, 220))
+        out.append(canvas.convert("P", palette=Image.ADAPTIVE, colors=64))
+
+    out[0].save(path, save_all=True, append_images=out[1:],
+                duration=33, loop=0, disposal=2)
+
+
 def contact_sheet(frames, path, scale=6, per_row=8, background=(38, 40, 42)):
     """Magnified grid of every frame, plus one row at true game size.
 
@@ -306,13 +342,23 @@ def main():
         print("VOLYA: prehlad ulozeny do %s" % cfg.sheet)
 
     if cfg.gif:
-        write_gif(finished, cfg.gif, fps=cfg.fps)
-        # 10 fps is the sprite rate the game will actually run at; 30 fps here
-        # is every rendered frame, which is only useful for spotting shimmer
-        slow = os.path.splitext(cfg.gif)[0] + "_10fps.gif"
-        write_gif(finished[::3], slow, fps=10)
-        print("VOLYA: animacia %s (plynula) a %s (herna rychlost)"
-              % (cfg.gif, slow))
+        # One preview per candidate sprite rate. The source is 30 fps mocap, so
+        # taking every 2nd or 3rd frame is exactly what the game would ship;
+        # fewer frames means a smaller texture atlas on the phone, and the only
+        # way to choose is to watch them side by side.
+        stem = os.path.splitext(cfg.gif)[0]
+        for rate, stride in ((30, 1), (15, 2), (10, 3)):
+            frames = finished[::stride]
+            if len(frames) < 2:
+                continue
+            path = cfg.gif if stride == 1 else "%s_%dfps.gif" % (stem, rate)
+            write_gif(frames, path, fps=rate)
+
+        compare = stem + "_porovnanie.gif"
+        write_rate_comparison(finished, compare)
+        print("VOLYA: porovnanie rychlosti v jednom subore: %s" % compare)
+        print("VOLYA: jednotlivo tiez v %s a %s_15fps / _10fps.gif"
+              % (cfg.gif, stem))
 
     print("VOLYA: hotovo - %d sprajtov v %s" % (len(finished), dst))
 

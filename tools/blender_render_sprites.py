@@ -44,6 +44,7 @@ DEFAULTS = {
     "shadow": 0.38,    # darkest band, as a fraction of the base colour
     "pixel": 1,        # 1 = no anti-aliasing, so every pixel is a real pixel
     "material_colours": "",  # "Alpha_Body=C08A6B,Alpha_Joints=6B5540"
+    "texture_size": 48,  # shrink textures to this before use; 0 = leave alone
 }
 
 
@@ -219,6 +220,44 @@ def side_view_azimuth():
 
 # ------------------------------------------------------------------ shading --
 
+def downscaled_texture(image, longest_side):
+    """A deliberately small copy of a texture.
+
+    A 2048 px texture sampled onto a 96 px sprite is not detail, it is noise:
+    every rendered pixel lands on a different stitch or scratch, and the result
+    changes completely from frame to frame. Shrinking the texture first keeps
+    what matters at this size - the tunic is one colour, the mail is another -
+    and throws away what cannot be seen anyway.
+    """
+    if longest_side <= 0:
+        return image
+    width, height = image.size
+    if width <= 0 or height <= 0 or max(width, height) <= longest_side:
+        return image
+
+    key = "VOLYA_%s_%d" % (image.name, longest_side)
+    existing = bpy.data.images.get(key)
+    if existing is not None:
+        return existing
+
+    if width >= height:
+        new_w = longest_side
+        new_h = max(1, int(round(height * longest_side / float(width))))
+    else:
+        new_h = longest_side
+        new_w = max(1, int(round(width * longest_side / float(height))))
+
+    try:
+        small = image.copy()
+        small.name = key
+        small.scale(new_w, new_h)
+        print("VOLYA:     textura %dx%d -> %dx%d" % (width, height, new_w, new_h))
+        return small
+    except Exception as exc:
+        print("VOLYA:     texturu sa nepodarilo zmensit (%s)" % exc)
+        return image
+
+
 def average_image_colour(image):
     """Collapse a texture to one colour by scaling a copy down to 8x8."""
     try:
@@ -306,7 +345,11 @@ def material_appearance(material):
     material. Collapsing that to its mean gives one muddy grey, and the render
     comes out as a grey statue even though the source model is fully coloured.
     """
-    if not material or not material.use_nodes:
+    # Blender 5.x warns that 'use_nodes' goes away in 6.0, where every material
+    # is node-based anyway. Asking for the node tree directly survives both.
+    if not material or material.node_tree is None:
+        return None, None
+    if not getattr(material, "use_nodes", True):
         return None, None
     for node in material.node_tree.nodes:
         if node.type != "BSDF_PRINCIPLED":
@@ -363,7 +406,11 @@ def make_toon_material(material, cfg, image, colour, bands_override=None):
     bands = max(2, int(bands_override or cfg["bands"]))
     darkest = float(cfg["shadow"])
 
-    material.use_nodes = True
+    try:
+        if not getattr(material, "use_nodes", True):
+            material.use_nodes = True
+    except Exception:
+        pass    # Blender 6.0 removed the flag; materials are always node-based
     tree = material.node_tree
     tree.nodes.clear()
 
@@ -405,8 +452,11 @@ def make_toon_material(material, cfg, image, colour, bands_override=None):
 
     if image is not None:
         tex = tree.nodes.new("ShaderNodeTexImage")
-        tex.image = image
-        tex.interpolation = "Closest"   # no smoothing; this is a 96 px sprite
+        tex.image = downscaled_texture(image, int(cfg["texture_size"]))
+        # Linear, not Closest. The texture has already been shrunk to roughly
+        # sprite scale, so the hard edges come from the cel bands; sampling it
+        # with Closest on top of that only reintroduces speckle.
+        tex.interpolation = "Linear"
         tex.location = (-400, 260)
 
         mix, slot_a, slot_b = _new_multiply_node(tree)
