@@ -46,18 +46,30 @@ Vygeneruj **tri samostatné obrázky** (nie jeden list s tromi postavami — AI
 nástroje na 3D chcú samostatné pohľady). Do `[POHĽAD]` daj postupne
 `front view`, `left side profile view`, `back view`.
 
+Do `[POSTAVA]` opis konkrétnej postavy — vždy rolou a výstrojom, nikdy pôvodom
+ani farbou pleti. Príklad hrdinu je nižšie.
+
 ```
 character reference for 3D modelling, single full body humanoid figure,
-strict symmetrical T-pose with both arms stretched straight out horizontally
-to the sides, palms facing down, legs straight and slightly apart,
+strict symmetrical T-pose, both arms stretched perfectly straight out and
+exactly horizontal at shoulder level, palms facing down, fingers together and
+straight, legs straight and slightly apart,
 [POHĽAD], orthographic, no perspective distortion,
-15th century Eastern European escaped slave fighter, bearded, bare muscular
-arms, torn sleeveless linen tunic, broken iron collar at the neck, leather
-wraps on forearms, simple cloth trousers, worn leather boots,
-empty hands, no weapons, no cape, no loose flowing fabric,
-plain flat light grey background, even flat diffuse lighting, no cast shadows,
-no rim light, entire figure visible from head to feet with margin,
-neutral colours, clear readable silhouette
+[POSTAVA],
+empty hands, no weapons, no chains, no hanging straps, no dangling cords,
+no cape, no loose flowing fabric, nothing hanging off the body,
+plain flat neutral grey background, no floor, no ground plane, no cast shadow,
+even flat diffuse lighting, no rim light,
+entire figure visible from head to feet with margin, clear readable silhouette
+```
+
+Hrdina do `[POSTAVA]`:
+
+```
+15th century Eastern European escaped slave fighter, thick dark beard, short
+messy hair above the shoulders, bare muscular arms, torn sleeveless light linen
+tunic, dark brown cloth trousers, worn dark leather boots, tight leather wraps
+on the forearms, a plain closed iron band on one wrist
 ```
 
 ### Negatívny prompt
@@ -65,14 +77,41 @@ neutral colours, clear readable silhouette
 ```
 action pose, dynamic pose, walking, running, contrapposto, arms down, arms
 bent, holding weapon, sword, axe, dagger, shield, cape, cloak, flowing fabric,
-loose hair, floating objects, detached parts, dramatic lighting, rim light,
-strong shadows, background scenery, environment, multiple characters, close-up,
+chain, hanging chain, dangling strap, loose cord, loose hair, floating objects,
+detached parts, dramatic lighting, rim light, strong shadows, cast shadow,
+floor, ground, background scenery, environment, multiple characters, close-up,
 cropped limbs, cut off head, cut off feet, perspective, foreshortening, text,
 letters, watermark, signature, colour swatches
 ```
 
-**Kontrola pred pokračovaním:** máš tri obrázky tej istej postavy, vo všetkých
-je v T-póze, v rukách nič nedrží a nič z nej nevisí voľne.
+### Kontrolný zoznam pred krokom 2
+
+Prejdi ho poctivo. Generovanie obrázkov je zadarmo, kredit na 3D nie —
+a chyba z tohto kroku sa prejaví až o dva kroky ďalej.
+
+- [ ] Vo všetkých troch je tá istá postava a **rovnaké vlasy**
+- [ ] Ruky sú **vodorovné**, nie klesajúce
+- [ ] Dlane **nadol**, prsty spolu
+- [ ] V rukách nič nedrží
+- [ ] **Nič z postavy nevisí** — žiadna reťaz, remienok, šnúrka
+- [ ] Na zemi **nie je tieň**
+- [ ] Pozadie je rovnomerné, bez prechodu
+- [ ] Postava je na všetkých troch **rovnako vysoká**
+
+Posledný bod sa okom neodhadne. Zmerať sa dá takto:
+
+```
+python tools/check_character_sheet.py ref/characters/02_main
+```
+
+> Prvá sada obrázkov padla na troch veciach naraz: z jedného zápästia visela
+> reťaz s tenkými článkami, vlasy boli spredu kratšie než zozadu, a na zemi bol
+> tieň. Ani jedna z nich sa nedá opraviť neskôr — tenká visiaca geometria je to,
+> čo rekonštrukcia z obrázkov zvláda najhoršie, protirečiace si pohľady kazia
+> práve to miesto, kde si protirečia, a tieň sa zapečie do textúry.
+>
+> Nápad rozbitého puta prežil ako **pevný krúžok na zápästí**. Pri 96 px
+> vyzerá rovnako a nič neriskuje.
 
 > Poznámka k obsahu: postava sa opisuje rolou a výstrojom, nikdy pôvodom ani
 > farbou pleti. Platí to aj pre nepriateľov. Je to pravidlo projektu
