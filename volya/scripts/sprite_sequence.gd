@@ -26,10 +26,41 @@ static func png_files(path: String) -> PackedStringArray:
 	return result
 
 
+## Frame paths listed by the manifest the render pass writes, or an empty array
+## if there is none.
+##
+## Godot converts images to its own format on export, so the original .png
+## files are not present in the installed game and listing the folder returns
+## nothing. That fails only on the device, never in the editor. The manifest is
+## a script, which does survive the export.
+static func manifest_paths(path: String) -> PackedStringArray:
+	var manifest_path := path.path_join("frames.gd")
+	if not ResourceLoader.exists(manifest_path):
+		return PackedStringArray()
+	var script := load(manifest_path)
+	if script == null:
+		return PackedStringArray()
+	var lister = script.new()
+	if lister == null or not (&"FRAMES" in lister):
+		return PackedStringArray()
+	var out := PackedStringArray()
+	for entry in lister.FRAMES:
+		out.append(String(entry))
+	return out
+
+
 static func load_frames(path: String) -> Array[Texture2D]:
 	var frames: Array[Texture2D] = []
-	for file_name in png_files(path):
-		var tex := load(path.path_join(file_name)) as Texture2D
+
+	var listed := manifest_paths(path)
+	if listed.is_empty():
+		# No manifest: fall back to reading the folder, which works in the
+		# editor and is enough for a sequence dropped in by hand.
+		for file_name in png_files(path):
+			listed.append(path.path_join(file_name))
+
+	for full_path in listed:
+		var tex := load(full_path) as Texture2D
 		if tex != null:
 			frames.append(tex)
 	return frames

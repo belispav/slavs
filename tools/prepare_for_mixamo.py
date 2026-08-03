@@ -218,8 +218,14 @@ def main():
     body = bpy.context.view_layer.objects.active
 
     # 3. reduce, but only downwards - Decimate cannot add detail
-    goal = max(1000, int(cfg["tris"]))
-    if before > goal:
+    goal = int(cfg["tris"])
+    if goal <= 0:
+        print("VOLYA: redukcia vypnuta (--tris 0)")
+    elif before > goal:
+        if body.data.uv_layers:
+            print("VOLYA: POZOR - model ma UV mapu a redukcia ju rozhadze. "
+                  "Ak nemusis, pouzi --tris 0.")
+        goal = max(1000, goal)
         modifier = body.modifiers.new("VOLYA_Decimate", "DECIMATE")
         modifier.decimate_type = "COLLAPSE"
         modifier.ratio = goal / float(before)
@@ -249,6 +255,15 @@ def main():
     if size.z < max(size.x, size.y) * 0.6:
         print("VOLYA: POZOR - postava je stale nizsia nez sirsia, mozno lezi.")
         print("VOLYA: skus to prebit rucne: --up x  alebo  --up y")
+
+    # Without a UV map there is nowhere to put a texture, and the character
+    # arrives in the game grey no matter what is supplied later. Worth saying
+    # before the file is uploaded, not after the render comes back colourless.
+    print("VOLYA: UV mapy: %d" % len(body.data.uv_layers))
+    if not body.data.uv_layers:
+        print("VOLYA: POZOR - bez UV mapy bude postava vzdy jednofarebna.")
+        print("VOLYA: pouzi ako vstup ten export, ktory textury nesie "
+              "(u Meshy je to GLB, nie FBX).")
 
     # 5. textures out to real files before export, or they are lost
     rescue_textures(os.path.dirname(target))

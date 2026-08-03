@@ -118,6 +118,10 @@ def walk(node, found):
         found["embedded"] += value if isinstance(value, int) else len(value)
     elif name == b"Deformer":
         found["deformers"] += 1
+    elif name == b"LayerElementUV":
+        found["uv_layers"] += 1
+    elif name in (b"Texture", b"Video"):
+        found["textures"] += 1
 
     for child in node["children"]:
         walk(child, found)
@@ -137,7 +141,8 @@ def inspect(path):
     wide = version >= 7500
 
     found = {"vertices": [], "indices": [], "geometries": 0,
-             "mesh_models": 0, "embedded": 0, "deformers": 0}
+             "mesh_models": 0, "embedded": 0, "deformers": 0,
+             "uv_layers": 0, "textures": 0}
     while reader.pos < len(data) - 160:
         node = read_node(reader, wide)
         if node is None:
@@ -154,10 +159,15 @@ def inspect(path):
     print("  sieti (Geometry)  %d" % found["geometries"])
     print("  mesh objektov     %d" % found["mesh_models"])
     print("  kostier/skinov    %d" % found["deformers"])
+    print("  UV mapy           %d" % found["uv_layers"])
+    print("  textury           %d" % found["textures"])
     print("  vlozene textury   %.1f MB" % (found["embedded"] / 1e6))
     print("  velkost suboru    %.1f MB" % (os.path.getsize(path) / 1e6))
 
     notes = []
+    if found["uv_layers"] == 0:
+        notes.append("BEZ UV MAPY - na tento model sa nedaju polozit farby. "
+                     "Texturu nema kam premietnut a ostane sedy.")
     if found["mesh_models"] > 1 or found["geometries"] > 1:
         notes.append("VIAC SIETI - Mixamo chce jednu. V Blenderi oznac vsetko "
                      "a stlac Ctrl+J.")

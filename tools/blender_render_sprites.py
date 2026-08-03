@@ -27,6 +27,7 @@ import mathutils
 
 # Used when the script is run from Blender's UI (no command line arguments).
 DEFAULTS = {
+    "import": "",      # load this FBX/OBJ/GLB instead of using the open scene
     "out": "//sprites",
     "name": "anim",
     "height": 96,      # rendered pixel height of one frame
@@ -46,6 +47,7 @@ DEFAULTS = {
     "pixel": 1,        # 1 = no anti-aliasing, so every pixel is a real pixel
     "material_colours": "",  # "Alpha_Body=C08A6B,Alpha_Joints=6B5540"
     "texture_size": 48,  # shrink textures to this before use; 0 = leave alone
+    "texture": "",       # colour map to put on the model, overriding its own
 }
 
 
@@ -479,11 +481,41 @@ def apply_toon_shading(cfg):
     colour survive the shrink; detail does not.
     """
     overrides = parse_colour_overrides(cfg.get("material_colours", ""))
+
+    # A colour map supplied on the command line beats whatever the model
+    # carries. Mixamo returns a rigged mesh with no texture, while the
+    # generator's own export has the texture but no rig - and since it is the
+    # same mesh with the same UVs, one can simply be put on the other.
+    forced = None
+    if cfg.get("texture"):
+        path = os.path.abspath(cfg["texture"])
+        if os.path.exists(path):
+            forced = bpy.data.images.load(path, check_existing=True)
+            print("VOLYA: textura z prikazoveho riadku: %s (%dx%d)"
+                  % (os.path.basename(path), forced.size[0], forced.size[1]))
+        else:
+            print("VOLYA: POZOR - texturu %s som nenasiel" % path)
+
     seen = []
     done = 0
     for obj in bpy.context.scene.objects:
         if obj.type != "MESH":
             continue
+
+        # A mesh can arrive with no material at all - Mixamo returns the rig
+        # and the geometry but drops the material along with the texture. There
+        # is then nothing to rebuild, and the model renders in Blender's default
+        # grey no matter what texture was supplied. So make one.
+        if not any(slot.material for slot in obj.material_slots):
+            created = bpy.data.materials.new("VOLYA_" + obj.name)
+            obj.data.materials.append(created)
+            print("VOLYA:   %s nemal ziadny material, vytvoril som mu ho"
+                  % obj.name)
+
+        if forced is not None and not obj.data.uv_layers:
+            print("VOLYA:   POZOR - %s nema UV mapu, texturu nie je kam "
+                  "polozit. Bude jednofarebny." % obj.name)
+
         for slot in obj.material_slots:
             material = slot.material
             if material is None or material.name in seen:
@@ -492,7 +524,9 @@ def apply_toon_shading(cfg):
 
             image, base = None, overrides.get(material.name.lower())
             source = "rucne zadana"
-            if base is None:
+            if forced is not None:
+                image, base, source = forced, None, "textura zvonku"
+            elif base is None:
                 image, base = material_appearance(material)
                 source = "textura z modelu" if image else "farba z modelu"
             if image is None and base is None:
@@ -650,8 +684,39 @@ def render_angle(cfg, pivot, index, total):
     bpy.ops.render.render(animation=True, write_still=False)
 
 
+def import_source(path):
+    """Load a model file into an empty scene.
+
+    Saves a round trip through the Blender UI: a rigged FBX straight from
+    Mixamo can be rendered without opening anything by hand, which matters
+    because every character will go through this several times.
+    """
+    if not path:
+        return
+    path = os.path.abspath(path)
+    if not os.path.exists(path):
+        raise RuntimeError("subor neexistuje: %s" % path)
+
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    lower = path.lower()
+    if lower.endswith(".fbx"):
+        bpy.ops.import_scene.fbx(filepath=path)
+    elif lower.endswith((".glb", ".gltf")):
+        bpy.ops.import_scene.gltf(filepath=path)
+    elif lower.endswith(".obj"):
+        try:
+            bpy.ops.wm.obj_import(filepath=path)
+        except AttributeError:
+            bpy.ops.import_scene.obj(filepath=path)
+    else:
+        raise RuntimeError("neznamy format: %s" % path)
+    print("VOLYA: nacitane %s" % os.path.basename(path))
+
+
 def main():
     cfg = parse_args()
+
+    import_source(cfg["import"])
 
     toon = int(cfg["toon"]) != 0
     if toon and cfg["engine"] == "auto":

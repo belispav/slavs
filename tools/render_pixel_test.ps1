@@ -13,13 +13,18 @@
 #   ... -Bands 4 -Colours 24 -Height 128
 
 param(
-    [string] $Blend   = "tools\blender\hero_run.blend",
+    # A .blend, or a model file straight from Mixamo (.fbx / .glb / .obj).
+    [string] $Model   = "tools\blender\hero_run.blend",
+    [string] $Blend   = "",   # old name for -Model, still accepted
     [string] $Name    = "run",
     [int]    $Height  = 96,   # sprite height in pixels
     [int]    $Bands   = 3,    # hard steps of light on a surface
     [int]    $Colours = 16,   # palette size for the whole animation
     [int]    $Step    = 1,    # 1 = every frame, needed to measure pixel crawl
-    [double] $Shadow  = 0.38  # how dark the darkest band is
+    [double] $Shadow  = 0.38, # how dark the darkest band is
+    # Colour map to use instead of the model's own. Mixamo returns a rigged
+    # mesh with no texture; this is how the generator's texture gets back on.
+    [string] $Texture = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -53,10 +58,12 @@ if (-not $blender) {
 if ($env:VOLYA_BLENDER) { $blender = $env:VOLYA_BLENDER }
 Write-Host "Blender:  $blender"
 
-if (-not (Test-Path $Blend)) {
-    Write-Host "Nenasiel som $Blend" -ForegroundColor Red
+if ($Blend -ne "") { $Model = $Blend }
+if (-not (Test-Path $Model)) {
+    Write-Host "Nenasiel som $Model" -ForegroundColor Red
     exit 1
 }
+$isBlend = $Model.ToLower().EndsWith(".blend")
 
 # ------------------------------------------------------------------ render ---
 
@@ -86,15 +93,31 @@ foreach ($stale in @("volya\art\${Name}_raw", "volya\art\${Name}_sheet.png",
 Write-Host ""
 Write-Host "[1/3] Renderujem (toon, $Bands pasma, bez antialiasingu)..." -ForegroundColor Yellow
 
-& $blender $Blend --background --python "tools\blender_render_sprites.py" -- `
-    --out (Join-Path $root $rawDir) `
-    --name $Name `
-    --height $Height `
-    --step $Step `
-    --toon 1 `
-    --pixel 1 `
-    --bands $Bands `
-    --shadow $Shadow
+# A .blend is opened by Blender itself; anything else is imported by the script
+# into an empty scene, so a rigged FBX from Mixamo needs no manual step at all.
+$blenderArgs = @()
+if ($isBlend) { $blenderArgs += $Model }
+$blenderArgs += @("--background", "--python", "tools\blender_render_sprites.py", "--")
+if (-not $isBlend) { $blenderArgs += @("--import", (Join-Path $root $Model)) }
+$blenderArgs += @(
+    "--out",    (Join-Path $root $rawDir),
+    "--name",   $Name,
+    "--height", $Height,
+    "--step",   $Step,
+    "--toon",   1,
+    "--pixel",  1,
+    "--bands",  $Bands,
+    "--shadow", $Shadow
+)
+if ($Texture -ne "") {
+    if (-not (Test-Path $Texture)) {
+        Write-Host "Nenasiel som texturu $Texture" -ForegroundColor Red
+        exit 1
+    }
+    $blenderArgs += @("--texture", (Join-Path $root $Texture))
+}
+
+& $blender @blenderArgs
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Render zlyhal." -ForegroundColor Red
