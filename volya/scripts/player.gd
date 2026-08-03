@@ -149,6 +149,26 @@ func _consume_jump_buffer(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if Touch.config.free_movement:
+		_move_free(delta)
+	else:
+		_move_platform(delta)
+
+	_iframes = maxf(_iframes - delta, 0.0)
+	move_and_slide()
+
+	# Aiming from the character needs to know where the character actually is
+	# on screen, which only the character can say: the camera moves, so the
+	# world position alone is not enough.
+	Touch.aim_origin = get_global_transform_with_canvas().origin
+
+	_update_aim(delta)
+	_update_sprite()
+	queue_redraw()
+
+
+## Run and jump along a floor. The F1 behaviour.
+func _move_platform(delta: float) -> void:
 	var ix: float = _move_axis()
 
 	var accel: float = Tuning.AIR_ACCEL
@@ -162,18 +182,26 @@ func _physics_process(delta: float) -> void:
 		_coyote = maxf(_coyote - delta, 0.0)
 		velocity.y = minf(velocity.y + Tuning.GRAVITY * delta, Tuning.MAX_FALL_SPEED)
 
-	_iframes = maxf(_iframes - delta, 0.0)
 	_consume_jump_buffer(delta)
-	move_and_slide()
 
-	# Aiming from the character needs to know where the character actually is
-	# on screen, which only the character can say: the camera moves, so the
-	# world position alone is not enough.
-	Touch.aim_origin = get_global_transform_with_canvas().origin
 
-	_update_aim(delta)
-	_update_sprite()
-	queue_redraw()
+## Walk the field on both axes. No gravity, no jump, no floor.
+##
+## Vertical travel is deliberately slower than horizontal: the depth axis is
+## for dodging, not for crossing ground, and a field that moves as fast
+## vertically as horizontally reads as floating rather than walking.
+func _move_free(delta: float) -> void:
+	var wish: Vector2 = _move_vector()
+	wish.y *= Touch.config.free_move_y_ratio
+
+	var accel: float = Tuning.GROUND_DECEL if wish.is_zero_approx() \
+		else Tuning.GROUND_ACCEL
+	var goal: Vector2 = wish * Tuning.RUN_SPEED
+	velocity.x = move_toward(velocity.x, goal.x, accel * delta)
+	velocity.y = move_toward(velocity.y, goal.y, accel * delta)
+
+	_coyote = 0.0
+	_jump_buffer = 0.0
 
 
 # ---------------------------------------------------------------- input ---
@@ -193,6 +221,24 @@ func _move_axis() -> float:
 		if not is_zero_approx(kx):
 			return kx
 	return Touch.move_x
+
+
+## Both axes, for free movement. On a keyboard W and S drive depth instead of
+## jumping, since there is nothing to jump over.
+func _move_vector() -> Vector2:
+	if _use_keyboard:
+		var kv := Vector2.ZERO
+		if Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT):
+			kv.x -= 1.0
+		if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
+			kv.x += 1.0
+		if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
+			kv.y -= 1.0
+		if Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN):
+			kv.y += 1.0
+		if kv != Vector2.ZERO:
+			return kv.normalized()
+	return Touch.move_vec
 
 
 func _keyboard_aim() -> Vector2:
@@ -242,7 +288,11 @@ func _update_sprite() -> void:
 
 	# Only a run cycle exists so far. Standing still holds a frame rather than
 	# running on the spot; a real idle animation replaces this later.
-	if absf(velocity.x) > Tuning.PLAYER_ANIM_MIN_SPEED:
+	# Speed is taken from both axes: in free movement, walking straight up the
+	# field is still walking and should not freeze the sprite.
+	var speed: float = velocity.length() if Touch.config.free_movement \
+		else absf(velocity.x)
+	if speed > Tuning.PLAYER_ANIM_MIN_SPEED:
 		if not _sprite.is_playing():
 			_sprite.play()
 	elif _sprite.is_playing():

@@ -69,6 +69,10 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
   - Meshy free tier cannot download Meshy 6 models; Meshy 5 works. **Licence decision still open**: free tier is CC BY 4.0 and obliges a credit line. Decide before the game is built on it.
   - Hitem3D was tried as an alternative: 1,014,241 vertices and 242 MB against Meshy's 41,963 and 2.6 MB. Reduced and parked, not rigged.
 - [x] First real character is in the game and rendering in colour (2026-08-02). Player draws whatever sequence sits in `volya/art/run_px/`, so swapping characters means re-rendering that folder and nothing else. Grey box remains the fallback.
+- [ ] **OPEN, decide before F2 content: jumping or free movement.** Pavel finds platforms and jumping at odds with the "dumb shooter" feeling he wants. Free movement — left thumb drives both axes, no gravity, no jump, Golden Axe style — is built behind a toggle (`free_movement`) so the two can be played back to back on the phone. Whichever wins, enemies still come **only from the right**: that is forced by the hand covering the left third, not by the genre.
+  - If free movement wins, the jump subsystem goes, and with it six of the ten tuning sliders and the hardest part of F1. The design already asked for gravity-free levels, so the code was needed anyway.
+  - If it wins, sprites must be re-rendered from a slightly raised camera; that is one parameter, but decide it **before** producing eight enemy types.
+  - Rushers no longer overshoot the player and turn back. They stop a short gap to the right and press, and a hard limit keeps every enemy right of the player in both modes.
 - [ ] F2: vertical slice
 - [ ] F3: content production
 - [ ] F4: polish + closed testing (12 testers / 14 days — mandatory for new personal Google Play accounts)

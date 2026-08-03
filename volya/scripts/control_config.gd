@@ -131,6 +131,25 @@ class_name ControlConfig
 @export_range(0.2, 0.8, 0.01) var move_zone_width: float = 0.5
 @export_range(0.0, 0.6, 0.01) var move_zone_bottom: float = 0.28
 
+## Free movement: the left thumb drives both axes and there is no gravity and
+## no jump. The character walks around the field instead of running along a
+## floor, the way a beat-em-up does.
+##
+## Worth trying because the jump is the most complicated thing in the project -
+## six of the ten sliders exist to serve it - and the design already calls for
+## levels with no gravity at all. If free movement is the better game, that
+## whole subsystem stops being needed.
+##
+## Enemies still come only from the right either way. That is not about the
+## genre, it is about the hand: the left thumb physically covers the left third
+## of the screen, so a threat arriving from there cannot be seen.
+@export var free_movement: bool = false
+
+## Vertical travel in free movement, as a fraction of the horizontal speed.
+## Below 1.0 the field feels wider than it is tall, which is how the genre
+## usually plays - the depth axis is for dodging, not for crossing ground.
+@export_range(0.2, 1.0, 0.05) var free_move_y_ratio: float = 0.62
+
 
 ## The arc threshold curve, in millimetres (SPEC B2). Asymmetric by design.
 ## Everything is relative to reach_mm, so the shape scales with the player's

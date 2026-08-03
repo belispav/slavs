@@ -88,7 +88,12 @@ func hit() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if not is_on_floor():
+	var free: bool = Touch.config.free_movement
+
+	if free:
+		# No floor to stand on, so no gravity. Depth is just another axis.
+		velocity.y = 0.0
+	elif not is_on_floor():
 		velocity.y = minf(velocity.y + Tuning.ENEMY_GRAVITY * delta, 1800.0)
 	else:
 		velocity.y = 0.0
@@ -96,11 +101,12 @@ func _physics_process(delta: float) -> void:
 	if target != null:
 		match kind:
 			Kind.RUSHER:
-				_think_rusher()
+				_think_rusher(free)
 			Kind.THROWER:
-				_think_thrower(delta)
+				_think_thrower(delta, free)
 
 	move_and_slide()
+	_stay_right_of_player()
 	# Redraw ONLY while the hit flash is fading. Moving a Node2D does not need
 	# a redraw, and 34 pointless redraws per frame cost real frame time on a
 	# phone — which shows up as the controls feeling sticky.
@@ -109,12 +115,37 @@ func _physics_process(delta: float) -> void:
 		queue_redraw()
 
 
-func _think_rusher() -> void:
-	var dir: float = signf(target.global_position.x - global_position.x)
-	velocity.x = dir * Tuning.RUSHER_SPEED
+## Hard floor on how far left an enemy may be. Applied after moving, so nothing
+## can slip past through a collision push or a fast frame.
+##
+## Sliding along this line rather than being stopped by it is deliberate: an
+## enemy that reaches the player keeps its vertical movement, so a crowd
+## presses in and spreads out instead of stacking into one point.
+func _stay_right_of_player() -> void:
+	if target == null:
+		return
+	var limit: float = target.global_position.x + Tuning.ENEMY_KEEP_RIGHT_MARGIN
+	if global_position.x < limit:
+		global_position.x = limit
+		velocity.x = maxf(velocity.x, 0.0)
 
 
-func _think_thrower(delta: float) -> void:
+func _think_rusher(free: bool) -> void:
+	var to_target: Vector2 = target.global_position - global_position
+
+	# Close in from the right and stop short. Pressing against the player is
+	# the attack; there is nothing to gain from running past.
+	if to_target.x < Tuning.ENEMY_STOP_GAP:
+		velocity.x = move_toward(velocity.x, 0.0, Tuning.RUSHER_SPEED * 6.0)
+	else:
+		velocity.x = -Tuning.RUSHER_SPEED
+
+	if free:
+		velocity.y = signf(to_target.y) * Tuning.RUSHER_SPEED * 0.6 \
+			if absf(to_target.y) > 8.0 else 0.0
+
+
+func _think_thrower(delta: float, free: bool) -> void:
 	var to_target: Vector2 = target.global_position - global_position
 	var dist: float = absf(to_target.x)
 	var dir: float = signf(to_target.x)
@@ -126,6 +157,10 @@ func _think_thrower(delta: float) -> void:
 		velocity.x = -dir * Tuning.THROWER_SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, Tuning.THROWER_SPEED * 4.0 * delta)
+
+	if free:
+		velocity.y = signf(to_target.y) * Tuning.THROWER_SPEED * 0.5 \
+			if absf(to_target.y) > 24.0 else 0.0
 
 	_throw_cd -= delta
 	if _throw_cd <= 0.0 and dist < Tuning.THROWER_RANGE:

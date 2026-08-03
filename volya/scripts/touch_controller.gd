@@ -26,6 +26,10 @@ var aim_active: bool = false
 ## Where on screen the character is, reported by the player every frame. Only
 ## used when config.aim_from_character is on. Vector2.INF means "not known yet".
 var aim_origin: Vector2 = Vector2.INF
+
+## Both axes of the left thumb. Only meaningful when config.free_movement is on;
+## move_x stays the single source of truth for walking left and right.
+var move_vec: Vector2 = Vector2.ZERO
 var left_state: int = LeftState.NO_TOUCH
 ## Gestures that crossed the threshold.
 var jump_count: int = 0
@@ -90,6 +94,7 @@ func reset_all() -> void:
 	right_index = -1
 	left_state = LeftState.NO_TOUCH
 	move_x = 0.0
+	move_vec = Vector2.ZERO
 	aim_active = false
 	move_input.emit(0.0)
 	aim_input.emit(aim_dir, false)
@@ -170,6 +175,7 @@ func _claim_left(index: int, pos: Vector2) -> void:
 	left_pos = pos
 	left_state = LeftState.GROUNDED_INPUT
 	move_x = 0.0
+	move_vec = Vector2.ZERO
 	move_input.emit(0.0)
 
 
@@ -192,6 +198,7 @@ func _on_release(index: int) -> void:
 		left_index = -1
 		left_state = LeftState.NO_TOUCH
 		move_x = 0.0
+		move_vec = Vector2.ZERO
 		move_input.emit(0.0)
 	elif index == right_index:
 		right_index = -1
@@ -211,6 +218,10 @@ func _on_drag(index: int, pos: Vector2) -> void:
 # ------------------------------------------------- left thumb (SPEC B2) ----
 
 func _update_left() -> void:
+	if config.free_movement:
+		_update_left_free()
+		return
+
 	var dx_mm: float = left_dx_mm()
 	var up_mm: float = left_up_mm()
 	var threshold: float = jump_threshold_mm(dx_mm)
@@ -230,6 +241,37 @@ func _update_left() -> void:
 	move_input.emit(move_x)
 	if left_state == LeftState.JUMP_HELD:
 		air_steer.emit(move_x)
+
+
+## The left thumb as a plain two-axis stick.
+##
+## No jump gesture, so no threshold arc, no hysteresis and no state machine -
+## the six sliders that exist to serve the flick are all unused here. Vertical
+## deflection uses the same dead zone and saturation as running right, because
+## up and down are symmetrical for the thumb in a way that left and right are
+## not.
+func _update_left_free() -> void:
+	var dx_mm: float = left_dx_mm()
+	var dy_mm: float = (left_pos.y - left_anchor.y) / px_per_mm
+
+	var x: float = _run_axis(dx_mm)
+	var y: float = _axis(dy_mm, config.run_saturation_right_mm)
+
+	move_vec = Vector2(x, y)
+	if move_vec.length() > 1.0:
+		move_vec = move_vec.normalized()
+
+	move_x = move_vec.x
+	left_state = LeftState.GROUNDED_INPUT
+	move_input.emit(move_x)
+
+
+func _axis(value_mm: float, saturation_mm: float) -> float:
+	var mag: float = absf(value_mm)
+	if mag <= config.run_deadzone_mm:
+		return 0.0
+	var span: float = maxf(saturation_mm - config.run_deadzone_mm, 0.1)
+	return signf(value_mm) * clampf((mag - config.run_deadzone_mm) / span, 0.0, 1.0)
 
 
 func _run_axis(dx_mm: float) -> float:

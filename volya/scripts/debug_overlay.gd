@@ -150,6 +150,14 @@ func _build_panel() -> void:
 	aim_mode.toggled.connect(func(on: bool) -> void:
 		Touch.config.aim_from_character = on)
 
+	var free_mode := CheckButton.new()
+	free_mode.text = "VOLNY POHYB (bez skoku)"
+	free_mode.custom_minimum_size = Vector2(0, 56)
+	free_mode.button_pressed = Touch.config.free_movement
+	rows.add_child(free_mode)
+	free_mode.toggled.connect(func(on: bool) -> void:
+		Touch.config.free_movement = on)
+
 	var buttons := HBoxContainer.new()
 	vb.add_child(buttons)
 
@@ -249,6 +257,8 @@ func _dump_values() -> void:
 		"aim_origin_min_mm       = %s" % c.aim_origin_min_mm,
 		"move_zone_width         = %s" % c.move_zone_width,
 		"move_zone_bottom        = %s" % c.move_zone_bottom,
+		"free_movement           = %s" % c.free_movement,
+		"free_move_y_ratio       = %s" % c.free_move_y_ratio,
 		"gest / vykonane         = %d / %d" % [Touch.jump_count, Touch.jumps_performed],
 		"dpi = %s   px_per_mm = %s" % [Touch.raw_dpi, Touch.px_per_mm],
 		"===============================",

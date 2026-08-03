@@ -50,6 +50,17 @@ const ENEMY_MAX_ALIVE: int = 34       # design pillar: overwhelming numbers
 const ENEMY_GRAVITY: float = 2200.0
 const ENEMY_CONTACT_DAMAGE: int = 1
 
+## How close a rusher presses before it stops. Pushing against the player IS
+## its attack, so the gap is small.
+const ENEMY_STOP_GAP: float = 26.0
+
+## Enemies never move to the LEFT of the player. That is not a difficulty
+## choice, it is forced by the hand: the left thumb covers the left third of
+## the screen, so a threat arriving from there cannot be seen. Rushers used to
+## run at the player, overshoot and turn back, which meant they spent half
+## their time in exactly that blind area.
+const ENEMY_KEEP_RIGHT_MARGIN: float = 8.0
+
 ## Rushers are chaff. One hit, large numbers — the point is mowing, not duelling.
 const RUSHER_HP: int = 1
 const RUSHER_SPEED: float = 230.0

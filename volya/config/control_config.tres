@@ -33,3 +33,7 @@ aim_origin_min_mm = 9.0
 ; and the shot never happened.
 move_zone_width = 0.5
 move_zone_bottom = 0.28
+; Free movement is OFF by default: it is a prototype to be compared against
+; jumping on the phone, not a decision yet. Toggle it in the panel.
+free_movement = false
+free_move_y_ratio = 0.62
