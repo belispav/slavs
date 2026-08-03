@@ -156,7 +156,24 @@ func _build_panel() -> void:
 	free_mode.button_pressed = Touch.config.free_movement
 	rows.add_child(free_mode)
 	free_mode.toggled.connect(func(on: bool) -> void:
-		Touch.config.free_movement = on)
+		Touch.config.free_movement = on
+		# The level is built at startup and the two modes need different ones,
+		# since platforms exist only for jumping. Reloading is the honest way
+		# to switch; the config lives in an autoload and survives the reload.
+		get_tree().reload_current_scene())
+
+	var follow_mode := CheckButton.new()
+	follow_mode.text = "POHYB KOPIRUJE PALEC"
+	follow_mode.custom_minimum_size = Vector2(0, 56)
+	follow_mode.button_pressed = Touch.config.free_move_follow
+	rows.add_child(follow_mode)
+	follow_mode.toggled.connect(func(on: bool) -> void:
+		Touch.config.free_move_follow = on)
+
+	_add_slider("KOPIR_ZISK", 1.0, 8.0, 0.25, Touch.config.free_move_gain,
+		func(v: float) -> void: Touch.config.free_move_gain = v)
+	_add_slider("HLBKA_POMER", 0.2, 1.0, 0.05, Touch.config.free_move_y_ratio,
+		func(v: float) -> void: Touch.config.free_move_y_ratio = v)
 
 	var buttons := HBoxContainer.new()
 	vb.add_child(buttons)
@@ -259,6 +276,8 @@ func _dump_values() -> void:
 		"move_zone_bottom        = %s" % c.move_zone_bottom,
 		"free_movement           = %s" % c.free_movement,
 		"free_move_y_ratio       = %s" % c.free_move_y_ratio,
+		"free_move_follow        = %s" % c.free_move_follow,
+		"free_move_gain          = %s" % c.free_move_gain,
 		"gest / vykonane         = %d / %d" % [Touch.jump_count, Touch.jumps_performed],
 		"dpi = %s   px_per_mm = %s" % [Touch.raw_dpi, Touch.px_per_mm],
 		"===============================",

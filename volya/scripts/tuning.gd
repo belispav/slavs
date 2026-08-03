@@ -61,6 +61,10 @@ const ENEMY_STOP_GAP: float = 26.0
 ## their time in exactly that blind area.
 const ENEMY_KEEP_RIGHT_MARGIN: float = 8.0
 
+## How far off the player's depth each enemy settles, in free movement. Without
+## it a crowd converges onto one line and reads as a queue rather than a mob.
+const ENEMY_DEPTH_SPREAD: float = 34.0
+
 ## Rushers are chaff. One hit, large numbers — the point is mowing, not duelling.
 const RUSHER_HP: int = 1
 const RUSHER_SPEED: float = 230.0

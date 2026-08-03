@@ -25,6 +25,12 @@ var _kb_jump_was_down: bool = false
 var _cam: Camera2D
 var _sprite: AnimatedSprite2D          # null when no frames have been rendered yet
 
+## Vertical bounds of the walkable field in free movement, set by the level.
+## A limit rather than a wall: a solid ceiling ends up drawn on screen and
+## swallows most of the view.
+var field_top: float = -1e9
+var field_bottom: float = 1e9
+
 
 func _ready() -> void:
 	spawn_point = global_position
@@ -191,17 +197,33 @@ func _move_platform(delta: float) -> void:
 ## for dodging, not for crossing ground, and a field that moves as fast
 ## vertically as horizontally reads as floating rather than walking.
 func _move_free(delta: float) -> void:
-	var wish: Vector2 = _move_vector()
-	wish.y *= Touch.config.free_move_y_ratio
+	if Touch.config.free_move_follow and not _use_keyboard:
+		# The character copies the thumb: travel becomes velocity for this one
+		# frame, so it stops the instant the thumb does even while still held.
+		# Capped, or a fast flick would fling the character across the level.
+		var travel: Vector2 = Touch.consume_travel() * Touch.config.free_move_gain
+		travel.y *= Touch.config.free_move_y_ratio
+		velocity = (travel / maxf(delta, 0.0001)).limit_length(
+			Tuning.RUN_SPEED * 2.0)
+	else:
+		var wish: Vector2 = _move_vector()
+		wish.y *= Touch.config.free_move_y_ratio
 
-	var accel: float = Tuning.GROUND_DECEL if wish.is_zero_approx() \
-		else Tuning.GROUND_ACCEL
-	var goal: Vector2 = wish * Tuning.RUN_SPEED
-	velocity.x = move_toward(velocity.x, goal.x, accel * delta)
-	velocity.y = move_toward(velocity.y, goal.y, accel * delta)
+		var accel: float = Tuning.GROUND_DECEL if wish.is_zero_approx() \
+			else Tuning.GROUND_ACCEL
+		var goal: Vector2 = wish * Tuning.RUN_SPEED
+		velocity.x = move_toward(velocity.x, goal.x, accel * delta)
+		velocity.y = move_toward(velocity.y, goal.y, accel * delta)
 
 	_coyote = 0.0
 	_jump_buffer = 0.0
+
+	# Applied after the velocity, before move_and_slide, so pressing against
+	# the edge simply stops rather than juddering.
+	var next_y: float = global_position.y + velocity.y * delta
+	if next_y < field_top or next_y > field_bottom:
+		global_position.y = clampf(global_position.y, field_top, field_bottom)
+		velocity.y = 0.0
 
 
 # ---------------------------------------------------------------- input ---

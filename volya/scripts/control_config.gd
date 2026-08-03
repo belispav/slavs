@@ -150,6 +150,21 @@ class_name ControlConfig
 ## usually plays - the depth axis is for dodging, not for crossing ground.
 @export_range(0.2, 1.0, 0.05) var free_move_y_ratio: float = 0.62
 
+## How the left thumb drives free movement.
+##
+## false — as a stick. Holding an offset keeps the character walking. Unlimited
+##         travel, but indirect: the thumb says "keep going", not "go here".
+## true  — the character copies the thumb. Move the thumb and it moves the same
+##         way; stop the thumb and it stops, even with the thumb still down.
+##         Direct and precise, at the cost of running out of thumb before you
+##         run out of level, so crossing ground means several strokes.
+@export var free_move_follow: bool = false
+
+## In follow mode, how far the character travels for a given thumb travel.
+## 1.0 is exactly the thumb's movement, which is far too slow to cross a level;
+## higher numbers trade precision for reach.
+@export_range(1.0, 8.0, 0.25) var free_move_gain: float = 3.0
+
 
 ## The arc threshold curve, in millimetres (SPEC B2). Asymmetric by design.
 ## Everything is relative to reach_mm, so the shape scales with the player's

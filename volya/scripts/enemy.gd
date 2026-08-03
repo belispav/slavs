@@ -22,6 +22,9 @@ var target: Node2D
 
 var _flash: float = 0.0
 var _throw_cd: float = 0.0
+## Each enemy aims for its own depth slightly off the player's, so a crowd
+## surrounds rather than forming a single line.
+var _depth_offset: float = 0.0
 var _hurtbox: Area2D
 
 
@@ -60,6 +63,8 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	velocity = Vector2.ZERO
 	_flash = 0.0
 	_throw_cd = randf() * Tuning.THROWER_INTERVAL
+	_depth_offset = randf_range(-Tuning.ENEMY_DEPTH_SPREAD,
+		Tuning.ENEMY_DEPTH_SPREAD)
 	active = true
 	show()
 	set_physics_process(true)
@@ -131,18 +136,19 @@ func _stay_right_of_player() -> void:
 
 
 func _think_rusher(free: bool) -> void:
-	var to_target: Vector2 = target.global_position - global_position
+	# The gap is measured from the enemy back to the player, and enemies are
+	# always to the right, so it is positive while there is ground to cover.
+	# Reading it the other way round made the stop condition true on the frame
+	# they appeared, and they simply stood there.
+	var gap: float = global_position.x - target.global_position.x
 
-	# Close in from the right and stop short. Pressing against the player is
-	# the attack; there is nothing to gain from running past.
-	if to_target.x < Tuning.ENEMY_STOP_GAP:
-		velocity.x = move_toward(velocity.x, 0.0, Tuning.RUSHER_SPEED * 6.0)
-	else:
+	if gap > Tuning.ENEMY_STOP_GAP:
 		velocity.x = -Tuning.RUSHER_SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0.0, Tuning.RUSHER_SPEED * 6.0)
 
 	if free:
-		velocity.y = signf(to_target.y) * Tuning.RUSHER_SPEED * 0.6 \
-			if absf(to_target.y) > 8.0 else 0.0
+		_track_depth(Tuning.RUSHER_SPEED * 0.55)
 
 
 func _think_thrower(delta: float, free: bool) -> void:
@@ -159,8 +165,21 @@ func _think_thrower(delta: float, free: bool) -> void:
 		velocity.x = move_toward(velocity.x, 0.0, Tuning.THROWER_SPEED * 4.0 * delta)
 
 	if free:
-		velocity.y = signf(to_target.y) * Tuning.THROWER_SPEED * 0.5 \
-			if absf(to_target.y) > 24.0 else 0.0
+		_track_depth(Tuning.THROWER_SPEED * 0.8)
+
+
+## Close on the player's depth, but smoothly and never exactly.
+##
+## Setting the vertical speed outright made a crowd snap onto the player's line
+## and stay glued there, which read as teleporting rather than walking. Easing
+## into the speed gives it weight, and the per-enemy offset stops thirty bodies
+## from converging into one row.
+func _track_depth(speed: float) -> void:
+	var wanted: float = target.global_position.y + _depth_offset - global_position.y
+	var goal: float = 0.0
+	if absf(wanted) > 6.0:
+		goal = clampf(wanted / 40.0, -1.0, 1.0) * speed
+	velocity.y = move_toward(velocity.y, goal, speed * 4.0 * get_physics_process_delta_time())
 
 	_throw_cd -= delta
 	if _throw_cd <= 0.0 and dist < Tuning.THROWER_RANGE:

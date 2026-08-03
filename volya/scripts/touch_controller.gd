@@ -30,6 +30,13 @@ var aim_origin: Vector2 = Vector2.INF
 ## Both axes of the left thumb. Only meaningful when config.free_movement is on;
 ## move_x stays the single source of truth for walking left and right.
 var move_vec: Vector2 = Vector2.ZERO
+
+## Thumb travel not yet acted on, for follow mode. Accumulated here rather than
+## read directly, because drag events do not arrive once per physics frame -
+## sampling the position would drop movement on busy frames and double it on
+## quiet ones.
+var move_travel: Vector2 = Vector2.ZERO
+var _left_prev: Vector2 = Vector2.ZERO
 var left_state: int = LeftState.NO_TOUCH
 ## Gestures that crossed the threshold.
 var jump_count: int = 0
@@ -173,9 +180,11 @@ func _claim_left(index: int, pos: Vector2) -> void:
 	left_index = index
 	left_anchor = pos
 	left_pos = pos
+	_left_prev = pos
 	left_state = LeftState.GROUNDED_INPUT
 	move_x = 0.0
 	move_vec = Vector2.ZERO
+	move_travel = Vector2.ZERO
 	move_input.emit(0.0)
 
 
@@ -251,6 +260,14 @@ func _update_left() -> void:
 ## up and down are symmetrical for the thumb in a way that left and right are
 ## not.
 func _update_left_free() -> void:
+	if config.free_move_follow:
+		# The character copies the thumb, so what matters is how far the thumb
+		# just moved, not where it sits relative to where it landed.
+		move_travel += left_pos - _left_prev
+		_left_prev = left_pos
+		left_state = LeftState.GROUNDED_INPUT
+		return
+
 	var dx_mm: float = left_dx_mm()
 	var dy_mm: float = (left_pos.y - left_anchor.y) / px_per_mm
 
@@ -264,6 +281,13 @@ func _update_left_free() -> void:
 	move_x = move_vec.x
 	left_state = LeftState.GROUNDED_INPUT
 	move_input.emit(move_x)
+
+
+## Thumb travel since the last call, and clears it. Follow mode only.
+func consume_travel() -> Vector2:
+	var travel: Vector2 = move_travel
+	move_travel = Vector2.ZERO
+	return travel
 
 
 func _axis(value_mm: float, saturation_mm: float) -> float:

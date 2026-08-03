@@ -7,6 +7,16 @@ const GROUND_Y := 600.0
 const LEVEL_LEFT := 0.0
 const LEVEL_RIGHT := 2400.0
 
+## Leftover F1 shooting-range targets. Off now that there are real enemies to
+## shoot at; they were only ever there to give aiming something to track.
+const SHOW_AIM_TARGETS := false
+
+## How far above the ground the walkable field reaches in free movement.
+##
+## Generous on purpose. The screen is 720 units tall, so a short band leaves
+## most of the view unusable and the second axis barely worth having.
+const FIELD_HEIGHT := 400.0
+
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
 var enemies: Array = []
@@ -22,7 +32,11 @@ var _alive: int = 0
 func _ready() -> void:
 	_build_level()
 	_build_player()
-	_build_targets()
+	# The moving targets are F1 shooting-range furniture, not content. They
+	# exist to give the aim something to track while the controls are tuned,
+	# and they only get in the way once there are real enemies.
+	if SHOW_AIM_TARGETS:
+		_build_targets()
 	_build_bullet_pool()
 	_build_enemy_pool()
 	_build_hud()
@@ -44,6 +58,15 @@ func _build_level() -> void:
 	_solid(Vector2(1200, GROUND_Y + 100.0), Vector2(2560, 200), Color(0.20, 0.22, 0.27))
 	_solid(Vector2(LEVEL_LEFT - 40.0, GROUND_Y - 300.0), Vector2(80, 800), Color(0.20, 0.22, 0.27))
 	_solid(Vector2(LEVEL_RIGHT + 40.0, GROUND_Y - 300.0), Vector2(80, 800), Color(0.20, 0.22, 0.27))
+
+	if Touch.config.free_movement:
+		# No jump means a jump-through platform is furniture with no purpose:
+		# unreachable, and in the way of a character walking the field.
+		#
+		# The top of the band is a limit on the character, not a wall. A solid
+		# ceiling was tried and it filled the upper half of the screen with a
+		# grey slab, leaving about 40 per cent of the view playable.
+		return
 
 	# 3 one-way platforms — jump-through, land-on (Metal Slug style)
 	_platform(Vector2(430, 460), Vector2(280, 24))
@@ -89,6 +112,8 @@ func _build_player() -> void:
 	player.global_position = Vector2(240, GROUND_Y - 120.0)
 	player.spawn_point = player.global_position
 	player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0, -500.0, GROUND_Y + 200.0)
+	player.field_top = GROUND_Y - FIELD_HEIGHT
+	player.field_bottom = GROUND_Y
 	player.fire_requested.connect(_on_fire_requested)
 	player.died.connect(_restart)
 
@@ -181,7 +206,15 @@ func _spawn_tick(delta: float) -> void:
 			+ randf() * Tuning.SPAWN_JITTER,
 		LEVEL_LEFT + 60.0, LEVEL_RIGHT - 60.0)
 	var kind: int = 1 if randf() < Tuning.THROWER_RATIO else 0
-	free_enemy.spawn(Vector2(x, GROUND_Y - 120.0), kind, player)
+
+	# In free movement there is no floor to walk in on, so they arrive spread
+	# across the depth of the field. Dropping them all on one line would make
+	# the second axis pointless: nothing would ever need dodging sideways.
+	var y: float = GROUND_Y - 120.0
+	if Touch.config.free_movement:
+		y = GROUND_Y - 40.0 - randf() * (FIELD_HEIGHT - 60.0)
+
+	free_enemy.spawn(Vector2(x, y), kind, player)
 
 
 func _on_enemy_died(_at: Vector2) -> void:
