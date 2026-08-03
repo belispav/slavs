@@ -22,6 +22,10 @@ var config: ControlConfig
 var move_x: float = 0.0
 var aim_dir: Vector2 = Vector2.RIGHT
 var aim_active: bool = false
+
+## Where on screen the character is, reported by the player every frame. Only
+## used when config.aim_from_character is on. Vector2.INF means "not known yet".
+var aim_origin: Vector2 = Vector2.INF
 var left_state: int = LeftState.NO_TOUCH
 ## Gestures that crossed the threshold.
 var jump_count: int = 0
@@ -133,17 +137,26 @@ func _blocked_by_ui(pos: Vector2) -> bool:
 	return false
 
 
+## The rectangle a touch must start inside to be taken as movement.
+##
+## Deliberately not the whole left half. The bottom band belongs to aiming,
+## because the right index finger reaches down there comfortably and a shot
+## aimed down-left was being swallowed as a movement input instead.
+func move_zone() -> Rect2:
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var height: float = view.y * (1.0 - config.move_zone_bottom)
+	return Rect2(Vector2.ZERO, Vector2(view.x * config.move_zone_width, height))
+
+
 func _on_press(index: int, pos: Vector2) -> void:
 	if _blocked_by_ui(pos):
 		return
-	var mid: float = get_viewport().get_visible_rect().size.x * 0.5
-	var wants_left: bool = pos.x < mid
 	# Ownership is decided by where the touch BEGAN and never changes (SPEC B1).
-	if wants_left:
+	if move_zone().has_point(pos):
 		if left_index == -1:
 			_claim_left(index, pos)
 		elif right_index == -1:
-			_claim_right(index, pos)   # edge case B6: both thumbs on one half
+			_claim_right(index, pos)   # edge case B6: both thumbs on one side
 	else:
 		if right_index == -1:
 			_claim_right(index, pos)
@@ -165,6 +178,11 @@ func _claim_right(index: int, pos: Vector2) -> void:
 	right_anchor = pos
 	right_pos = pos
 	_right_prev = pos
+	if config.aim_from_character:
+		# Thumb down means firing, from the first frame. Waiting for a
+		# deflection here would put a dead moment at the start of every shot.
+		_update_right_from_character()
+		return
 	aim_active = false
 	aim_input.emit(aim_dir, false)
 
@@ -227,6 +245,10 @@ func _run_axis(dx_mm: float) -> float:
 # ------------------------------------------------ right thumb (SPEC B3) ----
 
 func _update_right() -> void:
+	if config.aim_from_character:
+		_update_right_from_character()
+		return
+
 	var motion: Vector2 = right_pos - _right_prev
 	_right_prev = right_pos
 
@@ -254,4 +276,36 @@ func _update_right() -> void:
 		aim_active = true
 	else:
 		aim_active = false
+	aim_input.emit(aim_dir, aim_active)
+
+
+## Aim measured from the character rather than from an anchor under the thumb.
+##
+## The thumb indicates a direction instead of holding a stick. The shot leaves
+## the character, passes through the thumb and carries on, so an enemy further
+## along that line needs no reach and never sits under the thumb.
+##
+## Firing is tied to the thumb being down, not to how far the stick is pushed.
+## That is what kills the failure aim_turn_pull was rejected for: there is no
+## deflection that can shrink below a dead zone in the middle of a turn and
+## silence the gun.
+func _update_right_from_character() -> void:
+	_right_prev = right_pos
+
+	if aim_origin == Vector2.INF:
+		# The character has not reported where it is yet - keep the last
+		# direction rather than firing somewhere arbitrary.
+		aim_active = right_index != -1
+		aim_input.emit(aim_dir, aim_active)
+		return
+
+	var v: Vector2 = right_pos - aim_origin
+	var mm: float = v.length() / px_per_mm
+
+	# Near the character the angle swings wildly for almost no thumb movement,
+	# so hold the direction there. Firing is unaffected.
+	if mm > config.aim_origin_min_mm:
+		aim_dir = v.normalized()
+
+	aim_active = true
 	aim_input.emit(aim_dir, aim_active)

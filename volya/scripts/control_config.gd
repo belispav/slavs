@@ -93,6 +93,44 @@ class_name ControlConfig
 ## the idea and the reason it failed are not lost.
 @export_range(0.0, 1.0, 0.05) var aim_turn_pull: float = 0.0
 
+## Where the aim direction is measured FROM.
+##
+## false — from an anchor created under the thumb. The lever is only
+##         aim_recenter_mm long, so a millimetre of thumb tremor is a large
+##         change of angle. This is the F1 behaviour.
+## true  — from the character itself. The thumb points a direction rather than
+##         holding a stick: the shot travels from the character through the
+##         thumb and onward, so a distant enemy needs no reach and is never
+##         hidden under the thumb. The lever becomes the whole distance from
+##         character to thumb, typically 30-60 mm instead of 12, which is the
+##         same tremor spread over three to five times less angle.
+##
+## Added because aiming read as uncontrollably twitchy on device and the cause
+## was the short lever, not the player's thumb.
+@export var aim_from_character: bool = false
+
+## Below this distance between the character and the thumb, the direction is
+## held rather than recomputed. Close in, the angle between them swings wildly
+## for almost no thumb movement, which is the same twitchiness in a smaller
+## place. Firing continues; only the direction stops updating.
+@export_range(2.0, 30.0, 0.5) var aim_origin_min_mm: float = 9.0
+
+## The movement pad, as fractions of the screen. A touch that starts inside it
+## drives movement; everything else aims.
+##
+## It is not simply the left half any more. Aiming turned out to be far more
+## comfortable with the right INDEX finger than with the thumb, and an index
+## finger reaches the bottom left corner easily - where the touch was being
+## taken as movement, so the shot never happened. Standing still and shooting
+## down-left was impossible.
+##
+## The bottom band is excluded because that is where the character stands: a
+## thumb resting there covers the thing the player is trying to watch. Resting
+## it around mid height also puts it below the jump flick rather than at the
+## bottom of the travel.
+@export_range(0.2, 0.8, 0.01) var move_zone_width: float = 0.5
+@export_range(0.0, 0.6, 0.01) var move_zone_bottom: float = 0.28
+
 
 ## The arc threshold curve, in millimetres (SPEC B2). Asymmetric by design.
 ## Everything is relative to reach_mm, so the shape scales with the player's

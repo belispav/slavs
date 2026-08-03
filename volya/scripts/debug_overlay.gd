@@ -86,6 +86,25 @@ func _build_panel() -> void:
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	vb.add_child(scroll)
 
+	# Godot's default scrollbar is a few pixels wide, which is a mouse
+	# measurement. On the phone it cannot be grabbed at all. Widen it to
+	# something a thumb can actually land on.
+	var bar := scroll.get_v_scroll_bar()
+	if bar != null:
+		bar.custom_minimum_size = Vector2(48, 0)
+		var grabber := StyleBoxFlat.new()
+		grabber.bg_color = Color(0.85, 0.87, 0.95, 0.9)
+		grabber.set_corner_radius_all(10)
+		grabber.content_margin_left = 8.0
+		grabber.content_margin_right = 8.0
+		var track := StyleBoxFlat.new()
+		track.bg_color = Color(1, 1, 1, 0.12)
+		track.set_corner_radius_all(10)
+		bar.add_theme_stylebox_override("grabber", grabber)
+		bar.add_theme_stylebox_override("grabber_highlight", grabber)
+		bar.add_theme_stylebox_override("grabber_pressed", grabber)
+		bar.add_theme_stylebox_override("scroll", track)
+
 	rows = VBoxContainer.new()
 	rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(rows)
@@ -114,6 +133,22 @@ func _build_panel() -> void:
 	# 0 = kotva sa len vlecie, 1 = pri otoceni skoci rovno k palcu
 	_add_slider("MIER_OTOC", 0.0, 1.0, 0.05, Touch.config.aim_turn_pull,
 		func(v: float) -> void: Touch.config.aim_turn_pull = v)
+	_add_slider("MIER_MIN", 2.0, 30.0, 0.5, Touch.config.aim_origin_min_mm,
+		func(v: float) -> void: Touch.config.aim_origin_min_mm = v)
+	_add_slider("ZONA_SIRKA", 0.2, 0.8, 0.01, Touch.config.move_zone_width,
+		func(v: float) -> void: Touch.config.move_zone_width = v)
+	_add_slider("ZONA_DNO", 0.0, 0.6, 0.01, Touch.config.move_zone_bottom,
+		func(v: float) -> void: Touch.config.move_zone_bottom = v)
+
+	# The two aiming schemes sit side by side so they can be compared on the
+	# device in one session, which is the only place the answer exists.
+	var aim_mode := CheckButton.new()
+	aim_mode.text = "MIERIT OD POSTAVY"
+	aim_mode.custom_minimum_size = Vector2(0, 56)
+	aim_mode.button_pressed = Touch.config.aim_from_character
+	rows.add_child(aim_mode)
+	aim_mode.toggled.connect(func(on: bool) -> void:
+		Touch.config.aim_from_character = on)
 
 	var buttons := HBoxContainer.new()
 	vb.add_child(buttons)
@@ -210,6 +245,10 @@ func _dump_values() -> void:
 		"aim_deadzone_mm         = %s" % c.aim_deadzone_mm,
 		"aim_recenter_mm         = %s" % c.aim_recenter_mm,
 		"aim_turn_pull           = %s" % c.aim_turn_pull,
+		"aim_from_character      = %s" % c.aim_from_character,
+		"aim_origin_min_mm       = %s" % c.aim_origin_min_mm,
+		"move_zone_width         = %s" % c.move_zone_width,
+		"move_zone_bottom        = %s" % c.move_zone_bottom,
 		"gest / vykonane         = %d / %d" % [Touch.jump_count, Touch.jumps_performed],
 		"dpi = %s   px_per_mm = %s" % [Touch.raw_dpi, Touch.px_per_mm],
 		"===============================",
@@ -240,8 +279,9 @@ func _fmt(v: float) -> String:
 
 func _on_draw() -> void:
 	var vp: Vector2 = draw_layer.size
-	# screen midline — the ownership boundary
-	draw_layer.draw_line(Vector2(vp.x * 0.5, 0.0), Vector2(vp.x * 0.5, vp.y), COL_FAINT, 2.0)
+	# The boundary is no longer the screen midline but a rectangle, so draw the
+	# rectangle. A line here would be describing a rule that no longer applies.
+	_draw_move_zone()
 
 	_draw_left(vp)
 	_draw_right()
@@ -283,11 +323,38 @@ func _draw_left(vp: Vector2) -> void:
 		draw_layer.draw_polyline(pts2, Color(COL_ARC.r, COL_ARC.g, COL_ARC.b, 0.35), 2.0)
 
 
+## Outline of the area where a touch counts as movement. Without it the split
+## is invisible and a shot that quietly turned into a step looks like the game
+## ignoring the input.
+func _draw_move_zone() -> void:
+	var zone: Rect2 = Touch.move_zone()
+	draw_layer.draw_rect(zone, Color(COL_LEFT.r, COL_LEFT.g, COL_LEFT.b, 0.05),
+		true)
+	draw_layer.draw_rect(zone, Color(COL_LEFT.r, COL_LEFT.g, COL_LEFT.b, 0.30),
+		false, 2.0)
+
+
 func _draw_right() -> void:
 	if Touch.right_index == -1:
 		return
-	var a: Vector2 = Touch.right_anchor
 	var p: Vector2 = Touch.right_pos
+
+	# Aiming from the character has no anchor and no rings; drawing them would
+	# show a stick that is not being used. What matters is the line the shot
+	# takes, so draw that instead, continuing past the thumb.
+	if Touch.config.aim_from_character:
+		if Touch.aim_origin == Vector2.INF:
+			return
+		var o: Vector2 = Touch.aim_origin
+		draw_layer.draw_line(o, p, Color(COL_RIGHT.r, COL_RIGHT.g, COL_RIGHT.b,
+			0.45), 2.0)
+		draw_layer.draw_line(p, p + Touch.aim_dir * 260.0, COL_RIGHT, 3.0)
+		draw_layer.draw_arc(o, Touch.config.aim_origin_min_mm * Touch.px_per_mm,
+			0.0, TAU, 32, Color(COL_RIGHT.r, COL_RIGHT.g, COL_RIGHT.b, 0.25), 2.0)
+		draw_layer.draw_arc(p, 26.0, 0.0, TAU, 24, COL_RIGHT, 3.0)
+		return
+
+	var a: Vector2 = Touch.right_anchor
 	draw_layer.draw_arc(a, Touch.config.aim_deadzone_mm * Touch.px_per_mm,
 		0.0, TAU, 32, Color(COL_RIGHT.r, COL_RIGHT.g, COL_RIGHT.b, 0.5), 2.0)
 	# outer ring = point where the anchor starts sliding after the thumb

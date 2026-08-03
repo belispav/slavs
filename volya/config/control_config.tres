@@ -23,3 +23,13 @@ run_saturation_right_mm = 15.0
 aim_deadzone_mm = 2.5
 aim_recenter_mm = 12.0
 aim_turn_pull = 0.0
+; Aiming from the character, tried against the anchored stick on device
+; 2026-08-03 and clearly better. The stick's lever was ~12 mm, so a millimetre
+; of tremor threw the shots wide; from the character it is 30-60 mm.
+aim_from_character = true
+aim_origin_min_mm = 9.0
+; The movement pad no longer covers the whole left half. Aiming with the right
+; index finger reaches down-left, where a touch used to be taken as movement
+; and the shot never happened.
+move_zone_width = 0.5
+move_zone_bottom = 0.28

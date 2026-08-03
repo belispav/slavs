@@ -165,6 +165,12 @@ func _physics_process(delta: float) -> void:
 	_iframes = maxf(_iframes - delta, 0.0)
 	_consume_jump_buffer(delta)
 	move_and_slide()
+
+	# Aiming from the character needs to know where the character actually is
+	# on screen, which only the character can say: the camera moves, so the
+	# world position alone is not enough.
+	Touch.aim_origin = get_global_transform_with_canvas().origin
+
 	_update_aim(delta)
 	_update_sprite()
 	queue_redraw()
