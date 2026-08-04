@@ -109,35 +109,72 @@ func _build_panel() -> void:
 	rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(rows)
 
-	# Kratke nazvy, aby sa panel zmestil na displej telefonu.
-	_add_slider("PRAH", 3.0, 20.0, 0.5, Touch.config.j0_mm,
-		func(v: float) -> void: Touch.config.j0_mm = v)
-	# Vsetko v milimetroch, vztiahnute na skutocny rozsah palca.
-	_add_slider("ROZSAH", 5.0, 35.0, 0.5, Touch.config.reach_mm,
-		func(v: float) -> void: Touch.config.reach_mm = v)
-	_add_slider("VLAVO+", 0.0, 20.0, 0.25, Touch.config.rise_left_mm,
-		func(v: float) -> void: Touch.config.rise_left_mm = v)
-	_add_slider("VPRAVO-", 0.0, 20.0, 0.25, Touch.config.drop_right_mm,
-		func(v: float) -> void: Touch.config.drop_right_mm = v)
-	_add_slider("DNO", 0.0, 10.0, 0.25, Touch.config.j_min_mm,
-		func(v: float) -> void: Touch.config.j_min_mm = v)
-	_add_slider("REARM", 0.0, 8.0, 0.25, Touch.config.hysteresis_mm,
-		func(v: float) -> void: Touch.config.hysteresis_mm = v)
-	# Samostatne pre kazdy smer - dozadu nie je kam palcom ist.
-	_add_slider("BEH_L", 2.0, 30.0, 0.5, Touch.config.run_saturation_left_mm,
-		func(v: float) -> void: Touch.config.run_saturation_left_mm = v)
-	_add_slider("BEH_P", 2.0, 30.0, 0.5, Touch.config.run_saturation_right_mm,
-		func(v: float) -> void: Touch.config.run_saturation_right_mm = v)
-	_add_slider("MIER", 3.0, 60.0, 0.5, Touch.config.aim_recenter_mm,
-		func(v: float) -> void: Touch.config.aim_recenter_mm = v)
-	# 0 = kotva sa len vlecie, 1 = pri otoceni skoci rovno k palcu
-	_add_slider("MIER_OTOC", 0.0, 1.0, 0.05, Touch.config.aim_turn_pull,
-		func(v: float) -> void: Touch.config.aim_turn_pull = v)
-	_add_slider("MIER_MIN", 2.0, 30.0, 0.5, Touch.config.aim_origin_min_mm,
-		func(v: float) -> void: Touch.config.aim_origin_min_mm = v)
-	_add_slider("ZONA_SIRKA", 0.2, 0.8, 0.01, Touch.config.move_zone_width,
+	# Only the sliders that do something in the current mode are built. Fourteen
+	# sliders, most of them inert, is enough to lose the one that matters - and
+	# a slider that does nothing is worse than no slider, because moving it and
+	# feeling no change reads as the game being broken.
+	var c: ControlConfig = Touch.config
+
+	if c.free_movement:
+		_add_note("POHYB")
+		if c.free_move_follow:
+			_add_slider("o kolko dalej ide postava nez palec", 1.0, 8.0, 0.25,
+				c.free_move_gain,
+				func(v: float) -> void: Touch.config.free_move_gain = v)
+		else:
+			_add_slider("posun palca pre plnu rychlost vlavo", 2.0, 30.0, 0.5,
+				c.run_saturation_left_mm,
+				func(v: float) -> void: Touch.config.run_saturation_left_mm = v)
+			_add_slider("posun palca pre plnu rychlost vpravo", 2.0, 30.0, 0.5,
+				c.run_saturation_right_mm,
+				func(v: float) -> void: Touch.config.run_saturation_right_mm = v)
+		_add_slider("o kolko pomalsi je pohyb hore-dole", 0.2, 1.0, 0.05,
+			c.free_move_y_ratio,
+			func(v: float) -> void: Touch.config.free_move_y_ratio = v)
+	else:
+		_add_note("SKOK")
+		_add_slider("ako prudko svihnut na skok", 3.0, 20.0, 0.5, c.j0_mm,
+			func(v: float) -> void: Touch.config.j0_mm = v)
+		_add_slider("dosah tvojho palca", 5.0, 35.0, 0.5, c.reach_mm,
+			func(v: float) -> void: Touch.config.reach_mm = v)
+		_add_slider("nesumernost dovnutra", 0.0, 20.0, 0.25, c.rise_left_mm,
+			func(v: float) -> void: Touch.config.rise_left_mm = v)
+		_add_slider("nesumernost von", 0.0, 20.0, 0.25, c.drop_right_mm,
+			func(v: float) -> void: Touch.config.drop_right_mm = v)
+		_add_slider("najnizsi prah skoku", 0.0, 10.0, 0.25, c.j_min_mm,
+			func(v: float) -> void: Touch.config.j_min_mm = v)
+		_add_slider("navrat pred dalsim skokom", 0.0, 8.0, 0.25,
+			c.hysteresis_mm,
+			func(v: float) -> void: Touch.config.hysteresis_mm = v)
+		_add_note("BEH")
+		_add_slider("posun palca pre plnu rychlost vlavo", 2.0, 30.0, 0.5,
+			c.run_saturation_left_mm,
+			func(v: float) -> void: Touch.config.run_saturation_left_mm = v)
+		_add_slider("posun palca pre plnu rychlost vpravo", 2.0, 30.0, 0.5,
+			c.run_saturation_right_mm,
+			func(v: float) -> void: Touch.config.run_saturation_right_mm = v)
+
+	_add_note("MIERENIE")
+	if c.aim_from_character:
+		_add_slider("ako blizko k postave prestane mierit", 2.0, 30.0, 0.5,
+			c.aim_origin_min_mm,
+			func(v: float) -> void: Touch.config.aim_origin_min_mm = v)
+	else:
+		_add_slider("vacsie cislo = pokojnejsi terc", 3.0, 60.0, 0.5,
+			c.aim_recenter_mm,
+			func(v: float) -> void: Touch.config.aim_recenter_mm = v)
+
+	_add_note("NEPRIATELIA")
+	_add_slider("rychlost bezcov", 0.2, 2.0, 0.05, Tuning.rusher_speed_scale,
+		func(v: float) -> void: Tuning.rusher_speed_scale = v)
+	_add_slider("rychlost strelcov", 0.2, 2.0, 0.05, Tuning.thrower_speed_scale,
+		func(v: float) -> void: Tuning.thrower_speed_scale = v)
+
+	_add_note("ZONA PRE LAVY PALEC")
+	_add_slider("sirka", 0.2, 0.8, 0.01, c.move_zone_width,
 		func(v: float) -> void: Touch.config.move_zone_width = v)
-	_add_slider("ZONA_DNO", 0.0, 0.6, 0.01, Touch.config.move_zone_bottom,
+	_add_slider("kolko zospodu patri miereniu", 0.0, 0.6, 0.01,
+		c.move_zone_bottom,
 		func(v: float) -> void: Touch.config.move_zone_bottom = v)
 
 	# The two aiming schemes sit side by side so they can be compared on the
@@ -168,12 +205,11 @@ func _build_panel() -> void:
 	follow_mode.button_pressed = Touch.config.free_move_follow
 	rows.add_child(follow_mode)
 	follow_mode.toggled.connect(func(on: bool) -> void:
-		Touch.config.free_move_follow = on)
-
-	_add_slider("KOPIR_ZISK", 1.0, 8.0, 0.25, Touch.config.free_move_gain,
-		func(v: float) -> void: Touch.config.free_move_gain = v)
-	_add_slider("HLBKA_POMER", 0.2, 1.0, 0.05, Touch.config.free_move_y_ratio,
-		func(v: float) -> void: Touch.config.free_move_y_ratio = v)
+		Touch.config.free_move_follow = on
+		# Rebuilds the panel, since the two styles are tuned by different
+		# sliders and leaving the wrong ones on screen invites tuning something
+		# that is not connected to anything.
+		get_tree().reload_current_scene())
 
 	var buttons := HBoxContainer.new()
 	vb.add_child(buttons)
@@ -228,6 +264,15 @@ func _layout_panel() -> void:
 	panel.offset_bottom = panel.offset_top
 
 
+## Heading between slider groups, so it is clear which of them belong together.
+func _add_note(text: String) -> void:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_color_override("font_color", Color(0.62, 0.78, 1.0))
+	label.custom_minimum_size = Vector2(0, 34)
+	rows.add_child(label)
+
+
 func _add_slider(label_text: String, lo: float, hi: float, step: float,
 		start: float, setter: Callable) -> void:
 	var row := VBoxContainer.new()
@@ -278,6 +323,8 @@ func _dump_values() -> void:
 		"free_move_y_ratio       = %s" % c.free_move_y_ratio,
 		"free_move_follow        = %s" % c.free_move_follow,
 		"free_move_gain          = %s" % c.free_move_gain,
+		"rusher_speed_scale      = %s" % Tuning.rusher_speed_scale,
+		"thrower_speed_scale     = %s" % Tuning.thrower_speed_scale,
 		"gest / vykonane         = %d / %d" % [Touch.jump_count, Touch.jumps_performed],
 		"dpi = %s   px_per_mm = %s" % [Touch.raw_dpi, Touch.px_per_mm],
 		"===============================",
@@ -311,6 +358,7 @@ func _on_draw() -> void:
 	# The boundary is no longer the screen midline but a rectangle, so draw the
 	# rectangle. A line here would be describing a rule that no longer applies.
 	_draw_move_zone()
+	_draw_field_edges()
 
 	_draw_left(vp)
 	_draw_right()
@@ -325,11 +373,18 @@ func _draw_left(vp: Vector2) -> void:
 	var ppm: float = Touch.px_per_mm
 	var armed: bool = Touch.is_jump_held()
 
-	# anchor + horizontal run guide
-	draw_layer.draw_line(Vector2(0.0, a.y), Vector2(vp.x * 0.5, a.y), COL_FAINT, 1.0)
 	draw_layer.draw_circle(a, 10.0, COL_LEFT)
 	draw_layer.draw_line(a, p, COL_LEFT, 2.0)
 	draw_layer.draw_arc(p, 26.0, 0.0, TAU, 24, COL_LEFT, 3.0)
+
+	# Everything below draws the jump gesture: the threshold arc, the re-arm
+	# line and the horizontal guide they are measured against. Free movement
+	# has no jump, so they are describing a rule that is not in play - and a
+	# curve drawn across the thumb while it is being used is simply in the way.
+	if Touch.config.free_movement:
+		return
+
+	draw_layer.draw_line(Vector2(0.0, a.y), Vector2(vp.x * 0.5, a.y), COL_FAINT, 1.0)
 
 	# the arc threshold curve  y = anchor.y - J(dx)
 	var pts := PackedVector2Array()
@@ -350,6 +405,27 @@ func _draw_left(vp: Vector2) -> void:
 		dx_mm += 1.5
 	if pts2.size() > 1:
 		draw_layer.draw_polyline(pts2, Color(COL_ARC.r, COL_ARC.g, COL_ARC.b, 0.35), 2.0)
+
+
+## Top and bottom of the walkable field, in free movement.
+##
+## The limit is invisible by design - a solid ceiling filled half the screen
+## with grey - but an invisible limit reads as the character getting stuck.
+## A line says "this is the edge" instead.
+func _draw_field_edges() -> void:
+	if not Touch.config.free_movement:
+		return
+	var players := get_tree().get_nodes_in_group("player")
+	var player := players[0] if not players.is_empty() else null
+	if player == null:
+		return
+	var canvas: Transform2D = player.get_global_transform_with_canvas() \
+		* player.global_transform.affine_inverse()
+	var width: float = draw_layer.size.x
+	for edge in [player.field_top, player.field_bottom]:
+		var y: float = (canvas * Vector2(0.0, edge)).y
+		draw_layer.draw_line(Vector2(0.0, y), Vector2(width, y),
+			Color(0.55, 0.75, 1.0, 0.22), 2.0)
 
 
 ## Outline of the area where a touch counts as movement. Without it the split

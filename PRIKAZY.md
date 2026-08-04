@@ -96,40 +96,125 @@ Keyframe Reduction none → uložiť do `tools\blender\`
 
 ---
 
-## Posuvníky v hre — čo je čo
+## Posuvníky v hre — čo každý robí
 
-Panel má desať posuvníkov v troch skupinách. Zhora nadol:
+Panel stavia **len tie posuvníky, ktoré v danom režime naozaj niečo robia.**
+Keď prepneš režim, panel sa prestaví. Preto ich zoznam nie je stále rovnaký.
 
-**Skok** (prvých šesť)
+Ku každému je napísané, čo sa stane, keď ho zdvihneš a keď znížiš, a čo na
+telefóne sledovať.
 
-| | |
-|---|---|
-| `PRAH` | ako prudko treba švihnúť palcom, aby to bol skok |
-| `ROZSAH` | dosah palca v milimetroch — koľko ho vieš natiahnuť |
-| `VLAVO+` | dovnútra sa palec ohýba inak než von, toto je tá nesúmernosť |
-| `VPRAVO-` | to isté na druhú stranu |
-| `DNO` | najnižší prah, pod ktorý sa nikdy nejde |
-| `REARM` | ako ďaleko musí palec cúvnuť, než smie skočiť znova |
+---
 
-**Beh** (dva)
+### POHYB — keď je zapnuté „POHYB KOPIRUJE PALEC"
 
-| | |
-|---|---|
-| `BEH_L` | koľko treba posunúť palec doľava pre plnú rýchlosť |
-| `BEH_P` | to isté doprava |
+Postava kopíruje pohyb palca. Keď palec zastaví, zastaví aj postava — aj keď
+ho stále držíš.
 
-Malá hodnota = beh naskočí hneď naplno (ako Metal Slug). Veľká = plynulejšie.
+**`o kolko dalej ide postava nez palec`** — rozsah 1–8, teraz 3
 
-**Mierenie** (dva)
+Násobok. Pri 1 sa postava posunie presne o toľko, o koľko si posunul palec.
+Pri 3 sa posunie trikrát ďalej.
 
-| | |
-|---|---|
-| `MIER` | **toto hľadáš, keď terč lieta.** Malé číslo = terč lieta, veľké = pokojné a presné, ale otočenie stojí viac pohybu palca |
-| `MIER_OTOC` | **nechaj na 0.** Skúšalo sa a prepadlo — počas otáčania prestane streľba |
+- **Zvýšiš** → prejdeš level menším počtom ťahov, ale ťažšie sa trafíš presne.
+- **Znížiš** → veľmi presné, ale palec sa ti minie skôr než level a budeš
+  musieť ťahať znova a znova.
+
+Sleduj: koľkokrát musíš „prehmatnúť", kým prejdeš obrazovku. Ak často, zdvihni.
+
+---
+
+### POHYB — keď je „POHYB KOPIRUJE PALEC" vypnuté
+
+Palec funguje ako páčka: kam ho vychýliš od miesta, kde si ho položil, tam
+postava ide, a **ide dovtedy, kým výchylku držíš.**
+
+**`posun palca pre plnu rychlost vlavo`** a **`vpravo`** — rozsah 2–30 mm
+
+Koľko milimetrov musíš palec posunúť, aby postava išla naplno.
+
+- **Znížiš** (napr. na 3) → akýkoľvek dotyk = plná rýchlosť. Ostré, digitálne,
+  presne ako Metal Slug.
+- **Zvýšiš** (napr. na 20) → dá sa ísť aj pomaly, plynule, ale plná rýchlosť
+  stojí veľa pohybu.
+
+Sú dva, lebo palec sa dovnútra dlane ohýba inak než von. Doľava mu treba menej.
+
+---
+
+### POHYB — spoločné pre oba štýly
+
+**`o kolko pomalsi je pohyb hore-dole`** — rozsah 0,2–1,0, teraz 0,62
+
+Násobok rýchlosti do hĺbky oproti rýchlosti do strán.
+
+- **1,0** → hore-dole rovnako rýchlo ako do strán. Postava pôsobí, že sa
+  vznáša, nie že kráča.
+- **0,3** → do hĺbky sa hýbe pomaly, uhýbanie je ťažšie.
+
+Klasické hry tohto typu majú hĺbku pomalšiu. Preto 0,62.
+
+---
+
+### MIERENIE
+
+Teraz je zapnuté mierenie od postavy, takže je tam jeden posuvník.
+
+**`ako blizko k postave prestane mierit`** — rozsah 2–30 mm, teraz 9
+
+Keď je palec bližšie k postave než toto, smer sa prestane prepočítavať a
+podrží sa posledný. Streľba beží ďalej.
+
+Je to preto, že tesne pri postave stačí milimeter a smer sa preklopí o 180°.
+
+- **Zvýšiš** → pokojnejšie, ale okolo postavy vznikne väčšia „mŕtva" oblasť,
+  kde sa smer nemení.
+- **Znížiš** → mieriš aj celkom nablízko, ale bude to divoké.
+
+---
+
+### NEPRIATELIA
+
+**`rychlost bezcov`** a **`rychlost strelcov`** — rozsah 0,2–2,0, teraz 1,0
+
+Násobok. 1,0 = pôvodná rýchlosť, 0,5 = polovičná, 2,0 = dvojnásobná.
+
+Bežci sú tí červení, čo idú priamo na teba. Strelci sú tí fialoví, čo zastanú
+v diaľke a hádžu.
+
+---
+
+### ZONA PRE LAVY PALEC
+
+Obdĺžnik, v ktorom sa dotyk berie ako pohyb. Všade inde sa berie ako mierenie.
+**Na displeji ho vidíš orámovaný.**
+
+**`sirka`** — 0,2–0,8, teraz 0,5. Aká široká časť obrazovky patrí pohybu.
+
+**`kolko zospodu patri miereniu`** — 0,0–0,6, teraz 0,28
+
+Spodný pás sa z tej zóny vyberie a patrí miereniu.
+
+- **Zvýšiš** → ukazovákom pravej ruky dosiahneš nižšie doľava bez toho, aby to
+  spustilo pohyb. Ale ľavý palec musíš držať vyššie.
+- **Znížiš** → viac miesta pre ľavý palec, ale mierenie dole doľava sa začne
+  meniť na chôdzu.
+
+---
+
+### Posuvníky, ktoré tu už nenájdeš
+
+Šesť posuvníkov obsluhovalo švih na skok (`PRAH`, `ROZSAH`, `VLAVO+`,
+`VPRAVO-`, `DNO`, `REARM`). Vo voľnom pohybe skok neexistuje, takže sa
+nestavajú. Objavia sa len vtedy, ak vypneš „VOLNY POHYB".
+
+`MIER_OTOC` sa tiež nestavia — patrí k starému spôsobu mierenia a na telefóne
+prepadol, lebo počas otáčania prestávala streľba.
 
 ### Keď si hodnoty vyladíš
 
-V hre stlač `VYPIS DO LOGU`, potom spusti:
+**Dva kroky, oba treba.** V hre stlač `VYPIS DO LOGU` — tým sa hodnoty uložia
+do telefónu. Potom ich z neho stiahni:
 
 ```
 powershell -ExecutionPolicy Bypass -File tools\get_tuning.ps1
@@ -154,12 +239,33 @@ powershell -ExecutionPolicy Bypass -File tools\diag_android.ps1
 powershell -ExecutionPolicy Bypass -File tools\get_tuning.ps1
 ```
 
+**Zmizli nepriatelia / postava / niečo v hre celé chýba.** Skoro vždy to
+znamená, že sa nejaký skript neskompiloval — vtedy prestane fungovať celý,
+nie len chybný riadok. Skontroluj:
+
+```
+python tools/check_gdscript.py "volya/scripts/*.gd"
+```
+
 **Git sa sťažuje na zámok** (`Unable to create ... .lock`). Toto je najčastejší
 príkaz zo všetkých — zámok vzniká, keď sa commit prerušil:
 
 ```
 Remove-Item -Force .git\HEAD.lock, .git\index.lock -ErrorAction SilentlyContinue
 ```
+
+**Keď mi commit nechodí ani po tomto**, pripravím ti text do `commit_msg.txt`
+v hlavnom priečinku a ty spustíš:
+
+```
+Remove-Item -Force .git\HEAD.lock, .git\index.lock -ErrorAction SilentlyContinue
+git add -A
+git commit -F commit_msg.txt
+```
+
+**Prečo na tom záleží:** číslo buildu, ktoré vidíš v hre a vo výpise hodnôt,
+sa berie z posledného commitu. Keď commity nechodia, **všetky buildy sa hlásia
+rovnakým číslom** a nedá sa rozoznať, ktorá verzia je v telefóne.
 
 **V editore postava beží, v telefóne je sivý box.** Godot pri exporte obrázky
 prebalí a pôvodné `.png` v nainštalovanej hre už nie sú, takže sa priečinok

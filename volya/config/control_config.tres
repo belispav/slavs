@@ -32,8 +32,17 @@ aim_origin_min_mm = 9.0
 ; index finger reaches down-left, where a touch used to be taken as movement
 ; and the shot never happened.
 move_zone_width = 0.5
-move_zone_bottom = 0.28
-; Free movement is OFF by default: it is a prototype to be compared against
-; jumping on the phone, not a decision yet. Toggle it in the panel.
-free_movement = false
-free_move_y_ratio = 0.62
+; 0.16 measured on device 2026-08-04, deliberately low: the band taken from the
+; movement pad is band taken from the vertical room the left thumb has, and the
+; thumb is lifted between strokes anyway. Revisit if enemies start getting below
+; the player often.
+move_zone_bottom = 0.16
+; DECIDED on device 2026-08-03: free movement, no jumping. Played against the
+; platform version back to back - "plosinovka a skoky su o nicom". The jump
+; subsystem stays in the code behind the toggle for now, but it is no longer
+; the default and nothing new should be built on it.
+free_movement = true
+; Measured on device 2026-08-04.
+free_move_y_ratio = 0.6
+free_move_follow = true
+free_move_gain = 3.5

@@ -31,8 +31,14 @@ var _sprite: AnimatedSprite2D          # null when no frames have been rendered 
 var field_top: float = -1e9
 var field_bottom: float = 1e9
 
+## How far above the body's origin shots leave from. Derived from the drawing,
+## so re-rendering the character at a different height keeps the muzzle on the
+## hands instead of drifting to the knees.
+var _muzzle_height: float = Tuning.MUZZLE_HEIGHT_FALLBACK
+
 
 func _ready() -> void:
+	add_to_group("player")
 	spawn_point = global_position
 	collision_layer = Tuning.LAYER_PLAYER
 	collision_mask = Tuning.LAYER_WORLD
@@ -96,6 +102,10 @@ func _build_sprite() -> void:
 	_sprite.position.y = SIZE.y * 0.5 \
 		- (height * 0.5 - margin) * Tuning.PLAYER_SPRITE_SCALE
 
+	# Feet sit on the bottom of the box, so measure up from there.
+	var drawn: float = (height - margin) * Tuning.PLAYER_SPRITE_SCALE
+	_muzzle_height = drawn * Tuning.MUZZLE_HEIGHT_FRACTION - SIZE.y * 0.5
+
 	add_child(_sprite)
 	_sprite.play()
 
@@ -107,11 +117,30 @@ func set_camera_limits(left: float, right: float, top: float, bottom: float) -> 
 	_cam.limit_bottom = int(bottom)
 
 
+## Where shots leave from, in world space: roughly the hands.
+func muzzle_point() -> Vector2:
+	return global_position + Vector2(0.0, -_muzzle_height)
+
+
+## Back to the start. Only for falling out of the world, where staying put is
+## not an option.
 func respawn() -> void:
 	global_position = spawn_point
 	velocity = Vector2.ZERO
 	hp = Tuning.PLAYER_MAX_HP
 	_iframes = 0.0
+	health_changed.emit(hp)
+
+
+## Get up where you fell.
+##
+## Being teleported back to the start on every death made it impossible to
+## settle into the game - the run kept restarting before it had begun. Dying
+## still costs, but it costs health and a moment of the fight, not the level.
+func revive() -> void:
+	hp = Tuning.PLAYER_MAX_HP
+	_iframes = Tuning.PLAYER_REVIVE_IFRAMES
+	velocity = Vector2.ZERO
 	health_changed.emit(hp)
 
 
@@ -163,10 +192,10 @@ func _physics_process(delta: float) -> void:
 	_iframes = maxf(_iframes - delta, 0.0)
 	move_and_slide()
 
-	# Aiming from the character needs to know where the character actually is
-	# on screen, which only the character can say: the camera moves, so the
-	# world position alone is not enough.
-	Touch.aim_origin = get_global_transform_with_canvas().origin
+	# Aim from the hands, not from the middle of the collision box. Both the
+	# shot and the direction start at the same point, or the line drawn on
+	# screen would not be the line the bullets take.
+	Touch.aim_origin = get_viewport().get_canvas_transform() * muzzle_point()
 
 	_update_aim(delta)
 	_update_sprite()
@@ -297,7 +326,7 @@ func _update_aim(delta: float) -> void:
 	if active and _fire_cooldown <= 0.0:
 		_fire_cooldown = Tuning.FIRE_INTERVAL
 		fire_requested.emit(
-			global_position + aim_dir * Tuning.MUZZLE_DISTANCE, aim_dir)
+			muzzle_point() + aim_dir * Tuning.MUZZLE_DISTANCE, aim_dir)
 
 
 # --------------------------------------------------------------- visuals ---
@@ -338,7 +367,9 @@ func _draw() -> void:
 		draw_rect(Rect2(Vector2(float(facing) * 6.0 - 4.0, -SIZE.y * 0.5 + 8.0),
 			Vector2(8, 8)), Color(0.15, 0.16, 0.2))
 
-	# The aim line stays either way: it is the only readout of where shots go,
-	# and the controls are still the thing being judged.
-	draw_line(Vector2.ZERO, aim_dir * Tuning.MUZZLE_DISTANCE,
+	# Drawn from the muzzle, not from the body's origin. Left at the origin it
+	# sat by the character's feet while the shots came from the chest, which
+	# made the aim look wrong at exactly the moment it had been fixed.
+	var muzzle := Vector2(0.0, -_muzzle_height)
+	draw_line(muzzle, muzzle + aim_dir * Tuning.MUZZLE_DISTANCE,
 		Color(1.0, 0.85, 0.35), 5.0)

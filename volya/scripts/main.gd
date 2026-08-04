@@ -11,11 +11,18 @@ const LEVEL_RIGHT := 2400.0
 ## shoot at; they were only ever there to give aiming something to track.
 const SHOW_AIM_TARGETS := false
 
-## How far above the ground the walkable field reaches in free movement.
+## How far above the ground the walkable field reaches, as a multiple of the
+## screen height.
 ##
-## Generous on purpose. The screen is 720 units tall, so a short band leaves
-## most of the view unusable and the second axis barely worth having.
-const FIELD_HEIGHT := 400.0
+## The bottom is fixed - that is where the ground, the wall, the river will be
+## drawn - and everything above it is playable. At 1.5 the camera has to travel
+## upwards, which is the point: a band shorter than the screen is exhausted in a
+## second by a character 130 units tall, and there is nowhere to put the feet of
+## an enemy or the bottom of a cage.
+##
+## 1.5 was tried on device and overshot - the top of the field ended up so far
+## up that it stopped meaning anything. Halving the increase lands here.
+const FIELD_HEIGHT_SCREENS := 1.0
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
@@ -53,6 +60,11 @@ func _process(delta: float) -> void:
 
 
 # ---------------------------------------------------------------- level ---
+
+## Playable height above the ground, in world units.
+func field_height() -> float:
+	return get_viewport_rect().size.y * FIELD_HEIGHT_SCREENS
+
 
 func _build_level() -> void:
 	_solid(Vector2(1200, GROUND_Y + 100.0), Vector2(2560, 200), Color(0.20, 0.22, 0.27))
@@ -111,11 +123,14 @@ func _build_player() -> void:
 	add_child(player)
 	player.global_position = Vector2(240, GROUND_Y - 120.0)
 	player.spawn_point = player.global_position
-	player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0, -500.0, GROUND_Y + 200.0)
-	player.field_top = GROUND_Y - FIELD_HEIGHT
+	player.field_top = GROUND_Y - field_height()
 	player.field_bottom = GROUND_Y
+	# The camera must be allowed as high as the field goes, or the character
+	# walks up into a view that refuses to follow.
+	player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
+		player.field_top - 260.0, GROUND_Y + 200.0)
 	player.fire_requested.connect(_on_fire_requested)
-	player.died.connect(_restart)
+	player.died.connect(_on_player_died)
 
 
 func _build_targets() -> void:
@@ -212,7 +227,11 @@ func _spawn_tick(delta: float) -> void:
 	# the second axis pointless: nothing would ever need dodging sideways.
 	var y: float = GROUND_Y - 120.0
 	if Touch.config.free_movement:
-		y = GROUND_Y - 40.0 - randf() * (FIELD_HEIGHT - 60.0)
+		# Only across the part of the field the player can currently see -
+		# arriving far above the view is an enemy that never joins the fight.
+		var visible_up: float = minf(field_height(),
+			get_viewport_rect().size.y * 0.8)
+		y = GROUND_Y - 40.0 - randf() * (visible_up - 60.0)
 
 	free_enemy.spawn(Vector2(x, y), kind, player)
 
@@ -225,16 +244,31 @@ func _on_enemy_throw(from: Vector2, dir: Vector2) -> void:
 	_fire(from, dir, true, Tuning.THROWER_SHOT_SPEED)
 
 
+## Death clears the field and gives the player a moment, but leaves them where
+## they were. Being sent back to the start every time made it impossible to
+## settle into a run.
+func _on_player_died() -> void:
+	deaths += 1
+	_clear_field()
+	_spawn_cd = 1.2
+	player.revive()
+
+
+## Falling out of the world is the one case where staying put is not possible.
 func _restart() -> void:
 	deaths += 1
+	_clear_field()
+	_spawn_cd = 1.2
+	player.respawn()
+
+
+func _clear_field() -> void:
 	for e in enemies:
 		if e.active:
 			e.despawn()
 	for b in bullets:
 		if b.active:
 			b.despawn()
-	_spawn_cd = 1.2
-	player.respawn()
 
 
 func _update_hud() -> void:

@@ -39,9 +39,23 @@ const FIRE_INTERVAL: float = 0.09
 const BULLET_POOL_SIZE: int = 96
 const MUZZLE_DISTANCE: float = 34.0
 
+## Where on the body a shot leaves from, as a fraction of the drawing's height
+## measured up from the feet. The collision box is 54 units tall while the
+## drawing is over twice that, so firing from the box's centre put the muzzle at
+## ankle height - shots appeared to come out of the character's feet, which
+## reads as the aim being wrong even when it is not.
+## 0.58 measured on device: 0.62 put the muzzle just above the hands.
+const MUZZLE_HEIGHT_FRACTION: float = 0.58
+
+## Used when no sprite has been rendered yet and the grey box is drawn instead.
+const MUZZLE_HEIGHT_FALLBACK: float = 18.0
+
 # --- Player survivability ---
-const PLAYER_MAX_HP: int = 3
+const PLAYER_MAX_HP: int = 5
 const PLAYER_IFRAMES: float = 0.9     # invulnerable window after taking a hit
+## Longer window after dying, so getting up in the middle of a crowd is not
+## immediately fatal again.
+const PLAYER_REVIVE_IFRAMES: float = 2.0
 const PLAYER_KNOCKBACK: Vector2 = Vector2(240.0, -320.0)
 
 # --- Enemies ---
@@ -65,13 +79,37 @@ const ENEMY_KEEP_RIGHT_MARGIN: float = 8.0
 ## it a crowd converges onto one line and reads as a queue rather than a mob.
 const ENEMY_DEPTH_SPREAD: float = 34.0
 
+## How far behind the player an enemy may fall before it is recycled. Generous,
+## so nothing vanishes while it is still on screen.
+const ENEMY_CULL_BEHIND: float = 900.0
+
+## A body walking toward you does not travel in a straight line. Each enemy
+## drifts across its approach, at its own speed and phase, which is enough to
+## stop a crowd looking like it is on rails.
+const ENEMY_WEAVE_AMPLITUDE: float = 46.0
+const ENEMY_WEAVE_SPEED: float = 1.6
+
 ## Rushers are chaff. One hit, large numbers — the point is mowing, not duelling.
+##
+## 437 measured on device 2026-08-04, and the road there is worth keeping. An
+## earlier session set them to 46 — a fifth of this — but that was tuning around
+## dying constantly and being returned to the start of the level each time. Once
+## death cost health instead of the run, the same player asked for nearly ten
+## times the speed. A number measured while something else is broken measures
+## the other thing.
 const RUSHER_HP: int = 1
-const RUSHER_SPEED: float = 230.0
+const RUSHER_SPEED: float = 437.0
+
+## Live multipliers, so speeds can be found on the device instead of guessed.
+## The constants above stay the source of truth; once a value settles, it goes
+## into the constant and the multiplier returns to 1.
+var rusher_speed_scale: float = 1.0
+var thrower_speed_scale: float = 1.0
 
 ## Throwers are the rare ones that force you to move. Slow, dodgeable shots:
 ## fast projectiles turned the game into a reflex test and killed the mowing.
 const THROWER_HP: int = 2
+## Confirmed unchanged on device 2026-08-04.
 const THROWER_SPEED: float = 95.0
 const THROWER_KEEP_DISTANCE: float = 430.0
 const THROWER_RANGE: float = 700.0

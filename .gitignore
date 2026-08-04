@@ -14,3 +14,6 @@ __pycache__/
 
 # medzivysledky renderu - do gitu ani do APK nepatria
 render/
+
+# pripraveny commit message, ked mi zlyha commit zo sandboxu
+commit_msg.txt
