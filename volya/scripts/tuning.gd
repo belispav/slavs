@@ -94,14 +94,15 @@ const ENEMY_WEAVE_SPEED: float = 1.6
 
 ## Rushers are chaff. One hit, large numbers — the point is mowing, not duelling.
 ##
-## 437 measured on device 2026-08-04, and the road there is worth keeping. An
-## earlier session set them to 46 — a fifth of this — but that was tuning around
-## dying constantly and being returned to the start of the level each time. Once
-## death cost health instead of the run, the same player asked for nearly ten
-## times the speed. A number measured while something else is broken measures
-## the other thing.
+## 262, measured on device 2026-08-04. The road there is worth keeping: guessed
+## at 230, dropped to 46, raised to 437, settled at 262.
+##
+## The 46 was not a preference. It was tuning around dying constantly and being
+## sent back to the start each time; once death cost health instead of the run,
+## the same player asked for nearly ten times the speed. A number measured while
+## something else is broken measures the other thing.
 const RUSHER_HP: int = 1
-const RUSHER_SPEED: float = 437.0
+const RUSHER_SPEED: float = 262.0
 
 ## Live multipliers, so speeds can be found on the device instead of guessed.
 ## The constants above stay the source of truth; once a value settles, it goes
@@ -112,8 +113,9 @@ var thrower_speed_scale: float = 1.0
 ## Throwers are the rare ones that force you to move. Slow, dodgeable shots:
 ## fast projectiles turned the game into a reflex test and killed the mowing.
 const THROWER_HP: int = 2
-## Confirmed unchanged on device 2026-08-04.
-const THROWER_SPEED: float = 95.0
+## 76, measured on device 2026-08-04. Slower than a rusher by roughly the same
+## ratio as before, so the two roles still read apart at a glance.
+const THROWER_SPEED: float = 76.0
 const THROWER_KEEP_DISTANCE: float = 430.0
 const THROWER_RANGE: float = 700.0
 const THROWER_INTERVAL: float = 2.0
