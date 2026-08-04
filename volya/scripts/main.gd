@@ -20,9 +20,17 @@ const SHOW_AIM_TARGETS := false
 ## second by a character 130 units tall, and there is nowhere to put the feet of
 ## an enemy or the bottom of a cage.
 ##
-## 1.5 was tried on device and overshot - the top of the field ended up so far
-## up that it stopped meaning anything. Halving the increase lands here.
-const FIELD_HEIGHT_SCREENS := 1.0
+const BACKGROUND_PATH := "res://art/env_01.png"
+
+## Which rows of the background picture are open ground, measured from the art
+## itself. Above them is the palisade and the props stacked against it, below
+## them the rocks and the river.
+##
+## The playable field is taken from these, not the other way round. Deciding the
+## field in screen fractions and then hoping the picture agreed was what made
+## the earlier attempts feel wrong - the character could walk into the river.
+const BG_WALK_TOP := 640.0
+const BG_WALK_BOTTOM := 1140.0
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
@@ -61,24 +69,58 @@ func _process(delta: float) -> void:
 
 # ---------------------------------------------------------------- level ---
 
-## Playable height above the ground, in world units.
+## Playable height, in world units: the open ground in the picture.
 func field_height() -> float:
-	return get_viewport_rect().size.y * FIELD_HEIGHT_SCREENS
+	return BG_WALK_BOTTOM - BG_WALK_TOP
+
+
+## World y of the background picture's top row. Placed so its open ground ends
+## on GROUND_Y, which everything else is already measured from.
+func background_top() -> float:
+	return GROUND_Y - BG_WALK_BOTTOM
+
+
+## The background, repeated sideways for the length of the level.
+##
+## One Sprite2D with a region wider than the texture and repeat turned on: the
+## GPU does the tiling, so a level ten screens long costs the same as one. The
+## picture's edges match to within a few shades, which is what makes this
+## possible at all.
+func _build_background() -> void:
+	var texture: Texture2D = load(BACKGROUND_PATH) as Texture2D
+	if texture == null:
+		push_warning("Pozadie %s sa nenacitalo." % BACKGROUND_PATH)
+		return
+
+	var sprite := Sprite2D.new()
+	sprite.texture = texture
+	sprite.centered = false
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	sprite.region_enabled = true
+	# Wider than the level on both sides, so the edges are never reached.
+	var span: float = (LEVEL_RIGHT - LEVEL_LEFT) + texture.get_width() * 2.0
+	sprite.region_rect = Rect2(0.0, 0.0, span, texture.get_height())
+	sprite.position = Vector2(LEVEL_LEFT - texture.get_width(), background_top())
+	sprite.z_index = -100
+	add_child(sprite)
 
 
 func _build_level() -> void:
+	if Touch.config.free_movement:
+		# No floor and no ceiling. There is no gravity to hold the character
+		# down and no jump to carry it up, so the edges of the field are limits
+		# on where it may walk - and a grey box drawn across the background is
+		# the last thing wanted now that there is a background.
+		#
+		# Platforms are not built either: without a jump they are unreachable
+		# scenery standing in the way.
+		_build_background()
+		return
+
 	_solid(Vector2(1200, GROUND_Y + 100.0), Vector2(2560, 200), Color(0.20, 0.22, 0.27))
 	_solid(Vector2(LEVEL_LEFT - 40.0, GROUND_Y - 300.0), Vector2(80, 800), Color(0.20, 0.22, 0.27))
 	_solid(Vector2(LEVEL_RIGHT + 40.0, GROUND_Y - 300.0), Vector2(80, 800), Color(0.20, 0.22, 0.27))
-
-	if Touch.config.free_movement:
-		# No jump means a jump-through platform is furniture with no purpose:
-		# unreachable, and in the way of a character walking the field.
-		#
-		# The top of the band is a limit on the character, not a wall. A solid
-		# ceiling was tried and it filled the upper half of the screen with a
-		# grey slab, leaving about 40 per cent of the view playable.
-		return
 
 	# 3 one-way platforms — jump-through, land-on (Metal Slug style)
 	_platform(Vector2(430, 460), Vector2(280, 24))
@@ -125,10 +167,22 @@ func _build_player() -> void:
 	player.spawn_point = player.global_position
 	player.field_top = GROUND_Y - field_height()
 	player.field_bottom = GROUND_Y
-	# The camera must be allowed as high as the field goes, or the character
-	# walks up into a view that refuses to follow.
-	player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
-		player.field_top - 260.0, GROUND_Y + 200.0)
+	player.field_left = LEVEL_LEFT + 40.0
+	player.field_right = LEVEL_RIGHT - 40.0
+
+	if Touch.config.free_movement:
+		# Locked vertically: the field is shorter than the screen, so the whole
+		# of it is in view at once and a sliver of river and palisade frames it.
+		# Letting the camera chase the character up and down would scroll off
+		# the picture, and there is nothing above or below it to show.
+		var view: float = get_viewport_rect().size.y
+		var centre: float = (player.field_top + player.field_bottom) * 0.5
+		var top: float = centre - view * 0.5
+		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
+			top, top + view)
+	else:
+		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
+			player.field_top - 260.0, GROUND_Y + 200.0)
 	player.fire_requested.connect(_on_fire_requested)
 	player.died.connect(_on_player_died)
 
@@ -227,11 +281,9 @@ func _spawn_tick(delta: float) -> void:
 	# the second axis pointless: nothing would ever need dodging sideways.
 	var y: float = GROUND_Y - 120.0
 	if Touch.config.free_movement:
-		# Only across the part of the field the player can currently see -
-		# arriving far above the view is an enemy that never joins the fight.
-		var visible_up: float = minf(field_height(),
-			get_viewport_rect().size.y * 0.8)
-		y = GROUND_Y - 40.0 - randf() * (visible_up - 60.0)
+		# Anywhere across the open ground. The whole field is on screen, so
+		# there is no part of it an enemy could arrive in unseen.
+		y = randf_range(GROUND_Y - field_height() + 30.0, GROUND_Y - 30.0)
 
 	free_enemy.spawn(Vector2(x, y), kind, player)
 

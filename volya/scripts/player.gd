@@ -30,6 +30,8 @@ var _sprite: AnimatedSprite2D          # null when no frames have been rendered 
 ## swallows most of the view.
 var field_top: float = -1e9
 var field_bottom: float = 1e9
+var field_left: float = -1e9
+var field_right: float = 1e9
 
 ## How far above the body's origin shots leave from. Derived from the drawing,
 ## so re-rendering the character at a different height keeps the muzzle on the
@@ -265,11 +267,16 @@ func _move_free(delta: float) -> void:
 	_jump_buffer = 0.0
 
 	# Applied after the velocity, before move_and_slide, so pressing against
-	# the edge simply stops rather than juddering.
-	var next_y: float = global_position.y + velocity.y * delta
-	if next_y < field_top or next_y > field_bottom:
+	# an edge simply stops rather than juddering. There are no walls in free
+	# movement - a solid body would be drawn over the background - so every
+	# edge of the field is a limit like this one.
+	var next: Vector2 = global_position + velocity * delta
+	if next.y < field_top or next.y > field_bottom:
 		global_position.y = clampf(global_position.y, field_top, field_bottom)
 		velocity.y = 0.0
+	if next.x < field_left or next.x > field_right:
+		global_position.x = clampf(global_position.x, field_left, field_right)
+		velocity.x = 0.0
 
 
 # ---------------------------------------------------------------- input ---
