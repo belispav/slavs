@@ -109,6 +109,9 @@ const RUSHER_SPEED: float = 262.0
 ## into the constant and the multiplier returns to 1.
 var rusher_speed_scale: float = 1.0
 var thrower_speed_scale: float = 1.0
+## The stick has a speed ceiling that copying the thumb did not, so switching
+## back to it reads as slower. Tunable rather than argued about.
+var player_speed_scale: float = 1.0
 
 ## Throwers are the rare ones that force you to move. Slow, dodgeable shots:
 ## fast projectiles turned the game into a reflex test and killed the mowing.

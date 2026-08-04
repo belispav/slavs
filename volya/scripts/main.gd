@@ -32,20 +32,24 @@ const BACKGROUND_PATH := "res://art/env_02.png"
 ## The playable field is taken from these, not the other way round. Deciding the
 ## field in screen fractions and then hoping the picture agreed was what made
 ## the earlier attempts feel wrong - the character could walk into the river.
-## Measured on env_02: grass begins at the foot of the palisade around row 555
-## and the bank drops into the river around row 1255.
+## Rows of env_02 the character's FEET may stand on.
 ##
-## The walkable band stops short of the bank on purpose. Using all 700 rows left
-## a 720 unit screen with ten units of palisade above and ten of river below -
-## the boundaries were there but invisible, so the field looked like it ended
-## for no reason. Ending on grass instead reads as walking up to the water.
-const BG_WALK_TOP := 555.0
-const BG_WALK_BOTTOM := 1155.0
+## Measured: palisade ends around row 600, grass runs to about 1252, water below
+## that. The grass is 652 rows and the screen is 720, which is the whole
+## difficulty - a 720 row window has only 68 rows to spend on everything that is
+## not grass, and the character alone needs 130 of them above the band or its
+## head leaves the screen.
+##
+## So the band is deliberately shorter than the grass. The rows above it are
+## where the character's upper body goes; the rows below it carry the bank and
+## the water.
+const BG_WALK_TOP := 720.0
+const BG_WALK_BOTTOM := 1160.0
 
-## How much of the palisade stays in view above the field. The rest of the
-## screen's spare height goes below, where the river is - the far boundary only
-## needs to be suggested, the near one is what the player reads position from.
-const BG_MARGIN_TOP := 34.0
+## Rows kept in view above the top of the band. Has to clear a standing
+## character - 130 units of drawing above its feet - or walking to the back of
+## the field cuts it in half.
+const BG_MARGIN_TOP := 140.0
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
@@ -185,10 +189,10 @@ func _build_player() -> void:
 	add_child(player)
 	player.global_position = Vector2(240, GROUND_Y - 120.0)
 	player.spawn_point = player.global_position
-	player.field_top = GROUND_Y - field_height()
-	player.field_bottom = GROUND_Y
-	player.field_left = LEVEL_LEFT + 40.0
-	player.field_right = LEVEL_RIGHT - 40.0
+	# The field is stated in terms of where the feet may stand. The player turns
+	# that into a limit on its own origin, which sits half a body higher.
+	player.set_foot_field(GROUND_Y - field_height(), GROUND_Y,
+		LEVEL_LEFT + 40.0, LEVEL_RIGHT - 40.0)
 
 	if Touch.config.free_movement:
 		var view: float = get_viewport_rect().size.y
@@ -196,9 +200,10 @@ func _build_player() -> void:
 		var bottom: float
 		if field_height() <= view:
 			# The field fits on screen, so the camera has nothing to follow.
-			# Locked, and framed low: a little palisade above, the rest of the
-			# spare height given to the river below.
-			top = player.field_top - BG_MARGIN_TOP
+			# Framed from the top of the band, leaving room above it for the
+			# character's body; whatever is left over falls below, where the
+			# bank and the water are.
+			top = (GROUND_Y - field_height()) - BG_MARGIN_TOP
 			bottom = top + view
 		else:
 			# Taller than the screen, so the camera travels - but never past

@@ -164,6 +164,9 @@ func _build_panel() -> void:
 			c.aim_recenter_mm,
 			func(v: float) -> void: Touch.config.aim_recenter_mm = v)
 
+	_add_slider("rychlost postavy", 0.4, 2.5, 0.05, Tuning.player_speed_scale,
+		func(v: float) -> void: Tuning.player_speed_scale = v)
+
 	_add_note("NEPRIATELIA")
 	_add_slider("rychlost bezcov", 0.2, 2.0, 0.05, Tuning.rusher_speed_scale,
 		func(v: float) -> void: Tuning.rusher_speed_scale = v)
@@ -323,6 +326,7 @@ func _dump_values() -> void:
 		"free_move_y_ratio       = %s" % c.free_move_y_ratio,
 		"free_move_follow        = %s" % c.free_move_follow,
 		"free_move_gain          = %s" % c.free_move_gain,
+		"player_speed_scale      = %s" % Tuning.player_speed_scale,
 		"rusher_speed_scale      = %s" % Tuning.rusher_speed_scale,
 		"thrower_speed_scale     = %s" % Tuning.thrower_speed_scale,
 		"gest / vykonane         = %d / %d" % [Touch.jump_count, Touch.jumps_performed],

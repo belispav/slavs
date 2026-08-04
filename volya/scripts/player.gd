@@ -25,9 +25,13 @@ var _kb_jump_was_down: bool = false
 var _cam: Camera2D
 var _sprite: AnimatedSprite2D          # null when no frames have been rendered yet
 
-## Vertical bounds of the walkable field in free movement, set by the level.
-## A limit rather than a wall: a solid ceiling ends up drawn on screen and
-## swallows most of the view.
+## Bounds of the walkable field in free movement, set by the level. Limits
+## rather than walls: a solid body ends up drawn over the background.
+##
+## Held in the body's own coordinates, but set from where the FEET may stand -
+## see set_foot_field. Clamping the origin directly was wrong by half a body
+## height, which showed up as the character stopping well short of the water
+## with a gap under its boots.
 var field_top: float = -1e9
 var field_bottom: float = 1e9
 var field_left: float = -1e9
@@ -133,6 +137,18 @@ func _build_sprite() -> void:
 	_sprite.play()
 
 
+## The field, given as where the character's feet may stand.
+##
+## The level knows the ground in the picture; it has no business knowing how
+## tall the collision box is. Converting here keeps that in one place.
+func set_foot_field(top: float, bottom: float, left: float, right: float) -> void:
+	var feet: float = SIZE.y * 0.5
+	field_top = top - feet
+	field_bottom = bottom - feet
+	field_left = left
+	field_right = right
+
+
 func set_camera_limits(left: float, right: float, top: float, bottom: float) -> void:
 	_cam.limit_left = int(left)
 	_cam.limit_right = int(right)
@@ -232,7 +248,8 @@ func _move_platform(delta: float) -> void:
 	var accel: float = Tuning.AIR_ACCEL
 	if is_on_floor():
 		accel = Tuning.GROUND_DECEL if is_zero_approx(ix) else Tuning.GROUND_ACCEL
-	velocity.x = move_toward(velocity.x, ix * Tuning.RUN_SPEED, accel * delta)
+	velocity.x = move_toward(velocity.x,
+		ix * Tuning.RUN_SPEED * Tuning.player_speed_scale, accel * delta)
 
 	if is_on_floor():
 		_coyote = Tuning.COYOTE_TIME
@@ -263,7 +280,7 @@ func _move_free(delta: float) -> void:
 
 		var accel: float = Tuning.GROUND_DECEL if wish.is_zero_approx() \
 			else Tuning.GROUND_ACCEL
-		var goal: Vector2 = wish * Tuning.RUN_SPEED
+		var goal: Vector2 = wish * Tuning.RUN_SPEED * Tuning.player_speed_scale
 		velocity.x = move_toward(velocity.x, goal.x, accel * delta)
 		velocity.y = move_toward(velocity.y, goal.y, accel * delta)
 
