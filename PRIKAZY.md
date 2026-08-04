@@ -38,6 +38,15 @@ stačí spustiť nasadenie vyššie.
 powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Model "tools\blender\hrdina_run.fbx" -Texture "ref\characters\Meshy_AI_The_Tattered_Wanderer_0802131405_texture_basecolor.jpg" -Height 128
 ```
 
+**Postava má dve animácie.** Chôdzu vyrenderuj do `run_px`, státie do
+`idle_px` — hra si obe načíta sama:
+
+```
+powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Model "tools\blender\hrdina_idle.fbx" -Name idle -Height 160 -Texture "ref\characters\Meshy_AI_The_Tattered_Wanderer_0802131405_texture_basecolor.jpg"
+```
+
+(Rozhoduje `-Name` — z neho vznikne názov priečinka `<name>_px`.)
+
 Čo sa dá meniť:
 
 | | |

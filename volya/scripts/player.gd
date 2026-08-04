@@ -35,6 +35,8 @@ var field_bottom: float = 1e9
 ## so re-rendering the character at a different height keeps the muzzle on the
 ## hands instead of drifting to the knees.
 var _muzzle_height: float = Tuning.MUZZLE_HEIGHT_FALLBACK
+var _has_idle: bool = false
+var _rest_frame: int = 0
 
 
 func _ready() -> void:
@@ -84,9 +86,24 @@ func _build_sprite() -> void:
 			% Tuning.PLAYER_ART_DIR)
 		return
 
-	_sprite = AnimatedSprite2D.new()
-	_sprite.sprite_frames = SpriteSequence.build_frames(
+	var sheet := SpriteSequence.build_frames(
 		frames, "run", Tuning.PLAYER_ANIM_FPS)
+
+	# A standing animation if one has been rendered; otherwise the run cycle is
+	# held on whichever of its frames is closest to upright.
+	var idle := SpriteSequence.load_frames(Tuning.PLAYER_IDLE_ART_DIR)
+	if idle.is_empty():
+		_rest_frame = SpriteSequence.most_upright_frame(frames)
+	else:
+		_has_idle = true
+		sheet.add_animation(&"idle")
+		sheet.set_animation_speed(&"idle", Tuning.PLAYER_ANIM_FPS)
+		sheet.set_animation_loop(&"idle", true)
+		for tex in idle:
+			sheet.add_frame(&"idle", tex)
+
+	_sprite = AnimatedSprite2D.new()
+	_sprite.sprite_frames = sheet
 	_sprite.animation = &"run"
 	# Nearest, or the whole pixel pass is undone by the GPU smoothing it back.
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -337,18 +354,27 @@ func _update_sprite() -> void:
 
 	_sprite.flip_h = (facing > 0) if Tuning.PLAYER_ART_FACES_LEFT else (facing < 0)
 
-	# Only a run cycle exists so far. Standing still holds a frame rather than
-	# running on the spot; a real idle animation replaces this later.
 	# Speed is taken from both axes: in free movement, walking straight up the
 	# field is still walking and should not freeze the sprite.
 	var speed: float = velocity.length() if Touch.config.free_movement \
 		else absf(velocity.x)
-	if speed > Tuning.PLAYER_ANIM_MIN_SPEED:
+	var moving: bool = speed > Tuning.PLAYER_ANIM_MIN_SPEED
+
+	if moving:
+		if _sprite.animation != &"run":
+			_sprite.animation = &"run"
 		if not _sprite.is_playing():
 			_sprite.play()
+	elif _has_idle:
+		if _sprite.animation != &"idle":
+			_sprite.animation = &"idle"
+			_sprite.play()
 	elif _sprite.is_playing():
+		# No standing animation rendered yet, so hold the least wrong frame of
+		# the run rather than frame zero - which is mid-stride, on one leg and
+		# leaning forward.
 		_sprite.stop()
-		_sprite.frame = 0
+		_sprite.frame = _rest_frame
 
 	var tint := Color.WHITE
 	if _iframes > 0.0:

@@ -20,6 +20,9 @@ const JUMP_BUFFER: float = 0.14
 # --- Player art ---
 ## Where the pixel pass writes the player's frames.
 const PLAYER_ART_DIR: String = "res://art/run_px"
+## Standing animation. Optional: without it the run cycle is held on its most
+## upright frame, which is better than nothing but still a walking pose.
+const PLAYER_IDLE_ART_DIR: String = "res://art/idle_px"
 ## The renderer produces every frame of the mocap. 30 was picked over 15 and 10
 ## by eye; both lower rates read as choppy on this run cycle.
 const PLAYER_ANIM_FPS: float = 30.0

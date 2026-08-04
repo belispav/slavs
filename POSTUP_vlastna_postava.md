@@ -172,7 +172,13 @@ vždy jedna z týchto:
 | Model je obrovský alebo maličký | Nevadí, náš render si kameru zarámuje sám |
 
 3. Keď je kostra hotová, prepni na **Animations** a stiahni si postupne:
-   `run`, `idle`, `jump`, prípadne `death`
+   `idle`, `walk` alebo `run`, neskôr `death`
+
+   **`idle` je povinná, nie voliteľná.** Bez nej postava po zastavení zamrzne
+   v snímke z chôdze — na jednej nohe a naklonená dopredu. Hra si ju načíta
+   sama, keď ju vyrenderuješ do `volya/art/idle_px/`.
+
+   Skok už nepotrebujeme, hra ho nemá.
 4. Pri každej: **In Place** zaškrtnuté, formát **FBX Binary**, **30 fps**,
    **With Skin**, Keyframe Reduction: none
 5. Ulož do `tools/blender/`

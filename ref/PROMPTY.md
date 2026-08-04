@@ -115,7 +115,94 @@ watermark, signature, colour swatches, multiple views
 
 ---
 
-## 4. Pozadie — `env_01.png`
+## 4b. Pozadie pre VOĽNÝ POHYB — toto teraz platí
+
+**Hra už nie je plošinovka.** Postava chodí po ploche do hĺbky, nie po čiare.
+To mení pozadie od základu a staré `env_*` obrázky sa naň nedajú použiť —
+sú kreslené ako kulisa za postavou, nie ako podlaha, po ktorej sa chodí.
+
+### Ako je plocha postavená
+
+```
+  ┌──────────────────────────────────┐
+  │  nebo, vzdialené kopce            │  nedá sa tam ísť
+  ├──────────────────────────────────┤  ← vzdialená hranica:
+  │                                   │    palisáda, skala, hustý les
+  │      CHODÍ SA TU                  │
+  │      (celá táto plocha)           │
+  │                                   │
+  ├──────────────────────────────────┤  ← blízka hranica:
+  │  breh, rieka, balvany             │    rieka, skaly, priepasť
+  └──────────────────────────────────┘
+```
+
+Hore aj dole musí byť **vidieť, prečo sa ďalej nedá.** Bez toho to vyzerá,
+že hra hráča bezdôvodne zastavuje.
+
+### Rozmer
+
+Kamera sa hýbe aj hore-dole, takže pozadie musí byť **vyššie než obrazovka**.
+Použi pomer okolo **4:3** (napr. 2048 × 1536), nie 20:9.
+
+Musí sa **opakovať doľava-doprava** — level je dlhý, obrázok krátky. Preto do
+promptu patrí `seamlessly tileable horizontally` a preto tam **nesmie byť nič
+výrazné a jedinečné** (jeden veľký strom uprostred sa bude opakovať každých pár
+sekúnd a je to hneď vidieť).
+
+### Prompt
+
+```
+side-scrolling beat-em-up background, top-down-angled side view looking
+slightly down onto the ground, walkable ground plane with visible depth,
+seamlessly tileable horizontally, [ŠTÝL: detailed pixel art, 16 bit],
+15th century Eastern European countryside, [MIESTO],
+the lower edge of the image is an impassable near boundary — [BLIZKA: rushing
+river with sharp rocks], the upper edge is an impassable far boundary —
+[VZDIALENA: timber palisade and dense pine forest], the whole middle band is
+open walkable ground of packed dirt and grass,
+completely empty of people and animals, no characters,
+even flat daylight, no strong cast shadows, no single dominant landmark,
+cohesive limited colour palette
+```
+
+### Negatívny prompt
+
+```
+people, person, human, figure, character, animals, platforms, floating
+platforms, ledges, side view of a wall, flat backdrop, vertical cliff face
+filling the frame, single large tree in the centre, unique landmark, perspective
+distortion, vanishing point, depth of field, dramatic lighting, long shadows,
+text, letters, UI, watermark, signature
+```
+
+### Miesta, ktoré sedia na túto hru
+
+| `[MIESTO]` | `[BLIZKA]` | `[VZDIALENA]` |
+|---|---|---|
+| riverside trade landing | rushing river with sharp rocks | timber palisade, moored boats |
+| wheat field | drainage ditch and brambles | dense treeline, distant fort |
+| forest clearing at night | fallen trunks and roots | wall of black pines |
+| old cemetery | low stone wall | ruined chapel and bare trees |
+| cave floor | underground stream | cave wall with torches |
+
+### Dôležité — prekážky NEPATRIA do pozadia
+
+Klietky, barikády, sudy, všetko, cez čo sa **nedá prejsť**, musia byť
+**samostatné obrázky s priehľadným pozadím**, nie namaľované do kulisy.
+
+Dôvody sú dva a oba sú technické:
+
+1. Hra musí vedieť, kde presne prekážka je, aby cez ňu nepustila. Z namaľovanej
+   kulisy sa to vyčítať nedá.
+2. Keď stojíš **pred** prekážkou, musíš byť vidieť; keď za ňou, má ťa
+   zakrývať. To ide len vtedy, keď je to samostatný objekt.
+
+Na tie použi prompt pre postavu (`char_01`) — jednofarebné pozadie, rovnomerné
+svetlo, celý objekt v zábere.
+
+---
+
+## 4. Pozadie — `env_01.png` (STARÉ, pre plošinovku)
 
 Tu úmyselne nie je ani `full body`, ani `character height`, ani `silhouette` —
 všetko tri by ti do scény natlačili postavy.

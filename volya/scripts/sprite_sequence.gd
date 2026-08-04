@@ -102,6 +102,36 @@ static func build_frames(frames: Array[Texture2D], anim: String,
 	return sf
 
 
+## Index of the frame closest to standing still.
+##
+## A run cycle has no standing pose, so freezing on frame zero leaves the
+## character balanced on one leg and leaning. The narrowest frame is the one
+## where the legs have passed each other, which is the least wrong thing to
+## hold until a real idle animation exists.
+static func most_upright_frame(frames: Array[Texture2D]) -> int:
+	var best_index := 0
+	var best_width := 1 << 30
+	for index in frames.size():
+		var image := frames[index].get_image()
+		if image == null:
+			continue
+		if image.is_compressed() and image.decompress() != OK:
+			continue
+		var left := image.get_width()
+		var right := -1
+		for x in image.get_width():
+			for y in image.get_height():
+				if image.get_pixel(x, y).a > 0.5:
+					left = mini(left, x)
+					right = maxi(right, x)
+					break
+		var width := right - left
+		if right >= 0 and width < best_width:
+			best_width = width
+			best_index = index
+	return best_index
+
+
 ## How far the lowest opaque pixel sits above the bottom edge of the canvas.
 ##
 ## The renderer auto-frames the model with a margin, so the feet are not on the
