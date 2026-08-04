@@ -20,7 +20,7 @@ const SHOW_AIM_TARGETS := false
 ## second by a character 130 units tall, and there is nowhere to put the feet of
 ## an enemy or the bottom of a cage.
 ##
-const BACKGROUND_PATH := "res://art/env_01.png"
+const BACKGROUND_PATH := "res://art/env_02.png"
 
 ## Which rows of the background picture are open ground, measured from the art
 ## itself. Above them is the palisade and the props stacked against it, below
@@ -29,8 +29,11 @@ const BACKGROUND_PATH := "res://art/env_01.png"
 ## The playable field is taken from these, not the other way round. Deciding the
 ## field in screen fractions and then hoping the picture agreed was what made
 ## the earlier attempts feel wrong - the character could walk into the river.
-const BG_WALK_TOP := 640.0
-const BG_WALK_BOTTOM := 1140.0
+## Measured on env_02: grass begins at the foot of the palisade around row 555,
+## and the bank drops into the river around row 1255. 700 rows of open ground,
+## against 500 in the first background.
+const BG_WALK_TOP := 555.0
+const BG_WALK_BOTTOM := 1255.0
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
