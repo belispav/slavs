@@ -80,6 +80,11 @@ func background_top() -> float:
 	return GROUND_Y - BG_WALK_BOTTOM
 
 
+func background_height() -> float:
+	var texture: Texture2D = load(BACKGROUND_PATH) as Texture2D
+	return float(texture.get_height()) if texture != null else 1536.0
+
+
 ## The background, repeated sideways for the length of the level.
 ##
 ## One Sprite2D with a region wider than the texture and repeat turned on: the
@@ -171,15 +176,23 @@ func _build_player() -> void:
 	player.field_right = LEVEL_RIGHT - 40.0
 
 	if Touch.config.free_movement:
-		# Locked vertically: the field is shorter than the screen, so the whole
-		# of it is in view at once and a sliver of river and palisade frames it.
-		# Letting the camera chase the character up and down would scroll off
-		# the picture, and there is nothing above or below it to show.
 		var view: float = get_viewport_rect().size.y
-		var centre: float = (player.field_top + player.field_bottom) * 0.5
-		var top: float = centre - view * 0.5
+		var top: float
+		var bottom: float
+		if field_height() <= view:
+			# The field fits on screen, so the camera has nothing to follow.
+			# Locked, with the whole of it in view and a sliver of river and
+			# palisade framing it.
+			var centre: float = (player.field_top + player.field_bottom) * 0.5
+			top = centre - view * 0.5
+			bottom = top + view
+		else:
+			# Taller than the screen, so the camera travels - but never past
+			# the edges of the picture, which has nothing beyond them.
+			top = background_top()
+			bottom = background_top() + background_height()
 		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
-			top, top + view)
+			top, bottom)
 	else:
 		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
 			player.field_top - 260.0, GROUND_Y + 200.0)

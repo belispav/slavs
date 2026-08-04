@@ -139,15 +139,48 @@ sú kreslené ako kulisa za postavou, nie ako podlaha, po ktorej sa chodí.
 Hore aj dole musí byť **vidieť, prečo sa ďalej nedá.** Bez toho to vyzerá,
 že hra hráča bezdôvodne zastavuje.
 
-### Rozmer
+### Rozmer — toto je najdôležitejšia časť
 
-Kamera sa hýbe aj hore-dole, takže pozadie musí byť **vyššie než obrazovka**.
-Použi pomer okolo **4:3** (napr. 2048 × 1536), nie 20:9.
+Obrázok sa v hre kreslí **1:1, jeden pixel = jedna herná jednotka.** Nič sa
+nezmenšuje ani nezväčšuje, lebo škálovaný pixel art vyzerá zle. Čísla v
+obrázku sú teda priamo čísla v hre.
+
+**Obrazovka má 720 jednotiek na výšku.** Aby sa obraz pri chôdzi nahor
+posúval, musí byť **voľná zem vyššia než 720**. Ak je nižšia, celé pole sa
+zmestí na obrazovku naraz a nie je kam scrollovať — kamera sa potom zamkne,
+lebo nad obrázkom nič nie je.
+
+| | | |
+|---|---|---|
+| **Celý obrázok** | **2816 × 1536 px** | |
+| horný pás — hradba, les | 280 px | 18 % |
+| **voľná zem — TU SA CHODÍ** | **900 px** | 59 % |
+| dolný pás — skaly, voda | 356 px | 23 % |
+
+Pri 900 px sa obraz posunie o **180 jednotiek** — presne ten scroll nahor,
+ktorý chceš.
+
+> **Celková výška obrázka je v poriadku, zlý bol pomer pásov.** Prvý obrázok
+> mal voľnej zeme len 500 px z 1536, teda tretinu. Potrebuje mať skoro
+> dve tretiny. Hradbu aj rieku nechaj, len ich sprav užšie.
+
+Ak vyjde iný rozmer, nevadí — dôležitý je pomer. Presné riadky si zmeriam a
+nastavím v `main.gd` (`BG_WALK_TOP`, `BG_WALK_BOTTOM`).
 
 Musí sa **opakovať doľava-doprava** — level je dlhý, obrázok krátky. Preto do
 promptu patrí `seamlessly tileable horizontally` a preto tam **nesmie byť nič
 výrazné a jedinečné** (jeden veľký strom uprostred sa bude opakovať každých pár
 sekúnd a je to hneď vidieť).
+
+### Na voľnej zemi nesmie stáť nič, čo vyzerá pevne
+
+Debny, sudy, koly, veľké balvany. Keď sú namaľované v pozadí, hráč cez ne
+prejde a **vyzerá to ako chyba hry** — presne to sa stalo s kolmi hradby a
+s veľkými kameňmi pri rieke.
+
+Buď musia byť za hranicou pásu (v hornom alebo dolnom páse), alebo z nich
+treba spraviť samostatné objekty. Do promptu preto patrí, že voľná zem je
+prázdna.
 
 ### Prompt
 
@@ -156,10 +189,11 @@ side-scrolling beat-em-up background, top-down-angled side view looking
 slightly down onto the ground, walkable ground plane with visible depth,
 seamlessly tileable horizontally, [ŠTÝL: detailed pixel art, 16 bit],
 15th century Eastern European countryside, [MIESTO],
-the lower edge of the image is an impassable near boundary — [BLIZKA: rushing
-river with sharp rocks], the upper edge is an impassable far boundary —
-[VZDIALENA: timber palisade and dense pine forest], the whole middle band is
-open walkable ground of packed dirt and grass,
+the bottom fifth of the image is an impassable near boundary — [BLIZKA: rushing
+river with sharp rocks], the top fifth is an impassable far boundary —
+[VZDIALENA: timber palisade and dense pine forest],
+the middle three fifths of the image is wide open empty walkable ground of
+packed dirt and grass, completely clear and unobstructed,
 completely empty of people and animals, no characters,
 even flat daylight, no strong cast shadows, no single dominant landmark,
 cohesive limited colour palette
@@ -170,9 +204,11 @@ cohesive limited colour palette
 ```
 people, person, human, figure, character, animals, platforms, floating
 platforms, ledges, side view of a wall, flat backdrop, vertical cliff face
-filling the frame, single large tree in the centre, unique landmark, perspective
-distortion, vanishing point, depth of field, dramatic lighting, long shadows,
-text, letters, UI, watermark, signature
+filling the frame, single large tree in the centre, unique landmark,
+crates on the open ground, barrels on the open ground, posts on the open ground,
+boulders on the open ground, clutter in the middle of the field,
+perspective distortion, vanishing point, depth of field, dramatic lighting,
+long shadows, text, letters, UI, watermark, signature
 ```
 
 ### Miesta, ktoré sedia na túto hru
