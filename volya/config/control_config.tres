@@ -44,5 +44,9 @@ move_zone_bottom = 0.16
 free_movement = true
 ; Measured on device 2026-08-04.
 free_move_y_ratio = 0.6
-free_move_follow = true
+; Copying the thumb was tried on device and put back: the thumb reaches the edge
+; of its reach long before the level ends, so it has to be lifted and replaced
+; constantly - which is the one thing the whole control scheme exists to avoid.
+; Holding an offset keeps the character walking for as long as it is held.
+free_move_follow = false
 free_move_gain = 3.5

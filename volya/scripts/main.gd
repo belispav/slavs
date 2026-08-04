@@ -5,7 +5,10 @@ extends Node2D
 
 const GROUND_Y := 600.0
 const LEVEL_LEFT := 0.0
-const LEVEL_RIGHT := 2400.0
+## The background repeats on the GPU, so length costs nothing to draw. 2400 was
+## barely more than a screen and a half - not enough to tell whether scrolling
+## along feels like travelling anywhere.
+const LEVEL_RIGHT := 12000.0
 
 ## Leftover F1 shooting-range targets. Off now that there are real enemies to
 ## shoot at; they were only ever there to give aiming something to track.
@@ -29,11 +32,20 @@ const BACKGROUND_PATH := "res://art/env_02.png"
 ## The playable field is taken from these, not the other way round. Deciding the
 ## field in screen fractions and then hoping the picture agreed was what made
 ## the earlier attempts feel wrong - the character could walk into the river.
-## Measured on env_02: grass begins at the foot of the palisade around row 555,
-## and the bank drops into the river around row 1255. 700 rows of open ground,
-## against 500 in the first background.
+## Measured on env_02: grass begins at the foot of the palisade around row 555
+## and the bank drops into the river around row 1255.
+##
+## The walkable band stops short of the bank on purpose. Using all 700 rows left
+## a 720 unit screen with ten units of palisade above and ten of river below -
+## the boundaries were there but invisible, so the field looked like it ended
+## for no reason. Ending on grass instead reads as walking up to the water.
 const BG_WALK_TOP := 555.0
-const BG_WALK_BOTTOM := 1255.0
+const BG_WALK_BOTTOM := 1155.0
+
+## How much of the palisade stays in view above the field. The rest of the
+## screen's spare height goes below, where the river is - the far boundary only
+## needs to be suggested, the near one is what the player reads position from.
+const BG_MARGIN_TOP := 34.0
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
@@ -184,10 +196,9 @@ func _build_player() -> void:
 		var bottom: float
 		if field_height() <= view:
 			# The field fits on screen, so the camera has nothing to follow.
-			# Locked, with the whole of it in view and a sliver of river and
-			# palisade framing it.
-			var centre: float = (player.field_top + player.field_bottom) * 0.5
-			top = centre - view * 0.5
+			# Locked, and framed low: a little palisade above, the rest of the
+			# spare height given to the river below.
+			top = player.field_top - BG_MARGIN_TOP
 			bottom = top + view
 		else:
 			# Taller than the screen, so the camera travels - but never past
