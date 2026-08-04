@@ -17,3 +17,6 @@ render/
 
 # pripraveny commit message, ked mi zlyha commit zo sandboxu
 commit_msg.txt
+
+# nahlad ramovania, generuje sa
+preview_framing.png

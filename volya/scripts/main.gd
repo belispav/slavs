@@ -32,24 +32,22 @@ const BACKGROUND_PATH := "res://art/env_02.png"
 ## The playable field is taken from these, not the other way round. Deciding the
 ## field in screen fractions and then hoping the picture agreed was what made
 ## the earlier attempts feel wrong - the character could walk into the river.
-## Rows of env_02 the character's FEET may stand on.
+## Rows of env_02 the character's FEET may stand on: the open grass, all of it.
 ##
-## Measured: palisade ends around row 600, grass runs to about 1252, water below
-## that. The grass is 652 rows and the screen is 720, which is the whole
-## difficulty - a 720 row window has only 68 rows to spend on everything that is
-## not grass, and the character alone needs 130 of them above the band or its
-## head leaves the screen.
+## Measured: palisade ends around row 600, grass runs to about 1240, water from
+## about 1252.
 ##
-## So the band is deliberately shorter than the grass. The rows above it are
-## where the character's upper body goes; the rows below it carry the bank and
-## the water.
-const BG_WALK_TOP := 720.0
-const BG_WALK_BOTTOM := 1160.0
-
-## Rows kept in view above the top of the band. Has to clear a standing
-## character - 130 units of drawing above its feet - or walking to the back of
-## the field cuts it in half.
-const BG_MARGIN_TOP := 140.0
+## Earlier versions cut the band down to leave room on screen for the palisade
+## above and the river below at the same time. That cannot work here - the grass
+## alone is 640 rows against a 720 row screen, so both boundaries and the
+## character's head have to share 80 rows, and all three come out as slivers.
+##
+## They do not have to be on screen at the same time. The camera follows the
+## character up and down, so walking to the back of the field brings the
+## palisade into view and walking to the water brings the water. Each boundary
+## is seen when it matters, at full height, and the whole grass stays playable.
+const BG_WALK_TOP := 600.0
+const BG_WALK_BOTTOM := 1240.0
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
@@ -195,23 +193,12 @@ func _build_player() -> void:
 		LEVEL_LEFT + 40.0, LEVEL_RIGHT - 40.0)
 
 	if Touch.config.free_movement:
-		var view: float = get_viewport_rect().size.y
-		var top: float
-		var bottom: float
-		if field_height() <= view:
-			# The field fits on screen, so the camera has nothing to follow.
-			# Framed from the top of the band, leaving room above it for the
-			# character's body; whatever is left over falls below, where the
-			# bank and the water are.
-			top = (GROUND_Y - field_height()) - BG_MARGIN_TOP
-			bottom = top + view
-		else:
-			# Taller than the screen, so the camera travels - but never past
-			# the edges of the picture, which has nothing beyond them.
-			top = background_top()
-			bottom = background_top() + background_height()
+		# The camera follows the character up and down, stopping at the edges
+		# of the picture. That is what lets the field use the whole grass while
+		# the palisade and the river are still seen at full height - each comes
+		# into view as the character walks towards it.
 		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
-			top, bottom)
+			background_top(), background_top() + background_height())
 	else:
 		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
 			player.field_top - 260.0, GROUND_Y + 200.0)
