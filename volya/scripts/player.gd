@@ -57,7 +57,11 @@ func _ready() -> void:
 	_cam = Camera2D.new()
 	_cam.position_smoothing_enabled = true
 	_cam.position_smoothing_speed = 7.0
-	_cam.offset = Vector2(0, -60)
+	# The platformer looked 60 units up, to see what was above the jump. In free
+	# movement the camera is locked and framed deliberately, and that same
+	# offset silently eats the band at the bottom where the river is drawn -
+	# which is exactly the edge the player reads position from.
+	_cam.offset = Vector2.ZERO if Touch.config.free_movement else Vector2(0, -60)
 	add_child(_cam)
 
 	# Contact damage from enemy bodies.
