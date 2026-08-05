@@ -238,6 +238,98 @@ svetlo, celý objekt v zábere.
 
 ---
 
+## 5. Objekty — klietky, barikády, sudy, debny
+
+### Toto je dôležité: objekty NEPOTREBUJÚ 3D
+
+Postavy musia ísť cez Blender, lebo sa **animujú** — a jediný spôsob, ako
+zaručiť, že postava vyzerá na všetkých snímkach rovnako, je renderovať ich
+z jedného modelu.
+
+**Klietka sa nehýbe.** Barikáda tiež nie. Takže netreba Meshy, netreba Mixamo,
+netreba Blender. **Vygeneruješ obrázok a je hotovo.** Je to hodina práce
+namiesto večera.
+
+Zničiteľná barikáda potrebuje 2–3 stavy poškodenia — to sú tri obrázky, nie
+animácia.
+
+### Veľkosti
+
+Postava má **121 px**. Podľa nej sa riadi všetko ostatné:
+
+| objekt | výška | prečo |
+|---|---|---|
+| klietka so zajatcami | ~190 px | musí byť vidieť, že v nej niekto je |
+| barikáda, zátaras | ~110 px | po plecia, dá sa cez ňu strieľať |
+| sud, debna | ~70 px | prekážka pod pás |
+| kôl, stĺp | ~140 px | |
+
+Generuj **veľké** (napr. 1024 px) a ja to zmenším. Pri ladení to stačí; keby
+z niečoho bol finálny objekt, vygeneruje sa nanovo v správnej mierke.
+
+### Prompt
+
+```
+single object on a plain flat background, [ŠTÝL: detailed pixel art, 16 bit],
+[OBJEKT], 15th century Eastern European, weathered wood and rusted iron,
+side view seen very slightly from above, matching a beat-em-up ground plane,
+the object stands on flat ground and the bottom of the image is where it
+touches the ground,
+even flat daylight, no cast shadow, no ground beneath it, no scenery,
+plain solid neutral grey background, entire object visible with margin,
+strong readable silhouette, cohesive limited colour palette
+```
+
+### Negatívny prompt
+
+```
+background scenery, landscape, grass, ground, floor, cast shadow, drop shadow,
+people, person, character, animals, multiple objects, collection of objects,
+close-up, cropped, cut off, perspective distortion, vanishing point, dramatic
+lighting, rim light, text, letters, watermark, signature
+```
+
+### Do `[OBJEKT]`
+
+| | |
+|---|---|
+| klietka | `a heavy wooden cage with thick iron-bound bars and a barred door` |
+| klietka poškodená | `a heavy wooden cage with its bars splintered and broken open` |
+| barikáda | `a barricade of lashed timber stakes and planks` |
+| barikáda rozbitá | `a barricade of lashed timber stakes, smashed and half collapsed` |
+| zátaras | `a low wall of stacked sandbags and timber` |
+| sud | `a single wooden barrel bound with iron hoops` |
+| debna | `a single wooden crate` |
+| voz | `a broken wooden handcart lying on its side` |
+
+> **Zajatcov do klietky nekresli.** Sú to postavy, musia sa hýbať a musia
+> zmiznúť, keď ich zachrániš — takže patria zvlášť, do klietky sa vložia až
+> v hre.
+
+### Prečo „no cast shadow" a „no ground beneath it"
+
+Objekt sa v hre postaví na naše pozadie. Keby mal pod sebou vlastnú zem alebo
+vlastný tieň, viezol by si so sebou kus cudzej lúky.
+
+Tieň doplní hra sama, aby sedel so svetlom v scéne.
+
+### Nepriatelia
+
+Nepriatelia sa hýbu, takže **idú tou istou cestou ako hrdina** — celý postup
+je v `POSTUP_vlastna_postava.md`. Do `[POSTAVA]` v tom prompte daj rolu
+a výstroj, nikdy pôvod ani farbu pleti:
+
+| rola | opis |
+|---|---|
+| dozorca | `slaver overseer, heavy leather coat, wide belt, coiled whip at the hip` |
+| nájazdník | `river raider, quilted jacket, fur cap, short spear` |
+| štítonosič | `caravan guard, mail shirt, round shield, iron helmet` |
+| lukostrelec | `bowman, hooded cloak, quiver on the back` |
+
+Zbrane v rukách drž mimo — auto-rigger ich neznesie. Pridajú sa neskôr.
+
+---
+
 ## 4. Pozadie — `env_01.png` (STARÉ, pre plošinovku)
 
 Tu úmyselne nie je ani `full body`, ani `character height`, ani `silhouette` —
