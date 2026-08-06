@@ -26,6 +26,12 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 
 ## Content rules (hard constraints — store policy + project ethics)
 
+> **OPEN, must close before F3.** The tuning-stage enemy art (`ref/objects/Enemy_rusher_01`, `Enemy_gunman_01`) breaks the ethnicity rule below — both wear turbans, one has glowing red eyes. Pavel is aware, has a parallel review of Google Play policy running, and is knowingly using them as **tuning assets only**. Raised once, recorded here, not to be re-litigated in every session.
+>
+> What has to happen before any of it ships: regenerate with the ethnic markers replaced (fur cap, hood, helmet, brimmed hat instead of turban; no glowing eyes) and cross-check art, names, strings and store copy against the policy review. The silhouettes and role reads are good and should be kept — the coiled whip and the bandolier both say what the enemy is at a glance.
+>
+> The cost of leaving it later than F3: eight enemy types modelled, rigged, rendered and balanced on art that has to be thrown away.
+
 - Setting: Slavic slave fighting slavers, 9th–10th century trade routes (v1.0).
 - Enemies are ALWAYS defined by role/faction (slaver, raider, overseer, caravan guard, Varangian jarl…), NEVER by ethnicity or skin color — in code, art direction, names, strings, and store copy.
 - No killable civilians. No religious symbols as targets. Stylized pixel violence, no realistic gore (target rating PEGI 16).

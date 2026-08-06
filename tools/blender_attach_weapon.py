@@ -138,11 +138,26 @@ def build_bow():
     return parts, 1.20
 
 
+def build_club():
+    """A cut branch: thicker at the business end, roughly shaped.
+
+    Two tapering sections rather than one bar, because at 121 pixels the only
+    thing that separates a club from a sword is that one end is fatter.
+    """
+    parts = [
+        cylinder("handle", 0.028, 0.42, (-0.10, 0.0, 0.0), WOOD),
+        cylinder("head", 0.055, 0.34, (0.28, 0.0, 0.0), WOOD),
+        box("knot", (0.07, 0.085, 0.085), (0.40, 0.0, 0.0), WOOD),
+    ]
+    return parts, 0.72
+
+
 BUILDERS = {
     "arquebus": build_arquebus,
     "spear": build_spear,
     "sword": build_sword,
     "bow": build_bow,
+    "club": build_club,
 }
 
 
