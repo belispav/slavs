@@ -12,6 +12,7 @@ const SIZE := Vector2(30, 54)
 var hp: int = Tuning.PLAYER_MAX_HP
 var _iframes: float = 0.0
 var _hurtbox: Area2D
+var _hurt_shape: CollisionShape2D
 
 var aim_dir: Vector2 = Vector2.RIGHT
 var facing: int = 1
@@ -73,11 +74,11 @@ func _ready() -> void:
 	_hurtbox.collision_layer = 0
 	_hurtbox.collision_mask = Tuning.LAYER_ENEMY
 	add_child(_hurtbox)
-	var hs := CollisionShape2D.new()
+	_hurt_shape = CollisionShape2D.new()
 	var hrect := RectangleShape2D.new()
-	hrect.size = SIZE * 0.8           # small hurtbox, favours the player
-	hs.shape = hrect
-	_hurtbox.add_child(hs)
+	hrect.size = SIZE * 0.8           # replaced once the drawing is known
+	_hurt_shape.shape = hrect
+	_hurtbox.add_child(_hurt_shape)
 	_hurtbox.body_entered.connect(_on_body_touched)
 
 	_build_sprite()
@@ -132,9 +133,26 @@ func _build_sprite() -> void:
 	# Feet sit on the bottom of the box, so measure up from there.
 	var drawn: float = (height - margin) * Tuning.PLAYER_SPRITE_SCALE
 	_muzzle_height = drawn * Tuning.MUZZLE_HEIGHT_FRACTION - SIZE.y * 0.5
+	_fit_hurtbox(drawn)
 
 	add_child(_sprite)
 	_sprite.play()
+
+
+## Match the hurt area to the character that is actually drawn.
+##
+## Sized from the drawing and hung from the feet, so it covers the body from
+## about the knees to the top of the head however tall the character is
+## rendered. Narrower than the drawing on purpose: arms swing wide, and being
+## hit by an elbow is not a hit anyone would accept.
+func _fit_hurtbox(drawn_height: float) -> void:
+	var rect := _hurt_shape.shape as RectangleShape2D
+	if rect == null:
+		return
+	var tall: float = drawn_height * Tuning.PLAYER_HURT_HEIGHT_FRACTION
+	rect.size = Vector2(Tuning.PLAYER_HURT_WIDTH, tall)
+	# Feet are at +SIZE.y/2; hang the box from there so it sits on the body.
+	_hurt_shape.position.y = SIZE.y * 0.5 - tall * 0.5 - (drawn_height - tall) * 0.5
 
 
 ## The field, given as where the character's feet may stand.

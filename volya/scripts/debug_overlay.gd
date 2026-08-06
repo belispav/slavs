@@ -24,6 +24,31 @@ var scroll: ScrollContainer
 var rows: VBoxContainer
 var value_labels: Dictionary = {}
 var _font: Font
+var _title: Label
+var _toggle: Button
+
+
+## Show or hide every tuning readout at once.
+##
+## Anything in the "debug_ui" group goes with it, which is how the scoreboard in
+## main.gd disappears too - the overlay has no business knowing that node exists.
+func _set_debug_visible(on: bool) -> void:
+	scroll.visible = on
+	if _title != null:
+		_title.visible = on
+	if _toggle != null:
+		_toggle.text = "-" if on else "+"
+	if draw_layer != null:
+		draw_layer.visible = on
+	if panel != null:
+		# Transparent when collapsed, so only the small button remains.
+		panel.self_modulate.a = 1.0 if on else 0.0
+	for node in get_tree().get_nodes_in_group("debug_ui"):
+		node.visible = on
+	# The area the panel blocks from gameplay touches is recomputed every frame
+	# in _process from its own rectangle, which shrinks with it. Nothing to do
+	# here - and calling something that does not exist would take the whole
+	# script down with it.
 
 
 func _ready() -> void:
@@ -71,13 +96,17 @@ func _build_panel() -> void:
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(title)
 
+	_title = title
 	var toggle := Button.new()
 	toggle.text = "-"
 	toggle.custom_minimum_size = Vector2(56, 56)
 	head.add_child(toggle)
+	_toggle = toggle
 	toggle.pressed.connect(func() -> void:
-		scroll.visible = not scroll.visible
-		toggle.text = "-" if scroll.visible else "+"
+		# Everything, not just the sliders. The touch circles, the vectors, the
+		# movement rectangle and the counters are all readouts for tuning, and
+		# while they are on there is no way to see the game itself.
+		_set_debug_visible(not scroll.visible)
 	)
 
 	# Posuvniky su v scrollovacom okne, aby panel nikdy nepretiekol mimo displej,

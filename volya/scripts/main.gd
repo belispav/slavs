@@ -256,6 +256,8 @@ func _build_hud() -> void:
 	add_child(layer)
 	hud = Label.new()
 	hud.position = Vector2(20, 640)
+	# Goes away with the rest of the tuning readouts when the panel is collapsed.
+	hud.add_to_group("debug_ui")
 	layer.add_child(hud)
 
 

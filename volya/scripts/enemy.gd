@@ -72,6 +72,7 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	active = true
 	show()
 	set_physics_process(true)
+	set_deferred("collision_layer", Tuning.LAYER_ENEMY)
 	set_deferred("monitorable", true)
 	_hurtbox.set_deferred("monitorable", true)
 	queue_redraw()
@@ -83,6 +84,11 @@ func despawn() -> void:
 	set_physics_process(false)
 	if _hurtbox != null:
 		_hurtbox.set_deferred("monitorable", false)
+	# The body itself has to leave the enemy layer too, not just stop moving and
+	# stop being drawn. Without this a killed enemy leaves its collider standing
+	# where it fell, and walking over that spot costs a life to something
+	# invisible that is not there.
+	set_deferred("collision_layer", 0)
 
 
 ## Called by the player's bullets (via the hurtbox).

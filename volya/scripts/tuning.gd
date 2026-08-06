@@ -53,6 +53,20 @@ const MUZZLE_HEIGHT_FRACTION: float = 0.58
 ## Used when no sprite has been rendered yet and the grey box is drawn instead.
 const MUZZLE_HEIGHT_FALLBACK: float = 18.0
 
+## The player's hurt area, as fractions of the DRAWING rather than of the
+## collision box.
+##
+## The collision box is 54 units tall and the drawing is over twice that, so a
+## hurtbox sized from the box covered the hips and nothing else - shots passed
+## through the chest and head with no effect, which reads as the game not
+## registering hits.
+##
+## Still deliberately smaller than the picture. Narrow, because arms swing wide
+## and being hit by the shadow of an elbow is not what design pillar 1 means by
+## favouring the player.
+const PLAYER_HURT_HEIGHT_FRACTION: float = 0.72
+const PLAYER_HURT_WIDTH: float = 24.0
+
 # --- Player survivability ---
 const PLAYER_MAX_HP: int = 5
 const PLAYER_IFRAMES: float = 0.9     # invulnerable window after taking a hit
