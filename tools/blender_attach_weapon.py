@@ -139,17 +139,24 @@ def build_bow():
 
 
 def build_club():
-    """A cut branch: thicker at the business end, roughly shaped.
+    """A two-handed cudgel: a cut branch, thicker at the business end.
 
-    Two tapering sections rather than one bar, because at 121 pixels the only
+    Two tapering sections rather than one bar, because at 128 pixels the only
     thing that separates a club from a sword is that one end is fatter.
+
+    It is 1.25 m and not the 0.72 m a one-handed club would be, because the
+    rusher's Mixamo animations are the Great Sword set - both hands on the
+    shaft. Only the right hand carries the weapon through the bone; the left
+    hand simply lands where the animation puts it, so the shaft has to reach
+    back roughly 0.35 m behind the right hand or the left one closes on air.
+    Shorten this only together with swapping to one-handed animations.
     """
     parts = [
-        cylinder("handle", 0.028, 0.42, (-0.10, 0.0, 0.0), WOOD),
-        cylinder("head", 0.055, 0.34, (0.28, 0.0, 0.0), WOOD),
-        box("knot", (0.07, 0.085, 0.085), (0.40, 0.0, 0.0), WOOD),
+        cylinder("handle", 0.030, 0.80, (0.02, 0.0, 0.0), WOOD),
+        cylinder("head", 0.060, 0.42, (0.63, 0.0, 0.0), WOOD),
+        box("knot", (0.08, 0.095, 0.095), (0.82, 0.0, 0.0), WOOD),
     ]
-    return parts, 0.72
+    return parts, 1.25
 
 
 BUILDERS = {

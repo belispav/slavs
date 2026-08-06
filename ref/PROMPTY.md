@@ -30,7 +30,7 @@ deep woods with horror atmosphere at night
 ```
 side-scrolling video game screenshot, orthographic side view, flat camera at
 character height, no perspective distortion, wide establishing shot, [ŠTÝL],
-9th century Slavic river trade route, [MIESTO: napr. wooden palisade fort on a
+15th century Eastern European slave-raid country, [MIESTO: napr. wooden palisade fort on a
 riverbank at dusk], one escaped slave protagonist running left to right in the
 foreground, three armed enemies further right defined only by their role and
 equipment — an overseer with a coiled whip, a raider with a short spear, a
@@ -68,10 +68,10 @@ Najtvrdší test. Tu sa rozhodne, či sa štýl dá vôbec hrať.
 ```
 side-scrolling video game screenshot, orthographic side view, flat camera at
 character height, no perspective distortion, wide establishing shot, [ŠTÝL],
-9th century Slavic river trade route, [MIESTO], one lone escaped slave
+15th century Eastern European slave-raid country, [MIESTO], one lone escaped slave
 protagonist on the far left facing right, eight to ten armed enemies spread
 across the rest of the frame at different distances and heights — overseers
-with whips, raiders with spears, shield guards, a Varangian warband leader in
+with whips, raiders with spears, shield guards, a raid captain in
 mail, each distinguished only by armour, weapon and body shape, all figures
 small in the frame at roughly one seventh of the image height, dense but
 readable composition, every figure recognisable by silhouette alone, ground
@@ -92,7 +92,7 @@ Rovnaký ako pri obrázku 1.
 
 ```
 character reference sheet, single full body figure, orthographic side profile
-view, neutral standing pose, [ŠTÝL], 9th century Eastern European escaped
+view, neutral standing pose, [ŠTÝL], 15th century Eastern European escaped
 slave fighter, [DETAILY: napr. torn linen tunic, broken iron collar, leather
 arm wraps, short spear], plain flat neutral grey background, even diffuse
 lighting, entire figure visible from head to feet with margin, sharp readable
@@ -374,8 +374,8 @@ všetko tri by ti do scény natlačili postavy.
 
 ```
 side-scrolling video game background layer, orthographic side view, flat
-camera, no perspective distortion, [ŠTÝL], 9th century Slavic river trade
-route, [MIESTO: napr. burnt riverside village at dawn], completely empty
+camera, no perspective distortion, [ŠTÝL], 15th century Eastern European slave-raid
+country, [MIESTO: napr. burnt riverside village at dawn], completely empty
 uninhabited landscape, layered parallax composition — flat foreground ground
 plane in the lower third, midground [PRVOK: napr. timber palisade and a beached
 longboat], background distant pine forest and low hills, cohesive limited

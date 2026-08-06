@@ -16,7 +16,7 @@ Hra o slovanskom otrokovi, ktorý sa prebije na slobodu cez hordy otrokárov. Ex
 Kľúčové rozhodnutia tohto plánu:
 
 - **Engine: Godot 4.7** — zadarmo, ľahký, výborný pre 2D, AI nástroje ho poznajú dokonale.
-- **Prvá éra: 9.–10. storočie** (obchodné cesty Volga/Dneper) — nepriateľské frakcie sú historicky presné a etnicky rôznorodé (Varjagovia, Chazari, stepní nájazdníci, arabskí obchodníci), čo je fakticky správne a zároveň jediná cesta cez schvaľovací proces storov.
+- ~~**Prvá éra: 9.–10. storočie** (obchodné cesty Volga/Dneper)~~ → **PREKONANÉ. Prvá éra je 15. storočie** („žatva stepi", nájazdové trasy do Kaffy). Rozhodnuté, neotvárať znova. Dôsledok, ktorý z toho plynie a je správny, nie anachronizmus: **strelné zbrane existujú** (arkebúza, hákovnica). Dôsledok, ktorý z toho plynie a je rizikový, je popísaný v §2 nižšie — prečítaj si ho.
 - **Monetizácia: premium 5,99 €**, žiadne IAP vo verzii 1.0. DLC kampane (nové éry = noví otrokári) a kozmetické balíky až po validácii. Žiadna gacha, žiadne reklamy — v platenej hre by generovali „anger factor" (viď vlastná analýza, kap. 4.5 a 6).
 - **Časový plán: ~6 mesiacov part-time** do launchu na Google Play.
 - **Break-even: ~160 predajov.** Realistický scenár prvý rok: 2 000–4 000 predajov ≈ 9 000–18 000 € hrubého príjmu pre teba.
@@ -31,12 +31,30 @@ Riešenie nie je tému opustiť, ale definovať nepriateľa **rolou a frakciou, 
 
 | Éra | Frakcia otrokárov | Historický základ |
 |---|---|---|
-| 9.–10. stor. (v1.0) | Varjagovia (Vikingovia), Chazari, stepní nájazdníci, strážcovia arabských karaván | Volžská a dneperská obchodná cesta, trh v Itile a Bulgare |
+| **15. stor. (v1.0)** | **Krymský chanát, Nogajci, Osmani** | **„Žatva stepi", odhadom 2+ mil. odvlečených z Ukrajiny/Ruska/Poľska** |
+| 9.–10. stor. (DLC) | Varjagovia (Vikingovia), Chazari, stepní nájazdníci, strážcovia arabských karaván | Volžská a dneperská obchodná cesta, trh v Itile a Bulgare |
 | 10.–12. stor. (DLC) | Benátski a janovskí obchodníci, Byzancia | Stredomorské trhy, Kaffa |
-| 15.–17. stor. (DLC) | Krymský chanát, Nogajci, Osmani | „Žatva stepi", odhadom 2+ mil. odvlečených z Ukrajiny/Ruska/Poľska |
 | 16.–18. stor. (DLC) | Barbarskí korzári | Nájazdy na pobrežia Európy, otroci v Alžíri a Tunise |
 
-Všimni si: v1.0 začína érou, kde hlavní otrokári sú **Vikingovia a Chazari** — teda prevažne „bieli". To je historicky korektné (Varjagovia boli najväčší dodávatelia slovanských otrokov na východné trhy) a úplne to rozbíja obvinenie z rasovej agendy. Arabskí, tatárski a osmanskí otrokári prídu neskôr ako súčasť historickej progresie, keď už hra bude mať etablovanú reputáciu „historickej akčnej hry".
+**Čo zmena éry stála (napísané raz, aby sa to nemuselo riešiť v každom sedení).**
+Pôvodný plán začínal 9.–10. storočím schválne: hlavní otrokári tam sú Vikingovia
+a Chazari, teda prevažne „bieli", čo je historicky korektné a samo osebe rozbíja
+obvinenie z rasovej agendy. Posunom v1.0 do 15. storočia sa tento štít stráca —
+Krymský chanát a Osmani sú moslimské a turkické frakcie, takže hra začína presne
+tam, kde politika storov vníma najväčšie riziko.
+
+To sa nedá vyriešiť výberom éry, ale iba disciplínou pri stvárnení, a preto sú
+pravidlá nižšie od tejto chvíle **prísnejšie, nie voľnejšie**:
+
+- Frakcia sa pomenúva politicky (chanát, nájazdnícka horda, karavána), nikdy
+  nábožensky ani etnicky. Žiadne „Turci", „moslimovia", žiadny polmesiac.
+- Žiadny turban, žiadna čalma, žiadne sakrálne motívy na nepriateľoch. Klobúk,
+  kožušinová čiapka, prilba, kapucňa. (Toto je zároveň dôvod, prečo tuningové
+  arty `Enemy_rusher_01` a `Enemy_gunman_01` musia ísť preč pred F3.)
+- Medzi nepriateľmi musia byť aj domáci kolaboranti a žoldnieri, aby nepriateľ
+  nebol jednofarebný.
+- Kódex uvádza zdroje a explicitne pomenúva aj európsky podiel na obchode.
+- Éry v DLC sa zoraďujú tak, aby Varjagovia a Benátčania prišli čo najskôr.
 
 **Nepriestrelné pravidlá (nikdy neporušiť):**
 
@@ -68,7 +86,7 @@ Presne podľa priloženej špecifikácie „Zero Thumb-Lifting" — bez zmien, j
 - Ľavý palec: beh + skok cez Y-prahovú zónu s tromi kritickými UX prvkami: **oblúková hranica** („windshield wiper"), **reset skoku** návratom do Run Zone, **plávajúca kotva** (dynamický stred podľa položenia palca).
 - Implementácia ovládania je **prvý míľnik projektu** (fáza 1) a testuje sa na reálnom telefóne skôr, než sa postaví čokoľvek iné. Ak ovládanie nesedí, nič ostatné nemá zmysel.
 
-### 3.4 Zbrane a akcia (éra 9.–10. stor.)
+### 3.4 Zbrane a akcia (éra 15. stor.)
 
 Historické jadro + absurdné prepálenie (presne v duchu Metal Slug, ktorý tiež nebol simulátor):
 

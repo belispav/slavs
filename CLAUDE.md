@@ -32,8 +32,8 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 >
 > The cost of leaving it later than F3: eight enemy types modelled, rigged, rendered and balanced on art that has to be thrown away.
 
-- Setting: Slavic slave fighting slavers, 9th–10th century trade routes (v1.0).
-- Enemies are ALWAYS defined by role/faction (slaver, raider, overseer, caravan guard, Varangian jarl…), NEVER by ethnicity or skin color — in code, art direction, names, strings, and store copy.
+- **Setting: 15th century Eastern Europe** — an escaped Slavic slave fighting slavers on the raid routes of the "harvest of the steppe". **Decided; do not re-open it and do not revert it to the 9th–10th century.** The plan (`VOLYA_plan_hry.md` §1.2, §3.1) still describes the 9th–10th century era because it was written first; the 15th century wins wherever they disagree. Consequences that follow from the era, and are therefore correct, not anachronisms: firearms exist (arquebus, hand cannon), plate and mail both appear, and the raid captains are Crimean/Nogai/Ottoman rather than Varangian.
+- Enemies are ALWAYS defined by role/faction (slaver, raider, overseer, caravan guard, raid captain…), NEVER by ethnicity or skin color — in code, art direction, names, strings, and store copy.
 - No killable civilians. No religious symbols as targets. Stylized pixel violence, no realistic gore (target rating PEGI 16).
 - The in-game codex cites real history with sources.
 
@@ -87,7 +87,12 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 - [x] **Background pipeline works.** `env_03` is in the game, drawn 1:1 and tiled horizontally on the GPU, so level length costs nothing. The playing field is taken **from the picture** (`BG_WALK_TOP` / `BG_WALK_BOTTOM` in `main.gd`), not from screen fractions — that was the source of a long argument that only ended when the shot was drawn instead of described.
   - **Scale is stated in the prompt now:** the character is 121 px for 1.8 m, so 1 m = 67 px. Without it, generators draw waist-high grass and the hero looks like a dwarf on his own field.
   - The camera follows vertically, clamped to the picture. Each boundary — palisade behind, river in front — comes into view at full height as the character walks toward it. They do not need to be on screen together.
-- [ ] **Enemy art and weapons in progress.** Both enemies are through Meshy and Mixamo. Weapons attach to the hand bone in Blender **after** rigging (`tools/blender_attach_weapon.py`, has arquebus / club / spear / sword / bow), because Mixamo refuses to rig a model holding anything — and the animation has to match the weapon, so a rifle needs a rifle animation.
+- [ ] **Enemy art and weapons in progress.** Weapons attach to the hand bone in Blender **after** rigging (`tools/blender_attach_weapon.py`, has arquebus / club / spear / sword / bow), because Mixamo refuses to rig a model holding anything — and the animation has to match the weapon, so a rifle needs a rifle animation.
+  - **Rusher: done through Mixamo.** Three animations in `ref/characters/`: `Great Sword Idle`, `Walking`, `Standing Melee Attack Downward`. All verified — 35 bones, UV map present, textures embedded.
+  - **The rusher's club is two-handed (1.25 m), decided 2026-08-06.** The Great Sword animations put both hands on a shaft, so a 0.72 m one-handed club left the left hand closing on air. Lengthening the club was chosen over re-downloading three animations. Do not shorten it back without swapping to one-handed animations at the same time.
+  - **Open: `Walking` is probably the wrong cycle for a rusher** — a rusher closes and presses, and a walk reads too slow. `Great Sword Run` is the replacement to try.
+  - **Gunman: model is clean and ready for Mixamo** (`ref/objects/Enemy_gunman_01_mixamo.fbx`, 95 790 vertices, UV map present, 0 skins as it should be). No animations yet. It carries an **arquebus** — correct for the 15th century, not an anachronism.
+  - Housekeeping: `ref/objects/*" - Copy".glb` are duplicates (~28 MB) and `ref/characters/Hitem3d-1785662322779.fbx` is 242 MB. Do not let them into git.
 - [ ] **Still missing an `idle` animation for the hero.** Without it the character freezes mid-stride when standing. Render it to `volya/art/idle_px/` and the game picks it up by itself.
 - [ ] F2: vertical slice
 - [ ] F3: content production
