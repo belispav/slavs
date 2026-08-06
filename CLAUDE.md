@@ -91,7 +91,8 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
   - **Rusher: done through Mixamo.** Three animations in `ref/characters/`: `Great Sword Idle`, `Walking`, `Standing Melee Attack Downward`. All verified — 35 bones, UV map present, textures embedded.
   - **The rusher's club is two-handed (1.25 m), decided 2026-08-06.** The Great Sword animations put both hands on a shaft, so a 0.72 m one-handed club left the left hand closing on air. Lengthening the club was chosen over re-downloading three animations. Do not shorten it back without swapping to one-handed animations at the same time.
   - **Open: `Walking` is probably the wrong cycle for a rusher** — a rusher closes and presses, and a walk reads too slow. `Great Sword Run` is the replacement to try.
-  - **Gunman: model is clean and ready for Mixamo** (`ref/objects/Enemy_gunman_01_mixamo.fbx`, 95 790 vertices, UV map present, 0 skins as it should be). No animations yet. It carries an **arquebus** — correct for the 15th century, not an anachronism.
+  - **Gunman: done through Mixamo too.** Three animations in `ref/characters/`: `Rifle Idle`, `Rifle Walk`, `Firing Rifle`. All verified — 53 bones, UV map present, textures embedded. They match the **arquebus**, which is correct for the 15th century and not an anachronism.
+  - Next for both: attach the weapon in Blender (`blender_attach_weapon.py --weapon club` / `--weapon arquebus`), render to `volya/art/`, then tune the offsets **from the render**, never by reasoning.
   - Housekeeping: `ref/objects/*" - Copy".glb` are duplicates (~28 MB) and `ref/characters/Hitem3d-1785662322779.fbx` is 242 MB. Do not let them into git.
 - [ ] **Still missing an `idle` animation for the hero.** Without it the character freezes mid-stride when standing. Render it to `volya/art/idle_px/` and the game picks it up by itself.
 - [ ] F2: vertical slice
