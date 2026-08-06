@@ -23,7 +23,7 @@ const SHOW_AIM_TARGETS := false
 ## second by a character 130 units tall, and there is nowhere to put the feet of
 ## an enemy or the bottom of a cage.
 ##
-const BACKGROUND_PATH := "res://art/env_02.png"
+const BACKGROUND_PATH := "res://art/env_03.png"
 
 ## Which rows of the background picture are open ground, measured from the art
 ## itself. Above them is the palisade and the props stacked against it, below
@@ -34,8 +34,8 @@ const BACKGROUND_PATH := "res://art/env_02.png"
 ## the earlier attempts feel wrong - the character could walk into the river.
 ## Rows of env_02 the character's FEET may stand on: the open grass, all of it.
 ##
-## Measured: palisade ends around row 600, grass runs to about 1240, water from
-## about 1252.
+## Measured on env_03: palisade ends around row 560, grass runs to about 1210,
+## the bank and the water from there down.
 ##
 ## Earlier versions cut the band down to leave room on screen for the palisade
 ## above and the river below at the same time. That cannot work here - the grass
@@ -46,8 +46,8 @@ const BACKGROUND_PATH := "res://art/env_02.png"
 ## character up and down, so walking to the back of the field brings the
 ## palisade into view and walking to the water brings the water. Each boundary
 ## is seen when it matters, at full height, and the whole grass stays playable.
-const BG_WALK_TOP := 600.0
-const BG_WALK_BOTTOM := 1240.0
+const BG_WALK_TOP := 560.0
+const BG_WALK_BOTTOM := 1210.0
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []

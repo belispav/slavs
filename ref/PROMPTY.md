@@ -172,6 +172,36 @@ promptu patrí `seamlessly tileable horizontally` a preto tam **nesmie byť nič
 výrazné a jedinečné** (jeden veľký strom uprostred sa bude opakovať každých pár
 sekúnd a je to hneď vidieť).
 
+### Mierka — bez nej vyzerá postava ako trpaslík
+
+Hrdina je **121 px** a predstavuje muža vysokého **1,8 m**. Z toho vychádza
+všetko ostatné:
+
+> **1 meter ≈ 67 px.  1 px ≈ 1,5 cm.**
+
+| vec | v skutočnosti | v obrázku |
+|---|---|---|
+| trs trávy | 40 cm | **27 px** |
+| debna, sud | 60–85 cm | **40–57 px** |
+| balvan pri rieke | 60 cm | **40 px** |
+| kôl hradby | 2,5 m | **168 px** |
+| voz | 1,5 m | **100 px** |
+| zrub | 3,5 m | **235 px** |
+
+**Do promptu ale píš telo, nie pixely.** Generátory neposlúchajú „27 px", ale
+na „trávu po lýtka dospelému mužovi" reagujú dobre. Preto je v prompte tento
+riadok:
+
+```
+scaled so that a standing adult man would be one thirteenth of the image
+height, grass tufts reaching his mid-shin, the palisade one and a half times
+his height, boulders no higher than his knee
+```
+
+Ak tráva na obrázku vyzerá, že by mužovi siahala po pás, je celý obrázok
+v zlej mierke a postava v ňom bude pôsobiť ako trpaslík — aj keď je technicky
+správne veľká.
+
 ### Na voľnej zemi nesmie stáť nič, čo vyzerá pevne
 
 Debny, sudy, koly, veľké balvany. Keď sú namaľované v pozadí, hráč cez ne
@@ -194,6 +224,9 @@ river with sharp rocks], the top fifth is an impassable far boundary —
 [VZDIALENA: timber palisade and dense pine forest],
 the middle three fifths of the image is wide open empty walkable ground of
 packed dirt and grass, completely clear and unobstructed,
+scaled so that a standing adult man would be one thirteenth of the image
+height, grass tufts reaching his mid-shin, the palisade one and a half times
+his height, boulders no higher than his knee,
 completely empty of people and animals, no characters,
 even flat daylight, no strong cast shadows, no single dominant landmark,
 cohesive limited colour palette

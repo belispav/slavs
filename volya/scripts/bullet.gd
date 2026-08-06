@@ -85,17 +85,23 @@ func _on_body_entered(body: Node) -> void:
 
 
 func _draw() -> void:
+	# What is drawn solid is what hits. The enemy shot used to be a 52 unit
+	# streak with a 7 unit head over a hitbox of 6 - a bright bar could pass
+	# straight through the player and do nothing, which reads as broken just as
+	# badly as being hit by nothing.
+	#
+	# Everything beyond the hit radius is now transparent: a tail and a glow,
+	# clearly not the object itself.
 	if hostile:
-		# Big and loud so it never gets lost in the crowd — but the hitbox
-		# stays small, so it still reads as something you can slip past.
-		var back: Vector2 = -dir * 26.0
-		var tip: Vector2 = dir * 26.0
-		draw_line(back, tip, Color(0.10, 0.05, 0.08, 0.85), 13.0)
-		draw_line(back, tip, Color(1.0, 0.40, 0.30), 8.0)
-		draw_line(back * 0.4, tip, Color(1.0, 0.88, 0.70), 3.0)
-		draw_circle(tip, 7.0, Color(1.0, 0.95, 0.85))
+		var tail: Vector2 = -dir * 30.0
+		draw_line(tail, Vector2.ZERO, Color(1.0, 0.45, 0.32, 0.30), 5.0)
+		draw_circle(Vector2.ZERO, HIT_RADIUS_HOSTILE + 3.0,
+			Color(0.10, 0.05, 0.08, 0.55))
+		draw_circle(Vector2.ZERO, HIT_RADIUS_HOSTILE, Color(1.0, 0.42, 0.30))
+		draw_circle(Vector2.ZERO, HIT_RADIUS_HOSTILE * 0.5,
+			Color(1.0, 0.95, 0.85))
 	else:
-		draw_circle(Vector2.ZERO, RADIUS * 1.6, Color(1.0, 0.75, 0.25, 0.30))
+		draw_line(-dir * 16.0, Vector2.ZERO, Color(1.0, 0.85, 0.4, 0.35), 6.0)
+		draw_circle(Vector2.ZERO, HIT_RADIUS_PLAYER, Color(1.0, 0.75, 0.25, 0.28))
 		draw_circle(Vector2.ZERO, RADIUS, Color(1.0, 0.90, 0.45))
 		draw_circle(Vector2.ZERO, RADIUS * 0.45, Color(1.0, 1.0, 0.9))
-		draw_line(-dir * 14.0, Vector2.ZERO, Color(1.0, 0.85, 0.4, 0.45), 6.0)
