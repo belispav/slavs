@@ -42,6 +42,7 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 1. **Small tasks.** One feature per task. Never large rewrites without explicit approval.
 2. **Green state discipline.** After every change: run on device/editor → works? → `git commit`. Never continue on a broken state. Git from day one.
 3. **Explain as you go.** Pavel is learning — after each task, 2–3 sentences on what was done and why (in Slovak). No lectures.
+3b. **Anything about framing, sizes or proportions: draw it first.** `tools/preview_framing.py` composites the real background, the real sprite and the real camera arithmetic into a picture of the finished shot. Five rounds were lost describing framing in numbers, each making it worse, because a number cannot say whether the water is on screen. Produce the picture, agree on it, then build.
 4. **Weekly refactor.** When asked (or when a file exceeds ~300 lines), clean up before adding features.
 5. **Performance target:** 60 fps on a ~150 € Android phone. Object pooling for enemies/projectiles from the start.
 6. **Tunables in one place.** All gameplay constants (control thresholds, damage, speeds) in exported variables / a single config resource so Pavel can tune without code.
@@ -82,6 +83,12 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
   - Open sub-question: movement as a stick (hold an offset, keep walking) versus copying the thumb (stop the thumb, stop the character). Follow is preferred on first play but not settled. Its cost is real — it runs out of thumb before it runs out of level.
   - **Playing field:** the bottom is fixed (ground, wall, river get drawn there) and the playable area reaches **1.5 screen heights upward**, so the camera travels vertically. A band shorter than the screen is used up in a second by a 130-unit character and leaves nowhere to put the feet of an enemy or the bottom of a cage. Higher than 1.5 and nothing on screen tells you where anything else is. For frozen boss arenas Pavel wants the same idea: **+50 % up, +20 % right** — more vertical than horizontal, because the character is taller than it is wide.
   - Death no longer sends the player back to the start; it costs health and a moment. Being restarted constantly made it impossible to settle into a run.
+- [x] **Free movement built and playing well (2026-08-06).** Enemies only from the right, rushers close and press, throwers hold their own range. Death costs health, not the run. Player health 5. All control values in `control_config.tres` are measured on device — never change them by guessing.
+- [x] **Background pipeline works.** `env_03` is in the game, drawn 1:1 and tiled horizontally on the GPU, so level length costs nothing. The playing field is taken **from the picture** (`BG_WALK_TOP` / `BG_WALK_BOTTOM` in `main.gd`), not from screen fractions — that was the source of a long argument that only ended when the shot was drawn instead of described.
+  - **Scale is stated in the prompt now:** the character is 121 px for 1.8 m, so 1 m = 67 px. Without it, generators draw waist-high grass and the hero looks like a dwarf on his own field.
+  - The camera follows vertically, clamped to the picture. Each boundary — palisade behind, river in front — comes into view at full height as the character walks toward it. They do not need to be on screen together.
+- [ ] **Enemy art and weapons in progress.** Both enemies are through Meshy and Mixamo. Weapons attach to the hand bone in Blender **after** rigging (`tools/blender_attach_weapon.py`, has arquebus / club / spear / sword / bow), because Mixamo refuses to rig a model holding anything — and the animation has to match the weapon, so a rifle needs a rifle animation.
+- [ ] **Still missing an `idle` animation for the hero.** Without it the character freezes mid-stride when standing. Render it to `volya/art/idle_px/` and the game picks it up by itself.
 - [ ] F2: vertical slice
 - [ ] F3: content production
 - [ ] F4: polish + closed testing (12 testers / 14 days — mandatory for new personal Google Play accounts)

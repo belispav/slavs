@@ -234,6 +234,29 @@ Pošli mi ten výpis. Hodnoty patria do `volya\config\control_config.tres`, ale
 
 ---
 
+## Všetky nástroje na jednom mieste
+
+Spúšťajú sa `python tools\<nazov>.py`, ak nie je uvedené inak.
+
+| nástroj | na čo |
+|---|---|
+| `preview_framing.py` | **nakreslí, ako to bude vyzerať na telefóne.** Pred každou zmenou rámovania |
+| `check_background.py` | zmeria pozadie a povie, kde je voľná zem |
+| `check_character_sheet.py` | skontroluje obrázky postavy, kým sa minie kredit |
+| `prepare_character_image.py` | oreže obrázok pre generátor 3D, odstráni vodoznak |
+| `extract_glb_texture.py` | vytiahne farebnú mapu z GLB |
+| `inspect_fbx.py` | čo je v FBX — UV mapa, kostra, počet vrcholov |
+| `check_gdscript.py` | nájde rozdelené funkcie, kým zmizne pol hry |
+| `pixelize_sprites.py` | pixel-art prechod nad vyrenderovanými snímkami |
+
+Cez Blender (`blender.exe ... --background --python tools\<nazov>.py --`):
+
+| | |
+|---|---|
+| `blender_render_sprites.py` | render postavy na sprajty |
+| `prepare_for_mixamo.py` | postaví model do stoja, spojí siete, prípadne zredukuje |
+| `blender_attach_weapon.py` | pripne zbraň na kosť ruky |
+
 ## Keď niečo nejde
 
 **Diagnostika nasadzovania** — spusti a pošli mi celý výpis:
