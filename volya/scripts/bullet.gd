@@ -7,6 +7,8 @@ extends Area2D
 ## in the player's favour are design pillar 1 — a shot that looks close should
 ## count. Enemy shots get the opposite treatment: small, fair hitbox.
 const RADIUS := 9.0
+## How far past the edge of the screen a shot flies before it is recycled.
+const OFF_SCREEN_MARGIN := 120.0
 const HIT_RADIUS_PLAYER := 18.0
 const HIT_RADIUS_HOSTILE := 6.0
 
@@ -59,9 +61,28 @@ func despawn() -> void:
 
 func _physics_process(delta: float) -> void:
 	global_position += dir * speed * delta
+
+	# Shots end when they leave the screen, not on a stopwatch. A fixed lifetime
+	# is a distance in disguise, and it depended on the projectile's speed: the
+	# slow enemy shot covered 363 units of a 1600 unit screen before vanishing
+	# in mid-air, a quarter of the way to anything.
+	if _off_screen():
+		despawn()
+		return
+
+	# The timer stays as a safety net only, long enough never to be reached in
+	# normal play. Without it a shot fired at a camera that then stops moving
+	# could sit in the pool forever.
 	life -= delta
 	if life <= 0.0:
 		despawn()
+
+
+func _off_screen() -> bool:
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var at: Vector2 = get_global_transform_with_canvas().origin
+	return at.x < -OFF_SCREEN_MARGIN or at.x > view.x + OFF_SCREEN_MARGIN \
+		or at.y < -OFF_SCREEN_MARGIN or at.y > view.y + OFF_SCREEN_MARGIN
 
 
 func _on_area_entered(area: Area2D) -> void:

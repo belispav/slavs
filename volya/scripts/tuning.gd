@@ -37,7 +37,9 @@ const PLAYER_ANIM_MIN_SPEED: float = 20.0
 
 # --- Weapon ---
 const BULLET_SPEED: float = 1400.0
-const BULLET_LIFETIME: float = 1.1
+## Safety net only. Shots now end when they leave the screen, so this just has
+## to be longer than any shot could plausibly stay in view.
+const BULLET_LIFETIME: float = 6.0
 const FIRE_INTERVAL: float = 0.09
 const BULLET_POOL_SIZE: int = 96
 const MUZZLE_DISTANCE: float = 34.0
@@ -134,6 +136,13 @@ const THROWER_HP: int = 2
 ## ratio as before, so the two roles still read apart at a glance.
 const THROWER_SPEED: float = 76.0
 const THROWER_KEEP_DISTANCE: float = 430.0
+## Each thrower picks its own range within this much of the nominal one.
+##
+## With a single distance they all stop on the same line and stand in a heap,
+## which reads as one enemy drawn several times rather than several enemies.
+## Later this is where the difference between enemy types goes; for now a spread
+## is enough to break the row up.
+const THROWER_DISTANCE_SPREAD: float = 0.34
 const THROWER_RANGE: float = 700.0
 const THROWER_INTERVAL: float = 2.0
 const THROWER_SHOT_SPEED: float = 330.0

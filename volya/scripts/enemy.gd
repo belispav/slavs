@@ -27,6 +27,9 @@ var _throw_cd: float = 0.0
 var _depth_offset: float = 0.0
 var _weave_time: float = 0.0
 var _weave_rate: float = 1.0
+## The range this particular thrower holds. Its own, so a group of them does not
+## line up on one arc.
+var _keep_distance: float = Tuning.THROWER_KEEP_DISTANCE
 var _hurtbox: Area2D
 
 
@@ -69,6 +72,9 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 		Tuning.ENEMY_DEPTH_SPREAD)
 	_weave_time = randf() * TAU
 	_weave_rate = Tuning.ENEMY_WEAVE_SPEED * randf_range(0.6, 1.4)
+	_keep_distance = Tuning.THROWER_KEEP_DISTANCE * randf_range(
+		1.0 - Tuning.THROWER_DISTANCE_SPREAD,
+		1.0 + Tuning.THROWER_DISTANCE_SPREAD)
 	active = true
 	show()
 	set_physics_process(true)
@@ -197,9 +203,9 @@ func _think_thrower(delta: float, free: bool) -> void:
 	var speed: float = Tuning.THROWER_SPEED * Tuning.thrower_speed_scale
 
 	# hold the preferred range: close in if far, back off if too close
-	if dist > Tuning.THROWER_KEEP_DISTANCE + 60.0:
+	if dist > _keep_distance + 60.0:
 		velocity.x = dir * speed
-	elif dist < Tuning.THROWER_KEEP_DISTANCE - 60.0:
+	elif dist < _keep_distance - 60.0:
 		velocity.x = -dir * speed
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, speed * 4.0 * delta)
