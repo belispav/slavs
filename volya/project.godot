@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 
 Tuning="*res://scripts/tuning.gd"
 Touch="*res://scripts/touch_controller.gd"
+Debug="*res://scripts/debug_state.gd"
 
 [display]
 

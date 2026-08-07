@@ -207,6 +207,8 @@ func _on_body_touched(_body: Node) -> void:
 
 ## Called by enemy bodies on contact and by enemy projectiles.
 func take_damage(amount: int, from_pos: Vector2) -> void:
+	if Debug.god_mode:
+		return
 	if _iframes > 0.0 or hp <= 0:
 		return
 	hp -= amount

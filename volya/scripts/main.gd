@@ -296,6 +296,14 @@ func _spawn_tick(delta: float) -> void:
 			+ randf() * Tuning.SPAWN_JITTER,
 		LEVEL_LEFT + 60.0, LEVEL_RIGHT - 60.0)
 	var kind: int = 1 if randf() < Tuning.THROWER_RATIO else 0
+	# Debug panel switches. Force to the other kind if only one is off; if
+	# both are off there is nothing left to spawn this tick.
+	if kind == 0 and Debug.disable_rusher:
+		kind = 1
+	elif kind == 1 and Debug.disable_thrower:
+		kind = 0
+	if (kind == 0 and Debug.disable_rusher) or (kind == 1 and Debug.disable_thrower):
+		return
 
 	# In free movement there is no floor to walk in on, so they arrive spread
 	# across the depth of the field. Dropping them all on one line would make

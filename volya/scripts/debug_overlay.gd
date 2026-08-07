@@ -144,6 +144,50 @@ func _build_panel() -> void:
 	# feeling no change reads as the game being broken.
 	var c: ControlConfig = Touch.config
 
+	# Testing switches, not tuning. They never touch control_config.tres and
+	# must never ship - see debug_state.gd. Kept at the top of the panel since
+	# they are the ones reached for mid-crowd, not while sitting still tuning
+	# a slider.
+	_add_note("TEST")
+	var god_mode := CheckButton.new()
+	god_mode.text = "NESMRTELNOST"
+	god_mode.custom_minimum_size = Vector2(0, 56)
+	god_mode.button_pressed = Debug.god_mode
+	rows.add_child(god_mode)
+	god_mode.toggled.connect(func(on: bool) -> void:
+		Debug.god_mode = on)
+
+	var pause_mode := CheckButton.new()
+	pause_mode.text = "PAUZA"
+	pause_mode.custom_minimum_size = Vector2(0, 56)
+	pause_mode.button_pressed = get_tree().paused
+	rows.add_child(pause_mode)
+	pause_mode.toggled.connect(func(on: bool) -> void:
+		# The panel's own CanvasLayer is PROCESS_MODE_ALWAYS (see _ready), and
+		# every row here is its child, so the sliders and buttons keep working
+		# while the rest of the tree - player, enemies, spawner - freezes.
+		get_tree().paused = on)
+
+	var no_rusher := CheckButton.new()
+	no_rusher.text = "VYPNUT BEZCOV"
+	no_rusher.custom_minimum_size = Vector2(0, 56)
+	no_rusher.button_pressed = Debug.disable_rusher
+	rows.add_child(no_rusher)
+	no_rusher.toggled.connect(func(on: bool) -> void:
+		Debug.disable_rusher = on
+		if on:
+			_despawn_kind(0))
+
+	var no_thrower := CheckButton.new()
+	no_thrower.text = "VYPNUT STRELCOV"
+	no_thrower.custom_minimum_size = Vector2(0, 56)
+	no_thrower.button_pressed = Debug.disable_thrower
+	rows.add_child(no_thrower)
+	no_thrower.toggled.connect(func(on: bool) -> void:
+		Debug.disable_thrower = on
+		if on:
+			_despawn_kind(1))
+
 	if c.free_movement:
 		_add_note("POHYB")
 		if c.free_move_follow:
@@ -201,6 +245,9 @@ func _build_panel() -> void:
 		func(v: float) -> void: Tuning.rusher_speed_scale = v)
 	_add_slider("rychlost strelcov", 0.2, 2.0, 0.05, Tuning.thrower_speed_scale,
 		func(v: float) -> void: Tuning.thrower_speed_scale = v)
+	_add_slider("na aku vzdialenost si bezec vsimne hraca (px)", 100.0, 1200.0,
+		10.0, Tuning.enemy_detection_range,
+		func(v: float) -> void: Tuning.enemy_detection_range = v)
 
 	_add_note("ZONA PRE LAVY PALEC")
 	_add_slider("sirka", 0.2, 0.8, 0.01, c.move_zone_width,
@@ -376,6 +423,15 @@ func _dump_values() -> void:
 		print("ulozene do user://tuning.txt")
 	else:
 		push_warning("Nepodarilo sa zapisat user://tuning.txt")
+
+
+## Clears out enemies of one kind the moment their switch is turned on, so the
+## effect is immediate rather than waiting for the current wave to die off.
+## kind: 0 = RUSHER, 1 = THROWER (enemy.gd's Kind enum order).
+func _despawn_kind(kind: int) -> void:
+	for e in get_tree().get_nodes_in_group("enemy"):
+		if e.active and e.kind == kind:
+			e.despawn()
 
 
 func _fmt(v: float) -> String:

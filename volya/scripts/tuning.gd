@@ -34,6 +34,22 @@ const PLAYER_ANIM_FPS: float = 30.0
 const THROWER_IDLE_ART_DIR: String = "res://art/gunman_idle_px"
 const THROWER_WALK_ART_DIR: String = "res://art/gunman_walk_px"
 const THROWER_FIRE_ART_DIR: String = "res://art/gunman_fire_px"
+
+## Rusher art. Four folders instead of the thrower's three - see PRIKAZY.md's
+## ZBRANE section for how they get filled.
+##
+## The idle is deliberately split in two. "Looking around" (IDLE) is right for
+## an enemy that has not noticed the player yet; once it has closed in and is
+## between swings it should be watching the player, not glancing around.
+## Using the same "looking around" clip for both is what read wrong on the
+## gunman, who is already firing while playing an idle that looks unaware -
+## noted in CLAUDE.md, not fixed there yet. Fixed here first, on the enemy
+## that does not exist as art yet, before it gets built the same way twice.
+const RUSHER_IDLE_ART_DIR: String = "res://art/rusher_idle_px"
+const RUSHER_IDLE_READY_ART_DIR: String = "res://art/rusher_ready_px"
+const RUSHER_WALK_ART_DIR: String = "res://art/rusher_walk_px"
+const RUSHER_ATTACK_ART_DIR: String = "res://art/rusher_attack_px"
+
 const ENEMY_ANIM_FPS: float = 30.0
 const ENEMY_SPRITE_SCALE: float = 1.0
 ## Below this speed the thrower is standing rather than walking. Not zero:
@@ -133,6 +149,21 @@ const ENEMY_WEAVE_SPEED: float = 1.6
 ## something else is broken measures the other thing.
 const RUSHER_HP: int = 1
 const RUSHER_SPEED: float = 262.0
+
+## How far away, on the ground plane, an enemy notices the player and switches
+## its idle from "unaware" to closing in. 640 = half the 1280-wide viewport -
+## the point Pavel asked for when trying this concept on the rusher first.
+## Live below, so it can be found on the device rather than guessed.
+const ENEMY_DETECTION_RANGE: float = 640.0
+var enemy_detection_range: float = ENEMY_DETECTION_RANGE
+
+## How long a rusher waits between attacks once it has closed to melee range,
+## and how long the attack animation holds before the ready idle returns.
+## Cosmetic for now: contact damage still comes from the hurtbox on touch, not
+## from a hit landing mid-swing. Whether a swing should carry its own damage
+## instead is open - not decided here.
+const RUSHER_ATTACK_INTERVAL: float = 0.9
+const RUSHER_ATTACK_ANIM_TIME: float = 0.35
 
 ## Live multipliers, so speeds can be found on the device instead of guessed.
 ## The constants above stay the source of truth; once a value settles, it goes
