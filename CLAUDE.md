@@ -37,6 +37,32 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 - No killable civilians. No religious symbols as targets. Stylized pixel violence, no realistic gore (target rating PEGI 16).
 - The in-game codex cites real history with sources.
 
+## Sessions and which model to use
+
+Credits are a real constraint. **One session, one subject** — do not start a
+second topic in a session that already has one open; it costs a re-read of the
+whole context and it is how a day turns into twenty rounds about a club.
+
+**Sonnet is the default.** It is enough whenever the path is already written
+down and the work is following it:
+
+- producing an enemy by `PRIKAZY.md` (fit the weapon, measure the grip, pick
+  from grids, render) — the method is settled, only the answers change
+- small self-contained changes: one script, one scene, a few tunables, a HUD
+  toggle
+- renders, measurements, grids, commits, deploys
+
+**Switch to Opus when:**
+
+- something in the pipeline breaks in a way nobody understands yet, and it
+  needs several wrong hypotheses discarded before the right one
+- a decision touches many files at once, or changes what a system *is*
+  (controls, core loop, economy, the sensitive-topic rules)
+- the plan or the design pillars are being changed rather than followed
+
+If a Sonnet session hits three rounds without progress on the same problem,
+that is the signal to stop and bring it to Opus rather than keep pushing.
+
 ## Working rules
 
 1. **Small tasks.** One feature per task. Never large rewrites without explicit approval.
