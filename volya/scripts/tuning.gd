@@ -113,9 +113,15 @@ const ENEMY_MAX_ALIVE: int = 34       # design pillar: overwhelming numbers
 const ENEMY_GRAVITY: float = 2200.0
 const ENEMY_CONTACT_DAMAGE: int = 1
 
-## How close a rusher presses before it stops. Pushing against the player IS
-## its attack, so the gap is small.
-const ENEMY_STOP_GAP: float = 26.0
+## How far from the player a rusher stops to swing, not to touch. 26 was
+## "pressed against the player", left over from when the attack WAS the
+## contact. Now that a swing lands the hit (see RUSHER_ATTACK_* below), the
+## stopping distance has to read as weapon reach instead - Pavel's note
+## 2026-08-07: it depends on how the club animation actually looks, so this
+## stays a guess until it is measured against the render, not tuned by number.
+## Live below so it can be found on the device.
+const RUSHER_MELEE_RANGE: float = 70.0
+var rusher_melee_range: float = RUSHER_MELEE_RANGE
 
 ## Enemies never move to the LEFT of the player. That is not a difficulty
 ## choice, it is forced by the hand: the left thumb covers the left third of
@@ -159,9 +165,14 @@ var enemy_detection_range: float = ENEMY_DETECTION_RANGE
 
 ## How long a rusher waits between attacks once it has closed to melee range,
 ## and how long the attack animation holds before the ready idle returns.
-## Cosmetic for now: contact damage still comes from the hurtbox on touch, not
-## from a hit landing mid-swing. Whether a swing should carry its own damage
-## instead is open - not decided here.
+##
+## Pavel's correction 2026-08-07: a rusher pressed against the player and
+## dealing damage on touch is a shove, not a swing - it does not match a
+## character holding a club out in front of itself. The hit now lands when
+## the swing triggers (enemy.gd's melee_hit signal), gated by
+## RUSHER_MELEE_RANGE above instead of by the hurtbox touching. Landing it at
+## the start of the swing rather than mid-animation is a placeholder - once
+## the club render exists, watch it and move the timing to match, not before.
 const RUSHER_ATTACK_INTERVAL: float = 0.9
 const RUSHER_ATTACK_ANIM_TIME: float = 0.35
 

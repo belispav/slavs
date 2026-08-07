@@ -247,6 +247,7 @@ func _build_enemy_pool() -> void:
 		holder.add_child(e)
 		e.died.connect(_on_enemy_died)
 		e.throw_requested.connect(_on_enemy_throw)
+		e.melee_hit.connect(_on_enemy_melee_hit)
 		enemies.append(e)
 
 
@@ -323,6 +324,11 @@ func _on_enemy_died(_at: Vector2) -> void:
 
 func _on_enemy_throw(from: Vector2, dir: Vector2) -> void:
 	_fire(from, dir, true, Tuning.THROWER_SHOT_SPEED)
+
+
+## A rusher's swing landing - see enemy.gd's melee_hit and is_melee_kind.
+func _on_enemy_melee_hit(from_pos: Vector2) -> void:
+	player.take_damage(Tuning.ENEMY_CONTACT_DAMAGE, from_pos)
 
 
 ## Death clears the field and gives the player a moment, but leaves them where

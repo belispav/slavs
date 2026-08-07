@@ -10,6 +10,9 @@ extends CharacterBody2D
 
 signal died(at: Vector2)
 signal throw_requested(from: Vector2, dir: Vector2)
+## A rusher's swing landing. Not the same moment as touching the player - see
+## RUSHER_MELEE_RANGE and _update_attack_timer.
+signal melee_hit(from_pos: Vector2)
 
 enum Kind { RUSHER, THROWER }
 
@@ -201,6 +204,14 @@ func despawn() -> void:
 	set_deferred("collision_layer", 0)
 
 
+## Whether this enemy's damage comes from a swing (melee_hit) rather than from
+## its body touching the player. Read by player.gd's hurtbox handler, which
+## otherwise treats any enemy contact as a hit - a rule that stopped being
+## true the moment a rusher's attack became a timed swing instead of a shove.
+func is_melee_kind() -> bool:
+	return kind == Kind.RUSHER
+
+
 ## Called by the player's bullets (via the hurtbox).
 func hit() -> void:
 	if not active:
@@ -338,7 +349,7 @@ func _think_rusher(free: bool, delta: float) -> void:
 		# the enemy back to the player, and enemies are always to the right, so
 		# it is positive while there is ground to cover.
 		var gap: float = global_position.x - target.global_position.x
-		in_range = gap <= Tuning.ENEMY_STOP_GAP
+		in_range = gap <= Tuning.rusher_melee_range
 		if not in_range:
 			velocity.x = -speed
 		else:
@@ -353,7 +364,7 @@ func _think_rusher(free: bool, delta: float) -> void:
 		var to_target: Vector2 = target.global_position \
 			+ Vector2(0.0, _depth_offset + _weave()) - global_position
 		var distance: float = to_target.length()
-		in_range = distance <= Tuning.ENEMY_STOP_GAP
+		in_range = distance <= Tuning.rusher_melee_range
 
 		if not in_range:
 			var wish: Vector2 = to_target / distance * speed
@@ -367,9 +378,10 @@ func _think_rusher(free: bool, delta: float) -> void:
 	_update_attack_timer(in_range, delta)
 
 
-## Drives the attack/ready-idle cycle once a rusher has closed to melee range.
-## Visual only for now - see the RUSHER_ATTACK_* constants in tuning.gd for
-## why contact damage is not tied to this yet.
+## Drives the attack/ready-idle cycle once a rusher has closed to melee range,
+## and fires the hit itself. The swing lands the moment it triggers, not on
+## contact - see the RUSHER_ATTACK_* comment in tuning.gd for the reasoning
+## and for what is still a placeholder about the timing.
 func _update_attack_timer(in_range: bool, delta: float) -> void:
 	if not in_range:
 		_attack_cd = Tuning.RUSHER_ATTACK_INTERVAL * 0.5
@@ -382,6 +394,7 @@ func _update_attack_timer(in_range: bool, delta: float) -> void:
 	if _attack_cd <= 0.0:
 		_attack_cd = Tuning.RUSHER_ATTACK_INTERVAL
 		_attack_timer = Tuning.RUSHER_ATTACK_ANIM_TIME
+		melee_hit.emit(global_position)
 
 
 func _think_thrower(delta: float, free: bool) -> void:

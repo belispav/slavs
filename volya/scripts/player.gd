@@ -201,7 +201,14 @@ func revive() -> void:
 	health_changed.emit(hp)
 
 
-func _on_body_touched(_body: Node) -> void:
+func _on_body_touched(body: Node) -> void:
+	# A melee kind's damage comes from its swing landing (enemy.gd's
+	# melee_hit, wired in main.gd), not from its body touching this one - a
+	# rusher standing at its own weapon's reach is not touching the player at
+	# all. Anything that is not a melee kind (nothing is, yet) still hits on
+	# plain contact.
+	if body.has_method("is_melee_kind") and body.is_melee_kind():
+		return
 	take_damage(Tuning.ENEMY_CONTACT_DAMAGE, Vector2.ZERO)
 
 

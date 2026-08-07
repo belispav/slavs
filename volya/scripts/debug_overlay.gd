@@ -248,6 +248,9 @@ func _build_panel() -> void:
 	_add_slider("na aku vzdialenost si bezec vsimne hraca (px)", 100.0, 1200.0,
 		10.0, Tuning.enemy_detection_range,
 		func(v: float) -> void: Tuning.enemy_detection_range = v)
+	_add_slider("na aku vzdialenost sa bezec zastavi a siaha zbranou (px)",
+		20.0, 160.0, 2.0, Tuning.rusher_melee_range,
+		func(v: float) -> void: Tuning.rusher_melee_range = v)
 
 	_add_note("ZONA PRE LAVY PALEC")
 	_add_slider("sirka", 0.2, 0.8, 0.01, c.move_zone_width,
