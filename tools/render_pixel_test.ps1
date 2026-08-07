@@ -21,10 +21,51 @@ param(
     [int]    $Bands   = 3,    # hard steps of light on a surface
     [int]    $Colours = 16,   # palette size for the whole animation
     [int]    $Step    = 1,    # 1 = every frame, needed to measure pixel crawl
+    # Cut a window out of the animation. 0 = whole thing.
+    [int]    $From    = 0,
+    [int]    $To      = 0,
     [double] $Shadow  = 0.38, # how dark the darkest band is
     # Colour map to use instead of the model's own. Mixamo returns a rigged
     # mesh with no texture; this is how the generator's texture gets back on.
-    [string] $Texture = ""
+    [string] $Texture = "",
+    # Flat colours by material name, for models that arrived without textures:
+    #   -MatColours "Wood=3F2A17,Metal=858C99"
+    [string] $MatColours = "",
+    # Camera. Yaw turns towards the character's front (0 = strict profile),
+    # elevation lifts it above eye level so the ground reads.
+    # -Angle sets the camera azimuth outright, in degrees, and overrides the
+    # automatic side-view guess. -1 = work it out from the model.
+    [double] $Angle     = -1.0,
+    [double] $Yaw       = 0.0,
+    [double] $Elevation = 0.0,
+    # Sweep: render several angles, one frame each, to pick the yaw by eye.
+    #   -Angles 7 -AngleStep 15 -Yaw -45 -Step 999
+    # gives seven frames from yaw -45 to +45; a00 is the lowest yaw.
+    [int]    $Angles    = 1,
+    [double] $AngleStep = 0.0,
+    # Weapon built in Blender and hung on the hand bone: arquebus, club,
+    # spear, sword, bow. Empty = empty hands. The shifts are in metres and are
+    # meant to be corrected from the render, never guessed.
+    [string] $Weapon  = "",
+    [string] $Hand    = "right",
+    [double] $WScale  = 1.0,
+    [double] $WShiftX = 0.0,
+    [double] $WShiftY = 0.0,
+    [double] $WShiftZ = 0.0,
+    [double] $WTurn   = 0.0,
+    [int]    $WAim    = 1,
+    [int]    $WDebug  = 0,
+    [int]    $WOnly   = 0,
+    # Turn the weapon about the vertical axis, and sweep that turn.
+    [double] $WSpin      = 0.0,
+    [int]    $WSweep     = 0,
+    [double] $WSweepStep = 0.0,
+    # A downloaded weapon mesh, and a placement fitted by hand in Blender.
+    [string] $WModel = "",
+    [string] $WFit   = "",
+    # 0..1 along the weapon; past this point the faces become iron instead of
+    # wood. For a model whose wooden fore-end hides the barrel.
+    [double] $IronFrom = 0.0
 )
 
 $ErrorActionPreference = "Stop"
@@ -77,6 +118,11 @@ $gif    = "render\${Name}_anim.gif"
 
 New-Item -ItemType Directory -Force -Path "render" | Out-Null
 if (Test-Path $rawDir) { Remove-Item $rawDir -Recurse -Force }
+# The sprite folder has to go too. A shorter run leaves the tail of the longer
+# one behind, and stale frames from a previous experiment sitting next to fresh
+# ones is worse than no frames at all - the game plays them and the comparison
+# lies about what changed.
+if (Test-Path $pxDir) { Remove-Item $pxDir -Recurse -Force }
 
 # Earlier versions of this script wrote the intermediates into volya\art.
 foreach ($stale in @("volya\art\${Name}_raw", "volya\art\${Name}_sheet.png",
@@ -104,10 +150,17 @@ $blenderArgs += @(
     "--name",   $Name,
     "--height", $Height,
     "--step",   $Step,
+    "--frame_start", $From,
+    "--frame_end",   $To,
     "--toon",   1,
     "--pixel",  1,
+    "--angles",     $Angles,
+    "--angle_step", $AngleStep.ToString([System.Globalization.CultureInfo]::InvariantCulture),
+    "--start_angle", $Angle.ToString([System.Globalization.CultureInfo]::InvariantCulture),
+    "--yaw",       $Yaw.ToString([System.Globalization.CultureInfo]::InvariantCulture),
+    "--elevation", $Elevation.ToString([System.Globalization.CultureInfo]::InvariantCulture),
     "--bands",  $Bands,
-    "--shadow", $Shadow
+    "--shadow", $Shadow.ToString([System.Globalization.CultureInfo]::InvariantCulture)
 )
 if ($Texture -ne "") {
     if (-not (Test-Path $Texture)) {
@@ -115,6 +168,39 @@ if ($Texture -ne "") {
         exit 1
     }
     $blenderArgs += @("--texture", (Join-Path $root $Texture))
+}
+# Never pass an empty string as an argument value. PowerShell drops it from the
+# array, so "--material_colours" then swallows whatever switch came next and
+# the colours were silently ignored while the log blamed the model.
+if ($MatColours -ne "") { $blenderArgs += @("--material_colours", $MatColours) }
+# A downloaded model IS a weapon, so -WModel on its own has to be enough.
+# Requiring -Weapon as well meant a fitted, downloaded arquebus rendered as a
+# man with empty hands, and the only clue was "toon shading na 1 materialoch".
+if ($Weapon -ne "" -or $WModel -ne "") {
+    if ($Weapon -eq "") { $Weapon = "model" }
+    # Numbers go to Python, so they must use a dot. On a Slovak Windows the
+    # default double-to-string gives "0,05" and float() on the other side
+    # throws - a failure that reads like a Blender problem and is not one.
+    $inv = [System.Globalization.CultureInfo]::InvariantCulture
+    $blenderArgs += @(
+        "--weapon",         $Weapon,
+        "--weapon_hand",    $Hand,
+        "--weapon_scale",   $WScale.ToString($inv),
+        "--weapon_shift_x", $WShiftX.ToString($inv),
+        "--weapon_shift_y", $WShiftY.ToString($inv),
+        "--weapon_shift_z", $WShiftZ.ToString($inv),
+        "--weapon_turn",    $WTurn.ToString($inv),
+        "--weapon_aim",     $WAim,
+        "--weapon_debug",   $WDebug,
+        "--weapon_only",    $WOnly,
+        "--weapon_spin",       $WSpin.ToString($inv),
+        "--weapon_sweep",      $WSweep,
+        "--weapon_sweep_step", $WSweepStep.ToString($inv)
+    )
+    if ($WModel -ne "") { $blenderArgs += @("--weapon_model", (Join-Path $root $WModel)) }
+    if ($WFit   -ne "") { $blenderArgs += @("--weapon_fit",   (Join-Path $root $WFit)) }
+    $blenderArgs += @("--weapon_iron_from", $IronFrom.ToString($inv))
+    Write-Host "Zbran:    $Weapon ($Hand ruka)"
 }
 
 & $blender @blenderArgs

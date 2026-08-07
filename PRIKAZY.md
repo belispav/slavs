@@ -332,3 +332,82 @@ Windows-1252, pomlčka sa mu rozpadne na tri znaky a jeden z nich vyzerá ako
 git add -A
 git commit -m "popis toho, co sa zmenilo"
 ```
+
+---
+
+## ZBRANE — postav ju myšou, nie slovami
+
+Opisovať slovami, kde má zbraň sedieť, je najpomalšia cesta, aká existuje.
+Namiesto toho ju raz chytíš myšou v Blenderi a číslo si uložíme.
+
+**Krok 1 — otvor si postavu so zbraňou v ruke:**
+
+```
+powershell -ExecutionPolicy Bypass -File tools\fit_weapon.ps1 -Model "ref\characters\Enemy_gunman_01 Rifle Idle.fbx" -Weapon arquebus -Name gunman
+```
+
+Skript najprv v pozadí postaví scénu a uloží ju, potom ju Blender otvorí.
+Postavu vidíš cez hernú kameru a **zbraň je už vybratá**.
+
+- `G` a pohyb myšou — posúvaš zbraň (`G X` / `G Y` / `G Z` zamkne os)
+- `R` a pohyb myšou — otáčaš (`R X` / `R Y` / `R Z` zamkne os)
+- `S` — zväčšuješ
+- `Ctrl+S` — ulož (nechaj ten istý súbor)
+
+**Zbraň neodpájaj od kosti.** Len ju posúvaj a otáčaj.
+
+Prečo dva kroky a nie jeden: import FBX zo skriptu **v okne** Blenderu zlyhá,
+lebo importér potrebuje kontext okna, ktorý pri štarte ešte neexistuje.
+V pozadí je to bez problému. Nie je to elegancia, je to obchádzka chyby.
+
+**Krok 2 — ulož umiestnenie do súboru:**
+
+```
+powershell -ExecutionPolicy Bypass -File tools\save_fit.ps1 -Name gunman
+```
+
+Vznikne `art\fits\gunman.json`.
+
+**Krok 3 — renderuj čokoľvek od tej postavy s tým umiestnením:**
+
+```
+powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Model "ref\characters\Enemy_gunman_01 Rifle Walk.fbx" -Name gunman_walk -Height 128 -Weapon arquebus -WFit art\fits\gunman.json -Angle 45 -Elevation 12
+```
+
+**Umiestnenie sa ukladá voči kosti ruky, nie voči animácii.** Preto ho fituješ
+**raz na postavu** a platí pre jej idle, chôdzu aj útok. Osem nepriateľov = osem
+fitovaní po pár sekundách, nie osemkrát dvadsať kôl dohadovania.
+
+### Stiahnutá zbraň namiesto našej
+
+Ak nájdeš lepší model zbrane (Sketchfab s filtrom CC0, Poly Pizza, Quaternius,
+Kenney — alebo si ju vygeneruj v Meshy tak ako postavy):
+
+```
+... tools\fit_weapon.ps1 ... -WModel "ref\objects\arkebuza.glb"
+... tools\render_pixel_test.ps1 ... -WModel "ref\objects\arkebuza.glb" -WFit art\fits\gunman.json
+```
+
+Skript ju sám otočí pozdĺž správnej osi a zvyšok je rovnaký — fitni myšou, ulož,
+používaj. Pri sťahovaní si **vždy over licenciu**, rovnako ako pri Meshy.
+
+**Formáty:** `.blend`, `.glb`, `.gltf`, `.fbx`, `.obj`. Ak ti stránka ponúkne
+viac, ber `.blend` alebo `.glb`. **`.3ds` nepoužívaj** — Blender ho vie len cez
+vypnutý doplnok a nič navyše neponúka.
+
+**Otáčanie zbrane v Blenderi okolo jej vlastnej osi:** `R`, potom **dvakrát**
+`X`. Prvé `X` je globálna os, druhé prepne na vlastnú os objektu. Zbrane sú
+stavané pozdĺž svojej osi X, takže `R X X` točí hlavňou. Rovnako `R Y Y`,
+`R Z Z`.
+
+### Ako zistiť, či animácia vôbec drží zbraň
+
+Názvy animácií z Mixama klamú. „Standing Melee Attack Downward" má ruky 167 cm
+od seba, čo nie je obojručný úder, ale rozhodené ruky. Zmeraj to pred renderom:
+
+```
+& "C:\Program Files\Blender Foundation\Blender 5.2\blender.exe" --background --python tools\inspect_grip.py -- "ref\characters\A.fbx" "ref\characters\B.fbx"
+```
+
+Vypíše rozostup rúk a povie, či je úchop obojručný, jednoručný alebo žiadny.
+Trvá sekundy a ušetrí kolá renderovania.

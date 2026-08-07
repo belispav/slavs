@@ -31,6 +31,10 @@ var _weave_rate: float = 1.0
 ## line up on one arc.
 var _keep_distance: float = Tuning.THROWER_KEEP_DISTANCE
 var _hurtbox: Area2D
+## Drawn character, when one has been rendered. Null means the coloured box,
+## which is still a perfectly good enemy and is what every unfinished type uses.
+var _sprite: AnimatedSprite2D
+var _fire_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -57,7 +61,52 @@ func _ready() -> void:
 	hs.shape = hrect
 	_hurtbox.add_child(hs)
 
+	_build_sprite()
 	despawn()
+
+
+## Build the drawn character for the roles that have art.
+##
+## Only the thrower has any yet. Everything else keeps the box, and so does the
+## thrower on a fresh clone where the render has not been run - the game must
+## start and play without art, exactly as it did through F1.
+func _build_sprite() -> void:
+	var idle := SpriteSequence.load_frames(Tuning.THROWER_IDLE_ART_DIR)
+	if idle.is_empty():
+		return
+
+	var sheet := SpriteSequence.build_frames(idle, "idle", Tuning.ENEMY_ANIM_FPS)
+	for named in [
+		[&"walk", Tuning.THROWER_WALK_ART_DIR],
+		[&"fire", Tuning.THROWER_FIRE_ART_DIR],
+	]:
+		var extra := SpriteSequence.load_frames(String(named[1]))
+		if extra.is_empty():
+			continue
+		sheet.add_animation(named[0])
+		sheet.set_animation_speed(named[0], Tuning.ENEMY_ANIM_FPS)
+		# Firing is a one-shot: it must end so the enemy can go back to
+		# standing, otherwise it reloads forever and never looks like a shot.
+		sheet.set_animation_loop(named[0], named[0] == &"walk")
+		for tex in extra:
+			sheet.add_frame(named[0], tex)
+
+	_sprite = AnimatedSprite2D.new()
+	_sprite.sprite_frames = sheet
+	_sprite.animation = &"idle"
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_sprite.scale = Vector2.ONE * Tuning.ENEMY_SPRITE_SCALE
+	_sprite.z_index = -1
+
+	# Feet on the bottom of the collision box, not on the bottom of the image -
+	# the render leaves empty rows below the character from its margin.
+	var height: float = float(idle[0].get_height())
+	var margin: float = float(SpriteSequence.foot_margin(idle))
+	_sprite.position.y = SIZE.y * 0.5 \
+		- (height * 0.5 - margin) * Tuning.ENEMY_SPRITE_SCALE
+
+	add_child(_sprite)
+	_sprite.play()
 
 
 func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
@@ -76,6 +125,11 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 		1.0 - Tuning.THROWER_DISTANCE_SPREAD,
 		1.0 + Tuning.THROWER_DISTANCE_SPREAD)
 	active = true
+	_fire_timer = 0.0
+	if _sprite != null:
+		# Only the thrower has art. A rusher with a gunman's body would be a
+		# lie the player would learn to read wrongly.
+		_sprite.visible = kind == Kind.THROWER
 	show()
 	set_physics_process(true)
 	set_deferred("collision_layer", Tuning.LAYER_ENEMY)
@@ -136,6 +190,34 @@ func _physics_process(delta: float) -> void:
 	if _flash > 0.0:
 		_flash = maxf(_flash - delta * 6.0, 0.0)
 		queue_redraw()
+	_drive_sprite(delta)
+
+
+## Pick the clip from what the enemy is actually doing.
+##
+## Firing wins while it lasts, then walking or standing by speed. The threshold
+## is not zero because holding a distance means constant small corrections, and
+## a walk cycle re-triggered every few frames looks like a shiver.
+func _drive_sprite(delta: float) -> void:
+	if _sprite == null or not _sprite.visible:
+		return
+
+	var wanted := &"idle"
+	if _fire_timer > 0.0:
+		_fire_timer = maxf(_fire_timer - delta, 0.0)
+		wanted = &"fire"
+	elif velocity.length() > Tuning.ENEMY_WALK_SPEED_MIN:
+		wanted = &"walk"
+
+	if not _sprite.sprite_frames.has_animation(wanted):
+		wanted = &"idle"
+	if _sprite.animation != wanted:
+		_sprite.play(wanted)
+
+	# Sprites are rendered facing left, which is the way enemies travel. Flip
+	# only when one is pushed back to the right.
+	if absf(velocity.x) > Tuning.ENEMY_WALK_SPEED_MIN:
+		_sprite.flip_h = velocity.x > 0.0
 
 
 ## Enemies do not walk left past the player, and the ones the player leaves
@@ -218,6 +300,9 @@ func _think_thrower(delta: float, free: bool) -> void:
 		_throw_cd = Tuning.THROWER_INTERVAL
 		var aim: Vector2 = (target.global_position - global_position).normalized()
 		throw_requested.emit(global_position + aim * 30.0, aim)
+		# Show the shot. The clip runs once and then standing takes over,
+		# which is what _drive_sprite watches for.
+		_fire_timer = Tuning.THROWER_INTERVAL * 0.5
 
 
 ## A sideways drift across the approach, so the path curves instead of being a
@@ -244,6 +329,10 @@ func _track_depth(speed: float) -> void:
 
 
 func _draw() -> void:
+	# A drawn character replaces the box entirely. Leaving the box behind the
+	# sprite showed as a coloured slab around the legs.
+	if _sprite != null and _sprite.visible:
+		return
 	var base := Color(0.62, 0.30, 0.28) if kind == Kind.RUSHER else Color(0.40, 0.34, 0.52)
 	var col := base.lerp(Color(1.0, 0.96, 0.92), _flash)
 	draw_rect(Rect2(-SIZE * 0.5, SIZE), col)

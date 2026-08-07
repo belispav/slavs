@@ -26,6 +26,20 @@ const PLAYER_IDLE_ART_DIR: String = "res://art/idle_px"
 ## The renderer produces every frame of the mocap. 30 was picked over 15 and 10
 ## by eye; both lower rates read as choppy on this run cycle.
 const PLAYER_ANIM_FPS: float = 30.0
+
+## Thrower art. Three folders, one per state, rendered by
+## tools/render_enemy.ps1 from a single fit - see PRIKAZY.md.
+## Empty folders are not an error: the enemy falls back to the coloured box,
+## the same way the player does.
+const THROWER_IDLE_ART_DIR: String = "res://art/gunman_idle_px"
+const THROWER_WALK_ART_DIR: String = "res://art/gunman_walk_px"
+const THROWER_FIRE_ART_DIR: String = "res://art/gunman_fire_px"
+const ENEMY_ANIM_FPS: float = 30.0
+const ENEMY_SPRITE_SCALE: float = 1.0
+## Below this speed the thrower is standing rather than walking. Not zero:
+## the hold-your-distance logic keeps nudging, and a walk cycle that starts and
+## stops every few frames reads as a twitch.
+const ENEMY_WALK_SPEED_MIN: float = 12.0
 ## The sprites are rendered facing left.
 const PLAYER_ART_FACES_LEFT: bool = true
 ## 1.0 = the rendered 96 px height. The hitbox stays 54 px on purpose: a body

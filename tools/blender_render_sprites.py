@@ -33,8 +33,15 @@ DEFAULTS = {
     "height": 96,      # rendered pixel height of one frame
     "step": 1,         # render every frame; 30 fps was picked on device over
                        # 15 and 10, which both read as choppy on this cycle
+    "frame_start": 0,  # 0 = from the start of the animation
+    "frame_end": 0,    # 0 = to the end of the animation
     "angles": 1,       # 1 = single view; 8 = full 45-degree turnaround
     "start_angle": -1.0,  # -1 = work the side view out from the model itself
+    "yaw": 0.0,        # degrees turned off pure profile; + = more of the front
+    "angle_step": 0.0,  # >0 = spacing between angles in the same sense as yaw,
+                        # for a fine sweep; 0 = spread evenly over 360 degrees
+    "elevation": 0.0,  # degrees the camera is raised above eye level
+    "light_follow": 1,  # 1 = lights turn with the camera, so every angle is lit
     "preview": 0,      # 1 = one frame from 8 angles, to pick the side view
     "margin": 1.35,    # extra room around the rest-pose bounding box
     "engine": "auto",
@@ -48,6 +55,27 @@ DEFAULTS = {
     "material_colours": "",  # "Alpha_Body=C08A6B,Alpha_Joints=6B5540"
     "texture_size": 48,  # shrink textures to this before use; 0 = leave alone
     "texture": "",       # colour map to put on the model, overriding its own
+    # --- weapon --------------------------------------------------------------
+    # Empty = no weapon. Otherwise one of blender_attach_weapon.BUILDERS:
+    # arquebus, club, spear, sword, bow. The weapon is built and hung on the
+    # hand bone in this same run, before the camera is placed, so it counts
+    # towards the framing instead of sticking out of the rendered frame.
+    "weapon": "",
+    "weapon_hand": "right",
+    "weapon_scale": 1.0,
+    "weapon_shift_x": 0.0,   # metres, relative to the hand bone
+    "weapon_shift_y": 0.0,
+    "weapon_shift_z": 0.0,
+    "weapon_turn": 0.0,      # degrees around the shaft
+    "weapon_aim": 1,         # 1 = shaft follows the line between the hands
+    "weapon_debug": 0,       # 1 = paint the weapon magenta to find it
+    "weapon_only": 0,        # 1 = hide the character and render the weapon alone
+    "weapon_spin": 0.0,      # degrees to turn the weapon about the vertical axis
+    "weapon_sweep": 0,       # >1 = render this many spins, camera held still
+    "weapon_sweep_step": 0.0,  # degrees between them; 0 = spread over 360
+    "weapon_model": "",      # a downloaded weapon mesh instead of the built one
+    "weapon_fit": "",        # JSON from save_weapon_fit.py; beats everything
+    "weapon_iron_from": 0.0,  # 0..1 along the weapon; past this it turns iron
 }
 
 
@@ -193,15 +221,71 @@ def rest_pose_bounds():
     return bounds
 
 
+def facing_axis():
+    """Which way the character is looking, from the rig's rest pose.
+
+    Taken from foot to toe, because in a T-pose the toes point forward on every
+    Mixamo rig and nothing else in the skeleton states the facing without a
+    sign ambiguity. The shoulder axis alone gives a LINE, not a direction, so a
+    camera placed from it lands on the front or the back with equal chance -
+    which is how the first enemy render came out showing their backs.
+
+    Returns None if the rig has no feet to ask.
+    """
+    for obj in bpy.context.scene.objects:
+        if obj.type != "ARMATURE":
+            continue
+        table = _normalised_bone_names(obj)
+        vectors = []
+        for side in ("left", "right"):
+            foot = _find_bone(table, side, "foot")
+            toe = _find_bone(table, side, "toe")
+            if foot is None or toe is None:
+                continue
+            span = ((obj.matrix_world @ toe.head_local)
+                    - (obj.matrix_world @ foot.head_local))
+            span[2] = 0.0
+            if span.length > 1e-5:
+                vectors.append(span)
+        if vectors:
+            total = mathutils.Vector((0.0, 0.0, 0.0))
+            for v in vectors:
+                total += v
+            if total.length > 1e-5:
+                print("VOLYA: smer pohladu urceny z %d chodidiel" % len(vectors))
+                return total.normalized()
+    return None
+
+
 def side_view_azimuth():
     """Camera angle that puts the character in profile.
 
     The camera at azimuth A looks along (-sin A, cos A). A side view means
     looking straight down the shoulder axis, so A = atan2(-sx, sy).
 
-    Left profile or right profile is not decided here - that is a horizontal
-    flip in Godot and costs nothing.
+    Of the two angles that satisfy that, the one the character faces INTO is
+    picked, using the feet. Both give a profile, but only one shows the face,
+    the front of the tunic and the weapon in the near hand; the other shows a
+    back and a shoulder. That is not a horizontal flip in Godot - a flip
+    mirrors the same pixels, it cannot turn a character around.
     """
+    facing = facing_axis()
+    if facing is not None:
+        # The camera sits at direction (sin A, -cos A) from the centre. For a
+        # profile that has to be perpendicular to the facing; of the two
+        # perpendiculars this one leaves the character walking to the LEFT of
+        # the frame, which is the direction every enemy moves in this game.
+        azimuth = math.degrees(math.atan2(-facing[1], -facing[0])) % 360.0
+        # Sanity: the camera direction must be perpendicular to the facing.
+        look = mathutils.Vector((-math.sin(math.radians(azimuth)),
+                                 math.cos(math.radians(azimuth))))
+        if abs(look.dot(mathutils.Vector((facing[0], facing[1])))) > 0.2:
+            print("VOLYA: POZOR - vypocet bocneho pohladu nesedi, "
+                  "vraciam sa k osi ramien")
+        else:
+            print("VOLYA: bocny pohlad je %.0f stupnov (z chodidiel)" % azimuth)
+            return azimuth
+
     axis = shoulder_axis()
     if axis is None:
         lo, hi = rest_pose_bounds()
@@ -301,8 +385,34 @@ SCHEME = [
 GREY = (0.6, 0.6, 0.6)
 
 
+def srgb_to_linear(channel):
+    """Turn a colour as a screen shows it into the numbers Blender shades with.
+
+    Blender's shader maths is linear; a hex code off a colour picker is sRGB.
+    Writing the sRGB number straight into a shader makes everything come out
+    far too bright - #3A2616 was typed in and #6D5741 came out, nearly twice as
+    light. Worse than being wrong, it made the setting unusable: the number you
+    ask for is not the number you get, so no amount of careful choosing helps.
+    """
+    if channel <= 0.04045:
+        return channel / 12.92
+    return ((channel + 0.055) / 1.055) ** 2.4
+
+
+def linear_to_srgb(channel):
+    """The way back, for printing. Only ever used in messages to a human."""
+    channel = max(0.0, min(1.0, channel))
+    if channel <= 0.0031308:
+        return channel * 12.92
+    return 1.055 * (channel ** (1.0 / 2.4)) - 0.055
+
+
 def parse_colour_overrides(text):
-    """--material_colours "Alpha_Body=C08A6B,Alpha_Joints=6B5540" """
+    """--material_colours "Alpha_Body=C08A6B,Alpha_Joints=6B5540"
+
+    The hex is read as sRGB - what a colour picker or a paint program shows -
+    and converted, so what is typed is what the sprite comes out as.
+    """
     overrides = {}
     for chunk in (text or "").split(","):
         chunk = chunk.strip()
@@ -314,7 +424,8 @@ def parse_colour_overrides(text):
             print("VOLYA: preskakujem farbu '%s' (caka sa 6 hex znakov)" % chunk)
             continue
         try:
-            rgb = tuple(int(value[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
+            rgb = tuple(srgb_to_linear(int(value[i:i + 2], 16) / 255.0)
+                        for i in (0, 2, 4))
         except ValueError:
             print("VOLYA: preskakujem farbu '%s' (nie je to hex)" % chunk)
             continue
@@ -348,11 +459,12 @@ def material_appearance(material):
     material. Collapsing that to its mean gives one muddy grey, and the render
     comes out as a grey statue even though the source model is fully coloured.
     """
-    # Blender 5.x warns that 'use_nodes' goes away in 6.0, where every material
-    # is node-based anyway. Asking for the node tree directly survives both.
+    # Never read 'use_nodes'. Blender 5.x prints a deprecation warning every
+    # time it is touched, that warning goes to stderr, and PowerShell treats
+    # anything on stderr from a native command as a failure - which killed a
+    # six-variant colour test after the first one. The node tree alone says
+    # everything needed anyway.
     if not material or material.node_tree is None:
-        return None, None
-    if not getattr(material, "use_nodes", True):
         return None, None
     for node in material.node_tree.nodes:
         if node.type != "BSDF_PRINCIPLED":
@@ -409,11 +521,14 @@ def make_toon_material(material, cfg, image, colour, bands_override=None):
     bands = max(2, int(bands_override or cfg["bands"]))
     darkest = float(cfg["shadow"])
 
-    try:
-        if not getattr(material, "use_nodes", True):
+    if material.node_tree is None:
+        # Only touch the deprecated flag when there is genuinely no node tree
+        # to work with; reading it needlessly prints a warning on every
+        # material of every frame.
+        try:
             material.use_nodes = True
-    except Exception:
-        pass    # Blender 6.0 removed the flag; materials are always node-based
+        except Exception:
+            pass
     tree = material.node_tree
     tree.nodes.clear()
 
@@ -480,7 +595,16 @@ def apply_toon_shading(cfg):
     A photographic texture shrunk to 96 pixels is mud. Large flat areas of one
     colour survive the shrink; detail does not.
     """
-    overrides = parse_colour_overrides(cfg.get("material_colours", ""))
+    spec = cfg.get("material_colours", "")
+    if not spec and cfg.get("weapon_fit"):
+        here = os.path.dirname(os.path.abspath(__file__))
+        if here not in sys.path:
+            sys.path.insert(0, here)
+        import blender_attach_weapon as _W
+        spec = _W.settings_for(cfg["weapon_fit"]).get("colours", "")
+        if spec:
+            print("VOLYA: farby zo settings suboru: %s" % spec)
+    overrides = parse_colour_overrides(spec)
 
     # A colour map supplied on the command line beats whatever the model
     # carries. Mixamo returns a rigged mesh with no texture, while the
@@ -520,6 +644,14 @@ def apply_toon_shading(cfg):
             material = slot.material
             if material is None or material.name in seen:
                 continue
+            # Already flattened once. Running the rebuild a second time reads
+            # the toon node tree as if it were the original material, finds no
+            # texture in it, and repaints the character in one flat colour -
+            # which is exactly what happened to the gunman during a weapon
+            # sweep, where this is called again for every new weapon.
+            if material.get("VOLYA_toon"):
+                continue
+            material["VOLYA_toon"] = 1
             seen.append(material.name)
 
             image, base = None, overrides.get(material.name.lower())
@@ -540,9 +672,14 @@ def apply_toon_shading(cfg):
                     print("VOLYA:   %-28s %-22s (%s)"
                           % (material.name, image.name, source))
                 else:
+                    # Printed back as sRGB - the same numbers that were typed
+                    # in. Printing the internal linear value instead reported
+                    # 4A3016 as 110702 and read like the setting was ignored.
+                    shown = tuple(int(round(linear_to_srgb(c) * 255))
+                                  for c in base[:3])
                     print("VOLYA:   %-28s #%02X%02X%02X               (%s)"
-                          % (material.name, int(base[0] * 255),
-                             int(base[1] * 255), int(base[2] * 255), source))
+                          % (material.name, shown[0], shown[1], shown[2],
+                             source))
             except Exception as exc:
                 print("VOLYA: material %s sa nepodarilo prerobit (%s)"
                       % (material.name, exc))
@@ -574,19 +711,43 @@ def build_camera(cfg):
     cam = bpy.data.objects.new("VOLYA_Cam", cam_data)
     bpy.context.scene.collection.objects.link(cam)
     cam.parent = pivot
-    cam.location = (0.0, -distance, 0.0)
-    cam.rotation_euler = (math.radians(90.0), 0.0, 0.0)
+
+    # Elevation lifts the camera and tilts it back down at the same point, so
+    # the floor reads. The genre draws characters from slightly above for
+    # exactly that reason; a strict side view gives no ground plane at all and
+    # nothing on screen says where a character's feet are relative to a cage or
+    # an enemy. 0 keeps the old strict side view.
+    elev = math.radians(float(cfg["elevation"]))
+    cam.location = (0.0, -distance * math.cos(elev), distance * math.sin(elev))
+    cam.rotation_euler = (math.radians(90.0) - elev, 0.0, 0.0)
+    if abs(float(cfg["elevation"])) > 0.01:
+        print("VOLYA: kamera zdvihnuta o %.0f stupnov" % float(cfg["elevation"]))
 
     bpy.context.scene.camera = cam
     return pivot
 
 
-def build_lights(cfg):
-    """Simple 3-point rig parented to nothing - lighting stays fixed in world space."""
+def build_lights(cfg, pivot=None):
+    """Simple light rig, by default parented to the camera pivot.
+
+    The lights used to sit in world space, and that turned out to decide the
+    render for us: the key light comes from -Y, so of the two valid profile
+    angles one was lit and the other came out almost black. The first enemy
+    render landed on the dark one and nothing could be judged from it - not the
+    weapon, not the silhouette.
+
+    Hanging the lights off the same pivot as the camera means every azimuth is
+    lit identically, so the angle can be chosen for how the character reads
+    rather than for where the sun happens to be. It also makes an eight-angle
+    preview usable, since all eight frames are now lit the same.
+
+    Pass light_follow=0 for the old world-space behaviour.
+    """
     lo, hi = visible_mesh_bounds()
     center = (lo + hi) * 0.5
     height = max(hi[2] - lo[2], 1e-4)
     reach = height * 3.0
+    follow = pivot is not None and int(cfg.get("light_follow", 1)) != 0
 
     if int(cfg["toon"]) != 0:
         # Two lights only. A rim light paints a thin gradient along the edge,
@@ -608,14 +769,31 @@ def build_lights(cfg):
         obj = bpy.data.objects.new(name, data)
         bpy.context.scene.collection.objects.link(obj)
         vec = mathutils.Vector(direction).normalized()
-        obj.location = center + vec * reach
         obj.rotation_euler = (-vec).to_track_quat("-Z", "Y").to_euler()
+        if follow:
+            # Pivot-local: the pivot already sits at the centre, so the offset
+            # is the direction alone. matrix_parent_inverse has to be identity
+            # or Blender folds the pivot's current transform in and the light
+            # stops turning with the camera.
+            obj.parent = pivot
+            obj.matrix_parent_inverse = mathutils.Matrix.Identity(4)
+            obj.location = vec * reach
+        else:
+            obj.location = center + vec * reach
+    print("VOLYA: svetla %s"
+          % ("otacaju sa s kamerou" if follow else "fixne vo svete"))
 
 
 # ------------------------------------------------------------------- render --
 
-def sync_frame_range():
-    """FBX import does not always set the scene range - take it from the actions."""
+def sync_frame_range(cfg=None):
+    """FBX import does not always set the scene range - take it from the actions.
+
+    --frame_start / --frame_end cut a window out of it afterwards. That is not
+    a convenience: a downloaded animation can contain frames that are unusable
+    for a side view (the rusher's idle turns him a quarter turn away from the
+    camera halfway through), and an idle only has to loop, not to be complete.
+    """
     lo = None
     hi = None
     for obj in bpy.context.scene.objects:
@@ -633,6 +811,21 @@ def sync_frame_range():
     bpy.context.scene.frame_end = int(math.ceil(hi))
     print("VOLYA: frame range taken from animation: %d-%d"
           % (bpy.context.scene.frame_start, bpy.context.scene.frame_end))
+
+    if cfg is None:
+        return
+    scene = bpy.context.scene
+    want_lo = int(cfg.get("frame_start", 0))
+    want_hi = int(cfg.get("frame_end", 0))
+    if want_lo > 0:
+        scene.frame_start = max(scene.frame_start, want_lo)
+    if want_hi > 0:
+        scene.frame_end = min(scene.frame_end, want_hi)
+    if scene.frame_end < scene.frame_start:
+        scene.frame_end = scene.frame_start
+    if want_lo > 0 or want_hi > 0:
+        print("VOLYA: orezane na %d-%d"
+              % (scene.frame_start, scene.frame_end))
 
 
 def configure_render(cfg, engine):
@@ -670,7 +863,15 @@ def configure_render(cfg, engine):
 
 def render_angle(cfg, pivot, index, total):
     scene = bpy.context.scene
-    azimuth = cfg["start_angle"] + (360.0 / total) * index
+    step = float(cfg.get("angle_step", 0.0))
+    if step > 0.0:
+        # Subtracted, so the sweep walks in the same direction as --yaw: frame
+        # a00 is the given yaw and each following frame is one step more of the
+        # front. That makes the answer readable straight off the contact sheet -
+        # "a03 is right" means "--yaw <start + 3 steps>".
+        azimuth = float(cfg["start_angle"]) - step * index
+    else:
+        azimuth = float(cfg["start_angle"]) + (360.0 / total) * index
     pivot.rotation_euler = (0.0, 0.0, math.radians(azimuth))
 
     out_dir = bpy.path.abspath(cfg["out"])
@@ -713,10 +914,53 @@ def import_source(path):
     print("VOLYA: nacitane %s" % os.path.basename(path))
 
 
+def attach_weapon(cfg):
+    """Hang a weapon on the imported rig, if one was asked for.
+
+    Done here rather than as a separate Blender run, because the camera is
+    framed from the model's bounding box: attaching afterwards would push the
+    weapon outside the frame that was already decided.
+    """
+    name = str(cfg.get("weapon", "")).strip()
+    model = str(cfg.get("weapon_model", "")).strip()
+    if not name and not model:
+        return None
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import blender_attach_weapon
+    return blender_attach_weapon.attach({
+        "weapon": name,
+        "hand": cfg["weapon_hand"],
+        "scale": float(cfg["weapon_scale"]),
+        "shift_x": float(cfg["weapon_shift_x"]),
+        "shift_y": float(cfg["weapon_shift_y"]),
+        "shift_z": float(cfg["weapon_shift_z"]),
+        "turn": float(cfg["weapon_turn"]),
+        "aim": int(cfg["weapon_aim"]),
+        "debug": int(cfg["weapon_debug"]),
+        "spin": float(cfg["weapon_spin"]),
+        "model": cfg["weapon_model"],
+        "fit": cfg["weapon_fit"],
+        "iron_from": float(cfg["weapon_iron_from"]),
+    })
+
+
 def main():
     cfg = parse_args()
 
     import_source(cfg["import"])
+    weapon = attach_weapon(cfg)
+
+    # Rendering the weapon on its own answers "is it hidden or is it missing?",
+    # which no amount of looking at the finished sprite can.
+    if weapon is not None and int(cfg["weapon_only"]) != 0:
+        hidden = 0
+        for obj in bpy.context.scene.objects:
+            if obj.type == "MESH" and obj is not weapon:
+                obj.hide_render = True
+                hidden += 1
+        print("VOLYA: DEBUG - skryl som %d sietí, renderujem len zbran" % hidden)
 
     toon = int(cfg["toon"]) != 0
     if toon and cfg["engine"] == "auto":
@@ -739,12 +983,21 @@ def main():
     if float(cfg["start_angle"]) < 0.0:
         cfg["start_angle"] = side_view_azimuth()
 
-    sync_frame_range()
+    # Positive yaw turns the camera towards the character's front. Straight
+    # profile hides everything held across the body - a club, an arquebus at
+    # the waist - so a few degrees of front is worth more than it sounds.
+    yaw = float(cfg["yaw"])
+    if abs(yaw) > 0.01:
+        cfg["start_angle"] = (float(cfg["start_angle"]) - yaw) % 360.0
+        print("VOLYA: natocene o %.0f stupnov k prednej strane -> %.0f stupnov"
+              % (yaw, cfg["start_angle"]))
+
+    sync_frame_range(cfg)
     configure_render(cfg, engine)
     if toon:
         apply_toon_shading(cfg)
     pivot = build_camera(cfg)
-    build_lights(cfg)
+    build_lights(cfg, pivot)
 
     scene = bpy.context.scene
     total = max(1, int(cfg["angles"]))
@@ -760,6 +1013,33 @@ def main():
         scene.frame_step = 1
         print("VOLYA: PREVIEW - 1 frame from 8 angles (a00 = %.0f deg, "
               "each step +45 deg)" % cfg["start_angle"])
+
+    sweep = int(cfg["weapon_sweep"])
+    if sweep > 1 and (str(cfg["weapon"]).strip()
+                      or str(cfg["weapon_model"]).strip()):
+        # Same trick that settled the camera: instead of arguing about which
+        # way the weapon should point, render every option once and let a human
+        # look. The camera is held still so only one thing changes per frame.
+        base = float(cfg["weapon_spin"])
+        gap = float(cfg["weapon_sweep_step"]) or (360.0 / sweep)
+        pivot.rotation_euler = (0.0, 0.0, math.radians(float(cfg["start_angle"])))
+        out_dir = bpy.path.abspath(cfg["out"])
+        os.makedirs(out_dir, exist_ok=True)
+        for index in range(sweep):
+            for obj in list(bpy.data.objects):
+                if obj.name.startswith("VOLYA_Weapon"):
+                    bpy.data.objects.remove(obj, do_unlink=True)
+            cfg["weapon_spin"] = base + gap * index
+            attach_weapon(cfg)
+            if toon:
+                apply_toon_shading(cfg)
+            scene.render.filepath = os.path.join(
+                out_dir, "%s_a%02d_" % (cfg["name"], index))
+            print("VOLYA: spin %d/%d = %.0f stupnov"
+                  % (index + 1, sweep, cfg["weapon_spin"]))
+            bpy.ops.render.render(animation=True, write_still=False)
+        print("VOLYA: hotovo - %d natoceni zbrane, kamera stala" % sweep)
+        return
 
     for index in range(total):
         render_angle(cfg, pivot, index, total)
