@@ -374,6 +374,14 @@ Vznikne `art\fits\gunman.json`.
 powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Model "ref\characters\Enemy_gunman_01 Rifle Walk.fbx" -Name gunman_walk -Height 128 -Weapon arquebus -WFit art\fits\gunman.json -Angle 45 -Elevation 12
 ```
 
+**POZOR, `-Height 128` v tomto príklade je zastaraná hodnota — nekopíruj ju bez rozmyslu.**
+Presne toto `-Height 128` sa použilo na gunmana a vyrobilo postavu citeľne
+menšiu než hrdina (zmerané 2026-08-07: hrdina má vykreslenú výšku ~120 px pri
+`-Height` okolo 162; gunman len ~97 px pri `-Height 128` — rovnaký pomer
+vykreslené/plátno ~0,74 v oboch prípadoch, takže na zhodu s hrdinom treba
+`-Height` okolo **162**, nie 128. Pre rushera (má byť o kúsok väčší než
+hrdina) skús **175–185** a po renderi zmeraj skutočnú výšku, neuhádni ju.
+
 **Umiestnenie sa ukladá voči kosti ruky, nie voči animácii.** Preto ho fituješ
 **raz na postavu** a platí pre jej idle, chôdzu aj útok. Osem nepriateľov = osem
 fitovaní po pár sekundách, nie osemkrát dvadsať kôl dohadovania.

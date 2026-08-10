@@ -36,7 +36,9 @@ if (-not (Test-Path $fitPath)) {
 $setPath = "art\fits\$Name.settings.json"
 if (-not (Test-Path $setPath)) {
     Write-Host "Nenasiel som $setPath" -ForegroundColor Red
-    Write-Host "Ma obsahovat weapon_model, colours, iron_from, camera_angle." -ForegroundColor Red
+    Write-Host "Ma obsahovat weapon_model (stiahnuty model) alebo weapon (nasa" -ForegroundColor Red
+    Write-Host "primitivna zbran - club/arquebus/spear/sword/bow), plus colours," -ForegroundColor Red
+    Write-Host "iron_from, camera_angle." -ForegroundColor Red
     exit 1
 }
 $set = Get-Content $setPath -Raw | ConvertFrom-Json
@@ -44,11 +46,18 @@ $set = Get-Content $setPath -Raw | ConvertFrom-Json
 $angle     = if ($set.camera_angle)     { [double]$set.camera_angle }     else { 45.0 }
 $elevation = if ($set.camera_elevation) { [double]$set.camera_elevation } else { 12.0 }
 $wmodel    = if ($set.weapon_model)     { [string]$set.weapon_model }     else { "" }
+# Our own primitive weapon (club, arquebus, spear, sword, bow), for
+# characters that are not using a downloaded model. Added alongside
+# weapon_model, which used to be the only kind this script knew how to
+# attach - a settings.json with only "weapon" rendered every animation
+# unarmed and said nothing about why.
+$weapon    = if ($set.weapon)           { [string]$set.weapon }           else { "" }
 
 Write-Host ""
 Write-Host "=== VOLYA - $Name ===" -ForegroundColor Cyan
 Write-Host "kamera $angle stupnov, zdvih $elevation"
 if ($wmodel)     { Write-Host "zbran  $wmodel" }
+elseif ($weapon) { Write-Host "zbran  $weapon (nasa)" }
 if ($set.colours) { Write-Host "farby  $($set.colours)" }
 
 $entries = $Anims.Split(",") | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" }
@@ -92,6 +101,7 @@ foreach ($entry in $entries) {
               "-Angle", $angle, "-Elevation", $elevation,
               "-WFit", $useFit)
     if ($wmodel) { $call += @("-WModel", $wmodel) }
+    elseif ($weapon) { $call += @("-Weapon", $weapon) }
 
     & powershell @call *> "render\$spriteName`_log.txt"
     if ($LASTEXITCODE -ne 0) {
