@@ -65,7 +65,12 @@ param(
     [string] $WFit   = "",
     # 0..1 along the weapon; past this point the faces become iron instead of
     # wood. For a model whose wooden fore-end hides the barrel.
-    [double] $IronFrom = 0.0
+    [double] $IronFrom = 0.0,
+    # Skip the 1 px outline in the pixel pass. Needed at S = 2: the sprite is
+    # drawn at scale 0.5, so a 1 px outline is half a world unit and is thrown
+    # away by the minification anyway - it only adds crawl.
+    # See DIZAJN_pozadie_a_rozlisenie.md KROK 4 step 5.
+    [switch] $NoOutline
 )
 
 $ErrorActionPreference = "Stop"
@@ -258,8 +263,11 @@ if (-not $python) {
 Write-Host ""
 Write-Host "[2/3] Pixel-art prechod ($Colours farieb)..." -ForegroundColor Yellow
 
-& $python "tools\pixelize_sprites.py" `
-    --in $rawDir --out $pxDir --colours $Colours --sheet $sheet --gif $gif
+$pixelArgs = @("--in", $rawDir, "--out", $pxDir, "--colours", $Colours,
+               "--sheet", $sheet, "--gif", $gif)
+if ($NoOutline) { $pixelArgs += "--no-outline" }
+
+& $python "tools\pixelize_sprites.py" @pixelArgs
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Pixel prechod zlyhal." -ForegroundColor Red

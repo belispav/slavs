@@ -59,6 +59,9 @@ var kills: int = 0
 var deaths: int = 0
 var hud: Label
 var _alive: int = 0
+## Kept so the debug panel can flip its filter live. See _apply_bg_filter().
+var _bg_sprite: Sprite2D
+var _bg_smooth_applied: bool = false
 
 
 func _ready() -> void:
@@ -82,6 +85,20 @@ func _process(delta: float) -> void:
 	_alive = _count_alive()      # spocitane RAZ za snimku, nie trikrat
 	_spawn_tick(delta)
 	_update_hud()
+	_apply_bg_filter()
+
+
+## Follow the debug panel's background-filter switch. Only touches the sprite
+## when the value actually changed, so this costs a bool compare per frame.
+func _apply_bg_filter() -> void:
+	if _bg_sprite == null or Debug.smooth_background == _bg_smooth_applied:
+		return
+	_bg_smooth_applied = Debug.smooth_background
+	# No mipmaps here: env_03 is MAGNIFIED (1 asset px per world unit against
+	# the device's ~1.5), and mipmaps only do anything when minifying. The
+	# characters are the opposite case and do need them.
+	_bg_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR \
+		if _bg_smooth_applied else CanvasItem.TEXTURE_FILTER_NEAREST
 
 
 # ---------------------------------------------------------------- level ---
@@ -126,6 +143,7 @@ func _build_background() -> void:
 	sprite.position = Vector2(LEVEL_LEFT - texture.get_width(), background_top())
 	sprite.z_index = -100
 	add_child(sprite)
+	_bg_sprite = sprite
 
 
 func _build_level() -> void:
@@ -272,6 +290,18 @@ func _count_alive() -> int:
 	return n
 
 
+## Same as _count_alive, but only one kind - for the debug density caps.
+## Not folded into the per-frame _alive count above: the spawner is the only
+## thing that needs this, and it already runs throttled by SPAWN_INTERVAL,
+## not every frame.
+func _count_alive_kind(kind: int) -> int:
+	var n: int = 0
+	for e in enemies:
+		if e.active and e.kind == kind:
+			n += 1
+	return n
+
+
 func _spawn_tick(delta: float) -> void:
 	_spawn_cd -= delta
 	if _spawn_cd > 0.0:
@@ -304,6 +334,12 @@ func _spawn_tick(delta: float) -> void:
 	elif kind == 1 and Debug.disable_thrower:
 		kind = 0
 	if (kind == 0 and Debug.disable_rusher) or (kind == 1 and Debug.disable_thrower):
+		return
+	# Debug density cap - separate from the on/off switches above. Lets a
+	# crowd be thinned to a handful, or to one, instead of only ever being
+	# fully on or fully off.
+	var cap: int = Debug.max_rusher_alive if kind == 0 else Debug.max_thrower_alive
+	if _count_alive_kind(kind) >= cap:
 		return
 
 	# In free movement there is no floor to walk in on, so they arrive spread

@@ -45,6 +45,13 @@ var _muzzle_height: float = Tuning.MUZZLE_HEIGHT_FALLBACK
 var _has_idle: bool = false
 var _rest_frame: int = 0
 
+## True head-to-feet body height, in world units - set once art is loaded,
+## 0.0 with no art (the box fallback, where _fit_hurtbox is never called and
+## must not be re-driven from here). Kept around so _fit_hurtbox can be
+## re-run every frame with the live Tuning.player_hurt_height_fraction,
+## instead of being fixed at whatever the fraction was on launch.
+var _drawn_height: float = 0.0
+
 
 func _ready() -> void:
 	add_to_group("player")
@@ -69,9 +76,16 @@ func _ready() -> void:
 	_cam.offset = Vector2.ZERO if Touch.config.free_movement else Vector2(0, -60)
 	add_child(_cam)
 
-	# Contact damage from enemy bodies.
+	# Contact damage from enemy bodies, AND the target enemy bullets look for.
+	# collision_layer used to be 0 - detectable by nothing, so this only ever
+	# watched for enemies touching it and was never itself a target. Enemy
+	# shots hit the player's plain movement CollisionShape2D instead (see
+	# _ready below), which is the F1 grey box's size and was never resized
+	# to the drawn art - so a shot through the upper body, above that small
+	# box, silently missed. LAYER_PLAYER is otherwise unused by anything that
+	# would now double-detect it.
 	_hurtbox = Area2D.new()
-	_hurtbox.collision_layer = 0
+	_hurtbox.collision_layer = Tuning.LAYER_PLAYER
 	_hurtbox.collision_mask = Tuning.LAYER_ENEMY
 	add_child(_hurtbox)
 	_hurt_shape = CollisionShape2D.new()
@@ -116,8 +130,11 @@ func _build_sprite() -> void:
 	_sprite = AnimatedSprite2D.new()
 	_sprite.sprite_frames = sheet
 	_sprite.animation = &"run"
-	# Nearest, or the whole pixel pass is undone by the GPU smoothing it back.
-	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# S = 2 means the asset is MINIFIED (2 asset px per world unit against the
+	# device's ~1.5), and Nearest is the wrong filter when minifying - it drops
+	# every fourth pixel and crawls in motion. Linear + mipmaps instead.
+	# NOT a style choice reversal: see DIZAJN_pozadie_a_rozlisenie.md §4.
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	_sprite.scale = Vector2.ONE * Tuning.PLAYER_SPRITE_SCALE
 	# Behind the node's own _draw(), so the aim line stays visible on top of
 	# the body. The aim line is still the main readout for the controls.
@@ -130,9 +147,14 @@ func _build_sprite() -> void:
 	_sprite.position.y = SIZE.y * 0.5 \
 		- (height * 0.5 - margin) * Tuning.PLAYER_SPRITE_SCALE
 
-	# Feet sit on the bottom of the box, so measure up from there.
-	var drawn: float = (height - margin) * Tuning.PLAYER_SPRITE_SCALE
+	# The true body height, head to feet - NOT canvas height minus the bottom
+	# margin, which still counts the empty rows above the head as body. That
+	# older "drawn" put the muzzle and the hurtbox both a little too low,
+	# the hurtbox enough to miss the top half of the body entirely.
+	var top_margin: float = float(SpriteSequence.head_margin(frames))
+	var drawn: float = (height - margin - top_margin) * Tuning.PLAYER_SPRITE_SCALE
 	_muzzle_height = drawn * Tuning.MUZZLE_HEIGHT_FRACTION - SIZE.y * 0.5
+	_drawn_height = drawn
 	_fit_hurtbox(drawn)
 
 	add_child(_sprite)
@@ -149,7 +171,7 @@ func _fit_hurtbox(drawn_height: float) -> void:
 	var rect := _hurt_shape.shape as RectangleShape2D
 	if rect == null:
 		return
-	var tall: float = drawn_height * Tuning.PLAYER_HURT_HEIGHT_FRACTION
+	var tall: float = drawn_height * Tuning.player_hurt_height_fraction
 	rect.size = Vector2(Tuning.PLAYER_HURT_WIDTH, tall)
 	# Feet are at +SIZE.y/2; hang the box from there so it sits on the body.
 	_hurt_shape.position.y = SIZE.y * 0.5 - tall * 0.5 - (drawn_height - tall) * 0.5
@@ -257,6 +279,12 @@ func _physics_process(delta: float) -> void:
 
 	_iframes = maxf(_iframes - delta, 0.0)
 	move_and_slide()
+
+	# Cheap enough to redo every frame, and it is what makes the hurtbox
+	# fraction slider in the debug panel actually live instead of only
+	# taking effect after the next redeploy.
+	if _drawn_height > 0.0:
+		_fit_hurtbox(_drawn_height)
 
 	# Aim from the hands, not from the middle of the collision box. Both the
 	# shot and the direction start at the same point, or the line drawn on

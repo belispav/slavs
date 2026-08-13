@@ -16,7 +16,13 @@ param(
     [Parameter(Mandatory = $true)][string] $Anims,
     [string] $CharDir = "ref\characters",
     [int]    $Height  = 128,
-    [int]    $Step    = 1
+    [int]    $Step    = 1,
+    # Palette size and outline, passed through to the pixel pass. At S = 2 the
+    # sprite is minified, so the 17-colour hard-edged look is not achievable
+    # and not wanted: -Colours 64 -NoOutline.
+    # See DIZAJN_pozadie_a_rozlisenie.md KROK 4 step 5.
+    [int]    $Colours = 16,
+    [switch] $NoOutline
 )
 
 $ErrorActionPreference = "Continue"
@@ -99,9 +105,17 @@ foreach ($entry in $entries) {
               "-Model", $model, "-Name", $spriteName, "-Height", $Height,
               "-Step", $Step, "-From", $from, "-To", $to,
               "-Angle", $angle, "-Elevation", $elevation,
+              "-Colours", $Colours,
               "-WFit", $useFit)
     if ($wmodel) { $call += @("-WModel", $wmodel) }
     elseif ($weapon) { $call += @("-Weapon", $weapon) }
+    # These two were read from settings.json and printed, but never passed on -
+    # so every render through this wrapper came out with the weapon's default
+    # flat colours and no iron section, silently, while the header said
+    # otherwise. Found 2026-08-12 while preparing the S = 2 re-render.
+    if ($set.colours)   { $call += @("-MatColours", [string]$set.colours) }
+    if ($set.iron_from) { $call += @("-IronFrom", [double]$set.iron_from) }
+    if ($NoOutline)     { $call += "-NoOutline" }
 
     & powershell @call *> "render\$spriteName`_log.txt"
     if ($LASTEXITCODE -ne 0) {

@@ -29,7 +29,6 @@ func _ready() -> void:
 	cs.shape = _circle
 	add_child(cs)
 	area_entered.connect(_on_area_entered)
-	body_entered.connect(_on_body_entered)
 	despawn()
 
 
@@ -85,24 +84,27 @@ func _off_screen() -> bool:
 		or at.y < -OFF_SCREEN_MARGIN or at.y > view.y + OFF_SCREEN_MARGIN
 
 
+## Both directions go through the same Area signal now. Enemy shots used to
+## check body_entered against the player's plain movement CollisionShape2D
+## (the F1 grey box's size, 30x54, never resized to the drawn art), so a shot
+## through the upper half of the body - above that small box - silently
+## missed. The player now exposes its own fitted `_hurtbox` Area the same way
+## every enemy already does, so both cases are "which Area did I hit".
 func _on_area_entered(area: Area2D) -> void:
-	if not active or hostile:
+	if not active:
 		return
+	var method := "take_damage" if hostile else "hit"
 	# The hurtbox may be a child of the thing that actually takes damage.
 	var victim: Node = area
-	if not victim.has_method("hit") and area.get_parent() != null:
+	if not victim.has_method(method) and area.get_parent() != null:
 		victim = area.get_parent()
-	if victim.has_method("hit"):
-		victim.call("hit")
-		despawn()
-
-
-func _on_body_entered(body: Node) -> void:
-	if not active or not hostile:
+	if not victim.has_method(method):
 		return
-	if body.has_method("take_damage"):
-		body.call("take_damage", 1, global_position)
-		despawn()
+	if hostile:
+		victim.call(method, 1, global_position)
+	else:
+		victim.call(method)
+	despawn()
 
 
 func _draw() -> void:

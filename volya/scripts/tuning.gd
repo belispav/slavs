@@ -51,17 +51,22 @@ const RUSHER_WALK_ART_DIR: String = "res://art/rusher_walk_px"
 const RUSHER_ATTACK_ART_DIR: String = "res://art/rusher_attack_px"
 
 const ENEMY_ANIM_FPS: float = 30.0
-const ENEMY_SPRITE_SCALE: float = 1.0
+## S = 2: assets are rendered at 2 px per world unit and drawn at half size.
+## See DIZAJN_pozadie_a_rozlisenie.md KROK 4. Enemy renders that go with this:
+## gunman -Height 324, rusher -Height 380.
+const ENEMY_SPRITE_SCALE: float = 0.5
 ## Below this speed the thrower is standing rather than walking. Not zero:
 ## the hold-your-distance logic keeps nudging, and a walk cycle that starts and
 ## stops every few frames reads as a twitch.
 const ENEMY_WALK_SPEED_MIN: float = 12.0
 ## The sprites are rendered facing left.
 const PLAYER_ART_FACES_LEFT: bool = true
-## 1.0 = the rendered 96 px height. The hitbox stays 54 px on purpose: a body
-## narrower than the drawing is what "generous hitboxes favouring the player"
-## means in practice.
-const PLAYER_SPRITE_SCALE: float = 1.0
+## S = 2: assets are rendered at 2 px per world unit and drawn at half size, so
+## the drawn character keeps the same world size while carrying twice the pixels.
+## See DIZAJN_pozadie_a_rozlisenie.md KROK 4. Hero render that goes with this:
+## -Height 324. The hitbox stays 54 px on purpose: a body narrower than the
+## drawing is what "generous hitboxes favouring the player" means in practice.
+const PLAYER_SPRITE_SCALE: float = 0.5
 ## Below this horizontal speed the run cycle stops and the sprite holds a frame.
 const PLAYER_ANIM_MIN_SPEED: float = 20.0
 
@@ -98,6 +103,13 @@ const MUZZLE_HEIGHT_FALLBACK: float = 18.0
 ## favouring the player.
 const PLAYER_HURT_HEIGHT_FRACTION: float = 0.72
 const PLAYER_HURT_WIDTH: float = 24.0
+## Live, so the top/bottom margin can be felt out on the device instead of
+## computed from a still frame. Measured 2026-08-10: the margins ARE
+## symmetric to within about 1 px (~16-17 px each side of a 121 px body,
+## both from the worst-case frame across the whole run cycle and from the
+## resting frame alone) - if it still reads uneven on the phone, drag this
+## up to shrink both margins evenly rather than guessing at the constant.
+var player_hurt_height_fraction: float = PLAYER_HURT_HEIGHT_FRACTION
 
 # --- Player survivability ---
 const PLAYER_MAX_HP: int = 5
@@ -116,11 +128,13 @@ const ENEMY_CONTACT_DAMAGE: int = 1
 ## How far from the player a rusher stops to swing, not to touch. 26 was
 ## "pressed against the player", left over from when the attack WAS the
 ## contact. Now that a swing lands the hit (see RUSHER_ATTACK_* below), the
-## stopping distance has to read as weapon reach instead - Pavel's note
-## 2026-08-07: it depends on how the club animation actually looks, so this
-## stays a guess until it is measured against the render, not tuned by number.
-## Live below so it can be found on the device.
-const RUSHER_MELEE_RANGE: float = 70.0
+## stopping distance reads as weapon reach instead.
+##
+## 100, measured on device 2026-08-10 against the full-length attack
+## animation (the fix in enemy.gd's _attack_anim_duration) - the 70 placeholder
+## and the 100-120 in-between were both judged against a swing that was being
+## cut short, which is why this took two passes to settle.
+const RUSHER_MELEE_RANGE: float = 100.0
 var rusher_melee_range: float = RUSHER_MELEE_RANGE
 
 ## Enemies never move to the LEFT of the player. That is not a difficulty

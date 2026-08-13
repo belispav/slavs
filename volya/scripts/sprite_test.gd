@@ -24,7 +24,9 @@ var _r_was_down: bool = false
 
 func _ready() -> void:
 	sprite = Sprite2D.new()
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# Match the game: Linear + mipmaps at S = 2. See
+	# DIZAJN_pozadie_a_rozlisenie.md §4.
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	add_child(sprite)
 
 	info = Label.new()

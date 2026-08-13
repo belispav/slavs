@@ -163,14 +163,83 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
   - Colour is still the flat default WOOD, deliberately untouched — Pavel wants to do the club's colour last, after the shape is settled.
 - [x] **Music prototype wired in (2026-08-10), not yet tested on device.** `ref/audio/Protomusic.mp3` (Suno) copied to `volya/audio/music/protomusic.mp3`, new autoload `Music` (`music_player.gd`) plays it on loop via a plain `AudioStreamPlayer`. Godot imports MP3 natively and `AudioStreamMP3` has its own `loop` property, so **no format conversion was needed to hear music in the prototype** — deferred, per Pavel, is the OGG Vorbis conversion tooling for final tracks, which needs a Suno subscription for WAV export first (licence requirement, not yet purchased). Debug panel got a `HUDBA` checkbox next to `NESMRTELNOST`, wired to `Music.set_enabled()`. Not yet run on device — check on next deploy.
   - Open for later: separate level/boss tracks (`play_track()` already takes a path, so this is just adding files + a call site), and the actual OGG conversion step once real WAV masters exist.
-- [ ] **CURRENT ASSIGNMENT (opened 2026-08-12): parallax + unified asset resolution.** Full brief in `DIZAJN_pozadie_a_rozlisenie.md` — read it first, it holds the measurements, the decisions and the constraints.
-  - **Decided already, do not re-open:** the static background is solved with **parallax** (not water shaders, not frame-animated backgrounds, not a full re-layered regeneration yet); resolution is unified **upward**, toward the highest that makes sense, because downscaling is always possible and detail cannot be added back; and **pixel art is no longer certain** — the quantisation step must stay optional and nothing may be built so that it breaks without it.
-  - **The three measurements that reframed the problem:** `env_03.png` has **46 885 colours and no pixel grid at all** (it is a soft painting, not pixel art — block-size analysis shows error rising smoothly from block 2 to 8, so real detail lives at single-pixel level); the hero sprite has **17 colours**; so characters and background have the *same* texel density (1 px = 1 world unit) and the clash is **colour count and edge hardness, not resolution**. Separately, `default_texture_filter` is unset in `project.godot`, so Godot's LINEAR default is blurring everything through the 1.5× stretch to the phone's 2340×1080.
-  - **Sonnet can execute all of this.** What Sonnet must NOT decide alone: the value of **S** (asset pixels per world unit — 2 is recommended), and **P1/P2/P3** for how the background gets its resolution (layer-dependent detail / tiled generation / rendering the background in Blender like the characters). Those are Pavel's, and P3 in particular changes what the art pipeline *is* — bring it to Opus if it is being seriously considered rather than deciding it in passing.
-  - **The one constraint that will bite if forgotten:** the ground layer keeps parallax factor **1.0**, and parallax is **horizontal only**. The walkable field is numbers (`BG_WALK_TOP` / `BG_WALK_BOTTOM`) mapped onto a picture; scroll that picture at a different rate and the grass slides under the character's feet and the invisible limits stop matching the palisade and the river. Layers behind the ground get factors < 1, an optional strip in front of the feet gets > 1, and vertical factors stay at 1.0 because the camera travels up and down.
-  - **Build layers as data, not code** — an array of `{texture, factor}` — so "is one extra layer enough or do we need three" is answered by looking at the phone, not by rebuilding. Godot 4.7 has `Parallax2D`, which handles repeat.
-  - **Free win to test first:** `rendering/textures/canvas_textures/default_texture_filter=0` (Nearest). Two minutes, changes how the whole game looks on device. It may well be *worse* while the art is soft and undecided — that is information, so look at it on the phone rather than reasoning about it.
-  - Related and worth doing in the same pass: texture imports are at `compress/mode=0`, so nothing is VRAM-compressed and `env_03` alone occupies ~17 MB of raw RGBA. Turning compression on matters much more if S becomes 2. Note the tension: VRAM compression blocks up hard pixel-art edges but is harmless on soft high-resolution art — which is another argument for the direction Pavel is leaning.
+- [~] **KROK 4 (S = 2) — code side DONE 2026-08-12, waiting on Pavel's re-render.**
+  Pavel asked for resolution first, layers second — the reverse of §8's order.
+  The steps are independent, so this cost nothing; parallax (KROK 1–3) is
+  untouched and still to do.
+  - `Tuning.PLAYER_SPRITE_SCALE` / `ENEMY_SPRITE_SCALE` → `0.5`.
+  - `player.gd` / `enemy.gd` / `sprite_test.gd` → `TEXTURE_FILTER_LINEAR_WITH_MIPMAPS`.
+    `main.gd` (background) stays NEAREST while the background is S = 1.
+  - 402 `.import` files in the seven shipped character folders → `compress/mode=2`,
+    `mipmaps/generate=true`, `detect_3d/compress_to=0`. `env_03` deliberately untouched.
+  - **`[importer_defaults]` added to `project.godot`** so re-renders can't
+    silently land back on `mode=0`. Existing `.import` files keep their own
+    values, so this does not reach the background.
+  - `-NoOutline` switch added to `render_pixel_test.ps1`; `-Colours` / `-NoOutline`
+    passthrough added to `render_enemy.ps1`.
+  - **Bug found and fixed while doing this:** `render_enemy.ps1` read `colours`
+    and `iron_from` from `<name>.settings.json`, printed them in its header, and
+    then never passed them to the renderer. Every render through the wrapper came
+    out with default weapon colours and no iron section while the log said
+    otherwise. Would have hit the gunman's arquebus on the very next re-render.
+  - **Until Pavel runs the three render commands (PRIKAZY.md, top section:
+    hero 324, gunman 324, rusher 380, `-Colours 64 -NoOutline`), every character
+    in the game is drawn at half size.** That is expected, not a bug.
+  - **To verify on device afterwards:** does ETC2 leave blocks on the sprites'
+    alpha edges, and does the drawn height come out ~240 / ~240 / ~280 (measure,
+    do not assume). Hitbox and muzzle need no re-calibration — both go through
+    `SPRITE_SCALE` already, so double the render at half the scale is a no-op
+    for them.
+  - **The repo was NOT green when this started** — the rusher club pass, the
+    music player and ~330 re-rendered PNGs were already uncommitted. My changes
+    are mixed into that pile, so `git checkout` will not cleanly undo S = 2
+    alone. Commit in pieces.
+- [x] **S = 2 confirmed good on device 2026-08-13.** Pavel: characters the same
+  size as before, edges clean (no ETC2 blocking), arquebus still two-coloured,
+  "oveľa lepšie". S = 2 is done and closed.
+- [x] **Background filter is a dead end — measured, do not retry.** With the
+  characters now smooth, `env_03` reads badly next to them. A live NEAREST ↔
+  LINEAR switch was added (`Debug.smooth_background`, panel "HLADKE POZADIE")
+  and Pavel saw **no difference at all** on device. Measured: the two filters
+  differ by **0.36 %** on the walkable band at 1.5×. The blockiness is
+  *painted into* `env_03` (2–3 px stroke, imitation pixel art per §1 of the
+  design doc) — sampling cannot remove what the generator drew. The only fix
+  is a new background (P1, KROK 3). Switch kept as a measuring aid.
+- [x] **Enemies teleported sideways when switching animation. Fixed 2026-08-13.**
+  Pavel: "strelci ... keď sa zastavia a začnú strieľať, preblknú a teleportujú
+  sa o kúsok vedľa". **Not a regression from S = 2** — the same offset existed
+  before at half the pixels and the same world size; sharper art just made it
+  visible.
+  - **Cause:** Blender frames each clip on the *animation's origin*, and Mixamo
+    clips disagree about where the character stands relative to it. Measured
+    from the rendered PNGs: the gunman's body sits **33 world units further
+    right** in `fire` than in `idle`. The rusher had it too, smaller (walk −7,
+    attack −2.5), which nobody had noticed.
+  - **Fix:** `SpriteSequence.body_centre_offset()` measures each clip's body
+    position once per art folder (statically cached — the pool builds ~34
+    enemies), and `enemy.gd` cancels it on the sprite's `position.x` when the
+    clip changes, negating it when `flip_h` is set.
+  - **Why the median of alpha mass and not the bounding box:** a rifle barrel
+    is a long way from the body but only a few pixels of mass, so the bounding
+    box tracks the gun, not the man. The median tracks the torso to within half
+    a pixel across a whole clip. Verified the quarter-size shrink the runtime
+    uses agrees with a full-resolution measurement to ~1 world unit.
+  - **Two dictionaries, not one:** both kinds have a clip called `walk`, so a
+    single shared dictionary had them overwriting each other.
+  - **Not yet done:** the player has the same exposure the moment `idle_px`
+    exists — `run` and `idle` will not agree either. Wire the same measurement
+    into `player.gd` when that idle is rendered.
+- [ ] **CURRENT ASSIGNMENT (opened 2026-08-12): parallax + S = 2.** Full brief, with the numbers and the step-by-step, is in `DIZAJN_pozadie_a_rozlisenie.md`. **Everything is decided. Execute §8 in order; do not re-derive, do not re-decide.**
+  - **Closed 2026-08-12, do not re-open:** parallax (not water shaders, not frame-animated backgrounds); **S = 2** (assets at 2 px per world unit, drawn at `scale 0.5`); **P1** for the background — detail by layer, far layers may be soft; **P2 cancelled**; **P3 (background rendered in Blender) deferred** with an objective trigger — it returns only when the style is settled *and* more than two environments are needed, i.e. at F3; **the environment is daylight**.
+  - **The one thing still open, and it is Pavel's:** how many parallax layers. He answers it by looking at four variants on the phone after step 2. Nothing else is open.
+  - **Two corrections to what was written earlier here — both were wrong and would have cost a session:**
+    - `default_texture_filter` being unset does **not** mean the game renders through LINEAR. All four drawing sites set `TEXTURE_FILTER_NEAREST` themselves (`main.gd:120`, `player.gd:134`, `enemy.gd:143`, `sprite_test.gd:27`). There is no "free Nearest win" to collect — it is already done. What the device actually shows at 1.5× with Nearest is *uneven pixels*, not blur.
+    - The "night scene" question came from reading `ref/env_03.png` (a night graveyard **style reference**) instead of `volya/art/env_03.png` (**what is in the game**: daylight conifer forest, palisade, grass and dirt, river with boulders). Two different files with the same name in two folders. The question is void.
+  - **Consequence of S = 2 that must not be discovered by accident:** at S = 2 the asset is *minified* (2 asset px per world unit against the device's 1.5), and **NEAREST is the wrong filter when minifying** — it drops every fourth pixel and crawls in motion. Character sprites move to `TEXTURE_FILTER_LINEAR_WITH_MIPMAPS`. This means **strict pixel art stops being achievable at S = 2**, since that needs an integer asset-to-display ratio, which varies by phone. That is a consequence, not a new decision — S = 2 does not reopen because of it.
+  - **S = 2 is a much smaller change than it sounds:** `Tuning.PLAYER_SPRITE_SCALE` and `ENEMY_SPRITE_SCALE` already exist and the code already multiplies by them (`player.gd:152`, `enemy.gd:151`), so hurtbox, muzzle height and foot placement all follow by themselves. The change is those two constants to `0.5`, re-render at double height (hero 162 → 324, gunman 162 → 324, rusher 190 → 380), the filter change, and mipmaps + `compress/mode=2` in the imports.
+  - **The constraint that will bite if forgotten:** the ground never goes into the parallax layer array. `_build_background()` draws it and is not touched — that is factor 1.0 by construction. The walkable field is numbers (`BG_WALK_TOP` / `BG_WALK_BOTTOM`) mapped onto a picture; scroll that picture at a different rate and the grass slides under the character's feet. Vertical `scroll_scale` stays 1.0 on every layer because the camera travels up and down.
+  - **Contrast is a measured number now, not a feeling:** walkable band luma ≥ 80, and character-to-band difference ≥ 35. Today: band 88.9, hero 42.6, difference 46.3 — both pass. `tools/check_contrast.py` (step 5) makes this checkable for every new background and enemy.
+  - **Order matters and the steps are separate sessions:** parallax plumbing (no visual change, a green-state checkpoint) → one foreground strip at factor ~1.3, which is the only layer that can be added without cutting and repainting `env_03` → Pavel decides the layer count → S = 2 → the contrast script.
 - [ ] **Enemy art and weapons in progress.** Weapons attach to the hand bone in Blender **after** rigging (`tools/blender_attach_weapon.py`, has arquebus / club / spear / sword / bow), because Mixamo refuses to rig a model holding anything — and the animation has to match the weapon, so a rifle needs a rifle animation.
   - **Rusher: done through Mixamo.** Three animations in `ref/characters/`: `Great Sword Idle`, `Walking`, `Standing Melee Attack Downward`. All verified — 35 bones, UV map present, textures embedded.
   - **The rusher's club is two-handed (1.25 m), decided 2026-08-06.** The Great Sword animations put both hands on a shaft, so a 0.72 m one-handed club left the left hand closing on air. Lengthening the club was chosen over re-downloading three animations. Do not shorten it back without swapping to one-handed animations at the same time.

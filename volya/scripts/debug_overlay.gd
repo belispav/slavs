@@ -157,6 +157,25 @@ func _build_panel() -> void:
 	god_mode.toggled.connect(func(on: bool) -> void:
 		Debug.god_mode = on)
 
+	# Nearest vs Linear on the background, live. See debug_state.gd for why this
+	# is a switch and not a decision: it is a question about a picture, so it is
+	# answered by looking at the picture (METHOD rule 1).
+	var bg_filter := CheckButton.new()
+	bg_filter.text = "HLADKE POZADIE"
+	bg_filter.custom_minimum_size = Vector2(0, 56)
+	bg_filter.button_pressed = Debug.smooth_background
+	rows.add_child(bg_filter)
+	bg_filter.toggled.connect(func(on: bool) -> void:
+		Debug.smooth_background = on)
+
+	var music_toggle := CheckButton.new()
+	music_toggle.text = "HUDBA"
+	music_toggle.custom_minimum_size = Vector2(0, 56)
+	music_toggle.button_pressed = Music.enabled
+	rows.add_child(music_toggle)
+	music_toggle.toggled.connect(func(on: bool) -> void:
+		Music.set_enabled(on))
+
 	var pause_mode := CheckButton.new()
 	pause_mode.text = "PAUZA"
 	pause_mode.custom_minimum_size = Vector2(0, 56)
@@ -187,6 +206,16 @@ func _build_panel() -> void:
 		Debug.disable_thrower = on
 		if on:
 			_despawn_kind(1))
+
+	# Density, not just on/off - a crowd of thirty makes any one enemy's
+	# animation impossible to watch. Drag to 1 for a single enemy in
+	# isolation, or partway down for a thinned-out crowd instead of none.
+	_add_slider("kolko bezcov naraz (test)", 1.0, 34.0, 1.0,
+		Debug.max_rusher_alive,
+		func(v: float) -> void: Debug.max_rusher_alive = int(v))
+	_add_slider("kolko strelcov naraz (test)", 1.0, 34.0, 1.0,
+		Debug.max_thrower_alive,
+		func(v: float) -> void: Debug.max_thrower_alive = int(v))
 
 	if c.free_movement:
 		_add_note("POHYB")
@@ -239,6 +268,9 @@ func _build_panel() -> void:
 
 	_add_slider("rychlost postavy", 0.4, 2.5, 0.05, Tuning.player_speed_scale,
 		func(v: float) -> void: Tuning.player_speed_scale = v)
+	_add_slider("aky vysoky kus tela hraca sa da trafit (0-1)", 0.3, 1.0, 0.02,
+		Tuning.player_hurt_height_fraction,
+		func(v: float) -> void: Tuning.player_hurt_height_fraction = v)
 
 	_add_note("NEPRIATELIA")
 	_add_slider("rychlost bezcov", 0.2, 2.0, 0.05, Tuning.rusher_speed_scale,

@@ -92,11 +92,16 @@ def box(name, size, at, colour):
 
 
 def cylinder(name, radius, length, at, colour):
+    # 8 sides read as an octagon rather than a rod once a part gets thick and
+    # the render gets big - the rusher's club at Height ~180 instead of the
+    # 128 the first version disappeared into. 12 plus smooth shading rounds
+    # it off without adding real cost; this is still a handful of triangles.
     bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=length,
-                                        vertices=8, location=at,
+                                        vertices=12, location=at,
                                         rotation=(0.0, math.radians(90.0), 0.0))
     obj = bpy.context.view_layer.objects.active
     obj.name = name
+    bpy.ops.object.shade_smooth()
     _paint(obj, colour)
     return obj
 
@@ -210,8 +215,8 @@ def build_bow():
 def build_club():
     """A two-handed cudgel: a cut branch, thicker at the business end.
 
-    Two tapering sections rather than one bar, because at 128 pixels the only
-    thing that separates a club from a sword is that one end is fatter.
+    Three tapering sections rather than one bar, because at 128 pixels the
+    only thing that separates a club from a sword is that one end is fatter.
 
     It is 1.25 m and not the 0.72 m a one-handed club would be, because the
     rusher's Mixamo animations are the Great Sword set - both hands on the
@@ -219,17 +224,27 @@ def build_club():
     hand simply lands where the animation puts it, so the shaft has to reach
     back roughly 0.35 m behind the right hand or the left one closes on air.
     Shorten this only together with swapping to one-handed animations.
+
+    Reworked 2026-08-08: the head used to be a `box`, which reads as a flat,
+    hard-edged block once the rusher is rendered at the size that matches the
+    hero (Height ~180) rather than the 128 px the first version was tuned to
+    disappear into. Replaced with a third, fatter cylinder - rounded like the
+    shaft, just thicker - so the whole thing reads as one turned piece of
+    wood instead of a rod with a crate glued to the end. Same ~1.2 m overall
+    reach as before, so the fit Pavel already placed by hand still lands;
+    only the shape inside that reach changed. Colour is still the flat
+    default WOOD - not touched here, on purpose.
     """
-    # The shaft is 9 cm and the head 24 cm across. That is thicker than a real
+    # The shaft is 9 cm and the head 26 cm across. That is thicker than a real
     # cut branch on purpose: at 128 pixels the first version measured 2 px and
-    # 6 px, and a two-pixel line next to a body is not read as a weapon at all.
-    # These come out at roughly 3 px and 13 px, which survives the pixel pass.
+    # 6 px, and a two-pixel line next to a body is not read as a weapon at
+    # all. Sections overlap their neighbour so the silhouette cannot break.
     parts = [
-        cylinder("shaft", 0.045, 0.80, (0.02, 0.0, 0.0), WOOD),
-        cylinder("knob", 0.100, 0.34, (0.57, 0.0, 0.0), WOOD),
-        box("burl", (0.14, 0.24, 0.24), (0.76, 0.0, 0.0), WOOD),
+        cylinder("shaft", 0.036, 0.62, (-0.10, 0.0, 0.0), WOOD),
+        cylinder("neck", 0.075, 0.32, (0.29, 0.0, 0.0), WOOD),
+        cylinder("head", 0.130, 0.34, (0.62, 0.0, 0.0), WOOD),
     ]
-    return parts, 1.21, 0.25
+    return parts, 1.20, 0.25
 
 
 BUILDERS = {

@@ -39,6 +39,17 @@ var _hurtbox: Area2D
 ## Points at whichever of the two below matches the current kind - built once
 ## for both kinds up front, since kind can change every time spawn() reuses
 ## a pooled node.
+## How far each clip's body sits from that kind's base clip, in asset pixels.
+## Mixamo clips do not agree on where the character stands relative to the
+## animation origin, and Blender frames the canvas on that origin - so without
+## this the gunman jumps sideways every time he stops to fire.
+##
+## One per kind, not one shared: both kinds have a clip called "walk" and a
+## single dictionary would have them overwrite each other's shift.
+var _thrower_shift: Dictionary = {}
+var _rusher_shift: Dictionary = {}
+## Points at whichever of the two matches the sprite now on show.
+var _clip_shift: Dictionary = {}
 var _sprite: AnimatedSprite2D
 var _thrower_sprite: AnimatedSprite2D
 var _rusher_sprite: AnimatedSprite2D
@@ -95,13 +106,13 @@ func _build_sprite() -> void:
 		# Firing is a one-shot: it must end so the enemy can go back to
 		# standing, otherwise it reloads forever and never looks like a shot.
 		[&"fire", Tuning.THROWER_FIRE_ART_DIR, false],
-	])
+	], _thrower_shift)
 	_rusher_sprite = _build_sprite_from(&"idle_unaware", Tuning.RUSHER_IDLE_ART_DIR, [
 		[&"idle_ready", Tuning.RUSHER_IDLE_READY_ART_DIR, true],
 		[&"walk", Tuning.RUSHER_WALK_ART_DIR, true],
 		# One-shot for the same reason as the thrower's fire clip.
 		[&"attack", Tuning.RUSHER_ATTACK_ART_DIR, false],
-	])
+	], _rusher_shift)
 	if _thrower_sprite != null:
 		add_child(_thrower_sprite)
 	if _rusher_sprite != null:
@@ -117,10 +128,16 @@ func _build_sprite() -> void:
 ## is empty is skipped rather than failing - partial art (say, only the idle
 ## rendered so far) still plays, it just cannot show the missing states yet.
 func _build_sprite_from(base_anim: StringName, base_dir: String,
-		extra: Array) -> AnimatedSprite2D:
+		extra: Array, shift_out: Dictionary) -> AnimatedSprite2D:
 	var base_frames := SpriteSequence.load_frames(base_dir)
 	if base_frames.is_empty():
 		return null
+
+	# Every clip is lined up on the base clip's body, so switching animation
+	# does not move the character sideways. See _thrower_shift /_rusher_shift
+	# and SpriteSequence.body_centre_offset().
+	var base_centre := SpriteSequence.body_centre_offset(base_dir, base_frames)
+	shift_out[base_anim] = 0.0
 
 	var sheet := SpriteSequence.build_frames(
 		base_frames, String(base_anim), Tuning.ENEMY_ANIM_FPS)
@@ -131,6 +148,8 @@ func _build_sprite_from(base_anim: StringName, base_dir: String,
 		var frames := SpriteSequence.load_frames(dir)
 		if frames.is_empty():
 			continue
+		shift_out[clip_name] = \
+			SpriteSequence.body_centre_offset(dir, frames) - base_centre
 		sheet.add_animation(clip_name)
 		sheet.set_animation_speed(clip_name, Tuning.ENEMY_ANIM_FPS)
 		sheet.set_animation_loop(clip_name, loop)
@@ -140,7 +159,9 @@ func _build_sprite_from(base_anim: StringName, base_dir: String,
 	var sprite := AnimatedSprite2D.new()
 	sprite.sprite_frames = sheet
 	sprite.animation = base_anim
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# Linear + mipmaps, not Nearest: at S = 2 the asset is minified and Nearest
+	# drops pixels and crawls. See DIZAJN_pozadie_a_rozlisenie.md §4.
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	sprite.scale = Vector2.ONE * Tuning.ENEMY_SPRITE_SCALE
 	sprite.z_index = -1
 
@@ -179,6 +200,7 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	# Each kind shows only its own body. A rusher wearing the gunman's sprite
 	# would be a lie the player would learn to read wrongly.
 	_sprite = _thrower_sprite if kind == Kind.THROWER else _rusher_sprite
+	_clip_shift = _thrower_shift if kind == Kind.THROWER else _rusher_shift
 	if _thrower_sprite != null:
 		_thrower_sprite.visible = kind == Kind.THROWER
 	if _rusher_sprite != null:
@@ -279,6 +301,23 @@ func _drive_sprite(delta: float) -> void:
 	# only when one is pushed back to the right.
 	if absf(velocity.x) > Tuning.ENEMY_WALK_SPEED_MIN:
 		_sprite.flip_h = velocity.x > 0.0
+	elif target != null:
+		# Not really moving - holding range, firing, or pressed in melee.
+		# Face the player instead of freezing on whichever way the last step
+		# happened to point. Caught on the thrower: it backs off to its
+		# preferred distance moving right (flip_h true), stops, and then
+		# fires with its back turned - nothing after that ever pointed it
+		# at the player again, because flip_h was only ever set from motion.
+		_sprite.flip_h = target.global_position.x > global_position.x
+
+	# Cancel the clip's own idea of where the character stands. Applied here
+	# rather than once at build time because it has to follow flip_h too:
+	# mirroring the texture about the sprite's origin mirrors this shift with
+	# it, so facing right needs the opposite sign.
+	var shift: float = _clip_shift.get(_sprite.animation, 0.0)
+	if _sprite.flip_h:
+		shift = -shift
+	_sprite.position.x = -shift * Tuning.ENEMY_SPRITE_SCALE
 
 
 ## Firing wins while it lasts, then walking or standing by speed. The threshold
@@ -393,8 +432,26 @@ func _update_attack_timer(in_range: bool, delta: float) -> void:
 	_attack_cd -= delta
 	if _attack_cd <= 0.0:
 		_attack_cd = Tuning.RUSHER_ATTACK_INTERVAL
-		_attack_timer = Tuning.RUSHER_ATTACK_ANIM_TIME
+		_attack_timer = _attack_anim_duration()
 		melee_hit.emit(global_position)
+
+
+## How long the attack clip actually runs, read from the art itself once it
+## exists. RUSHER_ATTACK_ANIM_TIME (0.35s) was a guess made before any art
+## was rendered; the real Slash clip came out to 39 frames at 30fps = 1.3s,
+## more than triple that. Caught by Pavel as "the attack animation looks
+## unfinished" - it was: the code was switching the sprite away from
+## "attack" a second into a 1.3 second swing, every single time. Falls back
+## to the constant only when there is no "attack" clip to measure (box
+## fallback, or before render_enemy.ps1 has been run for this kind).
+func _attack_anim_duration() -> float:
+	if _sprite != null and _sprite.sprite_frames != null \
+			and _sprite.sprite_frames.has_animation(&"attack"):
+		var frames: int = _sprite.sprite_frames.get_frame_count(&"attack")
+		var fps: float = _sprite.sprite_frames.get_animation_speed(&"attack")
+		if fps > 0.0:
+			return float(frames) / fps
+	return Tuning.RUSHER_ATTACK_ANIM_TIME
 
 
 func _think_thrower(delta: float, free: bool) -> void:

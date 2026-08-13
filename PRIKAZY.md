@@ -29,7 +29,49 @@ Napríklad: `powershell -ExecutionPolicy Bypass -File tools\deploy_android.ps1 -
 
 ---
 
-## Postava z modelu do hry
+## S = 2 — tri príkazy, ktoré prerenderujú všetky postavy
+
+**Toto je teraz platný render. Príklady nižšie sú staršie a majú menšie
+`-Height`; neber ich ako vzor.** Prečo: `DIZAJN_pozadie_a_rozlisenie.md`
+KROK 4. Kód už je prepnutý (`Tuning.PLAYER_SPRITE_SCALE` a
+`ENEMY_SPRITE_SCALE` = 0.5), takže **kým tieto tri príkazy nezbehnú, postavy
+budú v hre polovičné.**
+
+Beží to dlho (4× viac pixelov). Pusť to na noc, jedno po druhom.
+
+**Hrdina — beh:**
+
+```
+powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Model "tools\blender\hrdina_run.fbx" -Texture "ref\characters\Meshy_AI_The_Tattered_Wanderer_0802131405_texture_basecolor.jpg" -Height 324 -Colours 64 -NoOutline
+```
+
+**Gunman — všetky tri animácie naraz:**
+
+```
+powershell -ExecutionPolicy Bypass -File tools\render_enemy.ps1 -Name gunman -Height 324 -Colours 64 -NoOutline -Anims "idle=Enemy_gunman_01 Rifle Idle:19-157, walk=Enemy_gunman_01 Rifle Walk, fire=Enemy_gunman_01 Firing Rifle"
+```
+
+**Rusher — všetky tri animácie naraz:**
+
+```
+powershell -ExecutionPolicy Bypass -File tools\render_enemy.ps1 -Name rusher -Height 380 -Colours 64 -NoOutline -Anims "idle=Enemy_rusher_02 Great Sword Idle, walk=Enemy_rusher_02 Great Sword Run, attack=Enemy_rusher_02 Great Sword Slash"
+```
+
+Čo je v nich nové oproti minule a prečo:
+
+| | |
+|---|---|
+| `-Height` 324 / 324 / 380 | presne dvojnásobok predošlých 162 / 162 / 190 |
+| `-Colours 64` | 17 farieb bola pixel-artová kvantizácia. Pri S = 2 sa obrázok zmenšuje a tvrdá paleta sa aj tak rozmixuje — 64 dá hladší výsledok |
+| `-NoOutline` | 1 px obrys je pri `scale 0.5` pol jednotky a pri zmenšovaní zmizne. Nechať ho tam znamená len šum pri pohybe |
+
+**Po renderi zmeraj skutočnú výšku, neuhádni ju** (METHOD pravidlo 2). Má
+vyjsť ~240 px u hrdinu a gunmana, ~280 u rushera. Ak vyjde iné, `-Height`
+uprav a renderuj znova — ale až potom, čo si to zmeral.
+
+---
+
+## Postava z modelu do hry (starší príklad, menšie rozlíšenie)
 
 Vyrenderuje sprajty a uloží ich rovno tam, odkiaľ ich hra načítava. Po ňom už
 stačí spustiť nasadenie vyššie.
