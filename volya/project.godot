@@ -32,19 +32,6 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=4
 
-[importer_defaults]
-
-; S = 2 (DIZAJN_pozadie_a_rozlisenie.md KROK 4). Assets carry twice the pixels
-; of a world unit, so every new render MUST come in with mipmaps and VRAM
-; compression - without this a re-render silently lands back on mode=0 and the
-; memory saving is lost. Existing .import files keep their own written values,
-; so env_03 (still S = 1) is unaffected.
-texture={
-"compress/mode": 2,
-"detect_3d/compress_to": 0,
-"mipmaps/generate": true
-}
-
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true

@@ -8,10 +8,18 @@ extends Node
 ## control_config.tres - these exist so Pavel can look at one enemy type, or
 ## stop dying mid-look, while testing on the phone.
 
+## --- Pavel's testing defaults, set 2026-08-13 on his ask ---------------------
+##
+## He was re-setting the same three switches by hand on every launch, which is
+## how a testing session turns into panel-fiddling. These are DEFAULTS, not
+## decisions: nothing here may ship, and the release checklist has to put
+## god_mode back to false, music back to true and both caps back to
+## Tuning.ENEMY_MAX_ALIVE.
+
 ## No damage reaches the player while true. Death, knockback and iframes are
 ## all skipped in player.gd - not just the health subtraction, or the
 ## knockback would still throw the character around while "immortal".
-var god_mode: bool = false
+var god_mode: bool = true
 
 ## Stops rushers being spawned. Enemies already on screen are despawned the
 ## moment this is switched on, so the effect is immediate instead of waiting
@@ -28,8 +36,10 @@ var disable_thrower: bool = false
 ## of just switched off. Default is the full ceiling, so leaving the sliders
 ## alone changes nothing - drag down to a handful, or to 1 to watch a single
 ## enemy's full idle/walk/attack cycle in isolation.
-var max_rusher_alive: int = 34
-var max_thrower_alive: int = 34
+## Now defaulted to 3 for Pavel's art-judging sessions - see the block above.
+## The real ceiling for play is Tuning.ENEMY_MAX_ALIVE and it has not moved.
+var max_rusher_alive: int = 3
+var max_thrower_alive: int = 3
 
 ## Background filter: NEAREST (false) or LINEAR (true).
 ##
@@ -44,3 +54,14 @@ var max_thrower_alive: int = 34
 ## not in the file; only a new, higher-resolution background can (P1, KROK 3).
 ## This switch exists so the choice is made by looking, not by arguing.
 var smooth_background: bool = false
+
+## Draw env_04 (the fine-grained pixel-art background, generated 2026-08-13)
+## instead of env_03. Both are 2816x1536 with the same layout, so this is a
+## straight texture swap - the walkable band, the camera and the enemy spawns
+## all stay exactly where they are.
+##
+## Here so the two can be compared IN MOTION on the phone. A still cannot show
+## the one thing that actually matters about a background this dense: whether
+## it shimmers while scrolling, and whether a crowd of enemies still reads
+## against it (design pillar 1).
+var alt_background: bool = false

@@ -29,45 +29,64 @@ Napríklad: `powershell -ExecutionPolicy Bypass -File tools\deploy_android.ps1 -
 
 ---
 
-## S = 2 — tri príkazy, ktoré prerenderujú všetky postavy
+## Čo je na paneli a čo je zapnuté pri štarte
 
-**Toto je teraz platný render. Príklady nižšie sú staršie a majú menšie
-`-Height`; neber ich ako vzor.** Prečo: `DIZAJN_pozadie_a_rozlisenie.md`
-KROK 4. Kód už je prepnutý (`Tuning.PLAYER_SPRITE_SCALE` a
-`ENEMY_SPRITE_SCALE` = 0.5), takže **kým tieto tri príkazy nezbehnú, postavy
-budú v hre polovičné.**
+Od 2026-08-13 sa hra spúšťa rovno v testovacom nastavení, aby sa to nemuselo
+klikať pri každom spustení: **nesmrteľnosť ZAPNUTÁ, hudba VYPNUTÁ, oboch typov
+nepriateľov najviac 3.** Je to v `debug_state.gd` a `music_player.gd`.
+**Pred vydaním sa to musí vrátiť** — nesmrteľnosť preč, hudba späť, počty späť
+na `Tuning.ENEMY_MAX_ALIVE`.
 
-Beží to dlho (4× viac pixelov). Pusť to na noc, jedno po druhom.
+Prepínače na porovnávanie grafiky:
 
-**Hrdina — beh:**
-
-```
-powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Model "tools\blender\hrdina_run.fbx" -Texture "ref\characters\Meshy_AI_The_Tattered_Wanderer_0802131405_texture_basecolor.jpg" -Height 324 -Colours 64 -NoOutline
-```
-
-**Gunman — všetky tri animácie naraz:**
-
-```
-powershell -ExecutionPolicy Bypass -File tools\render_enemy.ps1 -Name gunman -Height 324 -Colours 64 -NoOutline -Anims "idle=Enemy_gunman_01 Rifle Idle:19-157, walk=Enemy_gunman_01 Rifle Walk, fire=Enemy_gunman_01 Firing Rifle"
-```
-
-**Rusher — všetky tri animácie naraz:**
-
-```
-powershell -ExecutionPolicy Bypass -File tools\render_enemy.ps1 -Name rusher -Height 380 -Colours 64 -NoOutline -Anims "idle=Enemy_rusher_02 Great Sword Idle, walk=Enemy_rusher_02 Great Sword Run, attack=Enemy_rusher_02 Great Sword Slash"
-```
-
-Čo je v nich nové oproti minule a prečo:
-
-| | |
+| prepínač | čo robí |
 |---|---|
-| `-Height` 324 / 324 / 380 | presne dvojnásobok predošlých 162 / 162 / 190 |
-| `-Colours 64` | 17 farieb bola pixel-artová kvantizácia. Pri S = 2 sa obrázok zmenšuje a tvrdá paleta sa aj tak rozmixuje — 64 dá hladší výsledok |
-| `-NoOutline` | 1 px obrys je pri `scale 0.5` pol jednotky a pri zmenšovaní zmizne. Nechať ho tam znamená len šum pri pohybe |
+| `HRUBSIE PIXELY POSTAV` | prepne postavy na sadu `art/*_b` — tie isté postavy, rovnako veľké, len s 1,5× väčšími pixelmi. **Reštartuje scénu**, lebo sprajty sa stavajú raz pri štarte. |
+| `STARE POZADIE` | vráti `env_03`. Nové `env_04` je predvolené. |
+| `HLADKE POZADIE` | NEAREST ↔ LINEAR na pozadí. Zmerané: robí rozdiel 0,36 %, čiže skoro nič. Nechané ako meracia pomôcka. |
 
-**Po renderi zmeraj skutočnú výšku, neuhádni ju** (METHOD pravidlo 2). Má
-vyjsť ~240 px u hrdinu a gunmana, ~280 u rushera. Ak vyjde iné, `-Height`
-uprav a renderuj znova — ale až potom, čo si to zmeral.
+Hrubšiu sadu vyrába `tools/coarsen_sprites.py` z už vyrenderovaných snímok —
+netreba na to Blender:
+
+```
+python tools\coarsen_sprites.py --in volya\art\run_px --out volya\art\run_px_b --height 108
+```
+
+Je to **len na výber**, nie na vydanie: taká snímka prešla pixelovým prechodom
+dvakrát a je o kúsok mäkšia než render priamo z Blenderu v tej výške. Keď sa
+hrúbka vyberie, víťaz sa prerenderuje poriadne príkazmi nižšie.
+
+---
+
+## RENDER NEPRIATEĽOV — pixel art (platné od 2026-08-13)
+
+**Hra je pixel art.** Skúšala sa hladká varianta (S = 2, 64 farieb, bez
+obrysu), Pavel ju videl na telefóne a je zrušená — viď
+`DIZAJN_pozadie_a_rozlisenie.md`. **Nikdy nerenderuj s `-Colours 64
+-NoOutline`**; presne tie dva prepínače prestali robiť hru pixel artom.
+
+Hrdinu renderovať netreba — jeho pixel-artové snímky sú v gite a sú obnovené.
+**Gunmana a rushera áno**: ich pixel-artové rendery sa stratili, prepísali sa
+hladkými skôr, než sa stihli commitnúť.
+
+**Gunman:**
+
+```
+powershell -ExecutionPolicy Bypass -File tools\render_enemy.ps1 -Name gunman -Height 162 -Anims "idle=Enemy_gunman_01 Rifle Idle:19-157, walk=Enemy_gunman_01 Rifle Walk, fire=Enemy_gunman_01 Firing Rifle"
+```
+
+**Rusher:**
+
+```
+powershell -ExecutionPolicy Bypass -File tools\render_enemy.ps1 -Name rusher -Height 190 -Anims "idle=Enemy_rusher_02 Great Sword Idle, walk=Enemy_rusher_02 Great Sword Run, attack=Enemy_rusher_02 Great Sword Slash"
+```
+
+Bez `-Colours` a bez `-NoOutline` — vtedy platia predvolené hodnoty, čiže
+16 farieb a 1 px obrys, teda pixel art.
+
+`-Height` 162 a 190 sú overené z 2026-08-10: pri nich ani jeden nečítal
+primalo vedľa hrdinu. **Po rendere aj tak zmeraj skutočnú výšku**
+(METHOD pravidlo 2).
 
 ---
 

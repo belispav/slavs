@@ -18,6 +18,11 @@ enum Kind { RUSHER, THROWER }
 
 const SIZE := Vector2(30, 52)
 
+## How far the player has to be to one side before a standing enemy turns to
+## face them. Without it, an enemy pressed against the player flips its sprite
+## every frame as the player drifts across its column.
+const FACING_DEADZONE := 14.0
+
 var kind: int = Kind.RUSHER
 var hp: int = 2
 var active: bool = false
@@ -61,6 +66,11 @@ var _fire_timer: float = 0.0
 var _aware: bool = false
 var _attack_timer: float = 0.0
 var _attack_cd: float = 0.0
+## Length of the swing now running, and whether its hit has already been
+## resolved. Kept per swing rather than recomputed, so the hit lands at the same
+## point of the animation even if the clip is measured differently later.
+var _attack_len: float = 0.0
+var _attack_hit_done: bool = false
 
 
 func _ready() -> void:
@@ -159,9 +169,8 @@ func _build_sprite_from(base_anim: StringName, base_dir: String,
 	var sprite := AnimatedSprite2D.new()
 	sprite.sprite_frames = sheet
 	sprite.animation = base_anim
-	# Linear + mipmaps, not Nearest: at S = 2 the asset is minified and Nearest
-	# drops pixels and crawls. See DIZAJN_pozadie_a_rozlisenie.md §4.
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	# Nearest, or the pixel pass is undone by the GPU smoothing it back.
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	sprite.scale = Vector2.ONE * Tuning.ENEMY_SPRITE_SCALE
 	sprite.z_index = -1
 
@@ -196,6 +205,9 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	_aware = false
 	_attack_timer = 0.0
 	_attack_cd = 0.0
+	# Pooled nodes are reused mid-swing, so the swing's own state resets too.
+	_attack_len = 0.0
+	_attack_hit_done = false
 
 	# Each kind shows only its own body. A rusher wearing the gunman's sprite
 	# would be a lie the player would learn to read wrongly.
@@ -258,6 +270,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0.0
 
+	# State, not decoration - see _thrower_clip for why this cannot live there.
+	_fire_timer = maxf(_fire_timer - delta, 0.0)
+
 	if target != null:
 		match kind:
 			Kind.RUSHER:
@@ -265,8 +280,22 @@ func _physics_process(delta: float) -> void:
 			Kind.THROWER:
 				_think_thrower(delta, free)
 
+	# An enemy mid-attack stands still. Its clip has the feet planted, so a body
+	# that keeps travelling reads as sliding on ice - caught by Pavel on the
+	# thrower, which kept closing on the player through its whole firing
+	# animation without moving its legs.
+	#
+	# Deliberately for every kind, not just the thrower: an attack is a
+	# commitment, and it also gives the player a readable moment where an enemy
+	# has chosen to shoot instead of chase. Any future enemy type gets this free.
+	if _is_attacking():
+		velocity = Vector2.ZERO
+
 	move_and_slide()
 	_keep_out_of_the_left()
+	# Depth is Y. The sprite's own z_index is relative to this, so it keeps
+	# sitting behind the body's flash exactly as before.
+	z_index = Tuning.depth_z(global_position.y)
 	# Redraw ONLY while the hit flash is fading. Moving a Node2D does not need
 	# a redraw, and 34 pointless redraws per frame cost real frame time on a
 	# phone — which shows up as the controls feeling sticky.
@@ -308,7 +337,15 @@ func _drive_sprite(delta: float) -> void:
 		# preferred distance moving right (flip_h true), stops, and then
 		# fires with its back turned - nothing after that ever pointed it
 		# at the player again, because flip_h was only ever set from motion.
-		_sprite.flip_h = target.global_position.x > global_position.x
+		#
+		# The deadzone matters. A rusher pressed against the player sits within
+		# a pixel or two of the same column, so an exact comparison flipped the
+		# sprite back and forth every frame as the player nudged around - which
+		# is the "preblikávanie" Pavel saw. Below the deadzone, keep facing
+		# whichever way it already faces.
+		var dx: float = target.global_position.x - global_position.x
+		if absf(dx) > FACING_DEADZONE:
+			_sprite.flip_h = dx > 0.0
 
 	# Cancel the clip's own idea of where the character stands. Applied here
 	# rather than once at build time because it has to follow flip_h too:
@@ -323,9 +360,20 @@ func _drive_sprite(delta: float) -> void:
 ## Firing wins while it lasts, then walking or standing by speed. The threshold
 ## is not zero because holding a distance means constant small corrections, and
 ## a walk cycle re-triggered every few frames looks like a shiver.
-func _thrower_clip(delta: float) -> StringName:
+## Playing an attack clip: firing for the thrower, swinging for the rusher.
+## Both plant the feet, so both root the body - see _physics_process.
+func _is_attacking() -> bool:
+	return _fire_timer > 0.0 or _attack_timer > 0.0
+
+
+## The timer itself is counted down in _physics_process, NOT here. It used to
+## be decremented in this function, which is only reached from _drive_sprite -
+## and _drive_sprite returns immediately when there is no sprite. An enemy still
+## using the coloured box fallback therefore never ran its timer down, and once
+## _fire_timer started rooting the body in place that would have frozen every
+## unrendered enemy type permanently after its first shot.
+func _thrower_clip(_delta: float) -> StringName:
 	if _fire_timer > 0.0:
-		_fire_timer = maxf(_fire_timer - delta, 0.0)
 		return &"fire"
 	if velocity.length() > Tuning.ENEMY_WALK_SPEED_MIN:
 		return &"walk"
@@ -422,18 +470,34 @@ func _think_rusher(free: bool, delta: float) -> void:
 ## contact - see the RUSHER_ATTACK_* comment in tuning.gd for the reasoning
 ## and for what is still a placeholder about the timing.
 func _update_attack_timer(in_range: bool, delta: float) -> void:
-	if not in_range:
-		_attack_cd = Tuning.RUSHER_ATTACK_INTERVAL * 0.5
-		_attack_timer = 0.0
-		return
+	# A swing that has STARTED runs to the end, in range or not.
+	#
+	# This used to be the other way round: stepping out of reach zeroed
+	# _attack_timer, so the rusher dropped its swing mid-animation and walked
+	# after the player instead. Caught by Pavel 2026-08-13 - "uberá mi to na
+	# šanci sa uhýbať", and he was right, because there was nothing to dodge:
+	# the attack was never a commitment the enemy could be punished for.
 	if _attack_timer > 0.0:
 		_attack_timer = maxf(_attack_timer - delta, 0.0)
+		# The club connects PART-WAY through the swing, not on its first frame,
+		# and the range is checked at that moment. That is what makes stepping
+		# back a real dodge rather than a cosmetic one.
+		if not _attack_hit_done:
+			var elapsed: float = _attack_len - _attack_timer
+			if elapsed >= _attack_len * Tuning.rusher_attack_hit_at:
+				_attack_hit_done = true
+				if in_range:
+					melee_hit.emit(global_position)
+		return
+	if not in_range:
+		_attack_cd = Tuning.RUSHER_ATTACK_INTERVAL * 0.5
 		return
 	_attack_cd -= delta
 	if _attack_cd <= 0.0:
 		_attack_cd = Tuning.RUSHER_ATTACK_INTERVAL
-		_attack_timer = _attack_anim_duration()
-		melee_hit.emit(global_position)
+		_attack_len = _attack_anim_duration()
+		_attack_timer = _attack_len
+		_attack_hit_done = false
 
 
 ## How long the attack clip actually runs, read from the art itself once it

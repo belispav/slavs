@@ -60,6 +60,9 @@ func despawn() -> void:
 
 func _physics_process(delta: float) -> void:
 	global_position += dir * speed * delta
+	# Same depth rule as the bodies. Without it a shot drew either always over
+	# or always under every character, depending on nothing meaningful.
+	z_index = Tuning.depth_z(global_position.y)
 
 	# Shots end when they leave the screen, not on a stopwatch. A fixed lifetime
 	# is a distance in disguise, and it depended on the projectile's speed: the

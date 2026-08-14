@@ -51,22 +51,27 @@ const RUSHER_WALK_ART_DIR: String = "res://art/rusher_walk_px"
 const RUSHER_ATTACK_ART_DIR: String = "res://art/rusher_attack_px"
 
 const ENEMY_ANIM_FPS: float = 30.0
-## S = 2: assets are rendered at 2 px per world unit and drawn at half size.
-## See DIZAJN_pozadie_a_rozlisenie.md KROK 4. Enemy renders that go with this:
-## gunman -Height 324, rusher -Height 380.
-const ENEMY_SPRITE_SCALE: float = 0.5
+## PIXEL ART, S = 1. Reverted 2026-08-13 after the S = 2 pass was seen on
+## device: it works, but it stops the game being pixel art, and pixel art is
+## what VOLYA is. Do not raise S again without raising the style question with
+## Pavel first, in those words - "this stops being pixel art" - because that is
+## the part that got lost last time. See DIZAJN_pozadie_a_rozlisenie.md.
+## Enemy renders that go with this: gunman -Height 162, rusher -Height 190.
+const ENEMY_SPRITE_SCALE: float = 1.0
 ## Below this speed the thrower is standing rather than walking. Not zero:
 ## the hold-your-distance logic keeps nudging, and a walk cycle that starts and
 ## stops every few frames reads as a twitch.
 const ENEMY_WALK_SPEED_MIN: float = 12.0
 ## The sprites are rendered facing left.
 const PLAYER_ART_FACES_LEFT: bool = true
-## S = 2: assets are rendered at 2 px per world unit and drawn at half size, so
-## the drawn character keeps the same world size while carrying twice the pixels.
-## See DIZAJN_pozadie_a_rozlisenie.md KROK 4. Hero render that goes with this:
-## -Height 324. The hitbox stays 54 px on purpose: a body narrower than the
+## PIXEL ART, S = 1. Reverted 2026-08-13 after the S = 2 pass was seen on
+## device: it works, but it stops the game being pixel art, and pixel art is
+## what VOLYA is. Do not raise S again without raising the style question with
+## Pavel first, in those words - "this stops being pixel art" - because that is
+## the part that got lost last time. See DIZAJN_pozadie_a_rozlisenie.md.
+## Hero render that goes with this: -Height 162. The hitbox stays 54 px on purpose: a body narrower than the
 ## drawing is what "generous hitboxes favouring the player" means in practice.
-const PLAYER_SPRITE_SCALE: float = 0.5
+const PLAYER_SPRITE_SCALE: float = 1.0
 ## Below this horizontal speed the run cycle stops and the sprite holds a frame.
 const PLAYER_ANIM_MIN_SPEED: float = 20.0
 
@@ -136,6 +141,45 @@ const ENEMY_CONTACT_DAMAGE: int = 1
 ## cut short, which is why this took two passes to settle.
 const RUSHER_MELEE_RANGE: float = 100.0
 var rusher_melee_range: float = RUSHER_MELEE_RANGE
+
+## How far into the swing the club actually connects, as a fraction of the
+## attack animation. The range is re-checked at that instant, so this is the
+## dodge window: everything before it can be stepped out of.
+##
+## 0.45 is a STARTING POINT, not a measurement. The real answer is wherever the
+## club is furthest forward in the Slash clip, and CLAUDE.md already records
+## that this particular swing travels out to the SIDE rather than into the
+## player - so watch the render next to the hero and drag the slider, do not
+## trust this number (METHOD rule 2).
+const RUSHER_ATTACK_HIT_AT: float = 0.45
+var rusher_attack_hit_at: float = RUSHER_ATTACK_HIT_AT
+
+## How close two enemies may get before they push each other apart, in world
+## units. Rushers all head for the same point - the player - so without this
+## they arrive as one pile of overlapping bodies. Throwers barely need it; they
+## already spread by holding different distances.
+##
+## Deliberately smaller than the drawn body: enemies SHOULD crowd and overlap a
+## little, per design pillar 1. What this stops is them occupying one spot.
+const ENEMY_SEPARATION: float = 46.0
+var enemy_separation: float = ENEMY_SEPARATION
+
+
+## Draw order for anything standing on the ground plane.
+##
+## The field is a flat picture seen from slightly above, so DEPTH IS Y: a body
+## lower on the screen is nearer the camera and must be drawn in front. Without
+## this, order came from the enemy pool, so whichever node happened to be
+## earlier in the array covered the one in front of it - which Pavel spotted as
+## enemies higher up the screen overlapping the ones below them, exactly
+## backwards.
+##
+## Godot's own y_sort_enabled would do this too, but it interacts with the
+## z_index = -1 the sprites carry (so the aim line draws over the body), and
+## "it should sort" is not something worth guessing at again. This is explicit
+## and can be read.
+static func depth_z(world_y: float) -> int:
+	return clampi(int(world_y), -4000, 4000)
 
 ## Enemies never move to the LEFT of the player. That is not a difficulty
 ## choice, it is forced by the hand: the left thumb covers the left third of

@@ -130,11 +130,10 @@ func _build_sprite() -> void:
 	_sprite = AnimatedSprite2D.new()
 	_sprite.sprite_frames = sheet
 	_sprite.animation = &"run"
-	# S = 2 means the asset is MINIFIED (2 asset px per world unit against the
-	# device's ~1.5), and Nearest is the wrong filter when minifying - it drops
-	# every fourth pixel and crawls in motion. Linear + mipmaps instead.
-	# NOT a style choice reversal: see DIZAJN_pozadie_a_rozlisenie.md §4.
-	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	# Nearest, or the whole pixel pass is undone by the GPU smoothing it back.
+	# Briefly Linear+mipmaps during the S = 2 pass on 2026-08-13; reverted with
+	# it, because Linear is what stopped this being pixel art.
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_sprite.scale = Vector2.ONE * Tuning.PLAYER_SPRITE_SCALE
 	# Behind the node's own _draw(), so the aim line stays visible on top of
 	# the body. The aim line is still the main readout for the controls.
@@ -279,6 +278,9 @@ func _physics_process(delta: float) -> void:
 
 	_iframes = maxf(_iframes - delta, 0.0)
 	move_and_slide()
+	# Depth is Y, same rule as the enemies - the player is not special, and an
+	# enemy standing nearer the camera should cover him.
+	z_index = Tuning.depth_z(global_position.y)
 
 	# Cheap enough to redo every frame, and it is what makes the hurtbox
 	# fraction slider in the debug panel actually live instead of only

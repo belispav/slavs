@@ -15,7 +15,9 @@ extends Node
 
 const TRACK_PROTOTYPE: String = "res://audio/music/protomusic.mp3"
 
-var enabled: bool = true
+## Off by default at Pavel's request 2026-08-13 - he tests with it off and was
+## switching it off every launch. Must be back to true before release.
+var enabled: bool = false
 
 var _player: AudioStreamPlayer
 

@@ -157,9 +157,16 @@ func _build_panel() -> void:
 	god_mode.toggled.connect(func(on: bool) -> void:
 		Debug.god_mode = on)
 
-	# Nearest vs Linear on the background, live. See debug_state.gd for why this
-	# is a switch and not a decision: it is a question about a picture, so it is
-	# answered by looking at the picture (METHOD rule 1).
+	# env_03 instead of the chosen env_04, so a future background can be judged
+	# against the one it replaces rather than against a memory of it.
+	var bg_alt := CheckButton.new()
+	bg_alt.text = "STARE POZADIE"
+	bg_alt.custom_minimum_size = Vector2(0, 56)
+	bg_alt.button_pressed = Debug.alt_background
+	rows.add_child(bg_alt)
+	bg_alt.toggled.connect(func(on: bool) -> void:
+		Debug.alt_background = on)
+
 	var bg_filter := CheckButton.new()
 	bg_filter.text = "HLADKE POZADIE"
 	bg_filter.custom_minimum_size = Vector2(0, 56)
@@ -283,6 +290,16 @@ func _build_panel() -> void:
 	_add_slider("na aku vzdialenost sa bezec zastavi a siaha zbranou (px)",
 		20.0, 160.0, 2.0, Tuning.rusher_melee_range,
 		func(v: float) -> void: Tuning.rusher_melee_range = v)
+	# The dodge window. Everything before this point in the swing can be stepped
+	# out of; at this point the range is re-checked and the hit either lands or
+	# misses. Live because the right answer is wherever the club is furthest
+	# forward, which is a thing to watch, not to compute.
+	_add_slider("kedy v animacii uderu zasah plati (0 = hned, 1 = na konci)",
+		0.05, 0.95, 0.05, Tuning.rusher_attack_hit_at,
+		func(v: float) -> void: Tuning.rusher_attack_hit_at = v)
+	_add_slider("ako daleko od seba sa nepriatelia odtlacaju (px)",
+		0.0, 120.0, 2.0, Tuning.enemy_separation,
+		func(v: float) -> void: Tuning.enemy_separation = v)
 
 	_add_note("ZONA PRE LAVY PALEC")
 	_add_slider("sirka", 0.2, 0.8, 0.01, c.move_zone_width,

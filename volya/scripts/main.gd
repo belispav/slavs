@@ -23,7 +23,36 @@ const SHOW_AIM_TARGETS := false
 ## second by a character 130 units tall, and there is nowhere to put the feet of
 ## an enemy or the bottom of a cage.
 ##
-const BACKGROUND_PATH := "res://art/env_03.png"
+## CHOSEN 2026-08-13 by Pavel, on device: "nove pozadie je super, ovela lepsie
+## ako to predtym, takto to chceme nechat."
+##
+## Generated with the style token in ref/PROMPTY.md pushed away from "16 bit"
+## (which is what made the old generator draw 2-3 px blocks) and towards fine
+## grain. Measured on the walkable band: 39.1 % neighbour difference against
+## env_03's 4.8 %. Same 2816x1536 canvas and near-identical layout, so it went
+## in as a drop-in - palisade ends ~530, river starts ~1215, against
+## BG_WALK_TOP/BOTTOM's 560/1210.
+## env_05, generated 2026-08-14 with the prompt pushed further towards fine
+## grain (single-pixel stippling, heavy dithering, no flat areas). Measured on
+## the walkable band: 65.9 % neighbour difference, against env_04's 39.1 % and
+## env_03's 4.8 %.
+##
+## The reason it also WON on contrast, not just detail: band luma 103.7 against
+## env_04's 80.0, which was sitting exactly on the >= 80 rule with no margin.
+##
+## Drop-in confirmed by drawing it (METHOD rule 3b), not by arithmetic: the hero
+## standing with his feet on BG_WALK_TOP is in grass under the palisade, and on
+## BG_WALK_BOTTOM he is at the water's edge. Both limits still land where they
+## mean something, so 560/1210 are unchanged.
+##
+## It arrived as a JPEG and was converted once to PNG. JPEG rings every hard
+## pixel edge; the loss already baked in stays, but nothing more is added.
+## Ask for PNG next time.
+const BACKGROUND_PATH := "res://art/env_05.png"
+## The one it replaced, kept on a panel switch. Not a fallback - a reference, so
+## a new background is judged against the last one instead of against a memory
+## of it.
+const BACKGROUND_ALT_PATH := "res://art/env_04.png"
 
 ## Which rows of the background picture are open ground, measured from the art
 ## itself. Above them is the palisade and the props stacked against it, below
@@ -62,6 +91,7 @@ var _alive: int = 0
 ## Kept so the debug panel can flip its filter live. See _apply_bg_filter().
 var _bg_sprite: Sprite2D
 var _bg_smooth_applied: bool = false
+var _bg_alt_applied: bool = false
 
 
 func _ready() -> void:
@@ -86,19 +116,77 @@ func _process(delta: float) -> void:
 	_spawn_tick(delta)
 	_update_hud()
 	_apply_bg_filter()
+	_separate_enemies()
 
 
-## Follow the debug panel's background-filter switch. Only touches the sprite
-## when the value actually changed, so this costs a bool compare per frame.
-func _apply_bg_filter() -> void:
-	if _bg_sprite == null or Debug.smooth_background == _bg_smooth_applied:
+## Push overlapping enemies apart.
+##
+## Rushers all head for the same point - the player - so they arrive as a single
+## pile of bodies drawn on top of each other. Reported by Pavel 2026-08-13:
+## "runneri ... skoncia na jednej kope a vyzera to dost cudne."
+##
+## Done here rather than in enemy.gd because main.gd already holds the pool.
+## An enemy asking the scene tree for its neighbours every frame would be 34
+## group lookups per frame instead of one pass, which is real time on a 150 EUR
+## phone - and the frame budget is what the controls feel like.
+##
+## Positions are nudged rather than velocities pushed: a force fights the
+## approach logic and turns into orbiting, while a nudge just stops two bodies
+## occupying one spot and leaves the AI alone.
+func _separate_enemies() -> void:
+	var min_gap: float = Tuning.enemy_separation
+	if min_gap <= 0.0:
 		return
-	_bg_smooth_applied = Debug.smooth_background
-	# No mipmaps here: env_03 is MAGNIFIED (1 asset px per world unit against
-	# the device's ~1.5), and mipmaps only do anything when minifying. The
-	# characters are the opposite case and do need them.
-	_bg_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR \
-		if _bg_smooth_applied else CanvasItem.TEXTURE_FILTER_NEAREST
+	var live: Array = []
+	for e in enemies:
+		if e.active:
+			live.append(e)
+
+	for i in range(live.size()):
+		for j in range(i + 1, live.size()):
+			var a = live[i]
+			var b = live[j]
+			var away: Vector2 = a.global_position - b.global_position
+			# Depth counts for less than sideways distance: the field is only
+			# 1.5 screens tall and shoving enemies apart vertically walks them
+			# out of the playable band.
+			away.y *= 2.0
+			var d: float = away.length()
+			if d >= min_gap:
+				continue
+			if d < 0.001:
+				# Exactly on top of each other - pick a direction rather than
+				# dividing by zero and sending both to infinity.
+				away = Vector2(randf() - 0.5, randf() - 0.5).normalized()
+				d = 0.001
+			var push: Vector2 = away / d * (min_gap - d) * 0.5
+			push.y *= 0.5
+			a.global_position += push
+			b.global_position -= push
+
+
+## Follow the debug panel's background switches. Only touches the sprite when a
+## value actually changed, so this costs two bool compares per frame.
+##
+## The filter switch is kept even though it was measured to do almost nothing
+## (0.36 % on env_03 - the blockiness is painted in, not sampled in). It is a
+## measuring aid for every future background, not a fix.
+func _apply_bg_filter() -> void:
+	if _bg_sprite == null:
+		return
+	if Debug.smooth_background != _bg_smooth_applied:
+		_bg_smooth_applied = Debug.smooth_background
+		# No mipmaps: the background is MAGNIFIED (1 asset px per world unit
+		# against the device's ~1.5), and mipmaps only do anything when
+		# minifying.
+		_bg_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR \
+			if _bg_smooth_applied else CanvasItem.TEXTURE_FILTER_NEAREST
+	if Debug.alt_background != _bg_alt_applied:
+		_bg_alt_applied = Debug.alt_background
+		var path: String = BACKGROUND_ALT_PATH if _bg_alt_applied else BACKGROUND_PATH
+		var texture: Texture2D = load(path) as Texture2D
+		if texture != null:
+			_bg_sprite.texture = texture
 
 
 # ---------------------------------------------------------------- level ---

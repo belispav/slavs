@@ -173,13 +173,50 @@ def despeckle(im, tolerance=40):
     return Image.fromarray(arr, "RGBA"), int(lone.sum())
 
 
-def outline(im, colour=OUTLINE_COLOUR):
+def outline(im, colour=OUTLINE_COLOUR, darken=0.0):
+    """A 1 px border around the silhouette.
+
+    darken = 0.0 keeps the flat near-black OUTLINE_COLOUR. Anything above 0
+    instead takes the colour of the body the ring is touching and multiplies it
+    by that factor, so a red coat gets a dark red edge and pale skin a brown
+    one, rather than everything getting the same black.
+
+    Why the option exists (Pavel, 2026-08-13): against env_04's painted ground
+    a flat black ring reads as a sticker cut out and laid on the picture. It
+    was most obvious with coarse pixels, where the ring is thicker in world
+    units, but it is there at every size. What it is NOT is a readability
+    device being thrown away - the ring stays, it just stops being uniform.
+
+    0.55 is the value Pavel picked from tools-generated comparisons.
+    """
     solid = np.asarray(im.split()[3]) > 0
     padded = np.pad(solid, 1)
     ring = (padded[:-2, 1:-1] | padded[2:, 1:-1] |
             padded[1:-1, :-2] | padded[1:-1, 2:]) & ~solid
     arr = np.asarray(im).copy()
-    arr[ring] = colour
+    if darken <= 0.0:
+        arr[ring] = colour
+        return Image.fromarray(arr, "RGBA")
+
+    # Mean of the solid pixels each ring pixel touches. Shifted views rather
+    # than a per-pixel loop: a 139-frame clip would otherwise take minutes.
+    rgb = arr[..., :3].astype(np.float32)
+    total = np.zeros_like(rgb)
+    count = np.zeros(solid.shape, np.float32)
+    for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+        shifted_rgb = np.roll(np.roll(rgb, dy, axis=0), dx, axis=1)
+        shifted_solid = np.roll(np.roll(solid, dy, axis=0), dx, axis=1)
+        total += shifted_rgb * shifted_solid[..., None]
+        count += shifted_solid
+    safe = np.maximum(count, 1.0)[..., None]
+    edge = np.clip(total / safe * darken, 0, 255).astype(np.uint8)
+
+    arr[..., :3][ring] = edge[ring]
+    arr[..., 3][ring] = 255
+    # A ring pixel with no solid neighbour cannot happen by construction, but a
+    # body that is pure black would give a black ring anyway - fall back to the
+    # flat colour there so the edge never vanishes into the body.
+    arr[ring & (count == 0)] = colour
     return Image.fromarray(arr, "RGBA")
 
 
@@ -315,6 +352,10 @@ def main():
                     help="how far shadows are kept off pure black")
     ap.add_argument("--gain", type=float, default=1.35, help="contrast before banding")
     ap.add_argument("--no-outline", action="store_true")
+    ap.add_argument("--outline-darken", type=float, default=0.0,
+                    help="0 = flat dark outline (default). Above 0 = take the "
+                         "colour of the body under the ring and multiply by "
+                         "this. 0.55 is what VOLYA ships.")
     ap.add_argument("--no-despeckle", action="store_true")
     ap.add_argument("--sheet", default=None,
                     help="also write a magnified contact sheet here")
@@ -351,7 +392,7 @@ def main():
             im, removed = despeckle(im)
             speckles += removed
         if not cfg.no_outline:
-            im = outline(im)
+            im = outline(im, darken=cfg.outline_darken)
         im.save(os.path.join(dst, os.path.basename(path)))
         finished.append(im)
 

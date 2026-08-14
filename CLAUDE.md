@@ -194,9 +194,49 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
     music player and ~330 re-rendered PNGs were already uncommitted. My changes
     are mixed into that pile, so `git checkout` will not cleanly undo S = 2
     alone. Commit in pieces.
-- [x] **S = 2 confirmed good on device 2026-08-13.** Pavel: characters the same
-  size as before, edges clean (no ETC2 blocking), arquebus still two-coloured,
-  "oveľa lepšie". S = 2 is done and closed.
+- [x] **S = 2 REVERTED 2026-08-13. The game is pixel art. Do not re-raise S
+  without asking Pavel the style question first, in those words.**
+  - S = 2 worked technically and Pavel confirmed it looked sharper on device.
+    But its unavoidable consequence — LINEAR instead of NEAREST, 64 colours,
+    no outline — **stopped the game being pixel art**, and that is what VOLYA
+    is. Pavel: "ani vlastne neviem preco claude postavu vyhladil".
+  - **The mistake was mine and it was not technical.** The consequence was
+    written in `DIZAJN_pozadie_a_rozlisenie.md` §4 and I executed it as a step.
+    I never said the one sentence that mattered: *"this stops the game being
+    pixel art."* A change to how the whole game looks is Pavel's decision, and
+    writing it in an assignment document is not the same as saying it.
+  - **Standing rule from this:** if a technical step changes the game's style,
+    say so out loud and wait for an answer. Do not execute it because a
+    document said so.
+  - **His actual complaint was never "characters aren't sharp enough"** — it
+    was *"characters are finer-grained than the background"*. Measured:
+    character 16.0 % neighbour difference, background 4.8 %. The background was
+    3x coarser. The fix is a **finer background**, not smoother characters.
+  - Reverted: both `SPRITE_SCALE` back to `1.0`, all three character filters
+    back to `NEAREST`, 385 `.import` files back to `compress/mode=0` with no
+    mipmaps, `[importer_defaults]` removed from `project.godot`.
+  - **The hero's pixel-art frames were restored from commit `42ba8a8`. The
+    gunman's and rusher's were NOT recoverable** — the good 162/190 pixel-art
+    renders were overwritten by the smooth ones before they were ever
+    committed, and `42ba8a8` only has the older, too-small 98x130 versions.
+    Both must be re-rendered; the commands are at the top of `PRIKAZY.md`.
+- [x] **New background `env_04.png`, generated 2026-08-13, on a live switch.**
+  Pavel regenerated it after the style token in `ref/PROMPTY.md` §4b was
+  identified as the cause: it said `detailed pixel art, 16 bit`, and "16 bit"
+  is what made the generator draw 2–3 px blocks. New prompt pushes fine grain.
+  - Measured on the walkable band: **39.1 %** neighbour difference against
+    `env_03`'s 4.8 %. The mismatch has now **flipped** — the ground is finer
+    than the character (16.0 %). Whether that reads well is a device question.
+  - Drop-in: same 2816x1536, palisade ends ~530, river starts ~1215, against
+    `BG_WALK_TOP`/`BOTTOM`'s 560/1210. Tiles cleanly (seam 15.2 against its own
+    7.7 neighbour noise; `env_03`'s is 11.2 against 2.6, i.e. relatively worse).
+  - Contrast rule (§6): band luma **80.0**, exactly on the ≥80 line, down from
+    `env_03`'s 88.9. Hero 42.2, difference 37.8 against the ≥35 rule. Both
+    pass but with much less margin than before — worth watching.
+  - `Debug.alt_background` (panel: "NOVE POZADIE") swaps the texture live, so
+    the two can be judged **in motion**. The one thing a still cannot show is
+    whether ground this dense shimmers while scrolling, and whether a crowd of
+    enemies still reads against it (design pillar 1).
 - [x] **Background filter is a dead end — measured, do not retry.** With the
   characters now smooth, `env_03` reads badly next to them. A live NEAREST ↔
   LINEAR switch was added (`Debug.smooth_background`, panel "HLADKE POZADIE")
@@ -229,6 +269,124 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
   - **Not yet done:** the player has the same exposure the moment `idle_px`
     exists — `run` and `idle` will not agree either. Wire the same measurement
     into `player.gd` when that idle is rendered.
+- [x] **Outline colour: from the body, not black. Pavel's call 2026-08-13.**
+  `pixelize_sprites.py` and `coarsen_sprites.py` both take `--outline-darken`;
+  **0.55 is what VOLYA uses.** The 1 px ring stays — it is a readability
+  device and design pillar 1 needs it — but each ring pixel now takes the
+  colour of the body it touches, multiplied by 0.55. Measured: 66–74 distinct
+  ring colours per frame instead of one. A red coat gets a dark red edge.
+  - Why: against `env_04`'s painted ground a flat black ring read as a sticker
+    laid on the picture. Worst with coarse pixels (the ring is thicker in world
+    units), but present at every size.
+  - **Coarse pixels are rejected and removed** — Pavel tried the switch on
+    device: the thicker black ring made it worse, and the lost detail was not
+    worth it. `Tuning.art_dir()`, `COARSE_FACTOR`, the scale helpers,
+    `Debug.coarse_sprites` and the panel button are all gone; `art/*_px_b` is
+    Pavel's to delete. `tools/coarsen_sprites.py` stays — it is what resized
+    the hero from the 243x324 raw render, and it is the cheap way to try a
+    pixel size again without a Blender night.
+  - **Topic closed 2026-08-13.** Reopen only on a real symptom, and the symptom
+    to watch for is named: **the player cannot tell which objects are
+    interactive.** If cages, barricades and barrels stop reading as "I can
+    shoot this" once there are props on screen, the answer is likely to give
+    outlines a MEANING (Metal Slug: everything interactive is outlined,
+    scenery is not) and to regenerate the background with its own contours.
+    That is a design decision, not a tuning one — do not slide into it.
+  - **A test was wrong before it was right, and the lesson generalises:** the
+    first outline comparison recoloured a ring on art that *already had a black
+    outline baked into the PNG*, so "no outline" only meant "no second
+    outline". Pavel spotted it from the picture ("každý obrázok má čierny
+    obrys"). Measured after: ring luma 25 against body 45. **Before testing a
+    pipeline stage, check the input has not already been through it.**
+  - All sets were regenerated from `render/*_raw` — the frames as they leave
+    Blender, before any pixel pass. Those turned out to still be on disk at
+    the right heights (gunman 121x162, rusher 142x190, hero 243x324), which is
+    why no Blender re-render was needed.
+- [x] **Enemies no longer slide while attacking (2026-08-13).** Pavel: a
+  thrower that stopped to fire kept travelling toward him through the whole
+  firing animation, feet planted. `enemy.gd` now zeroes velocity while
+  `_is_attacking()` — deliberately for every kind, not just the thrower: an
+  attack is a commitment, and it gives the player a readable beat where an
+  enemy has chosen to shoot rather than chase.
+  - **A trap found on the way, worth remembering:** `_fire_timer` used to be
+    counted down inside `_thrower_clip()`, which is only reached from
+    `_drive_sprite()` — and that returns immediately when there is no sprite.
+    Any enemy still on the coloured-box fallback would therefore have frozen
+    permanently after its first shot the moment the timer started rooting the
+    body. The timer moved to `_physics_process`. **State does not live in the
+    drawing code**, however convenient the call site looks.
+- [x] **`env_05.png` is the background as of 2026-08-14, and it is the last one
+  generated as a single flat picture.** Pavel: "rozlisenie postav uz skoro
+  vobec nerusi... takto je to ok."
+  - Measured on the walkable band: grain **65.9 %** (env_04 39.1, env_03 4.8,
+    character ~16), band luma **103.7** (env_04 was 80.0, sitting exactly on
+    the ≥80 rule with no margin). It won on contrast as much as on detail.
+  - Drop-in: `BG_WALK_TOP`/`BOTTOM` 560/1210 unchanged, verified by drawing the
+    hero standing on both limits rather than by arithmetic.
+  - Arrived as JPEG, converted once to PNG. **Ask for PNG next time** — JPEG
+    rings every hard pixel edge and pixel art is all hard edges.
+  - **Two real faults, both measured, both for the parallax session:**
+    - **It does not tile.** Seam left-vs-right edge is 39.5 against its own
+      16.5 neighbour noise = **2.39x**, where env_04 was 1.99x. Pavel sees a
+      break at the first repeat and again mid-screen on the second.
+    - **The riverbank is not horizontal — it drops 484 px from left to right**
+      (env_04 dropped 10 px, i.e. level). So the bottom edge of the walkable
+      area is a slope in the picture while `BG_WALK_BOTTOM` is a straight line
+      in the code. They disagree by nearly a third of the picture's height.
+  - Neither is worth fixing in the picture: both dissolve once the ground is
+    its own layer. That is the next assignment.
+- [ ] **TODO — melee enemies on a 2.5D field are not solved, and Pavel has
+  raised whether they should exist at all. Left alone deliberately 2026-08-14;
+  do NOT try to tune it away.**
+  - **The dilemma, in his words:** rushers all converge on the player, so they
+    either overlap (which looks wrong) or they are separated on X — and once
+    separated on X they cannot reach him. Pushing them apart on Y is worse:
+    a rusher above or below the player swings along X and hits nothing but air,
+    because `Great Sword Slash` is authored as a sideways swing on a flat
+    stage, not as an attack in a depth field.
+  - So the separation added on 2026-08-14 (`Tuning.enemy_separation`) treats
+    the symptom. It stops bodies occupying one point; it does not make a
+    depth-offset swing mean anything.
+  - **Options not yet weighed:** fewer, tougher rushers (Pavel's own
+    suggestion — but it argues against the mass-shooter pillar); an attack that
+    resolves in a radius rather than along the swing; approaching to the
+    player's own row before closing; or dropping melee types entirely.
+  - **This is a design decision, not a tuning one.** It changes what the game
+    is about, so it belongs to Pavel and probably to an Opus session.
+- [x] **Depth sorting fixed 2026-08-14.** Draw order came from the enemy pool
+  array, so an enemy standing further UP the screen covered one standing lower
+  — backwards for a field seen from slightly above. `Tuning.depth_z()` now sets
+  `z_index` from world Y on enemies, the player and bullets. Godot's own
+  `y_sort_enabled` would also work, but it interacts with the `z_index = -1`
+  the sprites carry so the aim line stays on top, and explicit beats "it should
+  sort".
+- [ ] **TODO — enemy hurtbox is the player's old bug, unfixed. Reported by
+  Pavel 2026-08-13: shots pass through an enemy's upper body, only the lower
+  part registers. Diagnosed, not yet fixed.**
+  - `enemy.gd:_ready()` sizes the hurtbox as `SIZE * 1.15` = **34.5 x 59.8**,
+    centred on the enemy origin, and never touches it again. The drawn enemy is
+    **~120-140 world units** tall. The box therefore covers roughly the bottom
+    45 % of the body — exactly what Pavel is seeing.
+  - Identical in kind to the player bug fixed 2026-08-10, and the fix already
+    exists as a template: `player.gd`'s `_fit_hurtbox(drawn)`, sized from
+    `(height - foot_margin - head_margin) * SPRITE_SCALE` and hung from the
+    feet. `SpriteSequence.foot_margin()` / `head_margin()` are already there.
+  - **The one difference that will bite:** an enemy builds BOTH sprites up
+    front and `spawn()` picks one, and the two kinds are different heights
+    (gunman 162, rusher 190). So the fit must be re-run in `spawn()` per kind,
+    not once in `_ready()` — store a drawn height per kind alongside
+    `_thrower_shift` / `_rusher_shift`.
+  - Keep the box **narrower than the drawing** (design pillar 1 favours the
+    player) but it must be the right HEIGHT. The player's `PLAYER_HURT_WIDTH`
+    = 24 against a much wider drawing is the precedent.
+- [ ] **TODO — unify the colour palette across background, enemies and props
+  before final art is generated.** Pavel, 2026-08-13. `env_04` was generated
+  independently of the characters, so nothing ties their palettes together
+  yet. Cheapest moment to fix this is BEFORE eight enemy types are produced,
+  not after — same lesson as the ethnicity rule and the enemy-size one.
+  Likely mechanism: extract a shared palette from the chosen background and
+  pass it into `pixelize_sprites.py` instead of letting each character
+  quantise to its own 16 colours.
 - [ ] **CURRENT ASSIGNMENT (opened 2026-08-12): parallax + S = 2.** Full brief, with the numbers and the step-by-step, is in `DIZAJN_pozadie_a_rozlisenie.md`. **Everything is decided. Execute §8 in order; do not re-derive, do not re-decide.**
   - **Closed 2026-08-12, do not re-open:** parallax (not water shaders, not frame-animated backgrounds); **S = 2** (assets at 2 px per world unit, drawn at `scale 0.5`); **P1** for the background — detail by layer, far layers may be soft; **P2 cancelled**; **P3 (background rendered in Blender) deferred** with an objective trigger — it returns only when the style is settled *and* more than two environments are needed, i.e. at F3; **the environment is daylight**.
   - **The one thing still open, and it is Pavel's:** how many parallax layers. He answers it by looking at four variants on the phone after step 2. Nothing else is open.

@@ -9,8 +9,20 @@ session. **Toto je zadanie na vykonanie, nie na ďalšie rozhodovanie.**
 
 - **ROZHODNUTÉ 2026-08-12, neotvárať: statickosť sa rieši parallaxom.**
   Nie shader na vode, nie animované pozadie po snímkach.
-- **ROZHODNUTÉ 2026-08-12, neotvárať: S = 2.** Podklady sa vyrábajú v
-  dvojnásobku herných jednotiek a kreslia sa so `scale 0.5`.
+- ~~**ROZHODNUTÉ 2026-08-12: S = 2.**~~ **ZRUŠENÉ 2026-08-13 Pavlom. Späť na
+  S = 1.** S = 2 fungovalo technicky — postavy boli ostrejšie a Pavel to na
+  telefóne potvrdil — ale jeho nevyhnutný dôsledok (§4: LINEAR namiesto
+  NEAREST, 64 farieb, bez obrysu) **prestal robiť hru pixel artom**, a to je
+  to, čo VOLYA je.
+  - **Čo sa naozaj pokazilo, a nebolo to S = 2:** dôsledok bol v tomto
+    dokumente napísaný, ale Pavlovi nikdy nebol povedaný tou vetou —
+    „týmto hra prestáva byť pixel art". Vykonalo sa to ako technický krok.
+    Bola to zmena vzhľadu celej hry a mala byť jeho vedomé rozhodnutie.
+  - **Pravidlo, ktoré z toho platí:** ak nejaký technický krok mení štýl hry,
+    povie sa to nahlas a čaká sa na odpoveď. Nestačí to zapísať do zadania.
+  - Pôvodný Pavlov problém nebol „postavy sú málo ostré", ale **„postavy sú
+    jemnejšie než pozadie"**. Zmerané: postava 16,0 %, pozadie 4,8 % — pozadie
+    bolo 3× hrubšie. Riešenie je jemnejšie POZADIE, nie hladšie postavy.
 - **ROZHODNUTÉ 2026-08-12, neotvárať: pozadie ide cestou P1** — detail podľa
   vrstvy. Vzdialené vrstvy smú byť mäkké a v nižšom rozlíšení, ostré musí byť
   len to, čo je v hĺbke postavy a pred ňou. Zdôvodnenie a cena v §5.
