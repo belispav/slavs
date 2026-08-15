@@ -234,6 +234,81 @@ func _build_background() -> void:
 	_bg_sprite = sprite
 
 
+## Parallax layers in front of or behind the ground, as DATA - see
+## DIZAJN_pozadie_a_rozlisenie.md §8, KROK 1. Adding a layer should be one line
+## here, not a code change.
+##
+## The ground is deliberately NOT an entry here and never will be: it is drawn
+## by _build_background() above, at parallax factor 1.0 by construction,
+## because it never passes through Parallax2D at all (hard constraint §9.1).
+## A layer at any other factor scrolls at a different rate than the ground -
+## grass would slide under the character's feet, and BG_WALK_TOP/BOTTOM would
+## stop lining up with what the picture shows.
+##
+## Fields per entry:
+##   path:        res:// path to the layer's texture.
+##   factor:      horizontal parallax_scale. < 1.0 = further than the ground
+##                (moves slower, reads as distant); > 1.0 = nearer than the
+##                ground (moves faster; only the one foreground strip in
+##                KROK 2 is meant to use this).
+##   asset_scale: the layer's own S if it differs from the ground's S = 1
+##                (KROK 3's softer, lower-resolution distant layers).
+##   y:           offset from background_top() - the same coordinate space
+##                _build_background() uses - so a layer can be pinned to a
+##                row of the ground picture.
+##
+## Empty array = _build_parallax_layers() below adds nothing = the game looks
+## exactly as it did before this const existed. That is KROK 1's checkpoint.
+const BG_LAYERS := [
+	# {"path": "res://art/env_05_fg.png", "factor": 1.3, "asset_scale": 1.0, "y": 1536.0 - 240.0},
+]
+
+
+## Builds every entry in BG_LAYERS as its own Parallax2D, called right after
+## _build_background() so the ground is always in the tree first and every
+## parallax layer stacks around it.
+##
+## Vertical scroll_scale is hardcoded to 1.0 on every layer - hard constraint
+## §9.2. The camera travels vertically as the character walks toward the
+## palisade or the river; a layer scrolling vertically at a different rate
+## would drift out of registration with BG_WALK_TOP/BOTTOM.
+##
+## z_index: layers with factor < 1 (further than the ground, which sits at
+## -100) get -101 and below, one step further back per entry in array order -
+## the doc's §5 table lists them furthest-first. The one factor > 1 layer
+## (foreground) gets +50, ahead of the player.
+func _build_parallax_layers() -> void:
+	var behind_count: int = 0
+	for entry in BG_LAYERS:
+		var texture: Texture2D = load(entry["path"]) as Texture2D
+		if texture == null:
+			push_warning("Parallax vrstva %s sa nenacitala." % str(entry["path"]))
+			continue
+
+		var factor: float = entry["factor"]
+		var asset_scale: float = entry.get("asset_scale", 1.0)
+		var y_offset: float = entry.get("y", 0.0)
+
+		var layer := Parallax2D.new()
+		layer.scroll_scale = Vector2(factor, 1.0)
+		layer.repeat_size = Vector2(texture.get_width() / asset_scale, 0.0)
+		layer.repeat_times = 8
+		if factor < 1.0:
+			layer.z_index = -101 - behind_count
+			behind_count += 1
+		else:
+			layer.z_index = 50
+		add_child(layer)
+
+		var sprite := Sprite2D.new()
+		sprite.texture = texture
+		sprite.centered = false
+		sprite.scale = Vector2.ONE / asset_scale
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		sprite.position.y = background_top() + y_offset
+		layer.add_child(sprite)
+
+
 func _build_level() -> void:
 	if Touch.config.free_movement:
 		# No floor and no ceiling. There is no gravity to hold the character
@@ -244,6 +319,7 @@ func _build_level() -> void:
 		# Platforms are not built either: without a jump they are unreachable
 		# scenery standing in the way.
 		_build_background()
+		_build_parallax_layers()
 		return
 
 	_solid(Vector2(1200, GROUND_Y + 100.0), Vector2(2560, 200), Color(0.20, 0.22, 0.27))
