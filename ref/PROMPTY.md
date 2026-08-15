@@ -271,6 +271,145 @@ svetlo, celý objekt v zábere.
 
 ---
 
+## 4c. Popredie pre parallax — pás pred postavou (KROK 2, parallax session)
+
+Nový prompt, druhá verzia — prvá (transparent PNG) bola moja chyba: **tvoj
+generátor dáva JPEG, a JPEG nemá alfa kanál. Žiadny prompt to nezmení, je to
+vlastnosť formátu.** Over si výsledok pohľadom na vygenerovaný obrázok, nie
+na text.
+
+Toto ide **pred** postavu (Z-index +50 v `main.gd`), nie za `env_05`. Je to
+pás pri spodnom okraji obrazovky — trsy trávy, nízke balvany, zlomený plot —
+ktorý sa posúva **rýchlejšie** než zem (parallax faktor > 1), takže dáva
+pocit hĺbky bez toho, aby sa muselo `env_05` rozrezať a domaľovať.
+
+### Namiesto priehľadnosti: chroma-key
+
+Keďže JPEG alfu nedá, obrázok vygeneruješ s **plným, jednofarebným pozadím v
+sýtej purpurovej (`#FF00FF`, ako pri filmovom green-screene)** namiesto oblohy.
+Ja tú farbu na svojej strane algoritmicky vykrojím a zamením za skutočnú
+priehľadnosť (nový nástroj `tools/key_transparency.py`, napísaný nižšie v
+tejto session) — presne rovnaký princíp, aký `ref/PROMPTY.md` §5 už dávno
+používa pre klietky a barikády („plain solid neutral grey background"), len
+s farbou, ktorá sa nemôže omylom objaviť v tráve, kameňoch ani dreve.
+
+**Dôležité pre generátor aj pre teba pri výbere výsledku:** purpurová plocha
+musí byť **úplne rovná — žiadny prechod, žiadne tiene, žiadny lesk.** Keby
+mala odtieň, kľúčovanie po okraji zanechá purpurový lem.
+
+### Rozmer
+
+Skús čo najplochejší pomer strán (napr. `--ar 24:5` v Midjourney), ale
+**nie je to kritické** — generátor to aj tak pravdepodobne nedodrží presne
+(minule prišlo 2752×1536 namiesto požadovaného úzkeho pásu). Orezanie na
+skutočný obsah spraví `key_transparency.py` po vygenerovaní, podľa toho, kde
+purpurová naozaj končí — to sa **zmeria zo súboru**, nezadáva sa dopredu.
+
+Musí sa **bezšvovo opakovať doľava-doprava** v tej časti, čo nie je purpurová
+— rovnaké pravidlo ako pri `env_05`: nič výrazné a jedinečné, do promptu
+preto patrí `seamlessly tileable horizontally`.
+
+### Mierka
+
+Rovnaká ako všade v hre: **1 m ≈ 67 px** (hrdina je 121 px = 1,8 m). Trs
+trávy po lýtko, nízky balvan po koleno, zlomený kôl najviac po pás — nižšie
+než v `env_05`, lebo je to bližšie k oku a nesmie zakryť postavu vysoko.
+
+### Prompt
+
+```
+game foreground strip on a flat solid magenta background (#FF00FF), the
+magenta is perfectly uniform with no gradient, no shading, no glow, no
+texture — like a chroma-key green screen, seamlessly tileable horizontally,
+[ŠTÝL], 15th century Eastern European countryside, low foreground clutter
+only: grass tufts, low boulders, a single broken wattle fence post,
+scattered dead leaves, everything rooted to the bottom edge of the image,
+no ground plane extending into the magenta, no sky, no horizon line, no
+characters, scaled so a standing adult man would be roughly one and a half
+times the image height, grass tufts reaching his mid-shin, boulders no
+higher than his knee, cohesive limited earthy colour palette matching
+packed dirt and grass — no magenta, pink or purple anywhere in the grass,
+rocks or wood
+```
+
+### Negatívny prompt
+
+```
+sky, ground plane, horizon line, background scenery, distant landscape,
+people, person, character, animals, platforms, single large object in the
+centre, unique landmark, gradient background, shaded background, textured
+background, any background colour other than flat magenta, pink or purple
+foreground objects, text, letters, watermark, signature
+```
+
+---
+
+## 4d. Horný pás pre parallax — obloha, les, hory, palisáda v diaľke (nová priorita 2026-08-15)
+
+Nový prompt, prvý pokus — nie je z predošlej session. Toto je teraz prvá
+vrstva, ktorá sa skúša (Pavlova oprava poradia z 2026-08-15, pozri
+`DIZAJN_pozadie_a_rozlisenie.md` §8), nie pruh popredia.
+
+**Ako to funguje technicky, aby bol jasný rozmer aj obsah:** táto vrstva
+kreslí PRED zem (`env_05`), na tom istom mieste, kde má `env_05` dnes
+namaľovanú vlastnú oblohu/les/palisádu (riadky 0–560 z 1536, presne po
+`BG_WALK_TOP`). Vizuálne to teda **prekryje** to, čo tam `env_05` má, len
+vlastným (pomalším) tempom posunu — `env_05` sa nemení, nerozrezáva sa.
+
+### Rozmer
+
+**2816 × 600 px** (o niečo vyššie než 560, kvôli prekrytiu na spodnom
+okraji). Šírka zodpovedá `env_05`, ale **musí bezšvovo tilovať sama o
+sebe** — `seamlessly tileable horizontally` v prompte, rovnaké pravidlo ako
+všade inde.
+
+**Spodný okraj musí byť členitý, nie rovná čiara.** Vrstva sa posúva inou
+rýchlosťou než zem pod ňou, takže rovná hranica by pri chôdzi vyzerala ako
+škára, čo sa otvára a zatvára. Les alebo vrchol palisády majú prirodzene
+nerovný obrys — nechaj ho taký, nedokresľuj rovnú čiaru na spodku.
+
+### Mierka
+
+Rovnaká ako všade: **1 m ≈ 67 px** pri S = 1. Kôl palisády cca 168 px
+(2,5 m), stromy vyššie než palisáda.
+
+### Obsah a farba
+
+Obloha, vzdialené kopce, ihličnatý les, drevená palisáda — presne to, čo je
+dnes v `env_05` hore, len ako samostatný obrázok. Podľa P1 (§5 dokumentu)
+smie byť **mäkšie a menej detailné** než zem — je to vzdialená vrstva, nikto
+tam neostrí.
+
+### Prompt
+
+```
+side-scrolling video game background layer, top of frame only, seamlessly
+tileable horizontally, [ŠTÝL], 15th century Eastern European countryside at
+daytime, sky and distant low hills in the upper portion, a dense pine
+forest treeline below that, a weathered timber palisade wall in the
+foreground of this layer, scaled so a standing adult man would be roughly
+one thirteenth of the full image height, the bottom edge is an irregular
+treeline and palisade silhouette, not a straight line, no ground, no grass,
+no dirt, no walkable plane, no characters, no animals, even flat daylight,
+cohesive limited colour palette matching the rest of the scene
+```
+
+### Negatívny prompt
+
+```
+straight horizon line, flat bottom edge, ground plane, grass, dirt path,
+walkable ground, people, person, character, animals, platforms, single
+large unique landmark, text, letters, watermark, signature
+```
+
+### Faktor a test
+
+Skús na paneli (posuvník sa pridá rovnako ako pri popredí) niekoľko
+hodnôt < 1 — napr. 0,3 / 0,5 / 0,7 — a rozhodni podľa pohybu na telefóne,
+nie podľa nehybného obrázka.
+
+---
+
 ## 5. Objekty — klietky, barikády, sudy, debny
 
 ### Toto je dôležité: objekty NEPOTREBUJÚ 3D

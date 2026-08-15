@@ -175,6 +175,12 @@ func _build_panel() -> void:
 	bg_filter.toggled.connect(func(on: bool) -> void:
 		Debug.smooth_background = on)
 
+	# "rychlost popredia" slider removed 2026-08-15 along with env_05_fg.png -
+	# the file it controlled was pulled (broken, see
+	# DIZAJN_pozadie_a_rozlisenie.md SS8). Tuning.fg_parallax_factor stays
+	# defined for whichever foreground layer replaces it; re-add this slider
+	# then, same line as before.
+
 	var music_toggle := CheckButton.new()
 	music_toggle.text = "HUDBA"
 	music_toggle.custom_minimum_size = Vector2(0, 56)

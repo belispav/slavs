@@ -213,7 +213,7 @@ Zostala jediná otvorená vec a dá sa odpovedať pohľadom:
 
 | čo | kto | na základe čoho | kedy |
 |---|---|---|---|
-| **Koľko parallaxových vrstiev** (1 pruh popredia stačí, alebo treba aj vrstvy vzadu) | **Pavel** | pozrie na telefóne štyri varianty vedľa seba po KROKU 2 a povie číslo | po KROKU 2 |
+| **Koľko parallaxových vrstiev** (horný pás stačí, alebo treba aj pruh popredia a/alebo viac vrstiev vzadu) | **Pavel** | pozrie na telefóne varianty vedľa seba a povie číslo | po prvej pridanej vrstve (§8, opravené poradie 2026-08-15) |
 
 Všetko ostatné je rozhodnuté. Sonnet nemá čo dopĺňať úvahou; ak na niečo
 narazí, čo tu nie je, je to nové zistenie a patrí sem zapísať, nie odhadnúť.
@@ -221,6 +221,19 @@ narazí, čo tu nie je, je to nové zistenie a patrí sem zapísať, nie odhadn�
 ---
 
 ## 8. Kroky vykonania
+
+**OPRAVA PORADIA 2026-08-15 (Pavlova, chyba bola v pôvodnom zadaní):**
+začína sa **horným pásom** — obloha, vzdialené kopce, les, palisáda v
+diaľke, teda vrstvy ZA postavou (L0–L2 v tabuľke §5) — nie pruhom popredia.
+Pôvodný dôvod začať popredím ("dá sa pridať bez rezania `env_05`") bol
+platný ako argument, len zle zvážený voči tomu, čo Pavel chcel vidieť ako
+prvé. Presná špecifikácia horného pásu (koľko obrázkov, aký faktor, aký
+rozmer) ešte nie je zapísaná — určí sa rovnakým postupom ako doteraz:
+vygenerovať, zmerať, ukázať na obrázku, nie odhadnúť.
+
+Pruh popredia (pôvodné KROK 2, nižšie) sa vracia až po hornom páse, a len
+s obrázkom, ktorý spĺňa opravenú špecifikáciu — pozri "Popredie — odložené"
+za KROK 1.
 
 ### KROK 1 — parallaxový systém, bez novej grafiky
 
@@ -249,24 +262,64 @@ const BG_LAYERS := [
    `texture_filter = NEAREST`, `position.y = background_top() + y`.
    `z_index`: vrstvy s faktorom < 1 dostanú −101 a menej, vrstva s faktorom
    > 1 dostane +50 (pred postavu).
+
+   **OPRAVENÉ 2026-08-15 — toto pôvodné znenie bolo obrátene a nikdy sa
+   neprejavilo, lebo pole bolo do teraz prázdne.** Zem (`z_index = -100`) je
+   JEDEN nepriehľadný obrázok cez celý svoj obdĺžnik, bez priehľadnosti — a
+   kamera je zovretá presne na rozsah obrázka (`background_top()` až
+   `+background_height()`), takže nad obrázkom ani nie je kam sa pozrieť.
+   Vrstva s `z_index < -100` je preto **vždy úplne skrytá za zemou**, nie
+   "vzadu" v zmysle, ktorý by bolo vidieť. Aby bola vrstva za postavou
+   vôbec viditeľná, musí kresliť **PRED zem** (`z_index > -100`) — vizuálne
+   prekryje to, čo už `env_05` na tom mieste má namaľované, vlastnou
+   (pomalšou) rýchlosťou posunu. Správne: vrstvy s faktorom < 1 dostávajú
+   **-99 a vyššie**, po jednej za každý ďalší záznam v poradí od
+   najvzdialenejšej (tabuľka §5 je zoradená najvzdialenejšie-prvé) — stále
+   pohodlne za hráčom a nepriateľmi, ktorých `z_index` (`Tuning.depth_z`)
+   sleduje ich vlastné svetové Y a do tohto rozsahu sa v hracom páse
+   nedostane.
 4. Prázdne pole → nič sa nezmení. Nasadiť, overiť na telefóne, `git commit`.
 
-### KROK 2 — jedna vrstva popredia (najlacnejší možný test)
+### Popredie — odložené, opravená špecifikácia (bývalé KROK 2)
 
-Toto je jediná vrstva, ktorá sa dá pridať **bez toho, aby sa `env_03` muselo
-rozrezať a domaľovať** — ide pred neho, nie zaň. Preto sa začína ňou.
+Poradie sa zmenilo (viď hore) — toto už nie je najbližší krok, vracia sa až
+po hornom páse, a len s obrázkom, ktorý spĺňa nasledovné.
 
-1. Vygenerovať `volya/art/env_03_fg.png`, **2816 × 240 px, RGBA,
-   priehľadné všade okrem spodnej hrany.** Obsah: trsy trávy, nízke balvany,
-   zlomený plot — pás, ktorý je jasne rozpoznateľný ako popredie. Musí
-   bezšvovo tilovať vodorovne. Prompt zapísať do `ref/PROMPTY.md` ako §4c,
-   s mierkou z §4b (1 m = 67 px pri S = 1).
-2. Zapísať do `BG_LAYERS`:
-   `{"path": "res://art/env_03_fg.png", "factor": 1.3, "asset_scale": 1.0,
-   "y": 1536.0 - 240.0}`
-3. Faktor spraviť živý na paneli (`Debug`, jazdec „rychlost popredia",
-   rozsah 1,0–1,8), aby sa dal ladiť na zariadení bez nasadzovania.
-4. Vyskúšať 1,15 / 1,3 / 1,5 a nechať Pavla vybrať.
+**Prvý pokus, `volya/art/env_05_fg.png`, je zahodený 2026-08-15 — nie
+nápad, konkrétny súbor.** Zostáva na disku, mimo `BG_LAYERS` a mimo debug
+panelu. Namerané:
+
+| namerané | hodnota | pravidlo |
+|---|---|---|
+| čiastočne priehľadné pixely | **43,4 %** | pixel art má mať **0 %** — tvrdá alfa |
+| jas pásu | **60,5** | zem pod ním (`env_05`) má **103,7** — o 40 % tmavší |
+| výška | **350 px** | polovica 720-jednotkovej obrazovky |
+
+**Príčina, zapísaná aby sa nezopakovala:** obrázok, ako prišiel z
+generátora, bol 686 px vysoký pás s prirodzeným prechodom hustoty (hore
+riedka tráva, dole plná zem). Namiesto zmenšenia na potrebnú výšku bol
+**orezaný** na spodných 350 px a hore doplnený **umelý prechod alfy**
+(násobenie priehľadnosti). Orezanie vzalo najhustejšiu, najtmavšiu časť
+obrázka namiesto reprezentatívnej vzorky celku (bod "jas" v tabuľke) a
+umelý prechod vyrobil medzistupne priehľadnosti, ktoré pixel art nemá mať
+(bod "čiastočne priehľadné pixely"). **Pravidlo z toho: keď vygenerovaný
+obrázok nesedí na potrebnú veľkosť, CELÝ sa ZMENŠÍ, nie oreže.** Zmenšenie
+zachová zloženie aj priemerný jas; orezanie oboje mení.
+
+Požiadavky na náhradu:
+
+1. **Tvrdá alfa.** Každý pixel je buď úplne priehľadný (0), alebo úplne
+   nepriehľadný (255) — žiadny medzistupeň.
+2. **Výška 120–150 px** — nie 240, nie 350. Na 720-jednotkovej obrazovke
+   nesmie prekryť postavu.
+3. **Jas aspoň na úrovni zeme**, teda ≥ 103,7 (dnešná hodnota pásu
+   `env_05` — pozri §6), radšej svetlejšie, keďže je bližšie k oku.
+4. Generátor dáva JPEG, nie priehľadné PNG — pokračuje sa chroma-key
+   postupom z `ref/PROMPTY.md` §4c a `tools/key_transparency.py`, s
+   opravenou cieľovou výškou a bez orezávania (bod vyššie).
+5. Faktor (`Tuning.fg_parallax_factor`) živý na paneli, jazdec „rychlost
+   popredia", rozsah 1,0–1,8 — rovnako ako predtým, znovu pridať pri
+   návrate vrstvy.
 
 ### KROK 3 — počet vrstiev (rozhoduje Pavel, viď §7)
 
@@ -320,7 +373,16 @@ pozadie a každého nového nepriateľa.
    (`BG_WALK_TOP` / `BG_WALK_BOTTOM`) na obrázok; iná rýchlosť posunu = tráva
    uteká pod nohami a neviditeľné hranice prestanú sedieť s palisádou a
    riekou.
-2. **Zvislá zložka `scroll_scale` je vždy 1,0.** Kamera chodí hore-dole.
+2. **Zvislá zložka `scroll_scale` je vždy 1,0 — ale iba pre vrstvy ZA
+   postavou** (faktor < 1, L0–L2), ktoré sa musia trafiť do
+   `BG_WALK_TOP`/`BOTTOM`; kamera chodí hore-dole a iná zvislá rýchlosť by
+   ich odtrhla od tejto hranice. **Pruh popredia (faktor > 1) sa netrafuje
+   do ničoho v obrázku**, takže sa ho toto pravidlo netýka — smie mať iný
+   zvislý pomer, ak to bude vyzerať lepšie. OPRAVENÉ 2026-08-15: `main.gd`
+   dával zvislú 1,0 všetkým vrstvám bez rozdielu, aj popredia vrstve. Vo
+   verzii, ktorá sa práve zahodila, tak `env_05_fg.png` mal vodorovne 1,3 a
+   zvisle 1,0 naraz — súčasne bližšie aj rovnako ďaleko ako zem —
+   **nezrovnalosť, nie nastavenie**, nie niekým chcená hodnota.
 3. **Každá vrstva musí bezšvovo tilovať** a nesmie obsahovať nič výrazné a
    jedinečné — level má 12 000 jednotiek.
 4. **Nič sa nesmie diať vľavo.** Ambientné objekty smú zľava prilietať,

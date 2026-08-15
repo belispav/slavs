@@ -92,6 +92,11 @@ var _alive: int = 0
 var _bg_sprite: Sprite2D
 var _bg_smooth_applied: bool = false
 var _bg_alt_applied: bool = false
+## Parallax2D nodes built from BG_LAYERS entries with factor > 1.0 (nearer
+## than the ground - currently just env_05_fg.png). Kept so the "rychlost
+## popredia" panel slider can drive their speed live. See
+## _apply_fg_parallax_speed().
+var _fg_parallax_layers: Array = []
 
 
 func _ready() -> void:
@@ -116,7 +121,16 @@ func _process(delta: float) -> void:
 	_spawn_tick(delta)
 	_update_hud()
 	_apply_bg_filter()
+	_apply_fg_parallax_speed()
 	_separate_enemies()
+
+
+## Follows the "rychlost popredia" panel slider (Tuning.fg_parallax_factor)
+## so the foreground strip's speed can be found on the device - KROK 2, tried
+## 1.15 / 1.3 / 1.5 and picked by Pavel - without a redeploy per try.
+func _apply_fg_parallax_speed() -> void:
+	for layer in _fg_parallax_layers:
+		layer.scroll_scale.x = Tuning.fg_parallax_factor
 
 
 ## Push overlapping enemies apart.
@@ -259,8 +273,24 @@ func _build_background() -> void:
 ##
 ## Empty array = _build_parallax_layers() below adds nothing = the game looks
 ## exactly as it did before this const existed. That is KROK 1's checkpoint.
+## Empty again as of 2026-08-15: env_05_fg.png (KROK 2's foreground strip
+## attempt) is pulled. Not because a foreground layer is a bad idea - because
+## that specific file measured broken (43.4 % partially-transparent pixels
+## where pixel art wants 0 %, 40 % darker than the ground it sits in front
+## of, and 350 px tall against a 720-unit screen). File is kept on disk,
+## just out of this array and off the debug panel. Root cause and the
+## corrected requirements (hard alpha, 120-150 px, brightness >= ground) are
+## in DIZAJN_pozadie_a_rozlisenie.md SS8. Order also changed: the top band
+## (sky/forest/hills/distant palisade - layers BEHIND the player) comes
+## before the foreground strip now, per Pavel.
+##
+## "factor" per entry is only the value a Parallax2D is BUILT with (kept as a
+## literal rather than a cross-script const reference - GDScript const
+## initialisers must be foldable at parse time and an autoload const is not
+## a safe bet there). If a factor > 1 (foreground) entry exists, the panel
+## slider overwrites it live every frame from Tuning.fg_parallax_factor (see
+## _apply_fg_parallax_speed()), so the literal here is only frame-0's start.
 const BG_LAYERS := [
-	# {"path": "res://art/env_05_fg.png", "factor": 1.3, "asset_scale": 1.0, "y": 1536.0 - 240.0},
 ]
 
 
@@ -268,15 +298,34 @@ const BG_LAYERS := [
 ## _build_background() so the ground is always in the tree first and every
 ## parallax layer stacks around it.
 ##
-## Vertical scroll_scale is hardcoded to 1.0 on every layer - hard constraint
-## §9.2. The camera travels vertically as the character walks toward the
-## palisade or the river; a layer scrolling vertically at a different rate
-## would drift out of registration with BG_WALK_TOP/BOTTOM.
+## Vertical scroll_scale is hardcoded to 1.0 on every layer here - correct
+## for layers BEHIND the player (factor < 1), which must land on
+## BG_WALK_TOP/BOTTOM as the camera travels vertically; a different vertical
+## rate would drift them out of registration with the walkable field. A
+## layer in FRONT of the player (factor > 1) does not have to hit any line
+## in the picture, so this does not bind it - see
+## DIZAJN_pozadie_a_rozlisenie.md §9.2. env_05_fg.png ran 1.3 horizontal
+## against this hardcoded 1.0 vertical, which was never a deliberate choice,
+## just what this function does unconditionally; worth revisiting once a
+## foreground layer returns.
 ##
-## z_index: layers with factor < 1 (further than the ground, which sits at
-## -100) get -101 and below, one step further back per entry in array order -
-## the doc's §5 table lists them furthest-first. The one factor > 1 layer
-## (foreground) gets +50, ahead of the player.
+## z_index: FIXED 2026-08-15, was inverted since KROK 1 and only just found
+## while adding the first real "behind" layer. The ground sprite (z = -100)
+## is ONE OPAQUE image covering its whole rectangle top to bottom - it has no
+## transparency anywhere. z_index < -100 draws BEFORE (behind) the ground, so
+## anything put there is entirely hidden behind it; the camera is also
+## clamped to background_top()..background_top()+background_height() (see
+## _build_player()), so there is no world space above the picture to escape
+## into either. A "further away" layer therefore has to draw IN FRONT OF the
+## ground (z > -100) to be seen at all - it visually overpaints whatever
+## env_05 already has in that same picture region, at its own (slower)
+## scroll speed, rather than sitting further back in the z-buffer sense.
+## Layers with factor < 1 now get -99 and up, one step closer per entry in
+## array order (furthest-first, per the doc's §5 table) - still comfortably
+## behind the player and enemies, whose z_index (Tuning.depth_z) tracks
+## their own world Y and never goes anywhere near this range in the
+## walkable band. The one factor > 1 layer (foreground) keeps +50, ahead of
+## the player.
 func _build_parallax_layers() -> void:
 	var behind_count: int = 0
 	for entry in BG_LAYERS:
@@ -294,10 +343,11 @@ func _build_parallax_layers() -> void:
 		layer.repeat_size = Vector2(texture.get_width() / asset_scale, 0.0)
 		layer.repeat_times = 8
 		if factor < 1.0:
-			layer.z_index = -101 - behind_count
+			layer.z_index = -99 + behind_count
 			behind_count += 1
 		else:
 			layer.z_index = 50
+			_fg_parallax_layers.append(layer)
 		add_child(layer)
 
 		var sprite := Sprite2D.new()

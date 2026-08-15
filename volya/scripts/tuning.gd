@@ -164,6 +164,17 @@ var rusher_attack_hit_at: float = RUSHER_ATTACK_HIT_AT
 const ENEMY_SEPARATION: float = 46.0
 var enemy_separation: float = ENEMY_SEPARATION
 
+## How fast the foreground parallax strip (env_05_fg.png, main.gd's BG_LAYERS)
+## scrolls relative to the ground it sits in front of. 1.0 would move with the
+## ground like it was painted on it; > 1.0 reads as closer to the eye - see
+## DIZAJN_pozadie_a_rozlisenie.md SS8 KROK 2.
+##
+## 1.3 is a starting guess, not a measurement - KROK 2's whole point is trying
+## 1.15 / 1.3 / 1.5 on the device and letting Pavel pick, via the panel slider
+## below (range 1.0-1.8, per the doc) rather than redeploying per guess.
+const FG_PARALLAX_FACTOR: float = 1.3
+var fg_parallax_factor: float = FG_PARALLAX_FACTOR
+
 
 ## Draw order for anything standing on the ground plane.
 ##
