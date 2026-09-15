@@ -39,6 +39,7 @@ var _weave_rate: float = 1.0
 ## line up on one arc.
 var _keep_distance: float = Tuning.THROWER_KEEP_DISTANCE
 var _hurtbox: Area2D
+var _hurt_shape: CollisionShape2D
 ## Drawn character, when one has been rendered. Null means the coloured box,
 ## which is still a perfectly good enemy and is what every unfinished type uses.
 ## Points at whichever of the two below matches the current kind - built once
@@ -53,6 +54,16 @@ var _hurtbox: Area2D
 ## single dictionary would have them overwrite each other's shift.
 var _thrower_shift: Dictionary = {}
 var _rusher_shift: Dictionary = {}
+## Drawn sprite height per kind, head to feet, computed once in
+## _build_sprite_from - see its own comment. Different per kind (gunman
+## ~162, rusher ~190 world units), so the hurtbox must be refit in
+## spawn() whenever kind changes, not sized once for both.
+var _thrower_drawn_height: float = 0.0
+var _rusher_drawn_height: float = 0.0
+## Whichever of the two above is active. Refit every physics frame (see
+## _physics_process) so Tuning.enemy_hurt_height_fraction is live on the
+## debug panel, same pattern as player.gd's _drawn_height.
+var _drawn_height: float = 0.0
 ## Points at whichever of the two matches the sprite now on show.
 var _clip_shift: Dictionary = {}
 var _sprite: AnimatedSprite2D
@@ -96,9 +107,10 @@ func _ready() -> void:
 	add_child(_hurtbox)
 	var hs := CollisionShape2D.new()
 	var hrect := RectangleShape2D.new()
-	hrect.size = SIZE * 1.15          # generous hitbox, favours the player
+	hrect.size = SIZE * 1.15          # placeholder, _fit_hurtbox resizes it
 	hs.shape = hrect
 	_hurtbox.add_child(hs)
+	_hurt_shape = hs
 
 	_build_sprite()
 	despawn()
@@ -111,18 +123,22 @@ func _ready() -> void:
 ## either gets null back from both and keeps the coloured box, exactly as the
 ## thrower did on its own before the rusher existed.
 func _build_sprite() -> void:
+	var thrower_height := [0.0]
 	_thrower_sprite = _build_sprite_from(&"idle", Tuning.THROWER_IDLE_ART_DIR, [
 		[&"walk", Tuning.THROWER_WALK_ART_DIR, true],
 		# Firing is a one-shot: it must end so the enemy can go back to
 		# standing, otherwise it reloads forever and never looks like a shot.
 		[&"fire", Tuning.THROWER_FIRE_ART_DIR, false],
-	], _thrower_shift)
+	], _thrower_shift, thrower_height)
+	_thrower_drawn_height = thrower_height[0]
+	var rusher_height := [0.0]
 	_rusher_sprite = _build_sprite_from(&"idle_unaware", Tuning.RUSHER_IDLE_ART_DIR, [
 		[&"idle_ready", Tuning.RUSHER_IDLE_READY_ART_DIR, true],
 		[&"walk", Tuning.RUSHER_WALK_ART_DIR, true],
 		# One-shot for the same reason as the thrower's fire clip.
 		[&"attack", Tuning.RUSHER_ATTACK_ART_DIR, false],
-	], _rusher_shift)
+	], _rusher_shift, rusher_height)
+	_rusher_drawn_height = rusher_height[0]
 	if _thrower_sprite != null:
 		add_child(_thrower_sprite)
 	if _rusher_sprite != null:
@@ -138,7 +154,7 @@ func _build_sprite() -> void:
 ## is empty is skipped rather than failing - partial art (say, only the idle
 ## rendered so far) still plays, it just cannot show the missing states yet.
 func _build_sprite_from(base_anim: StringName, base_dir: String,
-		extra: Array, shift_out: Dictionary) -> AnimatedSprite2D:
+		extra: Array, shift_out: Dictionary, height_out: Array) -> AnimatedSprite2D:
 	var base_frames := SpriteSequence.load_frames(base_dir)
 	if base_frames.is_empty():
 		return null
@@ -180,9 +196,37 @@ func _build_sprite_from(base_anim: StringName, base_dir: String,
 	var margin: float = float(SpriteSequence.foot_margin(base_frames))
 	sprite.position.y = SIZE.y * 0.5 \
 		- (height * 0.5 - margin) * Tuning.ENEMY_SPRITE_SCALE
+
+	# The true body height, head to feet - same fix as player.gd's _drawn_height.
+	# Canvas height minus only the foot margin still counts the empty rows
+	# above the head as body, which is the bug: it put the hurtbox at roughly
+	# the bottom 45% of the drawing (see CLAUDE.md TODO, reported 2026-08-13).
+	var top_margin: float = float(SpriteSequence.head_margin(base_frames))
+	height_out[0] = (height - margin - top_margin) * Tuning.ENEMY_SPRITE_SCALE
+
 	sprite.visible = false
 	sprite.play()
 	return sprite
+
+
+## Match the hurt area to whichever kind is actually being shown.
+##
+## Same idea as player.gd's _fit_hurtbox: sized from the DRAWN height, hung
+## from the feet, narrower than the drawing on purpose (arms swing wide).
+## Called from spawn() - because the two kinds are drawn at different
+## heights, a box fitted for one kind is wrong on the other - and every
+## physics frame, so the debug-panel slider is live on enemies already on
+## screen.
+func _fit_hurtbox(drawn_height: float) -> void:
+	if drawn_height <= 0.0 or _hurt_shape == null:
+		return
+	var rect := _hurt_shape.shape as RectangleShape2D
+	if rect == null:
+		return
+	var tall: float = drawn_height * Tuning.enemy_hurt_height_fraction
+	rect.size = Vector2(Tuning.ENEMY_HURT_WIDTH, tall)
+	# Feet at +SIZE.y/2, same convention as the collision box above.
+	_hurt_shape.position.y = SIZE.y * 0.5 - tall * 0.5 - (drawn_height - tall) * 0.5
 
 
 func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
@@ -213,6 +257,8 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	# would be a lie the player would learn to read wrongly.
 	_sprite = _thrower_sprite if kind == Kind.THROWER else _rusher_sprite
 	_clip_shift = _thrower_shift if kind == Kind.THROWER else _rusher_shift
+	_drawn_height = _thrower_drawn_height if kind == Kind.THROWER else _rusher_drawn_height
+	_fit_hurtbox(_drawn_height)
 	if _thrower_sprite != null:
 		_thrower_sprite.visible = kind == Kind.THROWER
 	if _rusher_sprite != null:
@@ -302,6 +348,10 @@ func _physics_process(delta: float) -> void:
 	if _flash > 0.0:
 		_flash = maxf(_flash - delta * 6.0, 0.0)
 		queue_redraw()
+	# Cheap enough to redo every frame, and it is what makes the hurtbox
+	# slider in the debug panel actually live instead of only taking effect
+	# after the next redeploy - same reasoning as player.gd's own call.
+	_fit_hurtbox(_drawn_height)
 	_drive_sprite(delta)
 
 

@@ -318,6 +318,9 @@ func _build_panel() -> void:
 	_add_slider("ako daleko od seba sa nepriatelia odtlacaju (px)",
 		0.0, 120.0, 2.0, Tuning.enemy_separation,
 		func(v: float) -> void: Tuning.enemy_separation = v)
+	_add_slider("aky vysoky kus tela nepriatela sa da trafit (0-1)", 0.3, 1.0,
+		0.02, Tuning.enemy_hurt_height_fraction,
+		func(v: float) -> void: Tuning.enemy_hurt_height_fraction = v)
 
 	_add_note("ZONA PRE LAVY PALEC")
 	_add_slider("sirka", 0.2, 0.8, 0.01, c.move_zone_width,

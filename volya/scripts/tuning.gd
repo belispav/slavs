@@ -116,6 +116,17 @@ const PLAYER_HURT_WIDTH: float = 24.0
 ## up to shrink both margins evenly rather than guessing at the constant.
 var player_hurt_height_fraction: float = PLAYER_HURT_HEIGHT_FRACTION
 
+## Same problem as the player's, on the enemies: the collision box (SIZE,
+## 30x52) is far shorter than either kind's drawn sprite (gunman ~162,
+## rusher ~190 world units tall), so a hurtbox sized from the box only
+## covers the legs - shots pass through the chest and head. Diagnosed
+## 2026-08-13, fixed 2026-09-15 using the same fix as the player's:
+## fraction of the DRAWN height, not of the collision box.
+const ENEMY_HURT_HEIGHT_FRACTION: float = 0.72
+const ENEMY_HURT_WIDTH: float = 24.0     # same precedent as PLAYER_HURT_WIDTH
+## Live, same reason as player_hurt_height_fraction above.
+var enemy_hurt_height_fraction: float = ENEMY_HURT_HEIGHT_FRACTION
+
 # --- Player survivability ---
 const PLAYER_MAX_HP: int = 5
 const PLAYER_IFRAMES: float = 0.9     # invulnerable window after taking a hit
