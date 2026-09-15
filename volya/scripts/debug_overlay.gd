@@ -181,6 +181,18 @@ func _build_panel() -> void:
 	# defined for whichever foreground layer replaces it; re-add this slider
 	# then, same line as before.
 
+	# Speed of everything BEHIND the ground (sky + the valley under the ledge).
+	# A multiplier on each layer's own factor in main.gd's BG_LAYERS, so one
+	# slider moves both without collapsing the distance between them - 1.0 is
+	# the picture as authored. Added 2026-09-14; asked for 2026-08-15.
+	_add_slider("rychlost pozadia", 0.1, 3.0, 0.05, Tuning.bg_parallax_speed,
+		func(v: float) -> void: Tuning.bg_parallax_speed = v)
+
+	# How far the character stops short of the top/bottom edge it measured
+	# from the picture - see Tuning.walk_edge_inset. Added 2026-09-15.
+	_add_slider("odstup od okraja", 0.0, 60.0, 1.0, Tuning.walk_edge_inset,
+		func(v: float) -> void: Tuning.walk_edge_inset = v)
+
 	var music_toggle := CheckButton.new()
 	music_toggle.text = "HUDBA"
 	music_toggle.custom_minimum_size = Vector2(0, 56)

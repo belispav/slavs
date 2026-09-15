@@ -344,69 +344,168 @@ foreground objects, text, letters, watermark, signature
 
 ---
 
-## 4d. Horný pás pre parallax — obloha, les, hory, palisáda v diaľke (nová priorita 2026-08-15)
+## 4d. Horný pás pre parallax — LEN atmosféra (OPRAVA 2026-08-15 v2)
 
-Nový prompt, prvý pokus — nie je z predošlej session. Toto je teraz prvá
-vrstva, ktorá sa skúša (Pavlova oprava poradia z 2026-08-15, pozri
-`DIZAJN_pozadie_a_rozlisenie.md` §8), nie pruh popredia.
+**Zmena smeru, zapísaná po Pavlovej pripomienke, prvá verzia nižšie je
+zahodená.** Prvý pokus (prompt nižšie v histórii, kandidát
+`ref/candidates/env_top_raw_v2_daylight.jpg`) dával do tejto samostatnej
+parallax vrstvy konkrétny obsah — les, palisádu. Problém: táto vrstva sa
+posúva svojou vlastnou (pomalšou) rýchlosťou než zem pod ňou, takže
+konkrétne prvky s ostrým obrysom (kmene, koly) sa voči hracej ploche stále
+mierne posúvajú a nikdy s ňou nebudú trvalo zarovnané — obzvlášť raz, keď
+kamera bude schopná aj šikmého pohybu, nielen vodorovného scrollovania.
+Kandidát zostáva na disku, mimo `BG_LAYERS`, presne ako `env_05_fg.png`.
 
-**Ako to funguje technicky, aby bol jasný rozmer aj obsah:** táto vrstva
-kreslí PRED zem (`env_05`), na tom istom mieste, kde má `env_05` dnes
-namaľovanú vlastnú oblohu/les/palisádu (riadky 0–560 z 1536, presne po
-`BG_WALK_TOP`). Vizuálne to teda **prekryje** to, čo tam `env_05` má, len
-vlastným (pomalším) tempom posunu — `env_05` sa nemení, nerozrezáva sa.
+**Nové pravidlo (inšpirácia Metal Slug, náš vzor):** čokoľvek konkrétne a
+ostré (les, palisáda, múr) je súčasť **hracej plochy** (`env_05`-typu
+obrázka, pozri §4b aj nový §4e nižšie) — je to jeden obrázok, jedna
+mierka, navždy zarovnané s tým, po čom sa chodí. Táto parallax vrstva smie
+niesť **len atmosféru**: oblohu a prípadne nejasnú, rozmazanú siluetu v
+diaľke. Žiadny strom, žiadny kôl, nič s hranou, čo by muselo niekam
+nadväzovať.
 
 ### Rozmer
 
-**2816 × 600 px** (o niečo vyššie než 560, kvôli prekrytiu na spodnom
-okraji). Šírka zodpovedá `env_05`, ale **musí bezšvovo tilovať sama o
-sebe** — `seamlessly tileable horizontally` v prompte, rovnaké pravidlo ako
-všade inde.
-
-**Spodný okraj musí byť členitý, nie rovná čiara.** Vrstva sa posúva inou
-rýchlosťou než zem pod ňou, takže rovná hranica by pri chôdzi vyzerala ako
-škára, čo sa otvára a zatvára. Les alebo vrchol palisády majú prirodzene
-nerovný obrys — nechaj ho taký, nedokresľuj rovnú čiaru na spodku.
+**2816 × cca 400–600 px**, `seamlessly tileable horizontally`. Presná
+výška už nie je kritická ako predtým — obsah je neostrý a nemá spodný
+okraj, ktorý by sa musel na niečo napojiť (hracia plocha ho celý prekryje
+svojím vlastným, ostrým horným pásom, pozri §4e).
 
 ### Mierka
 
-Rovnaká ako všade: **1 m ≈ 67 px** pri S = 1. Kôl palisády cca 168 px
-(2,5 m), stromy vyššie než palisáda.
+Neplatí — v obrázku nesmie byť nič, čo by mierku potrebovalo (žiadny
+strom, budova, postava).
 
-### Obsah a farba
+### Obsah, svetlo a detail
 
-Obloha, vzdialené kopce, ihličnatý les, drevená palisáda — presne to, čo je
-dnes v `env_05` hore, len ako samostatný obrázok. Podľa P1 (§5 dokumentu)
-smie byť **mäkšie a menej detailné** než zem — je to vzdialená vrstva, nikto
-tam neostrí.
+Obloha, denné svetlo, prípadne veľmi nejasná vzdialená silueta hôr
+rozmazaná atmosférou — nič viac. **Denné svetlo, nie súmrak** (§3
+dokumentu, nezmenené). Zámerne mäkké, rozostrené, menej sýte farby —
+opak toho, čo je na hracej ploche.
 
 ### Prompt
 
 ```
 side-scrolling video game background layer, top of frame only, seamlessly
-tileable horizontally, [ŠTÝL], 15th century Eastern European countryside at
-daytime, sky and distant low hills in the upper portion, a dense pine
-forest treeline below that, a weathered timber palisade wall in the
-foreground of this layer, scaled so a standing adult man would be roughly
-one thirteenth of the full image height, the bottom edge is an irregular
-treeline and palisade silhouette, not a straight line, no ground, no grass,
-no dirt, no walkable plane, no characters, no animals, even flat daylight,
-cohesive limited colour palette matching the rest of the scene
+tileable horizontally, [ŠTÝL], clear daytime sky, flat even daylight, no
+sunset, no dusk, no dramatic sky colour, hazy indistinct far mountain
+silhouette barely visible through atmospheric haze, soft muted desaturated
+colours, heavy atmospheric perspective, nothing sharp or in focus, no
+distinguishable trees, no individual tree shapes, no pine trees, no forest,
+no treeline, no palisade, no fence, no wall, no buildings, no structures,
+no landmark, no ground, no grass, no dirt, no walkable plane, no
+characters, no animals, pure atmosphere and depth, cohesive limited colour
+palette matching the rest of the scene
 ```
 
 ### Negatívny prompt
 
 ```
-straight horizon line, flat bottom edge, ground plane, grass, dirt path,
-walkable ground, people, person, character, animals, platforms, single
-large unique landmark, text, letters, watermark, signature
+sunset, dusk, twilight, dramatic sky, orange sky, purple sky, sharp focus,
+highly detailed, intricate detail, crisp edges, individual trees, tree
+trunks, pine trees, forest, treeline, palisade, timber wall, fence, fort,
+buildings, structures, landmark, straight horizon line, flat bottom edge,
+torn edge, ragged edge, holes, gaps, ground plane, grass, dirt path,
+walkable ground, people, person, character, animals, platforms, text,
+letters, watermark, signature
 ```
 
 ### Faktor a test
 
-Skús na paneli (posuvník sa pridá rovnako ako pri popredí) niekoľko
-hodnôt < 1 — napr. 0,3 / 0,5 / 0,7 — a rozhodni podľa pohybu na telefóne,
-nie podľa nehybného obrázka.
+Skús na paneli niekoľko hodnôt < 1 — teraz skôr nižšie, napr.
+0,1 / 0,2 / 0,3, lebo obsah je teraz najvzdialenejšia možná vec v zábere
+(čistá atmosféra) — a rozhodni podľa pohybu na telefóne, nie podľa
+nehybného obrázka.
+
+---
+
+## 4e. Horný okraj hracej plochy — dva varianty ohraničenia (nové, 2026-08-15 v2)
+
+**Toto nahrádza myšlienku samostatnej "les/palisáda" parallax vrstvy z
+pôvodného §4d.** Namiesto toho sa upravuje horný pás priamo v obrázku
+hracej plochy (rovnaký typ obrázka ako `env_05`, pozri §4b) — je to už
+dnes takto (§4b, "horný pás — hradba, les", 18 % obrázka), mení sa len
+tvar toho pásu, nie kam patrí.
+
+**Čo sa mení, presne podľa Pavlovej pripomienky:**
+
+1. **Horný okraj hracej plochy nesmie byť rovná čiara.** Dnes je to de
+   facto ostrá hranica na riadku `BG_WALK_TOP`. Namiesto toho: nepravidelný
+   obrys — balvany/skaly čiastočne zapustené pri báze múru/lesa, rôzne
+   vysoké koly/kmene, žiadna jedna vodorovná hrana cez celú šírku obrázka.
+   Dôvod je vizuálny aj herný zároveň: jasne vidno, prečo sa tam nedá ísť
+   ďalej (prekáža skala, nie neviditeľná stena).
+2. **Plynulý prechod hore, smerom k atmosférickej vrstve za ním (§4d).**
+   Vrchná časť múru/lesa v obrázku (posledných pár desiatok pixelov smerom
+   hore) môže byť mäkšia, menej sýta — pripravuje to oko na to, že za tým
+   je už len hmlistá obloha z §4d, nie ostrý rez.
+3. **Skúšajú sa dva varianty naraz** — Pavel rozhodne, ktorý sedí lepšie,
+   rovnakým spôsobom ako doteraz (vygenerovať, zmerať, ukázať na obrázku).
+
+Oba varianty stavajú na promptovej šablóne §4b (rovnaký rozmer 2816×1536,
+rovnaký pomer pásov, rovnaká mierka 1 m ≈ 67 px) — mení sa len opis
+`[VZDIALENA]` hranice a pridáva vetu o nepravidelnom okraji a mäkkom
+prechode hore.
+
+### Variant A — palisáda
+
+```
+side-scrolling beat-em-up background, top-down-angled side view looking
+slightly down onto the ground, walkable ground plane with visible depth,
+seamlessly tileable horizontally, [ŠTÝL: detailed pixel art, 16 bit],
+15th century Eastern European countryside, [MIESTO],
+the bottom fifth of the image is an impassable near boundary — [BLIZKA],
+the top fifth is an impassable far boundary - a weathered timber palisade
+wall, its base partly obscured by scattered moss-covered boulders and low
+undergrowth, post heights slightly uneven so the top silhouette is natural
+and irregular, not a straight line, the very top edge of the palisade
+fading slightly softer and less saturated as if dissolving into distant
+haze,
+the middle three fifths of the image is wide open empty walkable ground of
+packed dirt and grass, completely clear and unobstructed,
+scaled so that a standing adult man would be one thirteenth of the image
+height, grass tufts reaching his mid-shin, the palisade one and a half
+times his height, boulders no higher than his knee,
+completely empty of people and animals, no characters,
+even flat daylight, no strong cast shadows, no single dominant landmark,
+cohesive limited colour palette
+```
+
+### Variant B — hustý les, bez plota
+
+```
+side-scrolling beat-em-up background, top-down-angled side view looking
+slightly down onto the ground, walkable ground plane with visible depth,
+seamlessly tileable horizontally, [ŠTÝL: detailed pixel art, 16 bit],
+15th century Eastern European countryside, [MIESTO],
+the bottom fifth of the image is an impassable near boundary — [BLIZKA],
+the top fifth is an impassable far boundary - a dense wall of pine forest,
+trunks and roots partly obscured by scattered boulders and undergrowth at
+the base, tree heights uneven so the treeline silhouette is natural and
+irregular, not a straight line, the very top of the canopy fading slightly
+softer and less saturated as if dissolving into distant haze, no fence,
+no palisade, no man-made structure,
+the middle three fifths of the image is wide open empty walkable ground of
+packed dirt and grass, completely clear and unobstructed,
+scaled so that a standing adult man would be one thirteenth of the image
+height, grass tufts reaching his mid-shin, boulders no higher than his
+knee,
+completely empty of people and animals, no characters,
+even flat daylight, no strong cast shadows, no single dominant landmark,
+cohesive limited colour palette
+```
+
+### Negatívny prompt (oba varianty)
+
+```
+people, person, human, figure, character, animals, platforms, floating
+platforms, ledges, side view of a wall, flat backdrop, straight horizon
+line, flat top edge, single large tree in the centre, unique landmark,
+crates on the open ground, barrels on the open ground, posts on the open
+ground, boulders on the open ground, clutter in the middle of the field,
+perspective distortion, vanishing point, depth of field, dramatic
+lighting, long shadows, text, letters, UI, watermark, signature
+```
 
 ---
 

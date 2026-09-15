@@ -38,6 +38,21 @@ var field_bottom: float = 1e9
 var field_left: float = -1e9
 var field_right: float = 1e9
 
+## Optional per-x top edge, in the same "where the FEET may stand" space
+## as the top argument to set_foot_field - set by the level once it has
+## read the picture's own silhouette (see Main.walk_top_for_x). Empty
+## Callable means "no per-column data": _move_free() then falls back to
+## the flat field_top above, so nothing breaks if a level never wires
+## this up.
+var _foot_top_at: Callable = Callable()
+
+## The bottom-edge mirror of _foot_top_at, same shape, same fallback pattern
+## - see Main.walk_bottom_for_x. ADDED 2026-09-15: the top curve existed
+## since 2026-09-04 and nobody had mirrored it for the front edge, not on
+## purpose - Pavel noticed the top edge already followed the picture and
+## asked why the bottom one did not.
+var _foot_bottom_at: Callable = Callable()
+
 ## How far above the body's origin shots leave from. Derived from the drawing,
 ## so re-rendering the character at a different height keeps the muzzle on the
 ## hands instead of drifting to the knees.
@@ -186,6 +201,21 @@ func set_foot_field(top: float, bottom: float, left: float, right: float) -> voi
 	field_bottom = bottom - feet
 	field_left = left
 	field_right = right
+
+
+## A top edge that varies with x, read from the level's picture instead
+## of one flat number - see the doc comment on _foot_top_at above.
+## top_at_x(world_x) must return in the same "where the FEET may stand"
+## space set_foot_field's own top argument is in; the feet offset is
+## applied here, same as set_foot_field, so the level still never has to
+## know how tall the collision box is.
+func set_dynamic_top(top_at_x: Callable) -> void:
+	_foot_top_at = top_at_x
+
+
+## The bottom-edge mirror of set_dynamic_top() above.
+func set_dynamic_bottom(bottom_at_x: Callable) -> void:
+	_foot_bottom_at = bottom_at_x
 
 
 func set_camera_limits(left: float, right: float, top: float, bottom: float) -> void:
@@ -349,8 +379,28 @@ func _move_free(delta: float) -> void:
 	# movement - a solid body would be drawn over the background - so every
 	# edge of the field is a limit like this one.
 	var next: Vector2 = global_position + velocity * delta
-	if next.y < field_top or next.y > field_bottom:
-		global_position.y = clampf(global_position.y, field_top, field_bottom)
+	# The rock edge the level measured from the picture, if any - see
+	# _foot_top_at above. Sampled at the column the character is moving
+	# INTO, so the bound is already correct for a column change made this
+	# frame, not one frame late.
+	var top_bound: float = field_top
+	if _foot_top_at.is_valid():
+		top_bound = float(_foot_top_at.call(next.x)) - SIZE.y * 0.5
+	# The front edge, same idea, mirrored - see _foot_bottom_at above.
+	var bottom_bound: float = field_bottom
+	if _foot_bottom_at.is_valid():
+		bottom_bound = float(_foot_bottom_at.call(next.x)) - SIZE.y * 0.5
+	# Pull both edges in by the same amount, live-tunable - see
+	# Tuning.walk_edge_inset. Added 2026-09-15: with the top edge now
+	# following the true silhouette (see _foot_top_at), the character could
+	# walk its feet right onto the measured line, which read as standing IN
+	# the grass rather than at its edge. minf/maxf guard against an inset
+	# large enough to invert the two bounds (top below bottom) on a field
+	# this narrow.
+	top_bound = minf(top_bound + Tuning.walk_edge_inset, field_bottom)
+	bottom_bound = maxf(bottom_bound - Tuning.walk_edge_inset, top_bound)
+	if next.y < top_bound or next.y > bottom_bound:
+		global_position.y = clampf(global_position.y, top_bound, bottom_bound)
 		velocity.y = 0.0
 	if next.x < field_left or next.x > field_right:
 		global_position.x = clampf(global_position.x, field_left, field_right)

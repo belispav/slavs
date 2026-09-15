@@ -48,11 +48,89 @@ const SHOW_AIM_TARGETS := false
 ## It arrived as a JPEG and was converted once to PNG. JPEG rings every hard
 ## pixel edge; the loss already baked in stays, but nothing more is added.
 ## Ask for PNG next time.
-const BACKGROUND_PATH := "res://art/env_05.png"
+##
+## env_06, 2026-08-15, replaces env_05. Pavel's own image (2816x1536, matches
+## the canvas convention already) with the palisade at the top - but instead
+## of the palisade's own painted sky/forest above it (what env_01-05 all
+## did), the top edge is cut to the actual silhouette of the fence tips:
+## every pixel above/between the points is alpha 0, not painted. That gap is
+## filled by a separate parallax sky layer (see BG_LAYERS below) scrolling
+## behind it, per DIZAJN_pozadie_a_rozlisenie.md SS4e / ref/PROMPTY.md SS4e -
+## the concrete stuff (fence, forest) stays baked into the walkable ground so
+## it is always in perfect registration with what you walk on; only the
+## atmosphere (sky) is a separate, independently-scrolling layer.
+##
+## The silhouette cut was not a clean geometric crop - it is a per-column
+## alpha mask, cleaned up in three passes (colour rule, connected-component
+## island removal, then Pavel's own manual touch-up in an image editor for
+## the last few spots a tree trunk behind the fence matched the wood colour
+## too closely for any of that to catch automatically). Confirmed by direct
+## pixel check: 0 partially-transparent pixels anywhere in the image (hard
+## alpha, as pixel art wants) - see chat history for the numbers.
+##
+## REPLACED 2026-09-01 by env_07 (below). Pavel rejected the whole palisade
+## boundary after seeing env_06 in gameplay preview: fence read too tall, the
+## sky layer behind it read as an unclear blue stripe, and there was no way
+## to feel out the parallax speed live. Decision was to drop the built
+## boundary (fence/wall) entirely and go the Metal Slug way instead: a
+## walkable ledge whose top AND bottom edges are just where the rock
+## silhouette stops, no built structure. env_06 is kept on disk and wired to
+## BACKGROUND_ALT_PATH as the reference to judge env_07 against.
+##
+## env_07 = ref/candidates/env_path_v1.png, Pavel's new rock-ledge image
+## (2400x1309, RGBA), un-retouched draft - he called it explicitly
+## "nie sú dokonalé" (not final) and asked to see it in-game to tune the
+## generation prompt, not to ship a finished asset. Known issues, left
+## as-is on his instruction:
+##   - edge alpha is soft (~50k partially-transparent pixels at the rock
+##     silhouette), not the hard 0/255 cut env_06 had.
+##   - character-vs-rock scale looks off (rocks read 3-4x too big); Pavel
+##     said he would fix this on his end, not done yet.
+## Seam measured 8.0 (left/right 6px strip average abs diff) - well inside
+## the <=25 rule, tiles cleanly despite being a draft.
+##
+## REPLACED 2026-09-14 by env_08 (below). Pavel called env_07 "prilis
+## pixelata" (too pixelated) after seeing it in gameplay preview - the
+## chunky 2-3px blocks in the rock texture, not the ledge concept itself,
+## which stays. env_06 is bumped out of BACKGROUND_ALT_PATH and env_07 takes
+## its place there, same "reference to judge the new one against" role the
+## slot has always had.
+##
+## env_08 = ref/candidates/env_path_v2.jpg, Pavel's new dirt-path/grass
+## image (2752x1536, delivered as JPEG with a flat magenta #FF00FF key
+## standing in for what should be transparent - the AI generator this
+## project uses cannot output alpha at all, see tools/key_transparency.py's
+## own doc comment). Converted to real hard alpha (0/255 only, no partial
+## pixels, matching env_06/env_07's own convention - measure_walk_top.py
+## below needs that to give a real per-column reading, not a soft-edge
+## fudge): distance-to-magenta thresholded at 150 (the file has a clean gap
+## between the magenta cluster, dist < ~20, and every real content pixel,
+## dist > 207 - nothing to feather), then a magenta-tint DESPILL pass on
+## the surviving opaque pixels - JPEG rings the hard magenta/content edge
+## and leaves a purple fringe baked into otherwise-real grass-tip colour
+## that a threshold alone cannot fix (1.3 % of opaque pixels were tinted,
+## pulled back towards neutral by the smaller of their R and B excess over
+## G). Connected-component check found the ground one single piece with 0
+## stray magenta islands and 0 stray opaque flecks in the sky - the
+## threshold alone was clean, the despill was the only real fix needed.
+## Neighbour-difference on the walkable band: 36.3 %, against env_07's
+## 12.4 % - this is the "too pixelated" complaint measured, not just
+## agreed with.
+##
+## Field height 881 (rows 406-1287, see BG_WALK_TOP/BOTTOM below) clears
+## the >=720 rule outright for the first time - every earlier background
+## from env_06 on had fallen short of it and shipped anyway on Pavel's call.
+##
+## Luma of the walkable band was NOT re-measured against the >=80 contrast
+## rule (DIZAJN_pozadie_a_rozlisenie.md SS6) - explicitly deferred, Pavel's
+## call 2026-09-14: "jas budeme riesit pri finalnej grafike" (contrast gets
+## handled with the final art, not this draft). env_07 did not clear that
+## rule either, so this is not a new gap, just still open.
+const BACKGROUND_PATH := "res://art/env_08.png"
 ## The one it replaced, kept on a panel switch. Not a fallback - a reference, so
 ## a new background is judged against the last one instead of against a memory
 ## of it.
-const BACKGROUND_ALT_PATH := "res://art/env_04.png"
+const BACKGROUND_ALT_PATH := "res://art/env_07.png"
 
 ## Which rows of the background picture are open ground, measured from the art
 ## itself. Above them is the palisade and the props stacked against it, below
@@ -75,8 +153,137 @@ const BACKGROUND_ALT_PATH := "res://art/env_04.png"
 ## character up and down, so walking to the back of the field brings the
 ## palisade into view and walking to the water brings the water. Each boundary
 ## is seen when it matters, at full height, and the whole grass stays playable.
-const BG_WALK_TOP := 560.0
-const BG_WALK_BOTTOM := 1210.0
+##
+## Re-measured 2026-08-15 for env_06 (fence base fully clear of grass by row
+## ~500, rocks start intruding on the walkable grass by row ~1010). Field
+## height is therefore 510 - short of the >=720 rule in ref/PROMPTY.md SS4b
+## (the walkable band should be taller than the screen so the camera has
+## something to scroll to). Flagged to Pavel 2026-08-15; he said ship it
+## anyway for now ("daj mi to do hry") rather than block on a redo. Camera
+## will barely scroll while walking this field - not broken, just less
+## depth than the rule asks for. Revisit if it reads as flat on device.
+##
+## Re-measured 2026-09-01 for env_07 (rock ledge, no built boundary). Alpha
+## scan of the actual file: rows 0-238 always transparent, rows 409-1042 are
+## opaque across the whole width on every column (the walkable ledge), the
+## bands either side of that are the jagged silhouette transition. 409/1042
+## is the safe inset - the first/last row the WHOLE width is solid, so feet
+## can never stand half on a transparent notch. Field height is 633 - again
+## short of the >=720 rule, same situation and same call as env_06: Pavel
+## approved shipping this as-is ("publishni mi to do hry", 2026-09-01), art
+## is still a draft.
+##
+## Re-measured 2026-09-14 for env_08 (dirt path/grass, same alpha-scan
+## method). Rows 0-275 always transparent, rows 406-1287 opaque across the
+## whole width on every column. 406/1287 is the same kind of safe inset as
+## before. Field height is 881 - the first background to clear the >=720
+## rule outright (every one from env_06 on had shipped short of it).
+const BG_WALK_TOP := 406.0
+const BG_WALK_BOTTOM := 1287.0
+
+## Per-column top of the walkable ground, in the same row-space as
+## BG_WALK_TOP above - one entry per pixel column of BACKGROUND_PATH's
+## texture (2752 wide for env_08). Measured once, offline, from the
+## picture's own alpha channel by tools/measure_walk_top.py (first row per
+## column where alpha == 255); the numbers themselves live in
+## art/env_08_top.json, not here - 2752 literals would swamp every other
+## comment in this file and cannot be diffed usefully.
+##
+## REGENERATED 2026-09-14 for env_08: min 276, max 406 (against BG_WALK_TOP's
+## conservative 406), mean 343.5 - a 130px jagged range from the grass tufts,
+## smaller than env_07's rock silhouette range. walk_top_for_x() below reads
+## the array's own length for the tiling period, so nothing here needed to
+## change when the column count changed from 2400 to 2752.
+##
+## ADDED 2026-09-04, Pavel on device: the flat BG_WALK_TOP moved fine but
+## read wrong for a Metal Slug ledge - the player walked in a straight line
+## while the rock behind them went up and down. This makes the walkable
+## edge follow the actual rock silhouette instead; see walk_top_for_x()
+## below for how it is sampled, and set_dynamic_top() on player.gd for how
+## the player uses it.
+##
+## KNOWN LIMITATION (Pavel, 2026-09-04): this is the top ENVELOPE of the
+## rock only - one height per column, read from where the alpha channel
+## first turns solid. A boulder that pokes further into the walkable band
+## than its neighbours IS captured (that is the column's minimum), but
+## nothing here stops the character walking through a separate rock that
+## sits apart from the edge, further into the open ground - the mask only
+## knows the picture's outer silhouette, not individual objects drawn on
+## top of it. Not fixed here.
+##
+## Longer-term direction agreed with Pavel: generate future playable-area
+## backgrounds WITHOUT rocks/obstacles baked into the walkable edge at all -
+## obstacles go in as their own objects (see the _solid()/StaticBody2D
+## pattern further down this file), and where a background does need a
+## rock border, keep its height uniform so the edge can be a fixed pixel
+## offset from GROUND_Y instead of a per-column measurement like this one.
+var _walk_top_curve: PackedInt32Array = PackedInt32Array()
+
+const WALK_TOP_MAP_PATH := "res://art/env_08_top.json"
+
+## Per-column BOTTOM of the walkable ground - the exact same idea as
+## _walk_top_curve above, mirrored: the front edge of the field frays too
+## (env_08: rows 1287-1369, see BG_WALK_TOP/BOTTOM's comment), and until
+## 2026-09-15 nothing read that, only the flat BG_WALK_BOTTOM. Nobody had
+## built it, not a deliberate choice - the per-column curve was only ever
+## requested for the top (2026-09-04, the Metal Slug ledge), and it did not
+## occur to extend it to the bottom until Pavel asked on device: "toto
+## ocividne funguje len na hornom okraji... chceme to aj na spodnom".
+## Measured by tools/measure_walk_bottom.py (last row per column where
+## alpha == 255, the mirror image of measure_walk_top.py's first row), into
+## art/env_08_bottom.json.
+var _walk_bottom_curve: PackedInt32Array = PackedInt32Array()
+
+const WALK_BOTTOM_MAP_PATH := "res://art/env_08_bottom.json"
+
+
+func _load_walk_top_curve() -> void:
+	var file := FileAccess.open(WALK_TOP_MAP_PATH, FileAccess.READ)
+	if file == null:
+		push_warning("Horna hranica %s sa nenacitala, pouzivam plochu BG_WALK_TOP." % WALK_TOP_MAP_PATH)
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	if typeof(parsed) != TYPE_ARRAY:
+		push_warning("Horna hranica %s ma neocakavany format." % WALK_TOP_MAP_PATH)
+		return
+	_walk_top_curve = PackedInt32Array(parsed)
+
+
+func _load_walk_bottom_curve() -> void:
+	var file := FileAccess.open(WALK_BOTTOM_MAP_PATH, FileAccess.READ)
+	if file == null:
+		push_warning("Dolna hranica %s sa nenacitala, pouzivam plochu BG_WALK_BOTTOM." % WALK_BOTTOM_MAP_PATH)
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	if typeof(parsed) != TYPE_ARRAY:
+		push_warning("Dolna hranica %s ma neocakavany format." % WALK_BOTTOM_MAP_PATH)
+		return
+	_walk_bottom_curve = PackedInt32Array(parsed)
+
+
+## Where the character's feet may stand at the front (rock) edge, at this
+## world x - background_top() plus the measured silhouette for that
+## picture column, wrapped with the same period the background tiles with
+## (_build_background() repeats the texture every texture.get_width()
+## units), so this lines up exactly with what is on screen at every repeat.
+## Falls back to the flat BG_WALK_TOP if the curve failed to load.
+func walk_top_for_x(world_x: float) -> float:
+	if _walk_top_curve.is_empty():
+		return background_top() + BG_WALK_TOP
+	var width: int = _walk_top_curve.size()
+	var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
+	return background_top() + float(_walk_top_curve[col])
+
+
+## The bottom-edge mirror of walk_top_for_x() above - same wrap, same
+## fallback pattern, read by player.gd's set_dynamic_bottom() instead of
+## set_dynamic_top().
+func walk_bottom_for_x(world_x: float) -> float:
+	if _walk_bottom_curve.is_empty():
+		return background_top() + BG_WALK_BOTTOM
+	var width: int = _walk_bottom_curve.size()
+	var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
+	return background_top() + float(_walk_bottom_curve[col])
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
@@ -92,14 +299,23 @@ var _alive: int = 0
 var _bg_sprite: Sprite2D
 var _bg_smooth_applied: bool = false
 var _bg_alt_applied: bool = false
-## Parallax2D nodes built from BG_LAYERS entries with factor > 1.0 (nearer
-## than the ground - currently just env_05_fg.png). Kept so the "rychlost
-## popredia" panel slider can drive their speed live. See
-## _apply_fg_parallax_speed().
+## Parallax2D nodes built from BG_LAYERS entries marked "front": true (drawn
+## ahead of the player - currently none; env_05_fg.png was the last one).
+## Kept so the "rychlost popredia" panel slider can drive their speed live.
+## See _apply_fg_parallax_speed().
 var _fg_parallax_layers: Array = []
+## Parallax2D nodes built from every BG_LAYERS entry NOT marked "front" (the
+## sky and the valley below the ledge). Each element is
+## {"layer": Parallax2D, "base": float}: "base" is the entry's own literal
+## factor, kept so the panel slider can scale every layer by one number
+## without flattening the depth split between them. See
+## _apply_bg_parallax_speed().
+var _bg_parallax_layers: Array = []
 
 
 func _ready() -> void:
+	_load_walk_top_curve()
+	_load_walk_bottom_curve()
 	_build_level()
 	_build_player()
 	# The moving targets are F1 shooting-range furniture, not content. They
@@ -122,6 +338,7 @@ func _process(delta: float) -> void:
 	_update_hud()
 	_apply_bg_filter()
 	_apply_fg_parallax_speed()
+	_apply_bg_parallax_speed()
 	_separate_enemies()
 
 
@@ -131,6 +348,18 @@ func _process(delta: float) -> void:
 func _apply_fg_parallax_speed() -> void:
 	for layer in _fg_parallax_layers:
 		layer.scroll_scale.x = Tuning.fg_parallax_factor
+
+
+## Follows the "rychlost pozadia" panel slider (Tuning.bg_parallax_speed) so
+## the speed of the layers BEHIND the ground can be found on the device.
+##
+## A MULTIPLIER on each layer's own BG_LAYERS literal, not an absolute factor:
+## with more than one layer back there (sky 0.2, valley 0.35) a single
+## absolute value would set both to the same speed and kill the depth between
+## them. 1.0 = exactly what the literals say.
+func _apply_bg_parallax_speed() -> void:
+	for item in _bg_parallax_layers:
+		item["layer"].scroll_scale.x = item["base"] * Tuning.bg_parallax_speed
 
 
 ## Push overlapping enemies apart.
@@ -221,6 +450,66 @@ func background_height() -> float:
 	return float(texture.get_height()) if texture != null else 1536.0
 
 
+## The z_index the ground sprite (and, one step further back per entry, every
+## BG_LAYERS behind-layer) must use to stay behind EVERY character, always.
+##
+## BUG, FOUND 2026-09-15, SAME DAY AS THE FIRST ONE: fixing behind_z_base in
+## _build_parallax_layers() only moved the problem, it did not remove it -
+## Pavel reported the player now draws ABOVE the sky (that part was fixed)
+## but BELOW the ground sprite itself, head "emerging from behind the edge
+## of the play area" as it climbs. Cause: the ground sprite had the exact
+## same kind of guessed constant the sky layer had, just a different number
+## (-100, not -101), and it never moved - _build_background() set it once
+## and this function only ever touched the LAYERS BEHIND it.
+##
+## The ground is one Sprite2D covering the WHOLE picture at ONE flat
+## z_index, but a character's z_index (Tuning.depth_z) IS their world Y -
+## it varies continuously from field_top up near the back of the field to
+## GROUND_Y at the front. The ground sprite has to sit behind the character
+## at EVERY Y a character can reach, not just at GROUND_Y - a character's
+## feet are always on the ground, so the ground can never be "in front of"
+## them, no matter how far back they stand. A flat -100 held only while
+## field_top never got that negative (env_07: -33). env_08's field_top is
+## -281, well past -100, so a character near the back was already being
+## drawn BEHIND the ground sprite before yesterday's fix, and is STILL
+## behind it after that fix, because that fix only touched the layers
+## behind the ground, not the ground itself.
+##
+## Both numbers - the ground's and the behind-layers' - are now the SAME
+## derivation, one call, so they cannot drift apart from each other or from
+## the field again.
+##
+## STILL INCOMPLETE, FOUND 2026-09-16 (Pavel: player still disappears right
+## at the very top): the first two fixes both measured "how far back can a
+## character get" from field_height(), i.e. from the flat BG_WALK_TOP - but
+## the PLAYER does not actually stop there. player.gd's set_dynamic_top()
+## lets it follow env_08's own per-column top curve instead (see
+## WALK_TOP_MAP_PATH / _walk_top_curve above), which is MORE permissive
+## than the flat line by design - that is the whole point of having it, so
+## the character can walk right up to the true grass edge instead of
+## stopping wherever the shortest column allows. The curve's minimum is
+## 276, not BG_WALK_TOP's 406 - 130 rows the flat-field math never saw.
+## Enemies do NOT use this curve (only player.gd calls set_dynamic_top),
+## and their spawn range is already built from field_height(), so this was
+## always a player-only gap - matches Pavel only reporting "postava" this
+## time, not enemies or bullets too.
+##
+## Fixed by reading the SAME curve the player actually moves against,
+## instead of re-deriving a bound and hoping it stays in sync: the ground
+## (and everything behind it) now sits below whichever is more negative of
+## the flat field_top and the curve's own worst column. -50 replaces the
+## previous -10 margin - big enough to cover player.gd's SIZE.y * 0.5 feet
+## offset (27, see set_foot_field/_move_free) with room left over, since
+## main.gd has no business hardcoding a number that is really player.gd's.
+func _ground_z_index() -> int:
+	var worst_row: float = BG_WALK_TOP
+	for row in _walk_top_curve:
+		if float(row) < worst_row:
+			worst_row = float(row)
+	var worst_world_y: float = minf(GROUND_Y - field_height(), background_top() + worst_row)
+	return mini(-100, int(worst_world_y) - 50)
+
+
 ## The background, repeated sideways for the length of the level.
 ##
 ## One Sprite2D with a region wider than the texture and repeat turned on: the
@@ -243,7 +532,7 @@ func _build_background() -> void:
 	var span: float = (LEVEL_RIGHT - LEVEL_LEFT) + texture.get_width() * 2.0
 	sprite.region_rect = Rect2(0.0, 0.0, span, texture.get_height())
 	sprite.position = Vector2(LEVEL_LEFT - texture.get_width(), background_top())
-	sprite.z_index = -100
+	sprite.z_index = _ground_z_index()
 	add_child(sprite)
 	_bg_sprite = sprite
 
@@ -265,6 +554,9 @@ func _build_background() -> void:
 ##                (moves slower, reads as distant); > 1.0 = nearer than the
 ##                ground (moves faster; only the one foreground strip in
 ##                KROK 2 is meant to use this).
+##   front:       true = drawn in front of the player, false/absent = behind
+##                the ground. This, not the factor, is what decides where the
+##                layer sits in the draw order - see _build_parallax_layers.
 ##   asset_scale: the layer's own S if it differs from the ground's S = 1
 ##                (KROK 3's softer, lower-resolution distant layers).
 ##   y:           offset from background_top() - the same coordinate space
@@ -287,10 +579,111 @@ func _build_background() -> void:
 ## "factor" per entry is only the value a Parallax2D is BUILT with (kept as a
 ## literal rather than a cross-script const reference - GDScript const
 ## initialisers must be foldable at parse time and an autoload const is not
-## a safe bet there). If a factor > 1 (foreground) entry exists, the panel
-## slider overwrites it live every frame from Tuning.fg_parallax_factor (see
-## _apply_fg_parallax_speed()), so the literal here is only frame-0's start.
+## a safe bet there). Both panel sliders overwrite it live every frame - a
+## "front" entry from Tuning.fg_parallax_factor (_apply_fg_parallax_speed),
+## every other entry from its own literal times Tuning.bg_parallax_speed
+## (_apply_bg_parallax_speed) - so the literal here is only frame-0's start.
+##
+## env_06_sky.png added 2026-08-15 (DIZAJN_pozadie_a_rozlisenie.md SS4e /
+## ref/PROMPTY.md SS4e). Sky + hazy hills only - the forest/palisade content
+## that a "top band" layer originally had (see the git history of this file)
+## moved into the ground image itself (env_06) instead, once it became clear
+## a separately-scrolling layer can never stay in registration with the
+## walkable field, especially once camera movement stops being purely
+## horizontal. This layer only fills the gap env_06's own alpha cutout
+## leaves above the fence tips. y = -300 puts its bottom edge at row 260 of
+## env_06's coordinate space - below every fence-tip notch (measured tips
+## ~200-220, deepest gaps ~250), so no sliver of the old black canvas clear
+## colour shows through. factor 0.2 is a first guess, not measured against
+## motion on device - see "Faktor a test" in ref/PROMPTY.md SS4d/4e.
+##
+## REPLACED 2026-09-01: env_07_sky.png swaps in for env_06_sky.png, and it is
+## Pavel's raw ref/candidates/env_atmosphere_v1_raw.jpg converted straight to
+## PNG (3168x1344), kept FULL HEIGHT and uncropped this time - env_06_sky.png
+## was a top-560px sky-only crop, and Pavel called the result out as "de
+## facto modrý pruh čo absolútne nie je jasné čo je" (just an unclear blue
+## stripe) once the hills/treeline that would have explained it were cut
+## away. Cropping is left to positioning (y below), not to the file.
+##
+## y = -615 was picked, not measured, by matching two rows: env_07's own
+## average ridge line (335, mean of the first opaque row per column across
+## all 2400 columns) against a row inside env_07_sky's treeline/hills band
+## (950) that Pavel picked from a side-by-side ("cislo 2 je lepsie" against
+## an anchor of 850, then "posun este vyssie" - shifted further to 950).
+## y_offset = 335 - 950 = -615 puts that chosen atmosphere row at the same
+## world height as the ridge, so at the back of the field (camera at
+## cam_min) the treeline sits right where the rock starts, same framing as
+## the approved preview. It will drift out of registration as the camera
+## moves away from cam_min - factor 0.2 is deliberately slow so that drift
+## reads as normal parallax depth, not as a mistake, but this has not been
+## checked at every camera position, only the "vzadu" one Pavel approved.
+##
+## The gap BELOW the ledge (env_07 is transparent under row 1042 too, the
+## drop-off side of the rock silhouette) was the same failure mode: standing
+## at the front of the field showed flat clear-colour through it. FIXED
+## 2026-09-14 by the second entry below rather than by new art - no
+## canyon/water asset exists for Pavel to hand over, and this needed none.
+##
+## Measured on the file itself: row 1042 is the last row opaque across the
+## whole width, the silhouette frays from there to ~1210 (opaque share 95 %
+## -> 0 %), and rows 1210-1309 are empty. The camera's bottom limit is
+## background_top() + background_height() = row 1309, so roughly the lower
+## third of the screen was showing that band at the front of the field.
+##
+## The second entry is env_07_sky.png AGAIN, the same file, placed low
+## instead of high. That image is 3168x1344 and only its top ~600 rows are
+## sky; from row ~670 down it is dark forest (row-mean luma 96 falling to 26
+## at the bottom). The first entry uses the sky half, this one uses the
+## forest half: y = +20 puts sky row 1000 at ground row 1020, so its dark
+## band covers 1020-1364 - the whole fray plus the empty rows plus margin,
+## and it reads as a wooded valley below the drop rather than as a hole.
+##
+## The two do not fight: entry 0's sprite spans ground rows -615..729 and
+## draws in front (z -101 against -102), and rows 239-1042 of the ground are
+## opaque, so entry 1 is only ever seen below the ledge.
+##
+## REPOSITIONED 2026-09-14 for env_08 (ground swap, same env_07_sky.png -
+## the atmosphere asset did not change, only what it sits behind). Both
+## entries keep their own sky-side anchor row (950 for the top entry, 950 is
+## Pavel's own pick from the side-by-side described above; 1000 for the
+## bottom entry, this file's pick when it was added) and are re-solved
+## against env_08's own ground rows instead of env_07's:
+##   top:    ground anchor = 343.5 (mean of env_08's own per-column top
+##           curve, was 335 for env_07 - the two ridgelines sit almost the
+##           same depth despite looking nothing alike) -> y = 343.5 - 950 =
+##           -606.5
+##   bottom: ground anchor = 1265 (22px before BG_WALK_BOTTOM's 1287, same
+##           lead-in margin the original +20 gave env_07's 1042, so the
+##           forest is already solidly dark by the time the silhouette
+##           starts fraying rather than transitioning right at the edge)
+##           -> y = 1265 - 1000 = 265
+## Neither anchor row is re-derived from scratch - both first guesses, still
+## unchecked at camera positions away from cam_min, exactly as before.
+##
+## The factors below are no longer guesses. Tuning.bg_parallax_speed drives
+## every behind-layer live from the debug panel (see
+## _apply_bg_parallax_speed) as a MULTIPLIER on these literals, which is the
+## slider Pavel asked for on 2026-08-15 and got on 2026-09-14. He ran it the
+## same day and picked 3.0 - "ruchlost sa mi pacia 3" - against the first
+## guesses of 0.2 (sky) and 0.35 (valley). Baked in here as 0.6 and 1.05, and
+## the slider is back to 1.0, per the rule that the slider finds the number
+## and the data stores it.
+##
+## 3.0 was the slider's own maximum, so it is a floor on what he wants, not
+## necessarily the value he would have landed on with more room. The panel
+## range is unchanged, which now reaches 3x these baked values if he wants to
+## push further.
+##
+## NOTE the valley's 1.05: faster than the ground. Physically that is what a
+## layer IN FRONT does, and _build_parallax_layers used to read exactly that
+## from the factor to decide z_index. It no longer does - placement is the
+## explicit "front" flag now (see that function), so this layer stays behind
+## the ground and behind the player, which is what Pavel judged on device.
+## At 1.05 it is all but glued to the ground; nothing breaks, because unlike
+## the ground itself it has no line in the picture that must stay registered.
 const BG_LAYERS := [
+	{"path": "res://art/env_07_sky.png", "factor": 0.6, "y": -606.5},
+	{"path": "res://art/env_07_sky.png", "factor": 1.05, "y": 265.0},
 ]
 
 
@@ -299,34 +692,68 @@ const BG_LAYERS := [
 ## parallax layer stacks around it.
 ##
 ## Vertical scroll_scale is hardcoded to 1.0 on every layer here - correct
-## for layers BEHIND the player (factor < 1), which must land on
+## for layers BEHIND the player (no "front" flag), which must land on
 ## BG_WALK_TOP/BOTTOM as the camera travels vertically; a different vertical
 ## rate would drift them out of registration with the walkable field. A
-## layer in FRONT of the player (factor > 1) does not have to hit any line
+## layer in FRONT of the player ("front": true) does not have to hit any line
 ## in the picture, so this does not bind it - see
 ## DIZAJN_pozadie_a_rozlisenie.md §9.2. env_05_fg.png ran 1.3 horizontal
 ## against this hardcoded 1.0 vertical, which was never a deliberate choice,
 ## just what this function does unconditionally; worth revisiting once a
 ## foreground layer returns.
 ##
-## z_index: FIXED 2026-08-15, was inverted since KROK 1 and only just found
-## while adding the first real "behind" layer. The ground sprite (z = -100)
-## is ONE OPAQUE image covering its whole rectangle top to bottom - it has no
-## transparency anywhere. z_index < -100 draws BEFORE (behind) the ground, so
-## anything put there is entirely hidden behind it; the camera is also
-## clamped to background_top()..background_top()+background_height() (see
-## _build_player()), so there is no world space above the picture to escape
-## into either. A "further away" layer therefore has to draw IN FRONT OF the
-## ground (z > -100) to be seen at all - it visually overpaints whatever
-## env_05 already has in that same picture region, at its own (slower)
-## scroll speed, rather than sitting further back in the z-buffer sense.
-## Layers with factor < 1 now get -99 and up, one step closer per entry in
-## array order (furthest-first, per the doc's §5 table) - still comfortably
-## behind the player and enemies, whose z_index (Tuning.depth_z) tracks
-## their own world Y and never goes anywhere near this range in the
-## walkable band. The one factor > 1 layer (foreground) keeps +50, ahead of
-## the player.
+## z_index: FIXED 2026-08-15 (KROK 1), FLIPPED BACK 2026-08-15 (SS4e) once
+## env_06 stopped being an opaque rectangle. The KROK 1 fix found that env_05
+## was ONE OPAQUE image covering its whole rectangle with no transparency
+## anywhere, so z_index < -100 (behind it) was entirely hidden and a
+## "further away" layer had to draw IN FRONT (z > -100) instead, overpainting
+## whatever env_05 had drawn in that region. env_06 breaks that assumption on
+## purpose: everything above its fence-tip silhouette is real alpha 0, not
+## painted (see the BACKGROUND_PATH comment above). A behind-layer can
+## therefore go back to drawing BEHIND the ground (z < -100) and show through
+## the cutout correctly, which is also the more intuitive depth ordering.
+## This ONLY holds while BACKGROUND_PATH points at an image with real
+## transparency above the walkable field - if a future background goes back
+## to a fully opaque top edge (like env_05/BACKGROUND_ALT_PATH still is),
+## behind-the-ground layers go invisible again for the KROK 1 reason, and
+## this formula needs to flip back. Still holds for env_07 (2026-09-01):
+## alpha scan confirms rows 0-238 are fully transparent, same condition as
+## env_06 had. Layers without a "front" flag get behind_z_base (see below)
+## and down, one step further per entry in array order (furthest-first, per
+## the doc's §5 table). A "front": true layer keeps +50, ahead of the
+## player. The flag replaced a factor > 1 test on 2026-09-14 - see the note
+## at the branch itself.
+##
+## BUG, FIRST FIX 2026-09-15 - INCOMPLETE: behind_z_base used to be the
+## literal -101, on the belief that player/enemy z_index (Tuning.depth_z,
+## which IS their world Y) "never goes anywhere near this range" - true
+## only as long as the walkable field stayed short. env_08's swap grew
+## field_height() from env_07's 633 to 881, pushing field_top = GROUND_Y -
+## field_height() down to -281 - past -101 - so a character near the top of
+## the field got a MORE negative z_index than the sky layer and vanished
+## into it. Reported by Pavel 2026-09-15: "postava sa pri hornom okraji
+## straca... aj nepriatelia aj gulky" (player, enemies and bullets all
+## disappear near the top edge) - all three set their own z_index the same
+## way (see player.gd/enemy.gd/bullet.gd), so all three were hit.
+##
+## First fix derived behind_z_base from field_height() instead of a guessed
+## -101 - correct as far as it went, but it left the GROUND SPRITE's own
+## z_index as the literal -100, the exact same kind of guess one step
+## closer to the camera. Pavel's very next report: player now drew above
+## the sky (that part was fixed) but BELOW the ground sprite, "akoby sa
+## hlava vynárala spoza okraja hracej plochy" (head emerging from behind
+## the edge of the play area) as it climbed - the ground sprite is a single
+## flat z_index covering the WHOLE picture, so once field_top passed -100
+## too, a character standing far enough back was behind the ground plane
+## itself, which makes no sense (the character's feet are always ON the
+## ground) but nothing had stopped it from happening.
+##
+## Both z_indices are now ONE derivation, _ground_z_index() above, so they
+## cannot drift apart from each other or from the field a second time:
+## behind_z_base is one step further back than the ground itself, whatever
+## the ground's own value turns out to be.
 func _build_parallax_layers() -> void:
+	var behind_z_base: int = _ground_z_index() - 1
 	var behind_count: int = 0
 	for entry in BG_LAYERS:
 		var texture: Texture2D = load(entry["path"]) as Texture2D
@@ -342,12 +769,19 @@ func _build_parallax_layers() -> void:
 		layer.scroll_scale = Vector2(factor, 1.0)
 		layer.repeat_size = Vector2(texture.get_width() / asset_scale, 0.0)
 		layer.repeat_times = 8
-		if factor < 1.0:
-			layer.z_index = -99 + behind_count
-			behind_count += 1
-		else:
+		# Placement is the entry's own "front" flag, NOT its factor. It used to
+		# be "factor < 1.0", which held only while every behind-layer was also
+		# slower than the ground - and stopped holding on 2026-09-14, when
+		# Pavel's chosen background speed put the valley layer at 1.05 while
+		# it still has to draw behind everything. Depth on screen and scroll
+		# rate are two separate decisions; this keeps them separate.
+		if entry.get("front", false):
 			layer.z_index = 50
 			_fg_parallax_layers.append(layer)
+		else:
+			layer.z_index = behind_z_base - behind_count
+			behind_count += 1
+			_bg_parallax_layers.append({"layer": layer, "base": factor})
 		add_child(layer)
 
 		var sprite := Sprite2D.new()
@@ -423,6 +857,8 @@ func _build_player() -> void:
 	# that into a limit on its own origin, which sits half a body higher.
 	player.set_foot_field(GROUND_Y - field_height(), GROUND_Y,
 		LEVEL_LEFT + 40.0, LEVEL_RIGHT - 40.0)
+	player.set_dynamic_top(walk_top_for_x)
+	player.set_dynamic_bottom(walk_bottom_for_x)
 
 	if Touch.config.free_movement:
 		# The camera follows the character up and down, stopping at the edges

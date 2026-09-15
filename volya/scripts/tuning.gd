@@ -175,6 +175,43 @@ var enemy_separation: float = ENEMY_SEPARATION
 const FG_PARALLAX_FACTOR: float = 1.3
 var fg_parallax_factor: float = FG_PARALLAX_FACTOR
 
+## How fast everything BEHIND the ground scrolls - the sky layer and the
+## valley layer under the ledge (main.gd's BG_LAYERS, every entry with a
+## factor < 1).
+##
+## A multiplier on each layer's own factor, not an absolute speed: two layers
+## back there at different distances would be collapsed onto one speed by a
+## single absolute number. 1.0 = the literals in BG_LAYERS unchanged, 0.5 =
+## half as fast as painted, 2.0 = twice.
+##
+## Range 0.1-3.0 on the panel. Pavel asked for this control 2026-08-15 (there
+## was no way to feel out the parallax speed without a redeploy per guess);
+## built 2026-09-14, and he picked 3.0 the same day. That 3x is already baked
+## into the BG_LAYERS literals, which is why this sits at 1.0 again - the
+## slider finds the number, the data stores it.
+const BG_PARALLAX_SPEED: float = 1.0
+var bg_parallax_speed: float = BG_PARALLAX_SPEED
+
+## How many world units short of the picture's own measured edge - top AND
+## bottom both, the same number - the character's feet stop. See
+## player.gd's _move_free(): applied on top of whichever bound is active,
+## the flat one or the per-column one.
+##
+## ADDED 2026-09-15: with the top edge now following env_08's real
+## silhouette (main.gd's _walk_top_curve), the character could walk its
+## feet right onto the measured line - which reads as standing IN the
+## grass, not at its edge. Pavel on device: "postava je trochu prilis
+## vysoko... budeme musiet zastavit par pixelov pred okrajom." The panel
+## range is 0-60, a guess at how far "a few pixels" could mean, not a
+## measurement.
+##
+## 20, picked on device 2026-09-15 ("idealny odstup vyzera byt okolo 20"),
+## against both the top curve and the new bottom one. Same pattern as
+## BG_PARALLAX_SPEED above: the slider found the number, so it is baked in
+## here and the slider sits back at the value it now represents.
+const WALK_EDGE_INSET: float = 20.0
+var walk_edge_inset: float = WALK_EDGE_INSET
+
 
 ## Draw order for anything standing on the ground plane.
 ##
