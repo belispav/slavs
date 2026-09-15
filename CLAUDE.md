@@ -360,25 +360,23 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
   `y_sort_enabled` would also work, but it interacts with the `z_index = -1`
   the sprites carry so the aim line stays on top, and explicit beats "it should
   sort".
-- [ ] **TODO — enemy hurtbox is the player's old bug, unfixed. Reported by
-  Pavel 2026-08-13: shots pass through an enemy's upper body, only the lower
-  part registers. Diagnosed, not yet fixed.**
-  - `enemy.gd:_ready()` sizes the hurtbox as `SIZE * 1.15` = **34.5 x 59.8**,
-    centred on the enemy origin, and never touches it again. The drawn enemy is
-    **~120-140 world units** tall. The box therefore covers roughly the bottom
-    45 % of the body — exactly what Pavel is seeing.
-  - Identical in kind to the player bug fixed 2026-08-10, and the fix already
-    exists as a template: `player.gd`'s `_fit_hurtbox(drawn)`, sized from
-    `(height - foot_margin - head_margin) * SPRITE_SCALE` and hung from the
-    feet. `SpriteSequence.foot_margin()` / `head_margin()` are already there.
-  - **The one difference that will bite:** an enemy builds BOTH sprites up
-    front and `spawn()` picks one, and the two kinds are different heights
-    (gunman 162, rusher 190). So the fit must be re-run in `spawn()` per kind,
-    not once in `_ready()` — store a drawn height per kind alongside
-    `_thrower_shift` / `_rusher_shift`.
-  - Keep the box **narrower than the drawing** (design pillar 1 favours the
-    player) but it must be the right HEIGHT. The player's `PLAYER_HURT_WIDTH`
-    = 24 against a much wider drawing is the precedent.
+- [x] **Enemy hurtbox fixed 2026-09-15.** Reported by Pavel 2026-08-13: shots
+  passed through an enemy's upper body, only the lower part registered.
+  `enemy.gd:_ready()` sized the hurtbox as `SIZE * 1.15` = 34.5 x 59.8,
+  centred on the enemy origin and never touched again - the drawn enemy is
+  120-190 world units tall (gunman/rusher differ), so the box covered
+  roughly the bottom 45% of the body.
+  - Fixed with the same approach as the player's own `_fit_hurtbox`: sized
+    from the DRAWN height (`SpriteSequence.foot_margin()`/`head_margin()`),
+    not the collision box. Computed once per kind in `_build_sprite_from()`
+    (`_thrower_drawn_height` / `_rusher_drawn_height`, since the two kinds
+    are different heights), applied in `spawn()` and re-applied every
+    physics frame so the new debug-panel slider (`enemy_hurt_height_fraction`)
+    is live. `Tuning.ENEMY_HURT_WIDTH` = 24 / `ENEMY_HURT_HEIGHT_FRACTION`
+    = 0.72, same precedent as the player's constants.
+  - **Not yet deployed to a phone.** Confirm on device before trusting it in
+    a real run - the fraction (0.72) is carried over from the player's own
+    measured value, not separately measured for either enemy kind.
 - [ ] **TODO — unify the colour palette across background, enemies and props
   before final art is generated.** Pavel, 2026-08-13. `env_04` was generated
   independently of the characters, so nothing ties their palettes together
@@ -387,7 +385,7 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
   Likely mechanism: extract a shared palette from the chosen background and
   pass it into `pixelize_sprites.py` instead of letting each character
   quantise to its own 16 colours.
-- [ ] **CURRENT ASSIGNMENT (opened 2026-08-12): parallax + S = 2.** Full brief, with the numbers and the step-by-step, is in `DIZAJN_pozadie_a_rozlisenie.md`. **Everything is decided. Execute §8 in order; do not re-derive, do not re-decide.**
+- [x] **Parallax + background assignment (opened 2026-08-12) closed for now, 2026-09-15.** Full brief was in `DIZAJN_pozadie_a_rozlisenie.md` §8; most of the detail below predates where it actually landed (background is env_08, not env_03/05; per-column walk edges replaced the flat bounds; see the 2026-09-15 commits). Pavel reviewed the current state on device and is satisfied with it for now - reopens only if he asks. Left as historical context below rather than rewritten; do not treat the S = 2 / four-variant-layer-count plan below as still active without checking the current code first.
   - **Closed 2026-08-12, do not re-open:** parallax (not water shaders, not frame-animated backgrounds); **S = 2** (assets at 2 px per world unit, drawn at `scale 0.5`); **P1** for the background — detail by layer, far layers may be soft; **P2 cancelled**; **P3 (background rendered in Blender) deferred** with an objective trigger — it returns only when the style is settled *and* more than two environments are needed, i.e. at F3; **the environment is daylight**.
   - **The one thing still open, and it is Pavel's:** how many parallax layers. He answers it by looking at four variants on the phone after step 2. Nothing else is open.
   - **Two corrections to what was written earlier here — both were wrong and would have cost a session:**
