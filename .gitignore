@@ -20,3 +20,6 @@ commit_msg.txt
 
 # nahlad ramovania, generuje sa
 preview_framing.png
+
+# PixelLab API kluc - nikdy do gitu
+tools/.pixellab_token

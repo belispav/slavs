@@ -66,6 +66,12 @@ var _rest_frame: int = 0
 ## re-run every frame with the live Tuning.player_hurt_height_fraction,
 ## instead of being fixed at whatever the fraction was on launch.
 var _drawn_height: float = 0.0
+## The art's own measurements at 1x, kept so the scale can change live
+## (debug panel) without reloading the frames. See _apply_sprite_scale().
+var _art_height: float = 0.0
+var _art_foot_margin: float = 0.0
+var _art_head_margin: float = 0.0
+var _applied_scale: float = 0.0
 
 
 func _ready() -> void:
@@ -149,30 +155,38 @@ func _build_sprite() -> void:
 	# Briefly Linear+mipmaps during the S = 2 pass on 2026-08-13; reverted with
 	# it, because Linear is what stopped this being pixel art.
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_sprite.scale = Vector2.ONE * Tuning.PLAYER_SPRITE_SCALE
 	# Behind the node's own _draw(), so the aim line stays visible on top of
 	# the body. The aim line is still the main readout for the controls.
 	_sprite.z_index = -1
 
 	# Sit the drawing's feet on the bottom of the collision box, not the bottom
 	# of the image, which has empty rows above it from the render margin.
-	var height: float = float(frames[0].get_height())
-	var margin: float = float(SpriteSequence.foot_margin(frames))
-	_sprite.position.y = SIZE.y * 0.5 \
-		- (height * 0.5 - margin) * Tuning.PLAYER_SPRITE_SCALE
-
+	_art_height = float(frames[0].get_height())
+	_art_foot_margin = float(SpriteSequence.foot_margin(frames))
 	# The true body height, head to feet - NOT canvas height minus the bottom
 	# margin, which still counts the empty rows above the head as body. That
 	# older "drawn" put the muzzle and the hurtbox both a little too low,
 	# the hurtbox enough to miss the top half of the body entirely.
-	var top_margin: float = float(SpriteSequence.head_margin(frames))
-	var drawn: float = (height - margin - top_margin) * Tuning.PLAYER_SPRITE_SCALE
-	_muzzle_height = drawn * Tuning.MUZZLE_HEIGHT_FRACTION - SIZE.y * 0.5
-	_drawn_height = drawn
-	_fit_hurtbox(drawn)
+	_art_head_margin = float(SpriteSequence.head_margin(frames))
+	_apply_sprite_scale(Tuning.player_sprite_scale)
 
 	add_child(_sprite)
 	_sprite.play()
+
+
+## Size the drawing and everything measured from it: feet on the bottom of
+## the collision box, muzzle on the hands, hurtbox on the body. Called once at
+## build and again whenever the debug panel flips the scale.
+func _apply_sprite_scale(s: float) -> void:
+	_applied_scale = s
+	_sprite.scale = Vector2.ONE * s
+	# Sit the drawing's feet on the bottom of the collision box, not the
+	# bottom of the image, which has empty rows below the feet.
+	_sprite.position.y = SIZE.y * 0.5 - (_art_height * 0.5 - _art_foot_margin) * s
+	var drawn: float = (_art_height - _art_foot_margin - _art_head_margin) * s
+	_muzzle_height = drawn * Tuning.MUZZLE_HEIGHT_FRACTION - SIZE.y * 0.5
+	_drawn_height = drawn
+	_fit_hurtbox(drawn)
 
 
 ## Match the hurt area to the character that is actually drawn.
@@ -315,6 +329,8 @@ func _physics_process(delta: float) -> void:
 	# Cheap enough to redo every frame, and it is what makes the hurtbox
 	# fraction slider in the debug panel actually live instead of only
 	# taking effect after the next redeploy.
+	if _sprite != null and Tuning.player_sprite_scale != _applied_scale:
+		_apply_sprite_scale(Tuning.player_sprite_scale)
 	if _drawn_height > 0.0:
 		_fit_hurtbox(_drawn_height)
 

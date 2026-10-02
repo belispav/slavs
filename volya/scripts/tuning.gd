@@ -18,14 +18,23 @@ const COYOTE_TIME: float = 0.10
 const JUMP_BUFFER: float = 0.14
 
 # --- Player art ---
-## Where the pixel pass writes the player's frames.
-const PLAYER_ART_DIR: String = "res://art/run_px"
-## Standing animation. Optional: without it the run cycle is held on its most
+## Where the player's frames live.
+##
+## 2026-10-02: switched to the PixelLab hero (generated, not rendered - see
+## ref/candidates/pixellab/). The 3D-rendered hero is untouched in
+## res://art/run_px; to go back, point these two at run_px / idle_px, set
+## PLAYER_ANIM_FPS back to 30, PLAYER_ART_FACES_LEFT back to true and
+## PLAYER_SPRITE_SCALE back to 1.0.
+const PLAYER_ART_DIR: String = "res://art/hero_pl_run"
+## Standing pose. Optional: without it the run cycle is held on its most
 ## upright frame, which is better than nothing but still a walking pose.
-const PLAYER_IDLE_ART_DIR: String = "res://art/idle_px"
-## The renderer produces every frame of the mocap. 30 was picked over 15 and 10
-## by eye; both lower rates read as choppy on this run cycle.
-const PLAYER_ANIM_FPS: float = 30.0
+## The PixelLab hero's is one frame (its east-facing rotation), padded onto
+## the run's 96x96 canvas with the feet on the same row.
+const PLAYER_IDLE_ART_DIR: String = "res://art/hero_pl_idle"
+## Chosen so one stride lasts as long as the old hero's: 17 frames at 30 fps
+## = 0.57 s; the PixelLab run has 8 frames, so 14 fps = 0.57 s. At 30 it
+## would read as running twice as fast as the character actually moves.
+const PLAYER_ANIM_FPS: float = 14.0
 
 ## Thrower art. Three folders, one per state, rendered by
 ## tools/render_enemy.ps1 from a single fit - see PRIKAZY.md.
@@ -63,7 +72,8 @@ const ENEMY_SPRITE_SCALE: float = 1.0
 ## stops every few frames reads as a twitch.
 const ENEMY_WALK_SPEED_MIN: float = 12.0
 ## The sprites are rendered facing left.
-const PLAYER_ART_FACES_LEFT: bool = true
+## false for the PixelLab hero (generated facing east); the 3D render faced left.
+const PLAYER_ART_FACES_LEFT: bool = false
 ## PIXEL ART, S = 1. Reverted 2026-08-13 after the S = 2 pass was seen on
 ## device: it works, but it stops the game being pixel art, and pixel art is
 ## what VOLYA is. Do not raise S again without raising the style question with
@@ -71,7 +81,18 @@ const PLAYER_ART_FACES_LEFT: bool = true
 ## the part that got lost last time. See DIZAJN_pozadie_a_rozlisenie.md.
 ## Hero render that goes with this: -Height 162. The hitbox stays 54 px on purpose: a body narrower than the
 ## drawing is what "generous hitboxes favouring the player" means in practice.
-const PLAYER_SPRITE_SCALE: float = 1.0
+##
+## 2026-10-02, PixelLab hero: the art is 1x what PixelLab drew (~58 px tall
+## body on a 96 px canvas), so it is shown at an INTEGER multiple - 2x puts it
+## at roughly the old hero's 122 px. Integer only: 1.5x would draw some pixels
+## one wide and some two wide, which is exactly the "uneven pixels" problem
+## from 2026-08-13. Live via the debug panel (1x / 2x) - see
+## player_sprite_scale below.
+const PLAYER_SPRITE_SCALE: float = 2.0
+## Live copy, flipped between 1.0 and 2.0 by the "HRDINA 2x" switch on the
+## debug panel. player.gd re-fits the sprite, feet, muzzle and hurtbox when it
+## changes.
+var player_sprite_scale: float = PLAYER_SPRITE_SCALE
 ## Below this horizontal speed the run cycle stops and the sprite holds a frame.
 const PLAYER_ANIM_MIN_SPEED: float = 20.0
 

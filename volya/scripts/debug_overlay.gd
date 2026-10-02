@@ -293,6 +293,14 @@ func _build_panel() -> void:
 
 	_add_slider("rychlost postavy", 0.4, 2.5, 0.05, Tuning.player_speed_scale,
 		func(v: float) -> void: Tuning.player_speed_scale = v)
+	# PixelLab hero size: only whole multiples keep every pixel the same size.
+	var hero_2x := CheckButton.new()
+	hero_2x.text = "HRDINA 2x (vypnute = 1x)"
+	hero_2x.custom_minimum_size = Vector2(0, 56)
+	hero_2x.button_pressed = Tuning.player_sprite_scale >= 2.0
+	rows.add_child(hero_2x)
+	hero_2x.toggled.connect(func(on: bool) -> void:
+		Tuning.player_sprite_scale = 2.0 if on else 1.0)
 	_add_slider("aky vysoky kus tela hraca sa da trafit (0-1)", 0.3, 1.0, 0.02,
 		Tuning.player_hurt_height_fraction,
 		func(v: float) -> void: Tuning.player_hurt_height_fraction = v)
