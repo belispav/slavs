@@ -161,6 +161,18 @@ const PLAYER_AXE_THROW_ART_DIR: String = "res://art/hero_pl_axe_throw"
 const AXE_THROW_FPS: float = 14.0
 const AXE_RELEASE_FRAME: int = 5
 
+# --- Hit / death effects (2026-10-03, fx.gd) ---
+## Pixel particles per event. Code-drawn placeholders for trying the
+## mechanic; final look may become PixelLab clips later.
+const FX_BLOOD_HIT: int = 8
+const FX_BLOOD_DEATH: int = 30
+const FX_WOOD_HIT: int = 6
+const FX_WOOD_BREAK: int = 30
+## How long blood/splinters lie on the ground before they are gone (s).
+const FX_STAIN_TIME: float = 3.0
+var fx_stain_time: float = FX_STAIN_TIME
+var fx_enabled: bool = true
+
 # --- Breakable barrel (2026-10-03) ---
 const BARREL_ART_DIR: String = "res://art/barrel_pl"
 ## 6 since 2026-10-03 (was 3): the returning axe hits twice per throw.

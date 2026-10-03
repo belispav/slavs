@@ -198,6 +198,16 @@ func _build_panel() -> void:
 	_add_slider("sud: odstup postavy", 40.0, 180.0, 2.0, Tuning.barrel_block_width,
 		func(v: float) -> void: Tuning.barrel_block_width = v)
 
+	# Hit/death effects (fx.gd). Added 2026-10-03.
+	var fx_toggle := CheckButton.new()
+	fx_toggle.text = "EFEKTY (krv, triesky, dym)"
+	fx_toggle.custom_minimum_size = Vector2(0, 56)
+	fx_toggle.button_pressed = Tuning.fx_enabled
+	rows.add_child(fx_toggle)
+	fx_toggle.toggled.connect(func(on: bool) -> void: Tuning.fx_enabled = on)
+	_add_slider("ako dlho lezi krv na zemi (s)", 0.5, 15.0, 0.5, Tuning.fx_stain_time,
+		func(v: float) -> void: Tuning.fx_stain_time = v)
+
 	var music_toggle := CheckButton.new()
 	music_toggle.text = "HUDBA"
 	music_toggle.custom_minimum_size = Vector2(0, 56)

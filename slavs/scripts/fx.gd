@@ -1,0 +1,198 @@
+extends Node2D
+
+## Hit and death effects (2026-10-03) - blood, wood splinters, dust/smoke.
+##
+## Drawn in code as square pixels, not as PixelLab art: Pavel wanted to try
+## the MECHANIC first ("presny efekt nie je az tak podstatny"), and code
+## particles cost no generations and every number is live. The final look can
+## replace them with PixelLab clips later without touching the call sites.
+##
+## The field is 2.5D, so every particle has a spot on the GROUND (x, y) and a
+## HEIGHT above it (h). It is drawn at (x, y - h). Blood and splinters fly up,
+## fall back to h = 0 and stay there as a stain where they landed - in front
+## of or behind a body according to their own ground y - then fade. Smoke
+## rises and grows instead.
+##
+## Two layers, because a stain on the ground must be covered by whoever walks
+## over it while a particle in the air must not be: `_ground` sits just above
+## the background, this node (the air) above everything.
+##
+## One node per layer draws every particle with draw_rect - one draw call per
+## layer, no nodes per particle, so a crowd dying at once stays cheap
+## (performance target: 60 fps on a ~150 EUR phone).
+
+enum Type { BLOOD, WOOD, SMOKE }
+
+const MAX_PARTICLES: int = 700
+const GRAVITY: float = 900.0
+
+# Per particle, parallel arrays (no per-particle objects to allocate).
+var _pos: PackedVector2Array = PackedVector2Array()   # ground spot
+var _vel: PackedVector2Array = PackedVector2Array()   # ground velocity
+var _h: PackedFloat32Array = PackedFloat32Array()     # height above ground
+var _vh: PackedFloat32Array = PackedFloat32Array()    # vertical speed (+ = up)
+var _age: PackedFloat32Array = PackedFloat32Array()
+var _life: PackedFloat32Array = PackedFloat32Array()
+var _size: PackedFloat32Array = PackedFloat32Array()
+var _type: PackedInt32Array = PackedInt32Array()
+var _col: PackedColorArray = PackedColorArray()
+var _landed: PackedByteArray = PackedByteArray()
+
+var _ground: Node2D
+
+const BLOOD_COLOURS: Array[Color] = [
+	Color(0.80, 0.06, 0.06), Color(0.95, 0.16, 0.12), Color(0.60, 0.03, 0.05)]
+const WOOD_COLOURS: Array[Color] = [
+	Color(0.86, 0.66, 0.38), Color(0.95, 0.80, 0.52), Color(0.62, 0.42, 0.22)]
+const SMOKE_COLOURS: Array[Color] = [
+	Color(0.85, 0.83, 0.78), Color(0.72, 0.70, 0.66), Color(0.95, 0.93, 0.88)]
+
+
+func setup(ground_z: int) -> void:
+	z_index = 4090
+	_ground = Node2D.new()
+	_ground.z_as_relative = false
+	_ground.z_index = ground_z + 1
+	_ground.draw.connect(_draw_ground)
+	# The ground layer is a sibling-like child but must not inherit our high z.
+	add_child(_ground)
+
+
+## A body was hit (`fatal` = it died). `feet` is where it stands, `height` its
+## drawn height in world units, `away` +1/-1 the side the blow came FROM the
+## opposite of, so blood sprays away from the hero.
+func body_hit(feet: Vector2, height: float, away: float, fatal: bool) -> void:
+	if not Tuning.fx_enabled:
+		return
+	var at_h: float = height * 0.55
+	var n: int = Tuning.FX_BLOOD_DEATH if fatal else Tuning.FX_BLOOD_HIT
+	for i in n:
+		var speed: float = randf_range(60.0, 260.0) if fatal else randf_range(40.0, 160.0)
+		var vx: float = away * speed * randf_range(0.3, 1.0) + randf_range(-40.0, 40.0)
+		var vy: float = randf_range(-70.0, 70.0)
+		_spawn(Type.BLOOD, feet + Vector2(randf_range(-6, 6), randf_range(-3, 3)),
+			Vector2(vx, vy), at_h + randf_range(-12, 12), randf_range(80.0, 300.0),
+			Tuning.fx_stain_time, 4.0 if randf() < 0.6 else 6.0,
+			BLOOD_COLOURS[randi() % BLOOD_COLOURS.size()])
+	if fatal:
+		_puff(feet, 8, 14.0)
+
+
+## A barrel was hit; `broken` = it burst.
+func wood_hit(feet: Vector2, away: float, broken: bool) -> void:
+	if not Tuning.fx_enabled:
+		return
+	var n: int = Tuning.FX_WOOD_BREAK if broken else Tuning.FX_WOOD_HIT
+	for i in n:
+		var speed: float = randf_range(80.0, 320.0) if broken else randf_range(40.0, 140.0)
+		var dir: float = away if not broken else (1.0 if randf() < 0.5 else -1.0)
+		_spawn(Type.WOOD, feet + Vector2(randf_range(-14, 14), randf_range(-4, 4)),
+			Vector2(dir * speed * randf_range(0.3, 1.0), randf_range(-90.0, 90.0)),
+			randf_range(20.0, 56.0), randf_range(120.0, 360.0),
+			Tuning.fx_stain_time, 4.0 if randf() < 0.6 else 6.0,
+			WOOD_COLOURS[randi() % WOOD_COLOURS.size()])
+	if broken:
+		_puff(feet, 14, 26.0)
+
+
+func _puff(feet: Vector2, n: int, spread: float) -> void:
+	for i in n:
+		_spawn(Type.SMOKE, feet + Vector2(randf_range(-spread, spread), randf_range(-4, 4)),
+			Vector2(randf_range(-30.0, 30.0), randf_range(-8.0, 8.0)),
+			randf_range(4.0, 40.0), randf_range(20.0, 60.0),
+			randf_range(0.5, 0.9), randf_range(8.0, 14.0),
+			SMOKE_COLOURS[randi() % SMOKE_COLOURS.size()])
+
+
+func _spawn(t: int, ground: Vector2, vel: Vector2, h: float, vh: float,
+		life: float, size: float, col: Color) -> void:
+	if _pos.size() >= MAX_PARTICLES:
+		_remove(0)  # oldest first - a full screen of stains must not stop new hits
+	_pos.append(ground)
+	_vel.append(vel)
+	_h.append(h)
+	_vh.append(vh)
+	_age.append(0.0)
+	_life.append(life)
+	_size.append(size)
+	_type.append(t)
+	_col.append(col)
+	_landed.append(0)
+
+
+func _remove(i: int) -> void:
+	_pos.remove_at(i); _vel.remove_at(i); _h.remove_at(i); _vh.remove_at(i)
+	_age.remove_at(i); _life.remove_at(i); _size.remove_at(i); _type.remove_at(i)
+	_col.remove_at(i); _landed.remove_at(i)
+
+
+## Wipe everything - used when the field is reset after a death.
+func clear() -> void:
+	while _pos.size() > 0:
+		_remove(_pos.size() - 1)
+	queue_redraw()
+	_ground.queue_redraw()
+
+
+func _process(delta: float) -> void:
+	if _pos.is_empty():
+		return
+	var i: int = _pos.size() - 1
+	while i >= 0:
+		_age[i] += delta
+		if _type[i] == Type.SMOKE:
+			_pos[i] += _vel[i] * delta
+			_h[i] += _vh[i] * delta
+			_size[i] += delta * 24.0
+			if _age[i] >= _life[i]:
+				_remove(i)
+		elif _landed[i] == 0:
+			_pos[i] += _vel[i] * delta
+			_vh[i] -= GRAVITY * delta
+			_h[i] += _vh[i] * delta
+			if _h[i] <= 0.0:
+				_h[i] = 0.0
+				_landed[i] = 1
+				_age[i] = 0.0   # the stain's own clock starts on landing
+		elif _age[i] >= _life[i]:
+			_remove(i)
+		i -= 1
+	queue_redraw()
+	_ground.queue_redraw()
+
+
+## Air layer: everything not yet landed.
+func _draw() -> void:
+	for i in _pos.size():
+		if _landed[i] == 1:
+			continue
+		var a: float = 1.0
+		if _type[i] == Type.SMOKE:
+			a = 0.9 * (1.0 - _age[i] / _life[i])
+		_draw_px(self, i, a)
+
+
+## Ground layer: stains, fading over the last third of their life.
+func _draw_ground() -> void:
+	for i in _pos.size():
+		if _landed[i] == 0:
+			continue
+		var left: float = 1.0 - _age[i] / _life[i]
+		_draw_px(_ground, i, clampf(left * 3.0, 0.0, 1.0))
+
+
+## Snapped to the 2-unit grid every sprite is drawn on (integer 2x), so the
+## particles read as the same pixels as the characters, never half a pixel.
+func _draw_px(canvas: CanvasItem, i: int, alpha: float) -> void:
+	var s: float = floorf(_size[i] * 0.5) * 2.0
+	var p: Vector2 = _pos[i] - Vector2(0.0, _h[i])
+	p = Vector2(floorf(p.x * 0.5) * 2.0, floorf(p.y * 0.5) * 2.0)
+	var c: Color = _col[i]
+	c.a = alpha
+	# Landed blood and splinters spread flat - wider than tall, it lies on
+	# the ground.
+	var r := Rect2(p - Vector2(s, s) * 0.5, Vector2(s, s))
+	if _landed[i] == 1:
+		var flat := Vector2(s + 2.0, maxf(2.0, s * 0.5))
+		r = Rect2(p - flat * 0.5, flat)
+	canvas.draw_rect(r, c)

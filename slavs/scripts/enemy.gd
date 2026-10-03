@@ -9,6 +9,9 @@ extends CharacterBody2D
 ## (CLAUDE.md hard content rule).
 
 signal died(at: Vector2)
+## Every hit, fatal or not: feet position, drawn height, whether it died.
+## Drives the blood effect (fx.gd).
+signal hurt(feet: Vector2, height: float, fatal: bool)
 signal throw_requested(from: Vector2, dir: Vector2)
 ## A rusher's swing landing. Not the same moment as touching the player - see
 ## RUSHER_MELEE_RANGE and _update_attack_timer.
@@ -304,6 +307,7 @@ func hit() -> void:
 		return
 	hp -= 1
 	_flash = 1.0
+	hurt.emit(global_position + Vector2(0.0, SIZE.y * 0.5), _drawn_height, hp <= 0)
 	if hp <= 0:
 		died.emit(global_position)
 		despawn()

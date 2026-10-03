@@ -525,6 +525,17 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
 - [x] **HP raised 2026-10-03 (Pavel), because the returning axe hits twice
   per throw:** rusher 1 -> 2, thrower/gunman 2 -> 4, barrel 3 -> 6. Not yet
   on device.
+- [~] **Hit/death effects (2026-10-03), code-drawn, not yet on device.**
+  `fx.gd`: square pixel particles on the 2-unit grid, 2.5D (ground spot +
+  height): blood on every enemy hit (8) and death (30 + dust puff), wood
+  splinters on every barrel hit (6) and burst (30 + smoke). Blood/splinters
+  land and lie as stains for `fx_stain_time` (3 s), then fade. Two layers:
+  stains just above the ground (walked over), flying bits on top. Signals:
+  `enemy.hurt(feet, height, fatal)`, `barrel.damaged(feet, broke)`; spray
+  goes away from the hero. Chosen over PixelLab because Pavel wanted to test
+  the mechanic (0 generations); PixelLab clips can replace the look later.
+  Measured: 700 particles (the cap) update in ~0.15 ms. Panel: "EFEKTY"
+  toggle + "ako dlho lezi krv na zemi". No explosion yet - nothing explodes.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the

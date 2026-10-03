@@ -9,6 +9,8 @@ extends Area2D
 ## hero snags on would be a controls problem, and controls come first.
 
 signal broken(at: Vector2)
+## Every hit: where the barrel stands and whether this one broke it.
+signal damaged(feet: Vector2, broke: bool)
 
 var hp: int = Tuning.BARREL_HP
 var is_broken: bool = false
@@ -130,6 +132,7 @@ func hit() -> void:
 	hp -= 1
 	_shake = 0.18
 	_flash = 1.0
+	damaged.emit(global_position, hp <= 0)
 	if hp <= 0:
 		is_broken = true
 		set_deferred("collision_layer", 0)

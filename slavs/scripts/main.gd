@@ -293,6 +293,7 @@ var _bullet_next: int = 0
 ## the same reason as `player`: scripts attached at runtime.
 var axe
 var barrels: Array = []
+var fx   # fx.gd - blood, splinters, smoke
 ## Barrels are stood on the field a few frames in, once the player has been
 ## clamped onto the walkable band - spawn_point alone may be off it. Set
 ## back to a few frames after every death so they come back, whole, in
@@ -335,6 +336,7 @@ func _ready() -> void:
 	_build_bullet_pool()
 	_build_enemy_pool()
 	_build_axe_and_barrel()
+	_build_fx()
 	_build_hud()
 	var overlay_script: GDScript = load("res://scripts/debug_overlay.gd")
 	add_child(overlay_script.new())
@@ -1013,6 +1015,30 @@ func _spawn_tick(delta: float) -> void:
 		y = randf_range(GROUND_Y - field_height() + 30.0, GROUND_Y - 30.0)
 
 	free_enemy.spawn(Vector2(x, y), kind, player)
+
+
+func _build_fx() -> void:
+	fx = Node2D.new()
+	fx.set_script(load("res://scripts/fx.gd"))
+	add_child(fx)
+	fx.setup(_ground_z_index())
+	for e in enemies:
+		e.hurt.connect(_on_body_hurt)
+	for b in barrels:
+		b.damaged.connect(_on_barrel_damaged)
+
+
+## Which way debris flies: away from the hero, who is the one hitting.
+func _away_from_player(at: Vector2) -> float:
+	return 1.0 if at.x >= player.global_position.x else -1.0
+
+
+func _on_body_hurt(feet: Vector2, height: float, fatal: bool) -> void:
+	fx.body_hit(feet, height, _away_from_player(feet), fatal)
+
+
+func _on_barrel_damaged(feet: Vector2, broke: bool) -> void:
+	fx.wood_hit(feet, _away_from_player(feet), broke)
 
 
 func _on_enemy_died(_at: Vector2) -> void:
