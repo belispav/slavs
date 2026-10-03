@@ -163,7 +163,8 @@ const AXE_RELEASE_FRAME: int = 5
 
 # --- Breakable barrel (2026-10-03) ---
 const BARREL_ART_DIR: String = "res://art/barrel_pl"
-const BARREL_HP: int = 3
+## 6 since 2026-10-03 (was 3): the returning axe hits twice per throw.
+const BARREL_HP: int = 6
 ## Integer like every PixelLab sprite - 2x matches the hero.
 const BARREL_SPRITE_SCALE: float = 2.0
 ## Slowed from 12 so the burst can be seen mid-fight (Pavel missed it).
@@ -196,7 +197,15 @@ const BARREL_WALL_SPACING: float = 40.0
 ## not whether the drawings overlap. Raised automatically inside the wall so
 ## neighbours leave no gap to slip through.
 const BARREL_BLOCK_DEPTH: float = 26.0
-const BARREL_BLOCK_WIDTH: float = 40.0
+## How wide the blocking strip is, in X. Measured 2026-10-03 from the art, not
+## guessed: the drawn barrel is 48 wide (24 each side of its centre), and the
+## hero's front edge reaches ~44 world units past his centre (legs/axe, run
+## and idle clips) while his collision box is only 15. For a ~6 unit gap
+## between his front and the barrel: centres stop 24 + 6 + 44 = 74 apart,
+## minus his box's 15 = 59 each side -> 118. Was 40, which let him walk ~33
+## units into the drawing. Live on the panel ("sud: odstup postavy").
+const BARREL_BLOCK_WIDTH: float = 118.0
+var barrel_block_width: float = BARREL_BLOCK_WIDTH
 
 ## Where on the body a shot leaves from, as a fraction of the drawing's height
 ## measured up from the feet. The collision box is 54 units tall while the
@@ -387,7 +396,9 @@ const ENEMY_WEAVE_SPEED: float = 1.6
 ## sent back to the start each time; once death cost health instead of the run,
 ## the same player asked for nearly ten times the speed. A number measured while
 ## something else is broken measures the other thing.
-const RUSHER_HP: int = 1
+## 2 since 2026-10-03 (was 1): the returning axe hits once out and once back,
+## so at 1 everything died like flies (Pavel).
+const RUSHER_HP: int = 2
 const RUSHER_SPEED: float = 262.0
 
 ## How far away, on the ground plane, an enemy notices the player and switches
@@ -421,7 +432,8 @@ var player_speed_scale: float = 1.0
 
 ## Throwers are the rare ones that force you to move. Slow, dodgeable shots:
 ## fast projectiles turned the game into a reflex test and killed the mowing.
-const THROWER_HP: int = 2
+## 4 since 2026-10-03 (was 2), same reason as RUSHER_HP.
+const THROWER_HP: int = 4
 ## 76, measured on device 2026-08-04. Slower than a rusher by roughly the same
 ## ratio as before, so the two roles still read apart at a glance.
 const THROWER_SPEED: float = 76.0

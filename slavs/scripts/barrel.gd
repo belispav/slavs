@@ -19,6 +19,9 @@ var _shape: CollisionShape2D
 ## target (bullets, axe) and must not push anything.
 var _block: StaticBody2D
 var _block_shape: CollisionShape2D
+## What _set_blocking last applied, so a panel change can be re-applied.
+var _block_depth: float = 0.0
+var _block_width: float = 0.0
 var _shake: float = 0.0
 var _flash: float = 0.0
 var _art_height: float = 64.0
@@ -86,6 +89,8 @@ func _fit() -> void:
 ## thin strip placed so that "boxes overlap" works out to exactly "feet within
 ## +-depth" - the arithmetic is below.
 func _set_blocking(depth: float) -> void:
+	_block_depth = depth
+	_block_width = Tuning.barrel_block_width
 	# Hero box spans [hf - H, hf] (H = 54). Strip spans [t, b]. They overlap
 	# when hf > t and hf - H < b, i.e. hf in (t, b + H). For hf in
 	# (bf - depth, bf + depth): t = bf - depth, b = bf + depth - H. Needs
@@ -94,7 +99,7 @@ func _set_blocking(depth: float) -> void:
 	var top: float = -depth
 	var bottom: float = maxf(depth - h_box, top + 2.0)
 	var r := _block_shape.shape as RectangleShape2D
-	r.size = Vector2(Tuning.BARREL_BLOCK_WIDTH, bottom - top)
+	r.size = Vector2(_block_width, bottom - top)
 	_block_shape.position = Vector2(0.0, (top + bottom) * 0.5)
 
 
@@ -135,6 +140,8 @@ func hit() -> void:
 
 
 func _process(delta: float) -> void:
+	if _block_width != Tuning.barrel_block_width:
+		_set_blocking(_block_depth)
 	_flash = maxf(_flash - delta * 6.0, 0.0)
 	_sprite.modulate = Color.WHITE.lerp(Color(1.0, 0.55, 0.45), _flash * 0.7)
 	if _shake > 0.0:

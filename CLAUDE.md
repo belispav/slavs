@@ -517,11 +517,14 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
     writes frames.gd. Hero offsets on the 96 canvas: rotation (20,16); v3
     clips from a custom start frame (20,4) idle, (20,2) run, (18,4) throw -
     measured by locating the reference frame inside each v3 canvas.
-- [ ] **TODO (Pavel 2026-10-03) — the hero walks a few pixels INTO a barrel
-  before it stops him.** Blocking works; the stop needs to come earlier. Look
-  at `BARREL_BLOCK_WIDTH` (40) against the drawn barrel (~48 wide at 2x) plus
-  the hero's 30-wide box, and the depth strip in `barrel._set_blocking()`.
-  Measure from a screenshot (xvfb), do not guess.
+- [x] **Hero stopped INSIDE a barrel - fixed 2026-10-03, not yet on device.**
+  `BARREL_BLOCK_WIDTH` 40 -> 118, derived from the art (barrel 48 wide, hero
+  front edge ~44 past his centre, box half 15, ~6 gap); headless test stops
+  centres exactly 74 apart, screenshot shows a small gap. Live slider
+  "sud: odstup postavy" (40-180) if it needs tuning on device.
+- [x] **HP raised 2026-10-03 (Pavel), because the returning axe hits twice
+  per throw:** rusher 1 -> 2, thrower/gunman 2 -> 4, barrel 3 -> 6. Not yet
+  on device.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the

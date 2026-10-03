@@ -193,6 +193,11 @@ func _build_panel() -> void:
 	_add_slider("odstup od okraja", 0.0, 60.0, 1.0, Tuning.walk_edge_inset,
 		func(v: float) -> void: Tuning.walk_edge_inset = v)
 
+	# How early a barrel stops the hero - see Tuning.BARREL_BLOCK_WIDTH.
+	# Added 2026-10-03.
+	_add_slider("sud: odstup postavy", 40.0, 180.0, 2.0, Tuning.barrel_block_width,
+		func(v: float) -> void: Tuning.barrel_block_width = v)
+
 	var music_toggle := CheckButton.new()
 	music_toggle.text = "HUDBA"
 	music_toggle.custom_minimum_size = Vector2(0, 56)
