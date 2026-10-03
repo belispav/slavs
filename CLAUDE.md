@@ -449,8 +449,8 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
     switch) and rusher (art/rusher_pl_*; RUSHER_SPRITE_SCALE 2, RUSHER_ANIM_FPS
     10, attack 6 fps, hit at 0.70 and melee range 100 both confirmed on device
     2026-10-03). The rusher no longer has the turban - helmet + spiked mace -
-    so the ethnicity TODO is closed FOR THE RUSHER; the gunman is still the old
-    render with the turban.
+    so the ethnicity TODO is closed FOR THE RUSHER; the gunman followed on
+    2026-10-03 (see the gunman entry below).
   - **Deviation to know about:** the rusher's weapon came out as a one-handed
     spiked mace, not the two-handed club decided 2026-08-06. Pavel accepted it
     2026-10-02. Lesson recorded with him: when an instruction ("copy it")
@@ -548,6 +548,27 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   "dlzka vibracie pri zasahu (ms)".
   **Needs the Vibrate permission ticked in the Android export preset on
   Pavel's PC** (PRIKAZY.md -> VIBRACIE) - export_presets.cfg is not in git.
+- [~] **Gunman redone in PixelLab (2026-10-03), checked headless, not yet on
+  device.** Pavel's design after rejecting a brimmed-hat version ("vyzerá ako
+  Španiel - sme pri Slovanoch"): small round iron helmet with a spike on top,
+  long dark blue coat, narrow black boots, bandolier, arquebus. PixelLab
+  character `1019b89a-7cd6-4694-8de8-3368ce129dc4` (v3, side, 76 px).
+  **The turban is gone, so the ethnicity TODO is now closed for both enemies.**
+  - Art: `gunman_pl_walk` (template walking-8-frames), `gunman_pl_fire` (v3
+    custom: raise, aim, muzzle flash on frame 5, recoil, lower; 108 px canvas
+    with the reference at 16,16), `gunman_pl_idle` = the east rotation as ONE
+    frame (no idle clip yet, saved a credit). All on a 104 canvas, rotation
+    at (14,28), mirrored to face west (`pixellab_export.py --mirror`, new;
+    negative offsets now work too). 2x, walk 10 fps, fire 8 fps.
+  - **Gameplay change:** the shot no longer leaves when the clip starts but on
+    the muzzle flash (`THROWER_SHOT_DELAY` = 5/8 s), from the drawn muzzle
+    (`THROWER_MUZZLE_FORWARD` 60 / `_HEIGHT` 104 above the feet), aimed at
+    the player's chest. The raise-and-aim is the warning. Verified headless:
+    shots leave on fire frame 5 at the barrel tip.
+  - Cost: 2 (rejected v1) + 2 (v2) + 1 walk + 2 fire = 7 generations; 14 left.
+  - Old 3D gunman untouched in `gunman_*_px`; tuning.gd says how to go back.
+  - Open: an idle clip and a ready idle (the awareness split) when credits
+    allow.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the

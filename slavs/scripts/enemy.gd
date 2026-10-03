@@ -73,6 +73,9 @@ var _sprite: AnimatedSprite2D
 var _thrower_sprite: AnimatedSprite2D
 var _rusher_sprite: AnimatedSprite2D
 var _fire_timer: float = 0.0
+## Counts down from the start of the fire clip to the muzzle flash; the shot
+## leaves when it reaches zero. < 0 = no shot pending.
+var _shot_delay: float = -1.0
 
 ## RUSHER awareness/attack state - see _think_rusher and _drive_rusher_sprite.
 ## Sticky once true: an enemy that has noticed the player does not go back to
@@ -131,9 +134,9 @@ func _build_sprite() -> void:
 		[&"walk", Tuning.THROWER_WALK_ART_DIR, true],
 		# Firing is a one-shot: it must end so the enemy can go back to
 		# standing, otherwise it reloads forever and never looks like a shot.
-		[&"fire", Tuning.THROWER_FIRE_ART_DIR, false],
+		[&"fire", Tuning.THROWER_FIRE_ART_DIR, false, Tuning.THROWER_FIRE_FPS],
 	], _thrower_shift, thrower_height,
-		Tuning.THROWER_SPRITE_SCALE, Tuning.ENEMY_ANIM_FPS)
+		Tuning.THROWER_SPRITE_SCALE, Tuning.THROWER_ANIM_FPS)
 	_thrower_drawn_height = thrower_height[0]
 	var rusher_height := [0.0]
 	_rusher_sprite = _build_sprite_from(&"idle_unaware", Tuning.RUSHER_IDLE_ART_DIR, [
@@ -255,6 +258,7 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 		1.0 + Tuning.THROWER_DISTANCE_SPREAD)
 	active = true
 	_fire_timer = 0.0
+	_shot_delay = -1.0
 	_aware = false
 	_attack_timer = 0.0
 	_attack_cd = 0.0
@@ -328,6 +332,10 @@ func _physics_process(delta: float) -> void:
 
 	# State, not decoration - see _thrower_clip for why this cannot live there.
 	_fire_timer = maxf(_fire_timer - delta, 0.0)
+	if _shot_delay >= 0.0:
+		_shot_delay -= delta
+		if _shot_delay < 0.0:
+			_release_shot()
 
 	if target != null:
 		match kind:
@@ -599,11 +607,26 @@ func _think_thrower(delta: float, free: bool) -> void:
 	_throw_cd -= delta
 	if _throw_cd <= 0.0 and dist < Tuning.THROWER_RANGE:
 		_throw_cd = Tuning.THROWER_INTERVAL
-		var aim: Vector2 = (target.global_position - global_position).normalized()
-		throw_requested.emit(global_position + aim * 30.0, aim)
-		# Show the shot. The clip runs once and then standing takes over,
-		# which is what _drive_sprite watches for.
-		_fire_timer = Tuning.THROWER_INTERVAL * 0.5
+		# Start the clip now; the shot itself leaves on the muzzle flash
+		# (_release_shot). The raise-and-aim before it is the player's
+		# warning - a shot that left as the rifle started to rise could not
+		# be read, and dodging is the whole answer to a gunman.
+		_fire_timer = Tuning.THROWER_FIRE_TIME
+		_shot_delay = Tuning.THROWER_SHOT_DELAY
+
+
+## The shot, from the muzzle of the drawn arquebus towards the player's body.
+func _release_shot() -> void:
+	if not active or target == null:
+		return
+	var face: float = signf(target.global_position.x - global_position.x)
+	if is_zero_approx(face):
+		face = 1.0
+	var muzzle: Vector2 = global_position + Vector2(
+		face * Tuning.THROWER_MUZZLE_FORWARD,
+		SIZE.y * 0.5 - Tuning.THROWER_MUZZLE_HEIGHT)
+	var aim_at: Vector2 = target.global_position + Vector2(0.0, -Tuning.THROWER_AIM_RAISE)
+	throw_requested.emit(muzzle, (aim_at - muzzle).normalized())
 
 
 ## A sideways drift across the approach, so the path curves instead of being a

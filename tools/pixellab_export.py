@@ -56,6 +56,9 @@ def main() -> None:
     ap.add_argument("--erase", action="append", default=[],
                     help="frame:x0,y0,x1,y1 in SOURCE pixels, inclusive")
     ap.add_argument("--note", default="")
+    ap.add_argument("--mirror", action="store_true",
+                    help="flip horizontally AFTER placing on the canvas: "
+                         "enemies are generated facing east, enemy.gd wants west")
     a = ap.parse_args()
 
     srcs = a.files or [f"{a.url_base}/{i}.png" for i in range(a.count)]
@@ -75,7 +78,11 @@ def main() -> None:
                 for x in range(x0, x1 + 1):
                     px[x, y] = (0, 0, 0, 0)
         canvas = Image.new("RGBA", (a.canvas, a.canvas), (0, 0, 0, 0))
-        canvas.alpha_composite(im, tuple(a.offset))
+        # paste, not alpha_composite: a v3 clip's own canvas can be bigger
+        # than the shared one, so its offset may be negative.
+        canvas.paste(im, tuple(a.offset), im)
+        if a.mirror:
+            canvas = canvas.transpose(Image.FLIP_LEFT_RIGHT)
         name = f"{a.name}_{i:04d}.png"
         hard_alpha(canvas).save(os.path.join(a.out, name))
         names.append(name)

@@ -40,9 +40,33 @@ const PLAYER_ANIM_FPS: float = 14.0
 ## tools/render_enemy.ps1 from a single fit - see PRIKAZY.md.
 ## Empty folders are not an error: the enemy falls back to the coloured box,
 ## the same way the player does.
-const THROWER_IDLE_ART_DIR: String = "res://art/gunman_idle_px"
-const THROWER_WALK_ART_DIR: String = "res://art/gunman_walk_px"
-const THROWER_FIRE_ART_DIR: String = "res://art/gunman_fire_px"
+##
+## 2026-10-03: the gunman is the PixelLab one now (round spiked helmet, long
+## dark blue coat, black boots - Pavel's design; no turban). The 3D render is
+## untouched in gunman_*_px; to go back, point these three there, set
+## THROWER_SPRITE_SCALE to ENEMY_SPRITE_SCALE and THROWER_ANIM_FPS /
+## THROWER_FIRE_FPS to ENEMY_ANIM_FPS. The idle is a single frame (the east
+## rotation) - no idle clip was generated yet, to save a credit.
+const THROWER_IDLE_ART_DIR: String = "res://art/gunman_pl_idle"
+const THROWER_WALK_ART_DIR: String = "res://art/gunman_pl_walk"
+const THROWER_FIRE_ART_DIR: String = "res://art/gunman_pl_fire"
+## PixelLab clips are 8-9 frames: 10 fps for the walk like the rusher's.
+const THROWER_ANIM_FPS: float = 10.0
+## Fire: 9 frames (raise, aim, flash on frame 5, recoil, lower) at 8 fps.
+const THROWER_FIRE_FPS: float = 8.0
+## How long the fire clip holds the gunman in place = 9 frames / 8 fps.
+const THROWER_FIRE_TIME: float = 9.0 / THROWER_FIRE_FPS
+## From the clip's start to the muzzle flash (frame 5 of 0-8) - the shot
+## leaves then.
+const THROWER_SHOT_DELAY: float = 5.0 / THROWER_FIRE_FPS
+## Where the barrel's mouth is, in world units from the gunman's feet,
+## measured on the flash frame: ~30 art px ahead of the body and ~52 above
+## the feet, times the 2x scale.
+const THROWER_MUZZLE_FORWARD: float = 60.0
+const THROWER_MUZZLE_HEIGHT: float = 104.0
+## The shot is aimed this far above the player's origin (his box centre), at
+## the chest rather than the belt.
+const THROWER_AIM_RAISE: float = 30.0
 
 ## Rusher art. Four folders instead of the thrower's three - see PRIKAZY.md's
 ## ZBRANE section for how they get filled.
@@ -81,9 +105,9 @@ const ENEMY_ANIM_FPS: float = 30.0
 ## Enemy renders that go with this: gunman -Height 162, rusher -Height 190.
 const ENEMY_SPRITE_SCALE: float = 1.0
 ## Per kind since 2026-10-02, because the two kinds no longer share an art
-## pipeline: the gunman is still the 3D render at 1x, the rusher is PixelLab
+## pipeline. Both are PixelLab now (rusher 2026-10-02, gunman 2026-10-03),
 ## pixel art shown at an INTEGER 2x like the hero (PLAYER_SPRITE_SCALE).
-const THROWER_SPRITE_SCALE: float = ENEMY_SPRITE_SCALE
+const THROWER_SPRITE_SCALE: float = 2.0
 const RUSHER_SPRITE_SCALE: float = 2.0
 ## Below this speed the thrower is standing rather than walking. Not zero:
 ## the hold-your-distance logic keeps nudging, and a walk cycle that starts and
