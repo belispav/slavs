@@ -1,5 +1,5 @@
 """
-VOLYA - report what is actually inside an FBX, before uploading it anywhere.
+Slavs - report what is actually inside an FBX, before uploading it anywhere.
 
 Mixamo's auto-rigger is fussy in ways that are invisible until it refuses the
 file, and the reasons are all measurable up front: too many polygons, more than

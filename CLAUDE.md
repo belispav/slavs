@@ -1,14 +1,15 @@
-# VOLYA — Project Memory (read this first)
+# Slavs fight back — Project Memory (read this first)
 
 > **NAME (Pavel, 2026-10-03): the game is "Slavs fight back", working name
-> "Slavs".** "VOLYA" was invented by an AI and Pavel does not like it - do not
-> use it in anything new (docs, strings, store copy, commit messages). The
-> rename of what still carries it (folder `volya/`, Godot project name, docs,
-> deploy script paths) is its own task - planned as the first job of the
-> first cloud session. NEVER change the Android package id in
-> `export_presets.cfg` as part of it: a new id installs as a second app.
+> "Slavs".** The old AI-invented name was removed from the whole repo on
+> 2026-10-03 (folder is now `slavs/`, Godot project name "Slavs fight back",
+> `PLAN_hry.md`, docs, tools, Blender object names, env var `SLAVS_BLENDER`).
+> Do not reintroduce it anywhere. **The ONE exception is the Android package
+> id `sk.pavel.volya`** (`export_presets.cfg`, `deploy_android.ps1`,
+> `get_tuning.ps1`, `SETUP_F0.md`): it never changes - a new id installs as a
+> second app and loses the data on the phone.
 
-You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mobile game (Metal Slug style) built in **Godot 4.7 / GDScript** for **Android first**. The developer (Pavel) is a solo creator with **zero prior game-dev knowledge** — you write the code, he directs, tests on his phone, and learns by reading. Communicate in Slovak; code, comments and commit messages in English.
+You are the AI development partner for Slavs fight back, a 2D side-scrolling run-and-gun mobile game (Metal Slug style) built in **Godot 4.7 / GDScript** for **Android first**. The developer (Pavel) is a solo creator with **zero prior game-dev knowledge** — you write the code, he directs, tests on his phone, and learns by reading. Communicate in Slovak; code, comments and commit messages in English.
 
 > **ALL GAME ART IS MADE IN PIXELLAB (since 2026-10-02) — Pavel's choice, and he is very happy with it.**
 > Characters, their animations, props and effects are generated with the PixelLab
@@ -28,14 +29,14 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
   pipeline, troubleshooting. Pavel does not memorise commands; put anything he
   will need to type again in here.
 
-- `VOLYA_plan_hry.md` — full plan: game design, business case, phase plan (F0–F5), deployment, roadmap, risks.
+- `PLAN_hry.md` — full plan: game design, business case, phase plan (F0–F5), deployment, roadmap, risks.
 - `DIZAJN_pozadie_a_rozlisenie.md` — **closed 2026-09-15** (Pavel satisfied with the parallax/background state; reopens only if he asks). Kept in the root because code comments point at it. Parallax for the static background, and unifying asset resolution between characters and background. Contains the measured facts, the decisions already made, the hard constraints, and the three questions only Pavel answers. Read it before touching anything about the background, `env_*`, sprite scale or texture filtering.
 - `DIZAJN_core_loop.md` — **supersedes the plan's §3.2 and §3.5 on game structure.** The game is a run-based score attack, not 12 handcrafted levels. Cage encounters are the core mechanic and the currency source. Read this before designing anything about levels, progression or economy. The plan's §2 (sensitive topic) is untouched and remains absolute.
 - `SPEC_ovladanie_implementacia.md` — the control system spec + implementation addendum. This is the single source of truth for controls. Controls are the product; everything else comes second.
 - `_archiv/Phone controls instrucitons.txt` — original control philosophy document (superseded by the SPEC file, kept for reference).
 - `_archiv/F2P Monetization Strategies Analysis.md` — background research only; the game is PREMIUM (5,99 €), no IAP in v1.0, no ads, no gacha. Ever.
 - `SETUP_F0.md` — Pavel's setup + testing guide (Godot, JDK 17, Android SDK, one-click USB deploy, F1 test protocol).
-- `volya/` — the Godot 4.7 project itself. Scenes are built in code (`main.gd`); only `main.tscn` exists as a scene file. Control tunables live in `volya/config/control_config.tres`, gameplay constants in `volya/scripts/tuning.gd`.
+- `slavs/` — the Godot 4.7 project itself. Scenes are built in code (`main.gd`); only `main.tscn` exists as a scene file. Control tunables live in `slavs/config/control_config.tres`, gameplay constants in `slavs/scripts/tuning.gd`.
 
 ## Design pillars (never violate)
 
@@ -53,7 +54,7 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 >
 > The cost of leaving it later than F3: eight enemy types modelled, rigged, rendered and balanced on art that has to be thrown away.
 
-- **Setting: 15th century Eastern Europe** — an escaped Slavic slave fighting slavers on the raid routes of the "harvest of the steppe". **Decided; do not re-open it and do not revert it to the 9th–10th century.** The plan (`VOLYA_plan_hry.md` §1.2, §3.1) still describes the 9th–10th century era because it was written first; the 15th century wins wherever they disagree. Consequences that follow from the era, and are therefore correct, not anachronisms: firearms exist (arquebus, hand cannon), plate and mail both appear, and the raid captains are Crimean/Nogai/Ottoman rather than Varangian.
+- **Setting: 15th century Eastern Europe** — an escaped Slavic slave fighting slavers on the raid routes of the "harvest of the steppe". **Decided; do not re-open it and do not revert it to the 9th–10th century.** The plan (`PLAN_hry.md` §1.2, §3.1) still describes the 9th–10th century era because it was written first; the 15th century wins wherever they disagree. Consequences that follow from the era, and are therefore correct, not anachronisms: firearms exist (arquebus, hand cannon), plate and mail both appear, and the raid captains are Crimean/Nogai/Ottoman rather than Varangian.
 - Enemies are ALWAYS defined by role/faction (slaver, raider, overseer, caravan guard, raid captain…), NEVER by ethnicity or skin color — in code, art direction, names, strings, and store copy.
 - No killable civilians. No religious symbols as targets. Stylized pixel violence, no realistic gore (target rating PEGI 16).
 - The in-game codex cites real history with sources.
@@ -93,7 +94,7 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   "nasaď" with `git pull` + the deploy command. He only pulls; he does not
   merge branches or review PRs. Commits therefore come BEFORE his device
   test - a failed test is fixed forward with the next commit.
-- **Check before every push:** `godot --headless --path volya --import`,
+- **Check before every push:** `godot --headless --path slavs --import`,
   then run the scene with `--quit-after N` and a temporary test appended to
   a copy of the script (see the axe/barrel entry). `tools/cloud_setup.sh`
   installs Godot; `xvfb-run ... --rendering-driver opengl3` gives screenshots.
@@ -117,9 +118,9 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
 
 ## Current status (update this section as you work)
 
-- [x] Plan complete (`VOLYA_plan_hry.md`)
+- [x] Plan complete (`PLAN_hry.md`)
 - [x] Control implementation spec complete
-- [x] F1 control prototype WRITTEN (`volya/`)
+- [x] F1 control prototype WRITTEN (`slavs/`)
 - [x] F0: Godot runs, APK builds and runs on a Samsung SM-S731B. One-click deploy in the editor never appeared despite a provably correct setup (possible engine bug); the working loop is `tools/deploy_android.ps1` — export, install, launch, live logcat.
 - [x] F1: GO. Controls work on device and Pavel is satisfied enough to move on.
   - The formal 10-minute protocol (SPEC PART C §1) was **deliberately waived by Pavel** — he had already played far more than that across tuning sessions. Last measured session: 111 gestures / 103 jumps / 0 unintended.
@@ -143,7 +144,7 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   - The T-pose rules in `_archiv/POSTUP_vlastna_postava.md` are not stylistic. A character holding a weapon, wearing a cape or with a dangling chain fails the auto-rigger two steps later.
   - Meshy free tier cannot download Meshy 6 models; Meshy 5 works. **Licence decision still open**: free tier is CC BY 4.0 and obliges a credit line. Decide before the game is built on it.
   - Hitem3D was tried as an alternative: 1,014,241 vertices and 242 MB against Meshy's 41,963 and 2.6 MB. Reduced and parked, not rigged.
-- [x] First real character is in the game and rendering in colour (2026-08-02). Player draws whatever sequence sits in `volya/art/run_px/`, so swapping characters means re-rendering that folder and nothing else. Grey box remains the fallback.
+- [x] First real character is in the game and rendering in colour (2026-08-02). Player draws whatever sequence sits in `slavs/art/run_px/`, so swapping characters means re-rendering that folder and nothing else. Grey box remains the fallback.
 - [x] **DECIDED 2026-08-03: free movement, no jumping.** Played back to back against the platform version on device — "plošinovka a skoky sú o ničom". The left thumb drives both axes, there is no gravity and no jump. This is now the default in `control_config.tres`; the jump code stays behind the toggle but nothing new should be built on it.
   - Consequences already taken: six of the ten tuning sliders served the jump flick and are no longer built. Jump-through platforms are not built either — without a jump they are unreachable scenery.
   - **Still to do: re-render sprites from a slightly raised camera.** The genre draws characters from slightly above so the floor reads; ours are strict side view. It is one parameter in the render script, but it must be decided **before** eight enemy types are produced, not after.
@@ -190,7 +191,7 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   - **Weapon decision confirmed: our own club, not a downloaded model** — Pavel tried it first per the recommendation below and is continuing with it.
   - **Club reshaped 2026-08-08, then superseded the same day.** The primitive head was a `box`, replaced with a rounder cylinder plus smooth shading (kept — improves every weapon, arquebus included) — but the reshaped primitive still read as "3 valce nalepené na seba" (3 cylinders stuck together) once Pavel saw it rendered. **Switched to a downloaded model**, per the fallback that was always on the table: `ref/objects/Club/club.obj`, `rusher.settings.json` now points `weapon_model` at it instead of `weapon: club`. Its `.mtl` shipped with the original modeller's absolute Windows paths to the texture maps (`C:\Users\petr\Desktop\...`), which do not exist here — fixed by rewriting them to `maps/Club Diff.png` etc., relative to the `.mtl`, so the model's own texture loads instead of falling back to grey.
     - **The imported model came in about 70x too large** (`weapon_model` gets no automatic size normalisation the way our own weapons do — a downloaded mesh's own real-world unit scale is whatever its author used, then the same character-height-based multiplier that correctly scales our metre-authored primitives is applied on top). Fixed by hand in Blender with `S 0.013 Enter` as a numeric starting point, then fitted visually as normal. Nothing to do differently next time except expect it and start with a numeric scale guess rather than trying to drag-resize an object 70x the size of the character on screen.
-    - Hands still do not fully close around the shaft in the Great Sword animations (both hands sit slightly off the mesh). Root cause unknown, likely a Mixamo rig quirk unrelated to VOLYA's placement code. **Pavel: does not block, not revisited unless it reads badly once the club's own colour is decided** (deliberately last, per Pavel).
+    - Hands still do not fully close around the shaft in the Great Sword animations (both hands sit slightly off the mesh). Root cause unknown, likely a Mixamo rig quirk unrelated to Slavs's placement code. **Pavel: does not block, not revisited unless it reads badly once the club's own colour is decided** (deliberately last, per Pavel).
   - **Two real bugs found from watching the rendered animation in-game (2026-08-10), both fixed in `enemy.gd`, not yet redeployed:**
     1. **Attack animation was being cut short every time.** `RUSHER_ATTACK_ANIM_TIME` (0.35s) was a guess made before any art existed. The real `Great Sword Slash` render log says `frame range taken from animation: 1-39` — 39 frames at 30fps = 1.3s, more than triple the guess. The code was switching the sprite away from `attack` a third of a second into a 1.3s swing, every single time — which is exactly what "looks unfinished" was. Fixed with `_attack_anim_duration()`, which reads the real clip length from the rendered `SpriteFrames` instead of trusting the constant; the constant is now only a fallback for when there is no `attack` clip to measure yet.
     2. **A thrower that backs off to its preferred range kept firing with its back turned.** `flip_h` was only ever set from horizontal velocity ("Sprites are rendered facing left... flip when pushed right"), so once a thrower finished retreating (moving right, `flip_h = true`) and came to a stop to fire, nothing ever pointed it at the player again — it just kept the last direction it happened to be moving in. Fixed in `_drive_sprite`'s shared tail: below the walk-speed threshold, face the player directly instead of freezing on the last motion. Affects both kinds, though the rusher rarely showed it (it is almost always moving left, toward the player, so the wrong-facing case barely came up).
@@ -198,11 +199,11 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   - **Melee range: 100 px confirmed working** with the fixed (full-length) attack animation. Was 70 (placeholder) → tried 100-120 → settled at 100. Update `Tuning.RUSHER_MELEE_RANGE`'s constant to 100 next time the file is touched; the live value is already there from the panel.
   - **Debug panel density caps confirmed working (2026-08-10).** `Debug.max_rusher_alive` / `max_thrower_alive`, sliders "kolko bezcov/strelcov naraz (test)". Used to isolate a single rusher and judge its animation/size without a pile of enemies in the way - which is how the two re-renders above got confirmed at all.
   - **Thrower facing-on-stop fix confirmed working.** Retreats, stops, turns to face the player before firing - no more shooting with its back turned.
-  - **New, found once the attack animation played in full: the swing reaches out to the SIDE, past the player, not into them.** Not fixed - left alone per Pavel for now. Likely the `Great Sword Slash` clip's own choreography (a swing that travels sideways) rather than a VOLYA placement bug, but not confirmed either way.
+  - **New, found once the attack animation played in full: the swing reaches out to the SIDE, past the player, not into them.** Not fixed - left alone per Pavel for now. Likely the `Great Sword Slash` clip's own choreography (a swing that travels sideways) rather than a Slavs placement bug, but not confirmed either way.
   - **METHOD addition, earned by missing the above:** test a new animation next to the player character, not alone. Watching the rusher's own render in isolation is how a swing that misses to the side went unnoticed - there was nothing in frame to miss. Add the player (or at least its silhouette/reach) to any future animation-judging step.
-  - **Open, low priority (Pavel: "zatiaľ mi to nevadí"):** the Great Sword animations don't close the hands fully around the shaft — both hands sit slightly off the mesh rather than gripping it. Root cause unknown (Mixamo rig quirk, not a VOLYA placement issue — `inspect_grip.py` only checks hand-to-hand spacing, not hand-to-mesh contact). Not blocking; revisit only if it reads badly once coloured.
+  - **Open, low priority (Pavel: "zatiaľ mi to nevadí"):** the Great Sword animations don't close the hands fully around the shaft — both hands sit slightly off the mesh rather than gripping it. Root cause unknown (Mixamo rig quirk, not a Slavs placement issue — `inspect_grip.py` only checks hand-to-hand spacing, not hand-to-mesh contact). Not blocking; revisit only if it reads badly once coloured.
   - Colour is still the flat default WOOD, deliberately untouched — Pavel wants to do the club's colour last, after the shape is settled.
-- [x] **Music prototype wired in (2026-08-10), not yet tested on device.** `ref/audio/Protomusic.mp3` (Suno) copied to `volya/audio/music/protomusic.mp3`, new autoload `Music` (`music_player.gd`) plays it on loop via a plain `AudioStreamPlayer`. Godot imports MP3 natively and `AudioStreamMP3` has its own `loop` property, so **no format conversion was needed to hear music in the prototype** — deferred, per Pavel, is the OGG Vorbis conversion tooling for final tracks, which needs a Suno subscription for WAV export first (licence requirement, not yet purchased). Debug panel got a `HUDBA` checkbox next to `NESMRTELNOST`, wired to `Music.set_enabled()`. Not yet run on device — check on next deploy.
+- [x] **Music prototype wired in (2026-08-10), not yet tested on device.** `ref/audio/Protomusic.mp3` (Suno) copied to `slavs/audio/music/protomusic.mp3`, new autoload `Music` (`music_player.gd`) plays it on loop via a plain `AudioStreamPlayer`. Godot imports MP3 natively and `AudioStreamMP3` has its own `loop` property, so **no format conversion was needed to hear music in the prototype** — deferred, per Pavel, is the OGG Vorbis conversion tooling for final tracks, which needs a Suno subscription for WAV export first (licence requirement, not yet purchased). Debug panel got a `HUDBA` checkbox next to `NESMRTELNOST`, wired to `Music.set_enabled()`. Not yet run on device — check on next deploy.
   - Open for later: separate level/boss tracks (`play_track()` already takes a path, so this is just adding files + a call site), and the actual OGG conversion step once real WAV masters exist.
 - [~] **KROK 4 (S = 2) — code side DONE 2026-08-12, waiting on Pavel's re-render.**
   Pavel asked for resolution first, layers second — the reverse of §8's order.
@@ -239,7 +240,7 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   without asking Pavel the style question first, in those words.**
   - S = 2 worked technically and Pavel confirmed it looked sharper on device.
     But its unavoidable consequence — LINEAR instead of NEAREST, 64 colours,
-    no outline — **stopped the game being pixel art**, and that is what VOLYA
+    no outline — **stopped the game being pixel art**, and that is what Slavs
     is. Pavel: "ani vlastne neviem preco claude postavu vyhladil".
   - **The mistake was mine and it was not technical.** The consequence was
     written in `DIZAJN_pozadie_a_rozlisenie.md` §4 and I executed it as a step.
@@ -312,7 +313,7 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
     into `player.gd` when that idle is rendered.
 - [x] **Outline colour: from the body, not black. Pavel's call 2026-08-13.**
   `pixelize_sprites.py` and `coarsen_sprites.py` both take `--outline-darken`;
-  **0.55 is what VOLYA uses.** The 1 px ring stays — it is a readability
+  **0.55 is what Slavs uses.** The 1 px ring stays — it is a readability
   device and design pillar 1 needs it — but each ring pixel now takes the
   colour of the body it touches, multiplied by 0.55. Measured: 66–74 distinct
   ring colours per frame instead of one. A red coat gets a dark red edge.
@@ -542,7 +543,7 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   - **The one thing still open, and it is Pavel's:** how many parallax layers. He answers it by looking at four variants on the phone after step 2. Nothing else is open.
   - **Two corrections to what was written earlier here — both were wrong and would have cost a session:**
     - `default_texture_filter` being unset does **not** mean the game renders through LINEAR. All four drawing sites set `TEXTURE_FILTER_NEAREST` themselves (`main.gd:120`, `player.gd:134`, `enemy.gd:143`, `sprite_test.gd:27`). There is no "free Nearest win" to collect — it is already done. What the device actually shows at 1.5× with Nearest is *uneven pixels*, not blur.
-    - The "night scene" question came from reading `ref/env_03.png` (a night graveyard **style reference**) instead of `volya/art/env_03.png` (**what is in the game**: daylight conifer forest, palisade, grass and dirt, river with boulders). Two different files with the same name in two folders. The question is void.
+    - The "night scene" question came from reading `ref/env_03.png` (a night graveyard **style reference**) instead of `slavs/art/env_03.png` (**what is in the game**: daylight conifer forest, palisade, grass and dirt, river with boulders). Two different files with the same name in two folders. The question is void.
   - **Consequence of S = 2 that must not be discovered by accident:** at S = 2 the asset is *minified* (2 asset px per world unit against the device's 1.5), and **NEAREST is the wrong filter when minifying** — it drops every fourth pixel and crawls in motion. Character sprites move to `TEXTURE_FILTER_LINEAR_WITH_MIPMAPS`. This means **strict pixel art stops being achievable at S = 2**, since that needs an integer asset-to-display ratio, which varies by phone. That is a consequence, not a new decision — S = 2 does not reopen because of it.
   - **S = 2 is a much smaller change than it sounds:** `Tuning.PLAYER_SPRITE_SCALE` and `ENEMY_SPRITE_SCALE` already exist and the code already multiplies by them (`player.gd:152`, `enemy.gd:151`), so hurtbox, muzzle height and foot placement all follow by themselves. The change is those two constants to `0.5`, re-render at double height (hero 162 → 324, gunman 162 → 324, rusher 190 → 380), the filter change, and mipmaps + `compress/mode=2` in the imports.
   - **The constraint that will bite if forgotten:** the ground never goes into the parallax layer array. `_build_background()` draws it and is not touched — that is factor 1.0 by construction. The walkable field is numbers (`BG_WALK_TOP` / `BG_WALK_BOTTOM`) mapped onto a picture; scroll that picture at a different rate and the grass slides under the character's feet. Vertical `scroll_scale` stays 1.0 on every layer because the camera travels up and down.
@@ -553,9 +554,9 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   - **The rusher's club is two-handed (1.25 m), decided 2026-08-06.** The Great Sword animations put both hands on a shaft, so a 0.72 m one-handed club left the left hand closing on air. Lengthening the club was chosen over re-downloading three animations. Do not shorten it back without swapping to one-handed animations at the same time.
   - **Open: `Walking` is probably the wrong cycle for a rusher** — a rusher closes and presses, and a walk reads too slow. `Great Sword Run` is the replacement to try.
   - **Gunman: done through Mixamo too.** Three animations in `ref/characters/`: `Rifle Idle`, `Rifle Walk`, `Firing Rifle`. All verified — 53 bones, UV map present, textures embedded. They match the **arquebus**, which is correct for the 15th century and not an anachronism.
-  - Next for both: attach the weapon in Blender (`blender_attach_weapon.py --weapon club` / `--weapon arquebus`), render to `volya/art/`, then tune the offsets **from the render**, never by reasoning.
+  - Next for both: attach the weapon in Blender (`blender_attach_weapon.py --weapon club` / `--weapon arquebus`), render to `slavs/art/`, then tune the offsets **from the render**, never by reasoning.
   - Housekeeping: `ref/objects/*" - Copy".glb` are duplicates (~28 MB) and `ref/characters/Hitem3d-1785662322779.fbx` is 242 MB. Do not let them into git.
-- [ ] **Still missing an `idle` animation for the hero.** Without it the character freezes mid-stride when standing. Render it to `volya/art/idle_px/` and the game picks it up by itself.
+- [ ] **Still missing an `idle` animation for the hero.** Without it the character freezes mid-stride when standing. Render it to `slavs/art/idle_px/` and the game picks it up by itself.
 - [ ] F2: vertical slice
 - [ ] F3: content production
 - [ ] F4: polish + closed testing (12 testers / 14 days — mandatory for new personal Google Play accounts)

@@ -1,5 +1,5 @@
 """
-VOLYA - measure the ground's real bottom edge, per picture column.
+Slavs - measure the ground's real bottom edge, per picture column.
 
 Mirrors measure_walk_top.py exactly, just from the other side: BG_WALK_BOTTOM
 in main.gd is one flat number, the LAST row where the WHOLE width of the
@@ -15,7 +15,7 @@ same way measure_walk_top.py writes its file - a flat JSON array, one integer
 per column, in the picture's own row numbers, so main.gd can offset it by
 background_top() the same way.
 
-    python tools/measure_walk_bottom.py volya/art/env_08.png volya/art/env_08_bottom.json
+    python tools/measure_walk_bottom.py slavs/art/env_08.png slavs/art/env_08_bottom.json
 
 Threshold is alpha == 255 (hard), not alpha > 0, for the same reason
 measure_walk_top.py uses it: env_08's edge alpha is hard 0/255 by
@@ -36,7 +36,7 @@ import sys
 try:
     from PIL import Image
 except ImportError:
-    sys.exit("VOLYA: chyba kniznica. Spusti:  pip install pillow")
+    sys.exit("Slavs: chyba kniznica. Spusti:  pip install pillow")
 
 
 def bottom_edge_per_column(image_path: str) -> list[int]:

@@ -1,5 +1,5 @@
 """
-VOLYA - turn a rendered PNG sequence into pixel-art sprites.
+Slavs - turn a rendered PNG sequence into pixel-art sprites.
 
 This is the second half of the graphics pipeline. Blender produces flat,
 cel-banded frames; this script does the final pixel-art pass:
@@ -18,7 +18,7 @@ of a feeling.
 
 Runs on plain Python - no Blender needed.
 
-    python tools/pixelize_sprites.py --in volya/art/hero_run --out volya/art/hero_run_px
+    python tools/pixelize_sprites.py --in slavs/art/hero_run --out slavs/art/hero_run_px
 
 Requires Pillow and numpy:
 
@@ -34,7 +34,7 @@ try:
     import numpy as np
     from PIL import Image, ImageDraw, ImageFilter
 except ImportError:
-    sys.exit("VOLYA: chyba kniznica. Spusti:  pip install pillow numpy")
+    sys.exit("Slavs: chyba kniznica. Spusti:  pip install pillow numpy")
 
 
 OUTLINE_COLOUR = (26, 20, 18, 255)
@@ -130,7 +130,7 @@ def write_frame_manifest(folder, names):
     path = os.path.join(folder, "frames.gd")
     with open(path, "w", encoding="utf-8", newline="\n") as handle:
         handle.write("\n".join(lines))
-    print("VOLYA: zoznam snimok zapisany do %s" % path)
+    print("Slavs: zoznam snimok zapisany do %s" % path)
 
 
 def build_shared_palette(frames, colours):
@@ -337,7 +337,7 @@ def contact_sheet(frames, path, scale=6, per_row=8, background=(38, 40, 42)):
 # --------------------------------------------------------------------- main --
 
 def main():
-    ap = argparse.ArgumentParser(description="VOLYA pixel-art pass")
+    ap = argparse.ArgumentParser(description="Slavs pixel-art pass")
     ap.add_argument("--in", dest="src", required=True,
                     help="folder with the rendered PNG sequence")
     ap.add_argument("--out", dest="dst", default=None,
@@ -355,7 +355,7 @@ def main():
     ap.add_argument("--outline-darken", type=float, default=0.0,
                     help="0 = flat dark outline (default). Above 0 = take the "
                          "colour of the body under the ring and multiply by "
-                         "this. 0.55 is what VOLYA ships.")
+                         "this. 0.55 is what Slavs ships.")
     ap.add_argument("--no-despeckle", action="store_true")
     ap.add_argument("--sheet", default=None,
                     help="also write a magnified contact sheet here")
@@ -368,9 +368,9 @@ def main():
     dst = cfg.dst or (cfg.src.rstrip("/\\") + "_px")
     files = sorted(glob.glob(os.path.join(cfg.src, "*.png")))
     if not files:
-        sys.exit("VOLYA: v %s nie su ziadne PNG subory." % cfg.src)
+        sys.exit("Slavs: v %s nie su ziadne PNG subory." % cfg.src)
 
-    print("VOLYA: %d snimok z %s" % (len(files), cfg.src))
+    print("Slavs: %d snimok z %s" % (len(files), cfg.src))
 
     prepared = []
     for path in files:
@@ -399,7 +399,7 @@ def main():
     write_frame_manifest(dst, [os.path.basename(p) for p in files])
 
     used = len(finished[0].convert("RGB").getcolors(1 << 24))
-    print("VOLYA: paleta %d farieb, osamelych pixelov odstranenych %d"
+    print("Slavs: paleta %d farieb, osamelych pixelov odstranenych %d"
           % (used, speckles))
 
     rates = measure_crawl(finished)
@@ -407,12 +407,12 @@ def main():
         avg = sum(rates) / len(rates)
         verdict = ("pokojne" if avg < 15 else
                    "mierne chvenie" if avg < 30 else "sprajt vrie")
-        print("VOLYA: pixel crawl priemer %.0f %% (%s)" % (avg, verdict))
-        print("VOLYA: cislo plati len ak si renderoval s --step 1")
+        print("Slavs: pixel crawl priemer %.0f %% (%s)" % (avg, verdict))
+        print("Slavs: cislo plati len ak si renderoval s --step 1")
 
     if cfg.sheet:
         contact_sheet(finished, cfg.sheet)
-        print("VOLYA: prehlad ulozeny do %s" % cfg.sheet)
+        print("Slavs: prehlad ulozeny do %s" % cfg.sheet)
 
     if cfg.gif:
         # One preview per candidate sprite rate. The source is 30 fps mocap, so
@@ -429,11 +429,11 @@ def main():
 
         compare = stem + "_porovnanie.gif"
         write_rate_comparison(finished, compare)
-        print("VOLYA: porovnanie rychlosti v jednom subore: %s" % compare)
-        print("VOLYA: jednotlivo tiez v %s a %s_15fps / _10fps.gif"
+        print("Slavs: porovnanie rychlosti v jednom subore: %s" % compare)
+        print("Slavs: jednotlivo tiez v %s a %s_15fps / _10fps.gif"
               % (cfg.gif, stem))
 
-    print("VOLYA: hotovo - %d sprajtov v %s" % (len(finished), dst))
+    print("Slavs: hotovo - %d sprajtov v %s" % (len(finished), dst))
 
 
 if __name__ == "__main__":

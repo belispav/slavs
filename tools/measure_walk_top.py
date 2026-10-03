@@ -1,5 +1,5 @@
 """
-VOLYA - measure the rock's real top edge, per picture column.
+Slavs - measure the rock's real top edge, per picture column.
 
 BG_WALK_TOP in main.gd is one flat number: the first row where the WHOLE
 width of the picture is solid rock, so the character never straddles a
@@ -14,7 +14,7 @@ array, one integer per column, in the picture's own row numbers - the same
 space BG_WALK_TOP is in - so main.gd can offset it by background_top() the
 same way it already offsets the flat constant.
 
-    python tools/measure_walk_top.py volya/art/env_07.png volya/art/env_07_top.json
+    python tools/measure_walk_top.py slavs/art/env_07.png slavs/art/env_07_top.json
 
 Threshold is alpha == 255 (hard), not alpha > 0, on purpose: env_07's edge
 alpha is soft (~50k partially-transparent pixels, see main.gd's comment on
@@ -28,7 +28,7 @@ import sys
 try:
     from PIL import Image
 except ImportError:
-    sys.exit("VOLYA: chyba kniznica. Spusti:  pip install pillow")
+    sys.exit("Slavs: chyba kniznica. Spusti:  pip install pillow")
 
 
 def top_edge_per_column(image_path: str) -> list[int]:

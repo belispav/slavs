@@ -1,5 +1,5 @@
 """
-VOLYA - draw what the phone will actually show, before building anything.
+Slavs - draw what the phone will actually show, before building anything.
 
 Framing has been argued about in numbers for several rounds and got worse each
 time, because a number does not say whether the water is on screen. This
@@ -20,12 +20,12 @@ import sys
 try:
     from PIL import Image, ImageDraw
 except ImportError:
-    sys.exit("VOLYA: chyba kniznica. Spusti:  pip install pillow")
+    sys.exit("Slavs: chyba kniznica. Spusti:  pip install pillow")
 
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MAIN = os.path.join(ROOT, "volya", "scripts", "main.gd")
-SPRITES = os.path.join(ROOT, "volya", "art", "run_px")
+MAIN = os.path.join(ROOT, "slavs", "scripts", "main.gd")
+SPRITES = os.path.join(ROOT, "slavs", "art", "run_px")
 
 # What the phone shows. The game renders 1280x720 units but stretches to fit,
 # uncovering more at the sides: about 1600x720 of world is visible.
@@ -45,7 +45,7 @@ def constant(name, default=None):
     if found:
         return found.group(1)
     if default is None:
-        sys.exit("VOLYA: v main.gd som nenasiel %s" % name)
+        sys.exit("Slavs: v main.gd som nenasiel %s" % name)
     return default
 
 
@@ -72,7 +72,7 @@ def main():
     walk_bottom = constant("BG_WALK_BOTTOM")
     bg_name = os.path.basename(str(constant("BACKGROUND_PATH")))
 
-    background = Image.open(os.path.join(ROOT, "volya", "art", bg_name)).convert("RGB")
+    background = Image.open(os.path.join(ROOT, "slavs", "art", bg_name)).convert("RGB")
     bg_h = background.height
 
     # Same arithmetic as main.gd.
@@ -135,13 +135,13 @@ def main():
     out = os.path.join(ROOT, "preview_framing.png")
     sheet.save(out)
 
-    print("VOLYA: pozadie %s, %d px vysoke" % (bg_name, bg_h))
-    print("VOLYA: pas pre nohy  svet %.0f .. %.0f  (%.0f jednotiek)"
+    print("Slavs: pozadie %s, %d px vysoke" % (bg_name, bg_h))
+    print("Slavs: pas pre nohy  svet %.0f .. %.0f  (%.0f jednotiek)"
           % (foot_top, foot_bottom, foot_bottom - foot_top))
-    print("VOLYA: kamera stred  %.0f .. %.0f  (posun %.0f)"
+    print("Slavs: kamera stred  %.0f .. %.0f  (posun %.0f)"
           % (cam_min, cam_max, cam_max - cam_min))
-    print("VOLYA: postava vysoka %d px" % body_h)
-    print("VOLYA: ulozene %s" % out)
+    print("Slavs: postava vysoka %d px" % body_h)
+    print("Slavs: ulozene %s" % out)
 
 
 if __name__ == "__main__":

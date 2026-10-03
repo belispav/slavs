@@ -1,4 +1,4 @@
-# VOLYA - render every animation of one enemy, with that enemy's saved settings.
+# Slavs - render every animation of one enemy, with that enemy's saved settings.
 #
 #   powershell -ExecutionPolicy Bypass -File tools\render_enemy.ps1 -Name gunman `
 #       -Anims "idle=Enemy_gunman_01 Rifle Idle:19-157, walk=Enemy_gunman_01 Rifle Walk, fire=Enemy_gunman_01 Firing Rifle"
@@ -60,7 +60,7 @@ $wmodel    = if ($set.weapon_model)     { [string]$set.weapon_model }     else {
 $weapon    = if ($set.weapon)           { [string]$set.weapon }           else { "" }
 
 Write-Host ""
-Write-Host "=== VOLYA - $Name ===" -ForegroundColor Cyan
+Write-Host "=== Slavs - $Name ===" -ForegroundColor Cyan
 Write-Host "kamera $angle stupnov, zdvih $elevation"
 if ($wmodel)     { Write-Host "zbran  $wmodel" }
 elseif ($weapon) { Write-Host "zbran  $weapon (nasa)" }
@@ -121,8 +121,8 @@ foreach ($entry in $entries) {
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  zlyhalo -> render\$spriteName`_log.txt" -ForegroundColor Red
     } else {
-        $count = @(Get-ChildItem "volya\art\${spriteName}_px" -Filter *.png -ErrorAction SilentlyContinue).Count
-        Write-Host "  $count sprajtov -> volya\art\${spriteName}_px" -ForegroundColor Green
+        $count = @(Get-ChildItem "slavs\art\${spriteName}_px" -Filter *.png -ErrorAction SilentlyContinue).Count
+        Write-Host "  $count sprajtov -> slavs\art\${spriteName}_px" -ForegroundColor Green
         $made++
     }
 }

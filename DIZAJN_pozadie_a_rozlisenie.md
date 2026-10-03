@@ -13,7 +13,7 @@ session. **Toto je zadanie na vykonanie, nie na ďalšie rozhodovanie.**
   S = 1.** S = 2 fungovalo technicky — postavy boli ostrejšie a Pavel to na
   telefóne potvrdil — ale jeho nevyhnutný dôsledok (§4: LINEAR namiesto
   NEAREST, 64 farieb, bez obrysu) **prestal robiť hru pixel artom**, a to je
-  to, čo VOLYA je.
+  to, čo Slavs je.
   - **Čo sa naozaj pokazilo, a nebolo to S = 2:** dôsledok bol v tomto
     dokumente napísaný, ale Pavlovi nikdy nebol povedaný tou vetou —
     „týmto hra prestáva byť pixel art". Vykonalo sa to ako technický krok.
@@ -48,7 +48,7 @@ session. **Toto je zadanie na vykonanie, nie na ďalšie rozhodovanie.**
 |---|---|
 | herné rozlíšenie (`project.godot`) | 1280 × 720, stretch `canvas_items`, aspect `expand` |
 | telefón (SM-S731B) | 2340 × 1080 → obraz sa naťahuje **1,5×** |
-| `volya/art/env_03.png` | 2816 × 1536, kreslí sa 1:1, tiluje sa vodorovne |
+| `slavs/art/env_03.png` | 2816 × 1536, kreslí sa 1:1, tiluje sa vodorovne |
 | farby v `env_03.png` | **46 885** |
 | veľkosť črty v `env_03.png` | ~2–3 px (pri bloku 2 sa líši 7,6 % pixelov — **napodobenina pixel artu, nie pixel art**) |
 | hrdina `run_px` | 122 × 162 px, **17 farieb**, ostrosť na úrovni 1 px |
@@ -71,10 +71,10 @@ nastavený a LINEAR všetko rozmazáva. **To je nepravda a bolo by to vyšlo
 najavo až pri práci.** Všetky štyri miesta, kde sa niečo kreslí, si filter
 nastavujú samy:
 
-- `volya/scripts/main.gd:120` (pozadie)
-- `volya/scripts/player.gd:134`
-- `volya/scripts/enemy.gd:143`
-- `volya/scripts/sprite_test.gd:27`
+- `slavs/scripts/main.gd:120` (pozadie)
+- `slavs/scripts/player.gd:134`
+- `slavs/scripts/enemy.gd:143`
+- `slavs/scripts/sprite_test.gd:27`
 
 Všetky na `TEXTURE_FILTER_NEAREST`. Projektový default sa teda neuplatní a
 **„zapnúť Nearest" nie je čo — je to už spravené.** Čo sa na telefóne
@@ -110,7 +110,7 @@ ale ako riešenie je uzavretý. Neskúšať znova, je to zmerané.
 
 Otázka „nočná scéna ako hlavné prostredie?" vznikla tak, že som sa pozrel na
 `ref/env_03.png` (nočný cintorín — **štýlová referencia**) a nie na
-`volya/art/env_03.png` (**to, čo je v hre**). Sú to dva rôzne súbory s
+`slavs/art/env_03.png` (**to, čo je v hre**). Sú to dva rôzne súbory s
 rovnakým menom v dvoch priečinkoch.
 
 To, čo je v hre, je **denná scéna**: ihličnatý les, drevená palisáda, pás
@@ -240,7 +240,7 @@ za KROK 1.
 Cieľ: po tomto kroku hra vyzerá **presne rovnako** ako predtým. Mení sa
 inštalatérstvo, nie obraz. To je kontrolný bod.
 
-1. `volya/scripts/main.gd`: **`_build_background()` sa nesmie dotknúť.** Zem
+1. `slavs/scripts/main.gd`: **`_build_background()` sa nesmie dotknúť.** Zem
    ostáva presne ten `Sprite2D`, čo je tam dnes (riadky 111–127), faktor 1,0
    z definície, lebo cez `Parallax2D` vôbec neprejde.
 2. Pridať konštantu s vrstvami ako **údaj**:
@@ -285,7 +285,7 @@ const BG_LAYERS := [
 Poradie sa zmenilo (viď hore) — toto už nie je najbližší krok, vracia sa až
 po hornom páse, a len s obrázkom, ktorý spĺňa nasledovné.
 
-**Prvý pokus, `volya/art/env_05_fg.png`, je zahodený 2026-08-15 — nie
+**Prvý pokus, `slavs/art/env_05_fg.png`, je zahodený 2026-08-15 — nie
 nápad, konkrétny súbor.** Zostáva na disku, mimo `BG_LAYERS` a mimo debug
 panelu. Namerané:
 
@@ -338,7 +338,7 @@ Zásah je menší, než sa zdá: `Tuning.PLAYER_SPRITE_SCALE` a
 násobí `drawn` scale-om, `enemy.gd:151` tiež. Hitbox, výška hlavne aj
 posadenie nôh sa teda prepočítajú samy.
 
-1. `volya/scripts/tuning.gd`: `PLAYER_SPRITE_SCALE` a `ENEMY_SPRITE_SCALE`
+1. `slavs/scripts/tuning.gd`: `PLAYER_SPRITE_SCALE` a `ENEMY_SPRITE_SCALE`
    z `1.0` na `0.5`.
 2. Prerenderovať postavy s dvojnásobnou výškou:
    - hrdina: `-Height 162` → **324**

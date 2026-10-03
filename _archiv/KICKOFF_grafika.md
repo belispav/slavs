@@ -5,8 +5,8 @@ Otvor nový Cowork v tomto priečinku a skopíruj mu celý prompt nižšie.
 ---
 
 ```
-Pracuješ na hre VOLYA v tomto priečinku. Najprv si prečítaj CLAUDE.md, potom
-DIZAJN_core_loop.md a GRAFIKA_test_pipeline.md. Plán VOLYA_plan_hry.md čítaj
+Pracuješ na hre Slavs v tomto priečinku. Najprv si prečítaj CLAUDE.md, potom
+DIZAJN_core_loop.md a GRAFIKA_test_pipeline.md. Plán PLAN_hry.md čítaj
 len ak potrebuješ kontext — jeho kapitoly 3.2 a 3.5 už neplatia, nahrádza ich
 DIZAJN_core_loop.md. Kapitola 2 (citlivá téma) platí absolútne a bez výnimky.
 

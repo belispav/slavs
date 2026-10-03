@@ -1,4 +1,4 @@
-# VOLYA — Control System: Specification + Implementation Addendum
+# Slavs — Control System: Specification + Implementation Addendum
 
 Single source of truth for the two-thumb "Zero Thumb-Lifting" control scheme. Part A is the original design spec (verbatim). Part B is the technical addendum for implementation in Godot 4. Part C defines acceptance criteria for the F1 GO/NO-GO milestone.
 

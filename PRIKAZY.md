@@ -1,8 +1,32 @@
-# VOLYA — príkazy, ktoré si nikto nepamätá
+# Slavs — príkazy, ktoré si nikto nepamätá
 
 Ťahák. Všetko sa spúšťa z PowerShellu **z priečinka `D:\2026\Slavs figh back`**.
 
 Ak si nie si istý, kde si, napíš `cd "D:\2026\Slavs figh back"`.
+
+---
+
+## PO PREMENOVANÍ volya → slavs (2026-10-03) — raz, na PC
+
+`git pull` presunie všetky súbory z gitu do `slavs\`. Súbory, ktoré v gite
+nie sú, ostanú v starom `volya\` – hlavne **`export_presets.cfg`**, bez
+ktorého sa APK nezostaví. Raz spusti:
+
+```
+cd "D:\2026\Slavs figh back"
+git pull
+Move-Item volya\export_presets.cfg slavs\
+Get-ChildItem volya\*.keystore | Move-Item -Destination slavs\
+Remove-Item -Recurse -Force volya\.godot, volya\build
+Get-ChildItem -Recurse -Force volya
+```
+
+Posledný príkaz vypíše, čo vo `volya\` ešte zostalo. Ak nič – zmaž ho
+(`Remove-Item volya`). Ak niečo áno, pošli mi výpis skôr, než to zmažeš.
+
+Potom v Godot editore (ak ho používaš) importuj `slavs\project.godot` –
+starý záznam `volya` v zozname projektov odstráň. ID balíka v telefóne
+(`sk.pavel.volya`) ostáva rovnaké, hra sa nainštaluje cez tú starú.
 
 ---
 
@@ -72,7 +96,7 @@ Hrubšiu sadu vyrába `tools/coarsen_sprites.py` z už vyrenderovaných snímok 
 netreba na to Blender:
 
 ```
-python tools\coarsen_sprites.py --in volya\art\run_px --out volya\art\run_px_b --height 108
+python tools\coarsen_sprites.py --in slavs\art\run_px --out slavs\art\run_px_b --height 108
 ```
 
 Je to **len na výber**, nie na vydanie: taká snímka prešla pixelovým prechodom
@@ -313,7 +337,7 @@ do telefónu. Potom ich z neho stiahni:
 powershell -ExecutionPolicy Bypass -File tools\get_tuning.ps1
 ```
 
-Pošli mi ten výpis. Hodnoty patria do `volya\config\control_config.tres`, ale
+Pošli mi ten výpis. Hodnoty patria do `slavs\config\control_config.tres`, ale
 **iba namerané na zariadení** — nikdy nie odhadnuté.
 
 ---
@@ -360,7 +384,7 @@ znamená, že sa nejaký skript neskompiloval — vtedy prestane fungovať celý
 nie len chybný riadok. Skontroluj:
 
 ```
-python tools/check_gdscript.py "volya/scripts/*.gd"
+python tools/check_gdscript.py "slavs/scripts/*.gd"
 ```
 
 **Git sa sťažuje na zámok** (`Unable to create ... .lock`). Toto je najčastejší
@@ -389,7 +413,7 @@ nedá prechádzať. Rieši to zoznam snímok `frames.gd`, ktorý zapisuje render
 Ak chýba, vyrob ho:
 
 ```
-python -c "import sys,os,glob; sys.path.insert(0,'tools'); from pixelize_sprites import write_frame_manifest; write_frame_manifest('volya/art/run_px',[os.path.basename(p) for p in sorted(glob.glob('volya/art/run_px/*.png'))])"
+python -c "import sys,os,glob; sys.path.insert(0,'tools'); from pixelize_sprites import write_frame_manifest; write_frame_manifest('slavs/art/run_px',[os.path.basename(p) for p in sorted(glob.glob('slavs/art/run_px/*.png'))])"
 ```
 
 **Vidí telefón vôbec počítač?**

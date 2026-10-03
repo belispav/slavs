@@ -1,4 +1,4 @@
-﻿# VOLYA - pixel-art pipeline test, one command.
+﻿# Slavs - pixel-art pipeline test, one command.
 #
 #   1. renders the .blend with flat cel-banded materials and no anti-aliasing
 #   2. runs the pixel-art pass (palette, despeckle, outline)
@@ -78,7 +78,7 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
 Write-Host ""
-Write-Host "=== VOLYA pixel-art test ===" -ForegroundColor Cyan
+Write-Host "=== Slavs pixel-art test ===" -ForegroundColor Cyan
 
 # ---------------------------------------------------------------- Blender ----
 
@@ -98,10 +98,10 @@ if (-not $blender) {
 }
 if (-not $blender) {
     Write-Host "Blender sa nenasiel. Najdi blender.exe a spusti skript znova s:" -ForegroundColor Red
-    Write-Host '  $env:VOLYA_BLENDER = "C:\cesta\k\blender.exe"' -ForegroundColor Red
+    Write-Host '  $env:SLAVS_BLENDER = "C:\cesta\k\blender.exe"' -ForegroundColor Red
     exit 1
 }
-if ($env:VOLYA_BLENDER) { $blender = $env:VOLYA_BLENDER }
+if ($env:SLAVS_BLENDER) { $blender = $env:SLAVS_BLENDER }
 Write-Host "Blender:  $blender"
 
 if ($Blend -ne "") { $Model = $Blend }
@@ -117,7 +117,7 @@ $isBlend = $Model.ToLower().EndsWith(".blend")
 # preview animations live outside it, or Godot imports them and they end up in
 # the APK - several megabytes of intermediate files shipped to players.
 $rawDir = "render\${Name}_raw"
-$pxDir  = "volya\art\${Name}_px"
+$pxDir  = "slavs\art\${Name}_px"
 $sheet  = "render\${Name}_sheet.png"
 $gif    = "render\${Name}_anim.gif"
 
@@ -129,12 +129,12 @@ if (Test-Path $rawDir) { Remove-Item $rawDir -Recurse -Force }
 # lies about what changed.
 if (Test-Path $pxDir) { Remove-Item $pxDir -Recurse -Force }
 
-# Earlier versions of this script wrote the intermediates into volya\art.
-foreach ($stale in @("volya\art\${Name}_raw", "volya\art\${Name}_sheet.png",
-                     "volya\art\${Name}_anim.gif",
-                     "volya\art\${Name}_anim_10fps.gif",
-                     "volya\art\${Name}_anim_15fps.gif",
-                     "volya\art\${Name}_anim_porovnanie.gif")) {
+# Earlier versions of this script wrote the intermediates into slavs\art.
+foreach ($stale in @("slavs\art\${Name}_raw", "slavs\art\${Name}_sheet.png",
+                     "slavs\art\${Name}_anim.gif",
+                     "slavs\art\${Name}_anim_10fps.gif",
+                     "slavs\art\${Name}_anim_15fps.gif",
+                     "slavs\art\${Name}_anim_porovnanie.gif")) {
     if (Test-Path $stale) {
         Remove-Item $stale -Recurse -Force
         Write-Host "      upratane: $stale" -ForegroundColor DarkGray

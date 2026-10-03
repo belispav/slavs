@@ -1,4 +1,4 @@
-# VOLYA - diagnostika one-click deploy.
+# Slavs - diagnostika one-click deploy.
 # Spusti a posli Claudovi cely vypis.
 #
 #   powershell -ExecutionPolicy Bypass -File "D:\2026\Slavs figh back\tools\diag_android.ps1"

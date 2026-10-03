@@ -1,4 +1,4 @@
-# VOLYA - render the same frame in several colour schemes, to pick one by eye.
+# Slavs - render the same frame in several colour schemes, to pick one by eye.
 #
 #   powershell -ExecutionPolicy Bypass -File tools\colour_test.ps1 `
 #       -Model "ref\characters\Enemy_gunman_01 Rifle Idle.fbx" `
@@ -56,7 +56,7 @@ $sets = $Variants.Split(";") | ForEach-Object { $_.Trim() } | Where-Object { $_ 
 # The labels go to a file so the grid can print what each variant actually was.
 $sets | Set-Content -Encoding UTF8 "render\$Name`_variants.txt"
 Write-Host ""
-Write-Host "=== VOLYA - skuska farieb: $($sets.Count) variantov ===" -ForegroundColor Cyan
+Write-Host "=== Slavs - skuska farieb: $($sets.Count) variantov ===" -ForegroundColor Cyan
 
 for ($i = 0; $i -lt $sets.Count; $i++) {
     $tag = "{0}_v{1:d2}" -f $Name, $i
@@ -91,7 +91,7 @@ for ($i = 0; $i -lt $sets.Count; $i++) {
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  zlyhalo, pozri render\$tag`_log.txt" -ForegroundColor Red
     } else {
-        Write-Host "  ok -> volya\art\${tag}_px" -ForegroundColor DarkGray
+        Write-Host "  ok -> slavs\art\${tag}_px" -ForegroundColor DarkGray
     }
 }
 
@@ -111,4 +111,4 @@ if ($python) {
 }
 
 Write-Host ""
-Write-Host "Hotovo. Sprajty su vo volya\art\${Name}_vNN_px" -ForegroundColor Green
+Write-Host "Hotovo. Sprajty su vo slavs\art\${Name}_vNN_px" -ForegroundColor Green

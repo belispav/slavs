@@ -1,4 +1,4 @@
-# VOLYA — Kickoff: čím a ako pokračovať
+# Slavs — Kickoff: čím a ako pokračovať
 
 ## Odporúčaný nástroj a model
 
@@ -12,8 +12,8 @@
 ## Prompt pre prvú session (skopíruj celý)
 
 ```
-Pracuješ na hre VOLYA v tomto foldri. Najprv si prečítaj CLAUDE.md,
-potom VOLYA_plan_hry.md (sekcie 3–5) a celý SPEC_ovladanie_implementacia.md.
+Pracuješ na hre Slavs v tomto foldri. Najprv si prečítaj CLAUDE.md,
+potom PLAN_hry.md (sekcie 3–5) a celý SPEC_ovladanie_implementacia.md.
 
 Aktuálna fáza: F0 → F1.
 
@@ -44,4 +44,4 @@ Cieľom F1 sú akceptačné kritériá v SPEC PART C — je to Go/No-Go míľnik
 
 ## Čo je hotové (nič z toho netreba robiť znova)
 
-Plán + business case (`VOLYA_plan_hry.md`), implementačná špecifikácia ovládania vrátane vzorcov, tunables a akceptačných kritérií (`SPEC_ovladanie_implementacia.md`), pamäť projektu pre AI (`CLAUDE.md`). Sekciu "Current status" v CLAUDE.md priebežne aktualizuje AI, s ktorou pracuješ.
+Plán + business case (`PLAN_hry.md`), implementačná špecifikácia ovládania vrátane vzorcov, tunables a akceptačných kritérií (`SPEC_ovladanie_implementacia.md`), pamäť projektu pre AI (`CLAUDE.md`). Sekciu "Current status" v CLAUDE.md priebežne aktualizuje AI, s ktorou pracuješ.

@@ -1,5 +1,5 @@
 """
-VOLYA style test A: characters drawn by code as silhouettes.
+Slavs style test A: characters drawn by code as silhouettes.
 
 Every figure is built from simple parts (capsules for limbs, ellipses for
 head/torso, polygons for gear) in one fill colour, which is exactly how the
@@ -12,7 +12,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 SS = 6  # supersampling factor
-U = "/mnt/user-data/uploads/Slavs figh back/volya/art"
+U = "/mnt/user-data/uploads/Slavs figh back/slavs/art"
 OUT = "/tmp/claude-0/-home-claude/33458727-12c3-53dc-8685-e87064f2450e/scratchpad/sil/"
 VIEW_W, VIEW_H = 1600, 720
 CROP_Y = 120  # env_08 row shown at the top of the frame

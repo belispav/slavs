@@ -1,7 +1,7 @@
-# VOLYA — jadro hry (revízia dizajnu, 31. 7. 2026)
+# Slavs — jadro hry (revízia dizajnu, 31. 7. 2026)
 
 Tento dokument nahrádza kapitolu 3.2 a 3.5 pôvodného plánu v tom, čo sa týka
-**štruktúry hry a dôvodu opakovať levely**. Zvyšok `VOLYA_plan_hry.md` platí,
+**štruktúry hry a dôvodu opakovať levely**. Zvyšok `PLAN_hry.md` platí,
 vrátane **kapitoly 2 (citlivá téma), ktorá je nemenná za každých okolností**.
 
 Vznikol z rozhovoru po prvom hrateľnom prototype hôrd, keď bolo potvrdené, že

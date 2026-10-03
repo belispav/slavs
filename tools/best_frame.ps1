@@ -1,4 +1,4 @@
-# VOLYA - work out which frame of an animation shows the weapon best, and
+# Slavs - work out which frame of an animation shows the weapon best, and
 # remember it.
 #
 #   powershell -ExecutionPolicy Bypass -File tools\best_frame.ps1 `
@@ -34,7 +34,7 @@ if ($Name -eq "") {
 }
 
 Write-Host ""
-Write-Host "=== VOLYA - hladam snimku, kde je zbran najlepsie vidiet ===" -ForegroundColor Cyan
+Write-Host "=== Slavs - hladam snimku, kde je zbran najlepsie vidiet ===" -ForegroundColor Cyan
 
 $call = @("-ExecutionPolicy", "Bypass", "-File", "tools\render_pixel_test.ps1",
           "-Model", $Model, "-Name", $Name, "-Height", $Height, "-Step", $Step,

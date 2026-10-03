@@ -1,5 +1,5 @@
 """
-VOLYA - pull the colour texture out of a GLB.
+Slavs - pull the colour texture out of a GLB.
 
 Meshy hands back a rigless GLB that carries the texture, and Mixamo hands back
 a rigged FBX that does not. Both are the same mesh with the same UV layout, so
@@ -68,7 +68,7 @@ def main():
 
     images = gltf.get("images", [])
     if not images:
-        sys.exit("VOLYA: GLB neobsahuje ziadnu texturu.")
+        sys.exit("Slavs: GLB neobsahuje ziadnu texturu.")
 
     chosen = None
     for index, image in enumerate(images):
@@ -77,12 +77,12 @@ def main():
         if chosen is None and any(w in name for w in WANTED):
             chosen = (index, image)
             mark = ">"
-        print("VOLYA: %s obrazok %d  %-22s %s"
+        print("Slavs: %s obrazok %d  %-22s %s"
               % (mark, index, image.get("name") or "?",
                  image.get("mimeType") or ""))
     if chosen is None:
         chosen = (0, images[0])
-        print("VOLYA: nazov farebnej mapy som nerozpoznal, beriem prvu")
+        print("Slavs: nazov farebnej mapy som nerozpoznal, beriem prvu")
 
     index, image = chosen
     payload = image_bytes(gltf, binary, image)
@@ -90,8 +90,8 @@ def main():
     out = os.path.splitext(path)[0] + "_basecolor" + extension
     with open(out, "wb") as handle:
         handle.write(payload)
-    print("VOLYA: ulozene %s (%.1f MB)" % (out, len(payload) / 1e6))
-    print("VOLYA: pouzi to pri renderi:  --texture \"%s\"" % out)
+    print("Slavs: ulozene %s (%.1f MB)" % (out, len(payload) / 1e6))
+    print("Slavs: pouzi to pri renderi:  --texture \"%s\"" % out)
 
 
 if __name__ == "__main__":

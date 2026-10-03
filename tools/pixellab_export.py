@@ -1,4 +1,4 @@
-"""Turn PixelLab frames into a VOLYA art folder (2026-10-03).
+"""Turn PixelLab frames into a Slavs art folder (2026-10-03).
 
 Downloads (or reads) the frames of one PixelLab clip, places each on the
 shared square canvas at a fixed offset so the feet sit on the same row as
@@ -9,7 +9,7 @@ runtime - the manifest can).
 
 Example (the hero's axe throw):
     python tools/pixellab_export.py --url-base <.../animations/<id>/east> \
-        --count 8 --out volya/art/hero_pl_axe_throw --name throw \
+        --count 8 --out slavs/art/hero_pl_axe_throw --name throw \
         --offset 18 4 --order 1,2,4,5,6,7,7 \
         --erase 7:0,33,21,47 --note "Throw: release on the last frame."
 
@@ -65,7 +65,7 @@ def main() -> None:
         erase.setdefault(int(k), []).append(tuple(int(v) for v in box.split(",")))
 
     os.makedirs(a.out, exist_ok=True)
-    res = "res://" + a.out.replace("\\", "/").split("volya/", 1)[1]
+    res = "res://" + a.out.replace("\\", "/").split("slavs/", 1)[1]
     names = []
     for i, src in enumerate(srcs):
         im = load(src)

@@ -1,5 +1,5 @@
 """
-VOLYA - prepare a character sheet image for an image-to-3D tool.
+Slavs - prepare a character sheet image for an image-to-3D tool.
 
 Does three things, in this order:
 
@@ -27,7 +27,7 @@ try:
     import numpy as np
     from PIL import Image
 except ImportError:
-    sys.exit("VOLYA: chyba kniznica. Spusti:  pip install pillow numpy")
+    sys.exit("Slavs: chyba kniznica. Spusti:  pip install pillow numpy")
 
 
 FIGURE_THRESHOLD = 45
@@ -94,11 +94,11 @@ def prepare(path, out_path, size, margin_fraction):
 
     mask = np.abs(pixels - background).sum(axis=2) > FIGURE_THRESHOLD
     if not mask.any():
-        sys.exit("VOLYA: nenasiel som postavu. Je pozadie jednofarebne?")
+        sys.exit("Slavs: nenasiel som postavu. Je pozadie jednofarebne?")
 
     figure, removed = largest_blob(mask)
     if removed > 0:
-        print("VOLYA: odstranene mimo postavy: %d px (vodoznak alebo smeti)"
+        print("Slavs: odstranene mimo postavy: %d px (vodoznak alebo smeti)"
               % removed)
 
     # Paint over everything that is not the figure.
@@ -110,7 +110,7 @@ def prepare(path, out_path, size, margin_fraction):
     top, bottom, left, right = int(ys.min()), int(ys.max()), \
         int(xs.min()), int(xs.max())
     fig_w, fig_h = right - left + 1, bottom - top + 1
-    print("VOLYA: postava %d x %d px v obrazku %d x %d"
+    print("Slavs: postava %d x %d px v obrazku %d x %d"
           % (fig_w, fig_h, image.width, image.height))
 
     side = int(max(fig_w, fig_h) * (1.0 + 2.0 * margin_fraction))
@@ -128,15 +128,15 @@ def prepare(path, out_path, size, margin_fraction):
     check = np.asarray(canvas).astype(int)
     cmask = np.abs(check - background).sum(axis=2) > FIGURE_THRESHOLD
     cys, cxs = np.where(cmask)
-    print("VOLYA: hotovo %s (%d x %d)" % (out_path, size, size))
-    print("VOLYA: volne vlavo %d px, vpravo %d px, hore %d px, dole %d px"
+    print("Slavs: hotovo %s (%d x %d)" % (out_path, size, size))
+    print("Slavs: volne vlavo %d px, vpravo %d px, hore %d px, dole %d px"
           % (cxs.min(), size - cxs.max(), cys.min(), size - cys.max()))
-    print("VOLYA: postava zabera %.0f %% vysky"
+    print("Slavs: postava zabera %.0f %% vysky"
           % (100.0 * (cys.max() - cys.min()) / size))
 
 
 def main():
-    ap = argparse.ArgumentParser(description="VOLYA character image prep")
+    ap = argparse.ArgumentParser(description="Slavs character image prep")
     ap.add_argument("image")
     ap.add_argument("--out", default=None)
     ap.add_argument("--size", type=int, default=1536)

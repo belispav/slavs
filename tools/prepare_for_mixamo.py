@@ -1,5 +1,5 @@
 """
-VOLYA - make a generated mesh acceptable to Mixamo's auto-rigger.
+Slavs - make a generated mesh acceptable to Mixamo's auto-rigger.
 
 Image-to-3D tools hand back whatever density their reconstruction produced,
 which can be a million vertices for a single character. Mixamo refuses or
@@ -56,7 +56,7 @@ def parse_args():
         if key in cfg:
             cfg[key] = int(float(value)) if isinstance(cfg[key], int) else value
         else:
-            print("VOLYA: neznamy argument --%s (ignorujem)" % key)
+            print("Slavs: neznamy argument --%s (ignorujem)" % key)
         i += 2
     return cfg
 
@@ -114,29 +114,29 @@ def stand_upright(body, forced):
 
     for axis, name in enumerate("XYZ"):
         share, span = scores[axis]
-        print("VOLYA: os %s  dlzka %.2f  v krajnych patinach %.0f %% vrcholov"
+        print("Slavs: os %s  dlzka %.2f  v krajnych patinach %.0f %% vrcholov"
               % (name, span, share * 100))
 
     if forced in ("x", "y", "z"):
         up = "xyz".index(forced)
-        print("VOLYA: os nahor zadana rucne: %s" % forced.upper())
+        print("Slavs: os nahor zadana rucne: %s" % forced.upper())
     else:
         # Only axes of a plausible length compete; a thin axis is the body's
         # depth and can never be its height.
         longest = max(s[1] for s in scores.values())
         candidates = [a for a in range(3) if scores[a][1] > longest * 0.6]
         up = max(candidates, key=lambda a: scores[a][0])
-        print("VOLYA: os nahor urcena ako %s" % "XYZ"[up])
+        print("Slavs: os nahor urcena ako %s" % "XYZ"[up])
 
     if up == 2:
-        print("VOLYA: postava uz stoji")
+        print("Slavs: postava uz stoji")
         return
 
     body.rotation_euler = (math.radians(90.0), 0.0, 0.0) if up == 1 \
         else (0.0, math.radians(-90.0), 0.0)
     bpy.context.view_layer.objects.active = body
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-    print("VOLYA: postava otocena do stoja")
+    print("Slavs: postava otocena do stoja")
 
 
 def rescue_textures(out_dir):
@@ -162,13 +162,13 @@ def rescue_textures(out_dir):
             image.save()
             image.filepath = path
             saved += 1
-            print("VOLYA: textura ulozena %s (%dx%d)"
+            print("Slavs: textura ulozena %s (%dx%d)"
                   % (name, image.size[0], image.size[1]))
         except Exception as exc:
-            print("VOLYA: texturu %s sa nepodarilo ulozit (%s)"
+            print("Slavs: texturu %s sa nepodarilo ulozit (%s)"
                   % (image.name, exc))
     if saved == 0:
-        print("VOLYA: POZOR - model nema ziadnu texturu, bude sedy")
+        print("Slavs: POZOR - model nema ziadnu texturu, bude sedy")
     return saved
 
 
@@ -184,7 +184,7 @@ def triangle_count(objects):
 def main():
     cfg = parse_args()
     if not cfg["in"]:
-        sys.exit("VOLYA: chyba --in")
+        sys.exit("Slavs: chyba --in")
     source = os.path.abspath(cfg["in"])
     target = os.path.abspath(cfg["out"] or
                              os.path.splitext(source)[0] + "_mixamo.fbx")
@@ -200,11 +200,11 @@ def main():
             removed += 1
     meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
     if not meshes:
-        sys.exit("VOLYA: v subore nie je ziadna siet.")
-    print("VOLYA: odstranene ne-mesh objekty: %d" % removed)
+        sys.exit("Slavs: v subore nie je ziadna siet.")
+    print("Slavs: odstranene ne-mesh objekty: %d" % removed)
 
     before = triangle_count(meshes)
-    print("VOLYA: na vstupe %d sieti, %s trojuholnikov"
+    print("Slavs: na vstupe %d sieti, %s trojuholnikov"
           % (len(meshes), f"{before:,}".replace(",", " ")))
 
     # 2. one body, one mesh
@@ -214,27 +214,27 @@ def main():
     bpy.context.view_layer.objects.active = meshes[0]
     if len(meshes) > 1:
         bpy.ops.object.join()
-        print("VOLYA: siete spojene do jednej")
+        print("Slavs: siete spojene do jednej")
     body = bpy.context.view_layer.objects.active
 
     # 3. reduce, but only downwards - Decimate cannot add detail
     goal = int(cfg["tris"])
     if goal <= 0:
-        print("VOLYA: redukcia vypnuta (--tris 0)")
+        print("Slavs: redukcia vypnuta (--tris 0)")
     elif before > goal:
         if body.data.uv_layers:
-            print("VOLYA: POZOR - model ma UV mapu a redukcia ju rozhadze. "
+            print("Slavs: POZOR - model ma UV mapu a redukcia ju rozhadze. "
                   "Ak nemusis, pouzi --tris 0.")
         goal = max(1000, goal)
-        modifier = body.modifiers.new("VOLYA_Decimate", "DECIMATE")
+        modifier = body.modifiers.new("SLAVS_Decimate", "DECIMATE")
         modifier.decimate_type = "COLLAPSE"
         modifier.ratio = goal / float(before)
         bpy.ops.object.modifier_apply(modifier=modifier.name)
         after = triangle_count([body])
-        print("VOLYA: zredukovane na %s trojuholnikov (pomer %.4f)"
+        print("Slavs: zredukovane na %s trojuholnikov (pomer %.4f)"
               % (f"{after:,}".replace(",", " "), modifier.ratio))
     else:
-        print("VOLYA: redukcia netreba, model je uz pod cielom")
+        print("Slavs: redukcia netreba, model je uz pod cielom")
 
     # 4. standing up, centred on the origin, feet on zero
     bpy.ops.object.select_all(action="DESELECT")
@@ -250,19 +250,19 @@ def main():
     bpy.context.view_layer.update()
 
     size = body.dimensions
-    print("VOLYA: rozmery sirka %.2f  hlbka %.2f  vyska %.2f"
+    print("Slavs: rozmery sirka %.2f  hlbka %.2f  vyska %.2f"
           % (size.x, size.y, size.z))
     if size.z < max(size.x, size.y) * 0.6:
-        print("VOLYA: POZOR - postava je stale nizsia nez sirsia, mozno lezi.")
-        print("VOLYA: skus to prebit rucne: --up x  alebo  --up y")
+        print("Slavs: POZOR - postava je stale nizsia nez sirsia, mozno lezi.")
+        print("Slavs: skus to prebit rucne: --up x  alebo  --up y")
 
     # Without a UV map there is nowhere to put a texture, and the character
     # arrives in the game grey no matter what is supplied later. Worth saying
     # before the file is uploaded, not after the render comes back colourless.
-    print("VOLYA: UV mapy: %d" % len(body.data.uv_layers))
+    print("Slavs: UV mapy: %d" % len(body.data.uv_layers))
     if not body.data.uv_layers:
-        print("VOLYA: POZOR - bez UV mapy bude postava vzdy jednofarebna.")
-        print("VOLYA: pouzi ako vstup ten export, ktory textury nesie "
+        print("Slavs: POZOR - bez UV mapy bude postava vzdy jednofarebna.")
+        print("Slavs: pouzi ako vstup ten export, ktory textury nesie "
               "(u Meshy je to GLB, nie FBX).")
 
     # 5. textures out to real files before export, or they are lost
@@ -277,9 +277,9 @@ def main():
         add_leaf_bones=False,
     )
     megabytes = os.path.getsize(target) / 1e6
-    print("VOLYA: ulozene %s (%.1f MB)" % (target, megabytes))
+    print("Slavs: ulozene %s (%.1f MB)" % (target, megabytes))
     if megabytes > 60:
-        print("VOLYA: stale velke - skus --tris mensie alebo --embed 0")
+        print("Slavs: stale velke - skus --tris mensie alebo --embed 0")
 
 
 if __name__ == "__main__":

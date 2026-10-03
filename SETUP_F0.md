@@ -1,4 +1,4 @@
-# VOLYA — F0 setup + ako budeme vyvíjať a testovať
+# Slavs — F0 setup + ako budeme vyvíjať a testovať
 
 Tento dokument je návod na jedno posedenie. Rob kroky presne v poradí.
 Po každom kroku je **Kontrola:** — ak nesedí, nepokračuj, napíš mi čo vypísalo.
@@ -42,9 +42,9 @@ ladil naslepo a stratil dni.
    Godot sa neinštaluje, len sa spúšťa.
 3. Spusti `Godot_v4.7.1-stable_win64.exe`.
 4. V Project Manageri klikni **Import** → **Browse** → vyber súbor
-   `D:\2026\Slavs figh back\volya\project.godot` → **Import & Edit**.
+   `D:\2026\Slavs figh back\slavs\project.godot` → **Import & Edit**.
 
-**Kontrola:** otvorí sa editor, projekt sa volá VOLYA, vľavo hore v strome
+**Kontrola:** otvorí sa editor, projekt sa volá Slavs fight back, vľavo hore v strome
 je scéna `Main`. V paneli **Output** dole nesmie byť žiadny červený riadok.
 
 5. Stlač **F5** (alebo tlačidlo Play vpravo hore).
@@ -95,7 +95,7 @@ o SDK, ktoré prináša.
 2. **Java SDK Path** = cesta k JDK 17 (koreň, nie `bin`).
 3. **Android SDK Path** = `C:\Users\belis\AppData\Local\Android\Sdk`.
 4. **Debug Keystore** nechaj prázdne — Godot si vytvorí vlastný.
-   Ak by hlásil chybu, vytvor si ho ručne (PowerShell v priečinku `volya`):
+   Ak by hlásil chybu, vytvor si ho ručne (PowerShell v priečinku `slavs`):
 
    ```
    & "C:\Program Files\Eclipse Adoptium\jdk-17.x.x-hotspot\bin\keytool.exe" `
@@ -117,7 +117,7 @@ nie je červený výkričník.
 2. Vpravo, hneď vedľa poľa **Name**, zaškrtni **Runnable**.
    **Bez tohto sa ikona telefónu v editore nikdy neobjaví.** Jeden preset na
    platformu môže byť runnable.
-3. V sekcii **Package → Unique Name** nastav `sk.pavel.volya`.
+3. V sekcii **Package → Unique Name** nastav `sk.pavel.volya` (staré meno ostáva v ID balíka naschvál - nové ID by sa nainštalovalo ako druhá aplikácia).
 4. Pozri sa **naspodok okna** — ak je tam červený text alebo červená ikona pri
    názve presetu, nabehni na ňu myšou a povie ti, čo chýba (najčastejšie
    export šablóny alebo keystore). Kým je tam chyba, one-click deploy nepôjde.

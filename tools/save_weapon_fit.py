@@ -1,5 +1,5 @@
 """
-VOLYA - read a hand-placed weapon back out of a .blend into a small JSON file.
+Slavs - read a hand-placed weapon back out of a .blend into a small JSON file.
 
 The point of the file is reuse. A weapon's placement is stored relative to the
 HAND BONE, and every animation of the same character has the same rig, so a
@@ -42,19 +42,19 @@ def parse_args():
 def main():
     cfg = parse_args()
     if not cfg["blend"]:
-        sys.exit("VOLYA: chyba --blend <subor>")
+        sys.exit("Slavs: chyba --blend <subor>")
     bpy.ops.wm.open_mainfile(filepath=os.path.abspath(cfg["blend"]))
 
     weapon = None
     for obj in bpy.context.scene.objects:
-        if obj.name.startswith("VOLYA_Weapon"):
+        if obj.name.startswith("SLAVS_Weapon"):
             weapon = obj
             break
     if weapon is None:
-        sys.exit("VOLYA: v tom .blend nie je objekt VOLYA_Weapon. Ulozil si "
+        sys.exit("Slavs: v tom .blend nie je objekt SLAVS_Weapon. Ulozil si "
                  "spravny subor?")
     if weapon.parent is None or weapon.parent_type != "BONE":
-        sys.exit("VOLYA: zbran nie je pripnuta na kost - odparila sa pri "
+        sys.exit("Slavs: zbran nie je pripnuta na kost - odparila sa pri "
                  "uprave. Zopakuj fitovanie a zbran len posuvaj, "
                  "neodparcuj ju.")
 
@@ -79,12 +79,12 @@ def main():
     with open(out, "w", encoding="utf-8") as handle:
         json.dump(fit, handle, indent=2)
 
-    print("VOLYA: kost      %s" % fit["bone"])
-    print("VOLYA: posun     %.3f %.3f %.3f" % tuple(fit["location"]))
-    print("VOLYA: otocenie  %.1f %.1f %.1f stupnov"
+    print("Slavs: kost      %s" % fit["bone"])
+    print("Slavs: posun     %.3f %.3f %.3f" % tuple(fit["location"]))
+    print("Slavs: otocenie  %.1f %.1f %.1f stupnov"
           % tuple(d * 57.2957795 for d in fit["rotation_euler"]))
-    print("VOLYA: velkost   %.3f" % fit["scale"][0])
-    print("VOLYA: ulozene do %s" % out)
+    print("Slavs: velkost   %.3f" % fit["scale"][0])
+    print("Slavs: ulozene do %s" % out)
 
 
 if __name__ == "__main__":

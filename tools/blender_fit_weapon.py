@@ -1,5 +1,5 @@
 """
-VOLYA - build a .blend with the weapon already in the character's hand, ready
+Slavs - build a .blend with the weapon already in the character's hand, ready
 to be placed by mouse.
 
     blender --background --python tools/blender_fit_weapon.py -- ^
@@ -71,7 +71,7 @@ def parse_args():
             cur = cfg[key]
             cfg[key] = value if isinstance(cur, str) else type(cur)(value)
         else:
-            print("VOLYA: neznamy argument --%s (ignorujem)" % key)
+            print("Slavs: neznamy argument --%s (ignorujem)" % key)
         i += 2
     return cfg
 
@@ -94,16 +94,16 @@ def look_through_camera():
                 space.region_3d.view_perspective = "CAMERA"
                 space.shading.type = "MATERIAL"
                 touched += 1
-    print("VOLYA: %d vyrezov nastavenych na hernu kameru" % touched)
+    print("Slavs: %d vyrezov nastavenych na hernu kameru" % touched)
 
 
 def main():
     cfg = parse_args()
     if not cfg["import"]:
-        sys.exit("VOLYA: chyba --import <fbx>")
+        sys.exit("Slavs: chyba --import <fbx>")
     source = os.path.abspath(cfg["import"])
     if not os.path.exists(source):
-        sys.exit("VOLYA: subor %s neexistuje" % source)
+        sys.exit("Slavs: subor %s neexistuje" % source)
 
     R.import_source(source)
 
@@ -145,15 +145,15 @@ def main():
 
     print("")
     print("=" * 70)
-    print("VOLYA: hotovo -> %s" % out)
-    print("VOLYA: snimka %d, kamera %.0f stupnov, zdvih %.0f"
+    print("Slavs: hotovo -> %s" % out)
+    print("Slavs: snimka %d, kamera %.0f stupnov, zdvih %.0f"
           % (frame, float(cfg["angle"]), float(cfg["elevation"])))
     if cfg["fit"]:
-        print("VOLYA: zbran je uz umiestnena podla %s"
+        print("Slavs: zbran je uz umiestnena podla %s"
               % os.path.basename(cfg["fit"]))
-        print("VOLYA: ak sedi, nic nerob a zavri. Ak nie, oprav a uloz -")
-        print("VOLYA: oprava plati pre VSETKY animacie tejto postavy.")
-    print("VOLYA: zbran je vybrata. G = posun, R = otocenie, S = velkost.")
+        print("Slavs: ak sedi, nic nerob a zavri. Ak nie, oprav a uloz -")
+        print("Slavs: oprava plati pre VSETKY animacie tejto postavy.")
+    print("Slavs: zbran je vybrata. G = posun, R = otocenie, S = velkost.")
     print("=" * 70)
 
 

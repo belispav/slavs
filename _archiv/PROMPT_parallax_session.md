@@ -4,7 +4,7 @@ Skopíruj všetko medzi čiarami do nového, prázdneho Cowork okna so Sonnetom.
 
 ---
 
-Projekt VOLYA, priečinok `D:\2026\Slavs figh back`.
+Projekt Slavs, priečinok `D:\2026\Slavs figh back`.
 Prečítaj `CLAUDE.md` a `DIZAJN_pozadie_a_rozlisenie.md`. Komunikuj po slovensky,
 kód a komentáre po anglicky.
 
@@ -15,7 +15,7 @@ plochu od obrázka.** Nič iné neotváraj.
 
 Rozlíšenie je vyriešené a uzavreté (13.–14. 8.). Hra je pixel art, S = 1,
 NEAREST, obrys vo vlastnej farbe postavy (`--outline-darken 0.55`).
-**Toto sa neotvára.** V hre je pozadie `volya/art/env_05.png`.
+**Toto sa neotvára.** V hre je pozadie `slavs/art/env_05.png`.
 
 Dnes sa pozadie kreslí ako **jeden Sprite2D** v `main.gd:_build_background()`,
 2816 × 1536, dlaždicovaný vodorovne na GPU. Hracia plocha je dvojica čísel —

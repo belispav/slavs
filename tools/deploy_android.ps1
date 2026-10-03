@@ -1,4 +1,4 @@
-# VOLYA - deploy na Android z prikazoveho riadku.
+# Slavs - deploy na Android z prikazoveho riadku.
 #
 # Oznaci build casovou znackou, vyexportuje, nainstaluje, spusti a streamuje
 # logy z telefonu. Trva ~40 sekund.
@@ -22,17 +22,17 @@ param(
 # --- cesty (uprav podla svojej instalacie) ---
 $Godot   = "D:\Tools\Godot\Godot_v4.7.1-stable_win64.exe"
 $Adb     = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
-$Project = "D:\2026\Slavs figh back\volya"
+$Project = "D:\2026\Slavs figh back\slavs"
 $Repo    = "D:\2026\Slavs figh back"
 $Preset  = "Android"
-$Package = "sk.pavel.volya"
+$Package = "sk.pavel.volya"   # nikdy nemenit: nove ID = druha aplikacia v telefone
 
 # Continue, nie Stop: nativne programy (adb, godot, java) pisu bezne veci na
 # stderr a pri "Stop" by to skript zhodilo. Kontrolujeme exit kody explicitne.
 $ErrorActionPreference = "Continue"
 
 $BuildDir = Join-Path $Project "build"
-$Apk = Join-Path $BuildDir "volya-debug.apk"
+$Apk = Join-Path $BuildDir "slavs-debug.apk"
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
 
 foreach ($path in @($Godot, $Adb)) {
@@ -167,7 +167,7 @@ if ($LASTEXITCODE -ne 0) {
 
 if ($NoLaunch) {
     Write-Host ""
-    Write-Host "HOTOVO. Spusti VOLYA rucne v telefone." -ForegroundColor Green
+    Write-Host "HOTOVO. Spusti Slavs rucne v telefone." -ForegroundColor Green
     Write-Host "V hre vlavo hore musi byt: $Stamp" -ForegroundColor Yellow
     exit 0
 }

@@ -5,7 +5,7 @@ Skopíruj celý text nižšie ako prvú správu v novom coworku nad priečinkom
 
 ---
 
-Pracujeme na VOLYA. Prečítaj si `CLAUDE.md` a `PRIKAZY.md` — hlavne sekcie
+Pracujeme na Slavs. Prečítaj si `CLAUDE.md` a `PRIKAZY.md` — hlavne sekcie
 **METHOD** a **ZBRANE**, tie sú pre túto session kľúčové.
 
 Táto session má **dva ciele a nič iné**. Ak sa vynorí čokoľvek ďalšie, zapíš to
@@ -15,7 +15,7 @@ ako poznámku a nerieš to.
 
 Nedá sa prezerať grafika, keď sa na mňa valia nepriatelia, zabíjajú ma a hra sa
 po chvíli reštartuje. Potrebujem v ladiacom paneli (ten, čo už existuje —
-`volya/scripts/debug_overlay.gd`) tri prepínače:
+`slavs/scripts/debug_overlay.gd`) tri prepínače:
 
 1. **NESMRTEĽNOSŤ** — hráč nedostáva zranenie
 2. **PAUZA** — hra zamrzne, ale ladiaci panel ostáva ovládateľný

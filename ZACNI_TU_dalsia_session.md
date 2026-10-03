@@ -5,7 +5,7 @@ Skopíruj všetko medzi čiarami do nového, prázdneho Cowork okna
 
 ---
 
-Projekt VOLYA, priečinok `D:\2026\Slavs figh back`.
+Projekt Slavs, priečinok `D:\2026\Slavs figh back`.
 Prečítaj `CLAUDE.md` (hlavne časť „Art pipeline switched to PixelLab“) a `PRIKAZY.md`.
 Komunikuj po slovensky, kód a komentáre po anglicky.
 
@@ -20,7 +20,7 @@ Komunikuj po slovensky, kód a komentáre po anglicky.
 
 ## Ako postupovať
 1. **Najprv sa ma opýtaj na zbrane – jednu otázku naraz**, s tvojím odporúčaním.
-   Podľa plánu (`VOLYA_plan_hry.md` §3.4) prichádzajú do úvahy sekera (hod, vracia sa ako bumerang),
+   Podľa plánu (`PLAN_hry.md` §3.4) prichádzajú do úvahy sekera (hod, vracia sa ako bumerang),
    luk, oštep, kladivo. Odporuč, čo sa najlepšie hodí na blízko a čo na diaľku.
 2. Skontroluj zostatok PixelLabu (`get_balance`) a povedz mi rozpočet celej úlohy
    v generovaniach ešte pred prvým generovaním. Na začiatku tejto úlohy ich bolo 28.

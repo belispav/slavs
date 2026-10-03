@@ -1,4 +1,4 @@
-# VOLYA - place a weapon in a character's hand by mouse, in two steps and one
+# Slavs - place a weapon in a character's hand by mouse, in two steps and one
 # command.
 #
 #   powershell -ExecutionPolicy Bypass -File tools\fit_weapon.ps1 `
@@ -37,7 +37,7 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 $inv = [System.Globalization.CultureInfo]::InvariantCulture
 
-$blender = $env:VOLYA_BLENDER
+$blender = $env:SLAVS_BLENDER
 if (-not $blender) {
     $found = Get-ChildItem "C:\Program Files\Blender Foundation" -Recurse `
              -Filter blender.exe -ErrorAction SilentlyContinue |
@@ -46,7 +46,7 @@ if (-not $blender) {
 }
 if (-not $blender) {
     Write-Host "Blender sa nenasiel. Spusti znova s:" -ForegroundColor Red
-    Write-Host '  $env:VOLYA_BLENDER = "C:\cesta\k\blender.exe"' -ForegroundColor Red
+    Write-Host '  $env:SLAVS_BLENDER = "C:\cesta\k\blender.exe"' -ForegroundColor Red
     exit 1
 }
 if (-not (Test-Path $Model)) {
@@ -58,7 +58,7 @@ if ($Name -eq "") { $Name = [System.IO.Path]::GetFileNameWithoutExtension($Model
 $blend = Join-Path $root "tools\blender\$Name`_fit.blend"
 
 Write-Host ""
-Write-Host "=== VOLYA - fitovanie zbrane ===" -ForegroundColor Cyan
+Write-Host "=== Slavs - fitovanie zbrane ===" -ForegroundColor Cyan
 Write-Host "Blender:  $blender"
 Write-Host "Postava:  $Model"
 Write-Host "Zbran:    $Weapon"

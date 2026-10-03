@@ -1,5 +1,5 @@
 """
-VOLYA - build a weapon and hang it on the character's hand bone.
+Slavs - build a weapon and hang it on the character's hand bone.
 
 A weapon drawn as a separate sprite pinned over the character looks wrong the
 moment the character moves: a matchlock that never comes up to the shoulder, a
@@ -68,7 +68,7 @@ def parse_args():
         if key in cfg:
             cfg[key] = float(value) if isinstance(cfg[key], float) else value
         else:
-            print("VOLYA: neznamy argument --%s (ignorujem)" % key)
+            print("Slavs: neznamy argument --%s (ignorujem)" % key)
         i += 2
     return cfg
 
@@ -126,7 +126,7 @@ def _paint(obj, colour):
     """
     if DEBUG_COLOUR is not None:
         colour = DEBUG_COLOUR
-    material = bpy.data.materials.new("VOLYA_" + obj.name)
+    material = bpy.data.materials.new("SLAVS_" + obj.name)
     material.diffuse_color = (colour[0], colour[1], colour[2], 1.0)
     material.use_nodes = True
     for node in material.node_tree.nodes:
@@ -289,18 +289,18 @@ def import_weapon_model(path):
                 bpy.context.scene.collection.objects.link(obj)
                 linked += 1
         if linked == 0:
-            sys.exit("VOLYA: v %s nie je ziadna siet"
+            sys.exit("Slavs: v %s nie je ziadna siet"
                      % os.path.basename(path))
-        print("VOLYA: z .blend som prevzal %d sieti" % linked)
+        print("Slavs: z .blend som prevzal %d sieti" % linked)
     else:
-        sys.exit("VOLYA: neznamy format zbrane: %s\n"
-                 "VOLYA: viem .blend, .glb, .gltf, .fbx a .obj. "
+        sys.exit("Slavs: neznamy format zbrane: %s\n"
+                 "Slavs: viem .blend, .glb, .gltf, .fbx a .obj. "
                  "Format .3ds nie, ten je zastaraly - ak mas na vyber, "
                  "stiahni .blend alebo .glb." % path)
 
     fresh = [o for o in bpy.data.objects if o not in before and o.type == "MESH"]
     if not fresh:
-        sys.exit("VOLYA: v %s nie je ziadna siet" % os.path.basename(path))
+        sys.exit("Slavs: v %s nie je ziadna siet" % os.path.basename(path))
 
     bpy.ops.object.select_all(action="DESELECT")
     for obj in fresh:
@@ -323,7 +323,7 @@ def import_weapon_model(path):
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
 
     length = max(weapon.dimensions)
-    print("VOLYA: nacitana zbran %s, dlzka %.2f, najdlhsia os bola %s"
+    print("Slavs: nacitana zbran %s, dlzka %.2f, najdlhsia os bola %s"
           % (os.path.basename(path), length, "XYZ"[longest]))
     return weapon, length
 
@@ -351,7 +351,7 @@ def settings_for(fit_path):
         with open(path, "r", encoding="utf-8") as handle:
             return json.load(handle)
     except Exception as problem:          # noqa: BLE001
-        print("VOLYA: POZOR - %s sa neda precitat: %s"
+        print("Slavs: POZOR - %s sa neda precitat: %s"
               % (os.path.basename(path), problem))
         return {}
 
@@ -388,7 +388,7 @@ def split_iron(weapon, fraction):
         material.use_nodes = True
         mesh.materials.append(material)
         iron = len(mesh.materials) - 1
-        print("VOLYA: model nemal zelezny material, vytvoril som ho")
+        print("Slavs: model nemal zelezny material, vytvoril som ho")
 
     xs = [v.co.x for v in mesh.vertices]
     lo, hi = min(xs), max(xs)
@@ -402,7 +402,7 @@ def split_iron(weapon, fraction):
         if centre > cut and poly.material_index != iron:
             poly.material_index = iron
             moved += 1
-    print("VOLYA: od %.0f %% dlzky zbrane je zelezo - preradenych %d plosok"
+    print("Slavs: od %.0f %% dlzky zbrane je zelezo - preradenych %d plosok"
           % (fraction * 100, moved))
 
 
@@ -486,7 +486,7 @@ def aim_along_hands(armature, hand, weapon_name):
         return None
     if str(weapon_name).lower() in FORWARD_PAST_OTHER_HAND:
         span = -span
-    print("VOLYA: ruky su od seba %.3f jednotiek, mierim zbran po tejto ciare"
+    print("Slavs: ruky su od seba %.3f jednotiek, mierim zbran po tejto ciare"
           % (a - b).length)
     return span.normalized()
 
@@ -504,28 +504,28 @@ def attach(cfg):
     global DEBUG_COLOUR
     DEBUG_COLOUR = MAGENTA if int(cfg.get("debug", 0)) != 0 else None
     if DEBUG_COLOUR is not None:
-        print("VOLYA: DEBUG - zbran bude fialova")
+        print("Slavs: DEBUG - zbran bude fialova")
 
     builder = BUILDERS.get(str(cfg["weapon"]).lower())
     if builder is None and not str(cfg.get("model", "")).strip():
-        sys.exit("VOLYA: neznama zbran '%s'. Mam: %s (alebo zadaj --model "
+        sys.exit("Slavs: neznama zbran '%s'. Mam: %s (alebo zadaj --model "
                  "s vlastnym suborom)"
                  % (cfg["weapon"], ", ".join(sorted(BUILDERS))))
 
     armature = find_armature()
     if armature is None:
-        sys.exit("VOLYA: v scene nie je kostra. Naimportuj najprv postavu "
+        sys.exit("Slavs: v scene nie je kostra. Naimportuj najprv postavu "
                  "z Mixama.")
 
     body_lo, body_hi = _mesh_bounds()
 
     hand = find_hand(armature, str(cfg["hand"]))
     if hand is None:
-        print("VOLYA: nenasiel som kost ruky. Kosti v rigu:")
+        print("Slavs: nenasiel som kost ruky. Kosti v rigu:")
         for bone in armature.data.bones:
             print("   %s" % bone.name)
-        sys.exit("VOLYA: prerusene.")
-    print("VOLYA: ruka = %s" % hand.name)
+        sys.exit("Slavs: prerusene.")
+    print("Slavs: ruka = %s" % hand.name)
 
     model_path = str(cfg.get("model", "")).strip()
     if model_path:
@@ -537,7 +537,7 @@ def attach(cfg):
                                   else (built[0], built[1], 0.0))
     if parts is None:
         weapon = weapon_obj
-        weapon.name = "VOLYA_Weapon"
+        weapon.name = "SLAVS_Weapon"
     else:
         bpy.ops.object.select_all(action="DESELECT")
         for part in parts:
@@ -554,7 +554,7 @@ def attach(cfg):
                                        scale=True)
         bpy.ops.object.join()
         weapon = bpy.context.view_layer.objects.active
-        weapon.name = "VOLYA_Weapon"
+        weapon.name = "SLAVS_Weapon"
 
     # The character is about 1.8 m, and a matchlock is about 1.35 m. Scale the
     # weapon to the rig actually loaded rather than assuming Mixamo's units.
@@ -576,7 +576,7 @@ def attach(cfg):
     unit = max(abs(parent_scale.z), 1e-9)
     factor = (height / 1.8) * float(cfg["scale"]) / unit
     weapon.scale = mathutils.Vector((factor, factor, factor))
-    print("VOLYA: postava %.2f jednotiek vysoka (kostra sama %.2f), "
+    print("Slavs: postava %.2f jednotiek vysoka (kostra sama %.2f), "
           "mierka kostry %.4f, zbran zvacsena %.1fx"
           % (height, armature.dimensions.z, unit, factor))
 
@@ -593,7 +593,7 @@ def attach(cfg):
     given = cfg.get("aim_vector")
     if given is not None:
         aim = mathutils.Vector(given).normalized()
-        print("VOLYA: zbran mierim zadanym smerom (%.2f %.2f %.2f)"
+        print("Slavs: zbran mierim zadanym smerom (%.2f %.2f %.2f)"
               % (aim.x, aim.y, aim.z))
     elif int(cfg.get("aim", 1)) != 0:
         aim = aim_along_hands(armature, hand, cfg["weapon"])
@@ -602,7 +602,7 @@ def attach(cfg):
     if aim is not None and abs(spin) > 0.01:
         aim = (mathutils.Matrix.Rotation(math.radians(spin), 3, "Z")
                @ aim).normalized()
-        print("VOLYA: zbran otocena o %.0f stupnov okolo zvislej osi" % spin)
+        print("Slavs: zbran otocena o %.0f stupnov okolo zvislej osi" % spin)
 
     turn = mathutils.Matrix.Rotation(math.radians(float(cfg["turn"])), 4, "X")
     if aim is not None:
@@ -614,11 +614,11 @@ def attach(cfg):
                 basis.col[col] = v.normalized()
         local = (basis.inverted() @ aim).normalized()
         rot = local.to_track_quat("X", "Z").to_matrix().to_4x4()
-        print("VOLYA: zbran natocena podla ruk (%.2f %.2f %.2f v priestore kosti)"
+        print("Slavs: zbran natocena podla ruk (%.2f %.2f %.2f v priestore kosti)"
               % (local.x, local.y, local.z))
     else:
         rot = mathutils.Matrix.Identity(4)
-        print("VOLYA: druha ruka sa nenasla, zbran ostava v osi X kosti")
+        print("Slavs: druha ruka sa nenasla, zbran ostava v osi X kosti")
 
     rot = rot @ turn
     # Where the hand sits along the weapon, per weapon. The old formula put it
@@ -640,20 +640,20 @@ def attach(cfg):
     fit_path = str(cfg.get("fit", "")).strip()
     if fit_path:
         if not os.path.exists(fit_path):
-            sys.exit("VOLYA: fit subor %s neexistuje" % fit_path)
+            sys.exit("Slavs: fit subor %s neexistuje" % fit_path)
         with open(fit_path, "r", encoding="utf-8") as handle:
             fit = json.load(handle)
         if fit.get("bone") and fit["bone"] != hand.name:
-            print("VOLYA: POZOR - fit bol robeny na kost %s, tu je %s"
+            print("Slavs: POZOR - fit bol robeny na kost %s, tu je %s"
                   % (fit["bone"], hand.name))
         weapon.location = mathutils.Vector(fit["location"])
         weapon.rotation_euler = mathutils.Euler(fit["rotation_euler"])
         weapon.scale = mathutils.Vector(fit["scale"])
-        print("VOLYA: pouzil som rucne fitovanie z %s"
+        print("Slavs: pouzil som rucne fitovanie z %s"
               % os.path.basename(fit_path))
 
-    print("VOLYA: zbran %s pripnuta na %s" % (cfg["weapon"], hand.name))
-    print("VOLYA: posun %.3f %.3f %.3f, otocenie %.0f stupnov"
+    print("Slavs: zbran %s pripnuta na %s" % (cfg["weapon"], hand.name))
+    print("Slavs: posun %.3f %.3f %.3f, otocenie %.0f stupnov"
           % (offset.x, offset.y, offset.z, float(cfg["turn"])))
 
     # Measure the result instead of trusting the arithmetic. A weapon that ends
@@ -661,7 +661,7 @@ def attach(cfg):
     # indistinguishable from "the script never ran" when looking at a sprite.
     bpy.context.view_layer.update()
     span = max(weapon.dimensions)
-    print("VOLYA: zbran ma vo svete %.2f jednotiek (postava %.2f)"
+    print("Slavs: zbran ma vo svete %.2f jednotiek (postava %.2f)"
           % (span, height))
 
     # WHERE it is, not just how big. Size alone was measured for two rounds and
@@ -670,19 +670,19 @@ def attach(cfg):
     centre = weapon.matrix_world.translation
     lo, hi = body_lo, body_hi
     body = hi - lo
-    print("VOLYA: zbran stred (%.2f %.2f %.2f)" % (centre.x, centre.y, centre.z))
-    print("VOLYA: telo od (%.2f %.2f %.2f) po (%.2f %.2f %.2f)"
+    print("Slavs: zbran stred (%.2f %.2f %.2f)" % (centre.x, centre.y, centre.z))
+    print("Slavs: telo od (%.2f %.2f %.2f) po (%.2f %.2f %.2f)"
           % (lo.x, lo.y, lo.z, hi.x, hi.y, hi.z))
     inside = all(lo[i] - 0.1 * body[i] <= centre[i] <= hi[i] + 0.1 * body[i]
                  for i in range(3))
-    print("VOLYA: zbran je %s telom"
+    print("Slavs: zbran je %s telom"
           % ("V oblasti tela - musi byt teda schovana za nim / v nom"
              if inside else "MIMO tela"))
     if span < 0.15 * height:
-        print("VOLYA: POZOR - zbran je oproti postave zanedbatelna a v renderi "
+        print("Slavs: POZOR - zbran je oproti postave zanedbatelna a v renderi "
               "ju neuvidis. Skontroluj mierku importu.")
     elif span > 3.0 * height:
-        print("VOLYA: POZOR - zbran je obrovska, vytlaci postavu z zaberu.")
+        print("Slavs: POZOR - zbran je obrovska, vytlaci postavu z zaberu.")
 
     # The fit file is where a character's decisions live. Anything given on the
     # command line still wins, but nothing has to be repeated.
@@ -690,10 +690,10 @@ def attach(cfg):
     if iron <= 0.0:
         iron = float(settings_for(fit_path).get("iron_from", 0.0))
         if iron > 0.0:
-            print("VOLYA: pomer zeleza %.2f zo settings suboru" % iron)
+            print("Slavs: pomer zeleza %.2f zo settings suboru" % iron)
     split_iron(weapon, iron)
 
-    print("VOLYA: ak sedi zle, oprav to cez --shift_x/--shift_y/--shift_z "
+    print("Slavs: ak sedi zle, oprav to cez --shift_x/--shift_y/--shift_z "
           "a --turn")
     return weapon
 
@@ -703,9 +703,9 @@ def main():
 
     if bpy.data.filepath:
         bpy.ops.wm.save_mainfile()
-        print("VOLYA: ulozene do %s" % bpy.data.filepath)
+        print("Slavs: ulozene do %s" % bpy.data.filepath)
     else:
-        print("VOLYA: scena nie je ulozena ako .blend, nic som neukladal")
+        print("Slavs: scena nie je ulozena ako .blend, nic som neukladal")
 
 
 if __name__ == "__main__":

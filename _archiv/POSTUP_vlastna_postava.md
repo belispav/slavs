@@ -176,7 +176,7 @@ vždy jedna z týchto:
 
    **`idle` je povinná, nie voliteľná.** Bez nej postava po zastavení zamrzne
    v snímke z chôdze — na jednej nohe a naklonená dopredu. Hra si ju načíta
-   sama, keď ju vyrenderuješ do `volya/art/idle_px/`.
+   sama, keď ju vyrenderuješ do `slavs/art/idle_px/`.
 
    Skok už nepotrebujeme, hra ho nemá.
 4. Pri každej: **In Place** zaškrtnuté, formát **FBX Binary**, **30 fps**,
@@ -196,7 +196,7 @@ vždy jedna z týchto:
 powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Blend "tools\blender\hrdina_run.blend"
 ```
 
-Skript vyrenderuje sprajty do `volya/art/run_px/` a hra ich načíta sama —
+Skript vyrenderuje sprajty do `slavs/art/run_px/` a hra ich načíta sama —
 nemusíš v Godote nič nastavovať.
 
 **Kontrola:** spusti hru, na mieste sivého obdĺžnika stojí postava.

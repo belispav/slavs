@@ -1,5 +1,5 @@
 """
-VOLYA - find the frame that shows the most of the weapon.
+Slavs - find the frame that shows the most of the weapon.
 
 Judging a weapon from a frame where the body hides it wastes a whole round, and
 it happened three times in a row because the frame was always chosen by guess.
@@ -23,7 +23,7 @@ try:
     from PIL import Image
     import numpy as np
 except ImportError:
-    sys.exit("VOLYA: chyba Pillow alebo numpy - "
+    sys.exit("Slavs: chyba Pillow alebo numpy - "
              "pip install pillow numpy")
 
 
@@ -43,7 +43,7 @@ def main():
 
     files = sorted(glob.glob(os.path.join(args.dir, "*.png")))
     if not files:
-        sys.exit("VOLYA: v %s nie su ziadne PNG" % args.dir)
+        sys.exit("Slavs: v %s nie su ziadne PNG" % args.dir)
 
     counts = []
     for path in files:
@@ -54,13 +54,13 @@ def main():
     best, most = ranked[0]
     worst = ranked[-1]
 
-    print("VOLYA: %d snimok preskumanych" % len(counts))
-    print("VOLYA: najlepsie snimky (kolko pixelov zbrane je vidiet):")
+    print("Slavs: %d snimok preskumanych" % len(counts))
+    print("Slavs: najlepsie snimky (kolko pixelov zbrane je vidiet):")
     for frame, n in ranked[:args.top]:
         print("   snimka %4d : %4d px" % (frame, n))
-    print("VOLYA: najhorsia snimka %d ma len %d px - o %.0f %% menej"
+    print("Slavs: najhorsia snimka %d ma len %d px - o %.0f %% menej"
           % (worst[0], worst[1], (1 - worst[1] / float(max(most, 1))) * 100))
-    print("VOLYA: NA POSUDZOVANIE POUZI SNIMKU %d" % best)
+    print("Slavs: NA POSUDZOVANIE POUZI SNIMKU %d" % best)
 
     if args.fit:
         folder = os.path.dirname(os.path.abspath(args.fit))
@@ -73,7 +73,7 @@ def main():
         data["preview_frame"] = best
         with open(target, "w", encoding="utf-8") as handle:
             json.dump(data, handle, indent=2, ensure_ascii=False)
-        print("VOLYA: preview_frame %d zapisany do %s"
+        print("Slavs: preview_frame %d zapisany do %s"
               % (best, os.path.basename(target)))
 
 

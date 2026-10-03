@@ -1,5 +1,5 @@
 """
-VOLYA - lay rendered variants out in a numbered grid, ready to choose from.
+Slavs - lay rendered variants out in a numbered grid, ready to choose from.
 
 Every comparison in this project ends the same way: several renders, side by
 side, numbered, and a human says a number. Doing that by hand each time is how
@@ -8,7 +8,7 @@ the end of a variant run instead.
 
     python tools/make_grid.py --name zelezo --labels render/zelezo_variants.txt
 
-Reads volya/art/<name>_v00_px, _v01_px ... and writes render/_look/<name>.png
+Reads slavs/art/<name>_v00_px, _v01_px ... and writes render/_look/<name>.png
 """
 
 import argparse
@@ -19,7 +19,7 @@ import sys
 try:
     from PIL import Image, ImageDraw
 except ImportError:
-    sys.exit("VOLYA: chyba Pillow - pip install pillow")
+    sys.exit("Slavs: chyba Pillow - pip install pillow")
 
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,9 +35,9 @@ def main():
     args = ap.parse_args()
 
     folders = sorted(glob.glob(os.path.join(
-        ROOT, "volya", "art", "%s_v*_px" % args.name)))
+        ROOT, "slavs", "art", "%s_v*_px" % args.name)))
     if not folders:
-        sys.exit("VOLYA: nenasiel som ziadne %s_v??_px" % args.name)
+        sys.exit("Slavs: nenasiel som ziadne %s_v??_px" % args.name)
 
     images = []
     for folder in folders:
@@ -76,7 +76,7 @@ def main():
     out = args.out or os.path.join(ROOT, "render", "_look", args.name + ".png")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     sheet.save(out)
-    print("VOLYA: mriezka %d variantov -> %s" % (len(images), out))
+    print("Slavs: mriezka %d variantov -> %s" % (len(images), out))
     return out
 
 

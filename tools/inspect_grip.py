@@ -1,5 +1,5 @@
 """
-VOLYA - measure how a downloaded animation actually holds the weapon.
+Slavs - measure how a downloaded animation actually holds the weapon.
 
 Animation names lie. "Great Sword Idle" turned out to be a genuine two-handed
 grip; "Walking" is a plain empty-handed walk with the arms swinging at the
@@ -145,7 +145,7 @@ def main():
     argv = sys.argv
     paths = argv[argv.index("--") + 1:] if "--" in argv else []
     if not paths:
-        sys.exit("VOLYA: zadaj aspon jeden FBX/GLB")
+        sys.exit("Slavs: zadaj aspon jeden FBX/GLB")
     for path in paths:
         print("")
         print("=== %s" % os.path.basename(path))

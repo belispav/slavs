@@ -1,5 +1,5 @@
 """
-VOLYA - check a character sheet before spending a 3D generation credit.
+Slavs - check a character sheet before spending a 3D generation credit.
 
 Image-to-3D tools cross-reference the views they are given. Where the views
 disagree, the reconstruction is worst exactly there - so it is worth knowing
@@ -29,7 +29,7 @@ try:
     import numpy as np
     from PIL import Image
 except ImportError:
-    sys.exit("VOLYA: chyba kniznica. Spusti:  pip install pillow numpy")
+    sys.exit("Slavs: chyba kniznica. Spusti:  pip install pillow numpy")
 
 
 EXTENSIONS = ("png", "jpg", "jpeg", "webp", "bmp")
@@ -118,14 +118,14 @@ def main():
 
     files = collect(sys.argv[1:])
     if not files:
-        sys.exit("VOLYA: nenasiel som ziadne obrazky.")
+        sys.exit("Slavs: nenasiel som ziadne obrazky.")
 
     results = [r for r in (measure(f) for f in files) if r is not None]
     if not results:
-        sys.exit("VOLYA: v obrazkoch som nenasiel ziadnu postavu. "
+        sys.exit("Slavs: v obrazkoch som nenasiel ziadnu postavu. "
                  "Je pozadie jednofarebne?")
 
-    print("VOLYA: %d obrazkov" % len(results))
+    print("Slavs: %d obrazkov" % len(results))
     print()
     print("  %-30s %7s %7s %8s %7s" % ("subor", "vyska", "sirka", "stred X",
                                        "tien"))
@@ -164,12 +164,12 @@ def main():
         for p in problems:
             print("  CHYBA: %s" % p)
         print()
-        print("VOLYA: oprav obrazky skor, nez minies kredit.")
+        print("Slavs: oprav obrazky skor, nez minies kredit.")
         return 1
 
-    print("VOLYA: vyska, pozadie a tien su v poriadku.")
-    print("VOLYA: skript NEVIDI, ci postava nieco drzi alebo z nej nieco visi")
-    print("VOLYA: ani ci ma vsade rovnake vlasy - to prejdi okom.")
+    print("Slavs: vyska, pozadie a tien su v poriadku.")
+    print("Slavs: skript NEVIDI, ci postava nieco drzi alebo z nej nieco visi")
+    print("Slavs: ani ci ma vsade rovnake vlasy - to prejdi okom.")
     return 0
 
 

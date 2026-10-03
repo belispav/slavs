@@ -1,4 +1,4 @@
-# VOLYA - vytiahne z telefonu posledny vypis hodnot ovladania.
+# Slavs - vytiahne z telefonu posledny vypis hodnot ovladania.
 #
 # V hre stlac tlacidlo VYPIS DO LOGU, potom spusti tento skript.
 # Funguje aj ked ti uz nebezi logcat.
@@ -8,8 +8,8 @@
 # POZOR: ciste ASCII, Windows PowerShell cita .ps1 v ANSI kodovani.
 
 $Adb     = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
-$Package = "sk.pavel.volya"
-$OutFile = "D:\2026\Slavs figh back\volya\build\tuning.txt"
+$Package = "sk.pavel.volya"   # nikdy nemenit: nove ID = druha aplikacia v telefone
+$OutFile = "D:\2026\Slavs figh back\slavs\build\tuning.txt"
 
 $ErrorActionPreference = "Continue"
 

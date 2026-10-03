@@ -1,4 +1,4 @@
-# VOLYA — test grafického pipeline (jedna postava end-to-end)
+# Slavs — test grafického pipeline (jedna postava end-to-end)
 
 **Cieľ:** za jeden večer zistiť, či ti Blender sadne, a vidieť vlastnú
 animovanú postavu bežať v Godote. Nie je to výroba grafiky — je to test cesty.
@@ -64,7 +64,7 @@ verzie):
   "D:\2026\Slavs figh back\tools\blender\hero_run.blend" `
   --background `
   --python "D:\2026\Slavs figh back\tools\blender_render_sprites.py" `
-  -- --out "D:\2026\Slavs figh back\volya\art\hero_run" --name run --height 96 --step 3
+  -- --out "D:\2026\Slavs figh back\slavs\art\hero_run" --name run --height 96 --step 3
 ```
 
 ### Cesta B — v Blenderi
@@ -100,8 +100,8 @@ Pozri sa na súbory `_a00_` až `_a07_` a nájdi ten, kde je postava presne
 z boku. Číslo v názve vynásob 45 a použi ako `--start_angle`. Napríklad ak
 sedí `_a02_`, pridaj do normálneho renderu `--start_angle 90`.
 
-**Kontrola:** v `volya/art/hero_run/` je 10–20 PNG súborov s priehľadným
-pozadím, v konzole posledný riadok `VOLYA: done — 1 angle(s) x N frames`.
+**Kontrola:** v `slavs/art/hero_run/` je 10–20 PNG súborov s priehľadným
+pozadím, v konzole posledný riadok `Slavs: done — 1 angle(s) x N frames`.
 
 ---
 

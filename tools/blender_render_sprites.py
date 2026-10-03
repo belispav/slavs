@@ -1,5 +1,5 @@
 """
-VOLYA - Blender sprite renderer.
+Slavs - Blender sprite renderer.
 
 Renders the animation currently loaded in a .blend / imported FBX into a PNG
 sequence with a transparent background, using an orthographic side view.
@@ -9,7 +9,7 @@ frames can never drift apart the way hand-drawn or AI-generated ones do.
 Usage (headless, from a normal terminal):
 
     blender scene.blend --background --python tools/blender_render_sprites.py -- \
-        --out volya/art/hero_run --name run --height 96 --step 3
+        --out slavs/art/hero_run --name run --height 96 --step 3
 
 Usage (inside Blender): open the Scripting tab, load this file, edit
 DEFAULTS below, press Run.
@@ -107,7 +107,7 @@ def parse_args():
             else:
                 cfg[key] = value
         else:
-            print("VOLYA: unknown argument --%s (ignored)" % key)
+            print("Slavs: unknown argument --%s (ignored)" % key)
         i += 2
     return cfg
 
@@ -199,7 +199,7 @@ def shoulder_axis():
                 # flip any vector pointing the other way before averaging,
                 # otherwise a mirrored pair cancels the sum out
                 total += v if v.dot(vectors[0]) >= 0 else -v
-            print("VOLYA: os ramien urcena z %d kosti rigu" % len(vectors))
+            print("Slavs: os ramien urcena z %d kosti rigu" % len(vectors))
             return total
     return None
 
@@ -252,7 +252,7 @@ def facing_axis():
             for v in vectors:
                 total += v
             if total.length > 1e-5:
-                print("VOLYA: smer pohladu urceny z %d chodidiel" % len(vectors))
+                print("Slavs: smer pohladu urceny z %d chodidiel" % len(vectors))
                 return total.normalized()
     return None
 
@@ -280,10 +280,10 @@ def side_view_azimuth():
         look = mathutils.Vector((-math.sin(math.radians(azimuth)),
                                  math.cos(math.radians(azimuth))))
         if abs(look.dot(mathutils.Vector((facing[0], facing[1])))) > 0.2:
-            print("VOLYA: POZOR - vypocet bocneho pohladu nesedi, "
+            print("Slavs: POZOR - vypocet bocneho pohladu nesedi, "
                   "vraciam sa k osi ramien")
         else:
-            print("VOLYA: bocny pohlad je %.0f stupnov (z chodidiel)" % azimuth)
+            print("Slavs: bocny pohlad je %.0f stupnov (z chodidiel)" % azimuth)
             return azimuth
 
     axis = shoulder_axis()
@@ -292,16 +292,16 @@ def side_view_azimuth():
         span_x, span_y = hi[0] - lo[0], hi[1] - lo[1]
         axis = mathutils.Vector((1.0, 0.0, 0.0) if span_x >= span_y
                                 else (0.0, 1.0, 0.0))
-        print("VOLYA: rig sa nenasiel, os odhadnuta z rozmerov v kludovej poze "
+        print("Slavs: rig sa nenasiel, os odhadnuta z rozmerov v kludovej poze "
               "(X=%.2f Y=%.2f)" % (span_x, span_y))
 
     flat = mathutils.Vector((axis[0], axis[1]))
     if flat.length < 1e-6:
-        print("VOLYA: os ramien je zvisla, pouzivam 0 stupnov")
+        print("Slavs: os ramien je zvisla, pouzivam 0 stupnov")
         return 0.0
     flat.normalize()
     azimuth = math.degrees(math.atan2(-flat[0], flat[1])) % 360.0
-    print("VOLYA: bocny pohlad je %.0f stupnov" % azimuth)
+    print("Slavs: bocny pohlad je %.0f stupnov" % azimuth)
     return azimuth
 
 
@@ -322,7 +322,7 @@ def downscaled_texture(image, longest_side):
     if width <= 0 or height <= 0 or max(width, height) <= longest_side:
         return image
 
-    key = "VOLYA_%s_%d" % (image.name, longest_side)
+    key = "SLAVS_%s_%d" % (image.name, longest_side)
     existing = bpy.data.images.get(key)
     if existing is not None:
         return existing
@@ -338,10 +338,10 @@ def downscaled_texture(image, longest_side):
         small = image.copy()
         small.name = key
         small.scale(new_w, new_h)
-        print("VOLYA:     textura %dx%d -> %dx%d" % (width, height, new_w, new_h))
+        print("Slavs:     textura %dx%d -> %dx%d" % (width, height, new_w, new_h))
         return small
     except Exception as exc:
-        print("VOLYA:     texturu sa nepodarilo zmensit (%s)" % exc)
+        print("Slavs:     texturu sa nepodarilo zmensit (%s)" % exc)
         return image
 
 
@@ -421,13 +421,13 @@ def parse_colour_overrides(text):
         name, value = chunk.split("=", 1)
         value = value.strip().lstrip("#")
         if len(value) != 6:
-            print("VOLYA: preskakujem farbu '%s' (caka sa 6 hex znakov)" % chunk)
+            print("Slavs: preskakujem farbu '%s' (caka sa 6 hex znakov)" % chunk)
             continue
         try:
             rgb = tuple(srgb_to_linear(int(value[i:i + 2], 16) / 255.0)
                         for i in (0, 2, 4))
         except ValueError:
-            print("VOLYA: preskakujem farbu '%s' (nie je to hex)" % chunk)
+            print("Slavs: preskakujem farbu '%s' (nie je to hex)" % chunk)
             continue
         overrides[name.strip().lower()] = rgb
     return overrides
@@ -603,7 +603,7 @@ def apply_toon_shading(cfg):
         import blender_attach_weapon as _W
         spec = _W.settings_for(cfg["weapon_fit"]).get("colours", "")
         if spec:
-            print("VOLYA: farby zo settings suboru: %s" % spec)
+            print("Slavs: farby zo settings suboru: %s" % spec)
     overrides = parse_colour_overrides(spec)
 
     # A colour map supplied on the command line beats whatever the model
@@ -615,10 +615,10 @@ def apply_toon_shading(cfg):
         path = os.path.abspath(cfg["texture"])
         if os.path.exists(path):
             forced = bpy.data.images.load(path, check_existing=True)
-            print("VOLYA: textura z prikazoveho riadku: %s (%dx%d)"
+            print("Slavs: textura z prikazoveho riadku: %s (%dx%d)"
                   % (os.path.basename(path), forced.size[0], forced.size[1]))
         else:
-            print("VOLYA: POZOR - texturu %s som nenasiel" % path)
+            print("Slavs: POZOR - texturu %s som nenasiel" % path)
 
     seen = []
     done = 0
@@ -631,13 +631,13 @@ def apply_toon_shading(cfg):
         # is then nothing to rebuild, and the model renders in Blender's default
         # grey no matter what texture was supplied. So make one.
         if not any(slot.material for slot in obj.material_slots):
-            created = bpy.data.materials.new("VOLYA_" + obj.name)
+            created = bpy.data.materials.new("SLAVS_" + obj.name)
             obj.data.materials.append(created)
-            print("VOLYA:   %s nemal ziadny material, vytvoril som mu ho"
+            print("Slavs:   %s nemal ziadny material, vytvoril som mu ho"
                   % obj.name)
 
         if forced is not None and not obj.data.uv_layers:
-            print("VOLYA:   POZOR - %s nema UV mapu, texturu nie je kam "
+            print("Slavs:   POZOR - %s nema UV mapu, texturu nie je kam "
                   "polozit. Bude jednofarebny." % obj.name)
 
         for slot in obj.material_slots:
@@ -649,9 +649,9 @@ def apply_toon_shading(cfg):
             # texture in it, and repaints the character in one flat colour -
             # which is exactly what happened to the gunman during a weapon
             # sweep, where this is called again for every new weapon.
-            if material.get("VOLYA_toon"):
+            if material.get("SLAVS_toon"):
                 continue
-            material["VOLYA_toon"] = 1
+            material["SLAVS_toon"] = 1
             seen.append(material.name)
 
             image, base = None, overrides.get(material.name.lower())
@@ -669,7 +669,7 @@ def apply_toon_shading(cfg):
                 make_toon_material(material, cfg, image, base)
                 done += 1
                 if image is not None:
-                    print("VOLYA:   %-28s %-22s (%s)"
+                    print("Slavs:   %-28s %-22s (%s)"
                           % (material.name, image.name, source))
                 else:
                     # Printed back as sRGB - the same numbers that were typed
@@ -677,17 +677,17 @@ def apply_toon_shading(cfg):
                     # 4A3016 as 110702 and read like the setting was ignored.
                     shown = tuple(int(round(linear_to_srgb(c) * 255))
                                   for c in base[:3])
-                    print("VOLYA:   %-28s #%02X%02X%02X               (%s)"
+                    print("Slavs:   %-28s #%02X%02X%02X               (%s)"
                           % (material.name, shown[0], shown[1], shown[2],
                              source))
             except Exception as exc:
-                print("VOLYA: material %s sa nepodarilo prerobit (%s)"
+                print("Slavs: material %s sa nepodarilo prerobit (%s)"
                       % (material.name, exc))
 
-    print("VOLYA: toon shading na %d materialoch, %d pasiem svetla"
+    print("Slavs: toon shading na %d materialoch, %d pasiem svetla"
           % (done, int(cfg["bands"])))
     if done == 0:
-        print("VOLYA: POZOR - model nema ziadne materialy, ostane sedy. "
+        print("Slavs: POZOR - model nema ziadne materialy, ostane sedy. "
               "Prirad mu v Blenderi aspon jeden material na cast tela.")
 
 
@@ -698,17 +698,17 @@ def build_camera(cfg):
     height = max(hi[2] - lo[2], 1e-4)
     distance = max(height * 4.0, 1.0)
 
-    pivot = bpy.data.objects.new("VOLYA_Pivot", None)
+    pivot = bpy.data.objects.new("SLAVS_Pivot", None)
     bpy.context.scene.collection.objects.link(pivot)
     pivot.location = center
 
-    cam_data = bpy.data.cameras.new("VOLYA_Cam")
+    cam_data = bpy.data.cameras.new("SLAVS_Cam")
     cam_data.type = "ORTHO"
     cam_data.ortho_scale = height * cfg["margin"]
     cam_data.clip_start = 0.01
     cam_data.clip_end = distance * 4.0
 
-    cam = bpy.data.objects.new("VOLYA_Cam", cam_data)
+    cam = bpy.data.objects.new("SLAVS_Cam", cam_data)
     bpy.context.scene.collection.objects.link(cam)
     cam.parent = pivot
 
@@ -721,7 +721,7 @@ def build_camera(cfg):
     cam.location = (0.0, -distance * math.cos(elev), distance * math.sin(elev))
     cam.rotation_euler = (math.radians(90.0) - elev, 0.0, 0.0)
     if abs(float(cfg["elevation"])) > 0.01:
-        print("VOLYA: kamera zdvihnuta o %.0f stupnov" % float(cfg["elevation"]))
+        print("Slavs: kamera zdvihnuta o %.0f stupnov" % float(cfg["elevation"]))
 
     bpy.context.scene.camera = cam
     return pivot
@@ -754,14 +754,14 @@ def build_lights(cfg, pivot=None):
         # which at 96 pixels turns into a row of speckles rather than a
         # highlight - exactly the noise the pixel pass then has to remove.
         specs = [
-            ("VOLYA_Key", cfg["sun"], (-0.6, -1.0, 0.9)),
-            ("VOLYA_Fill", cfg["sun"] * 0.3, (1.0, -0.7, 0.2)),
+            ("SLAVS_Key", cfg["sun"], (-0.6, -1.0, 0.9)),
+            ("SLAVS_Fill", cfg["sun"] * 0.3, (1.0, -0.7, 0.2)),
         ]
     else:
         specs = [
-            ("VOLYA_Key", cfg["sun"], (-0.6, -1.0, 0.9)),
-            ("VOLYA_Fill", cfg["sun"] * 0.35, (1.0, -0.7, 0.2)),
-            ("VOLYA_Rim", cfg["sun"] * 0.6, (0.3, 1.0, 0.6)),
+            ("SLAVS_Key", cfg["sun"], (-0.6, -1.0, 0.9)),
+            ("SLAVS_Fill", cfg["sun"] * 0.35, (1.0, -0.7, 0.2)),
+            ("SLAVS_Rim", cfg["sun"] * 0.6, (0.3, 1.0, 0.6)),
         ]
     for name, energy, direction in specs:
         data = bpy.data.lights.new(name, type="SUN")
@@ -780,7 +780,7 @@ def build_lights(cfg, pivot=None):
             obj.location = vec * reach
         else:
             obj.location = center + vec * reach
-    print("VOLYA: svetla %s"
+    print("Slavs: svetla %s"
           % ("otacaju sa s kamerou" if follow else "fixne vo svete"))
 
 
@@ -804,12 +804,12 @@ def sync_frame_range(cfg=None):
         lo = span[0] if lo is None else min(lo, span[0])
         hi = span[1] if hi is None else max(hi, span[1])
     if lo is None or hi is None or hi <= lo:
-        print("VOLYA: no action found, keeping scene range %d-%d"
+        print("Slavs: no action found, keeping scene range %d-%d"
               % (bpy.context.scene.frame_start, bpy.context.scene.frame_end))
         return
     bpy.context.scene.frame_start = int(math.floor(lo))
     bpy.context.scene.frame_end = int(math.ceil(hi))
-    print("VOLYA: frame range taken from animation: %d-%d"
+    print("Slavs: frame range taken from animation: %d-%d"
           % (bpy.context.scene.frame_start, bpy.context.scene.frame_end))
 
     if cfg is None:
@@ -824,7 +824,7 @@ def sync_frame_range(cfg=None):
     if scene.frame_end < scene.frame_start:
         scene.frame_end = scene.frame_start
     if want_lo > 0 or want_hi > 0:
-        print("VOLYA: orezane na %d-%d"
+        print("Slavs: orezane na %d-%d"
               % (scene.frame_start, scene.frame_end))
 
 
@@ -879,7 +879,7 @@ def render_angle(cfg, pivot, index, total):
     prefix = "%s_a%02d_" % (cfg["name"], index)
     scene.render.filepath = os.path.join(out_dir, prefix)
 
-    print("VOLYA: rendering angle %d/%d (%.1f deg) frames %d-%d step %d -> %s"
+    print("Slavs: rendering angle %d/%d (%.1f deg) frames %d-%d step %d -> %s"
           % (index + 1, total, azimuth, scene.frame_start, scene.frame_end,
              scene.frame_step, out_dir))
     bpy.ops.render.render(animation=True, write_still=False)
@@ -911,7 +911,7 @@ def import_source(path):
             bpy.ops.import_scene.obj(filepath=path)
     else:
         raise RuntimeError("neznamy format: %s" % path)
-    print("VOLYA: nacitane %s" % os.path.basename(path))
+    print("Slavs: nacitane %s" % os.path.basename(path))
 
 
 def attach_weapon(cfg):
@@ -960,7 +960,7 @@ def main():
             if obj.type == "MESH" and obj is not weapon:
                 obj.hide_render = True
                 hidden += 1
-        print("VOLYA: DEBUG - skryl som %d sietí, renderujem len zbran" % hidden)
+        print("Slavs: DEBUG - skryl som %d sietí, renderujem len zbran" % hidden)
 
     toon = int(cfg["toon"]) != 0
     if toon and cfg["engine"] == "auto":
@@ -969,11 +969,11 @@ def main():
         cfg["engine"] = "BLENDER_EEVEE_NEXT"
     engine = pick_engine(cfg["engine"])
     if toon and "EEVEE" not in engine:
-        print("VOLYA: POZOR - toon shading potrebuje EEVEE, engine je %s. "
+        print("Slavs: POZOR - toon shading potrebuje EEVEE, engine je %s. "
               "Vypinam toon." % engine)
         cfg["toon"] = 0
         toon = False
-    print("VOLYA: Blender %s, engine %s, toon %s, pixel %s"
+    print("Slavs: Blender %s, engine %s, toon %s, pixel %s"
           % (bpy.app.version_string, engine,
              "ano" if toon else "nie",
              "ano" if int(cfg["pixel"]) else "nie"))
@@ -989,7 +989,7 @@ def main():
     yaw = float(cfg["yaw"])
     if abs(yaw) > 0.01:
         cfg["start_angle"] = (float(cfg["start_angle"]) - yaw) % 360.0
-        print("VOLYA: natocene o %.0f stupnov k prednej strane -> %.0f stupnov"
+        print("Slavs: natocene o %.0f stupnov k prednej strane -> %.0f stupnov"
               % (yaw, cfg["start_angle"]))
 
     sync_frame_range(cfg)
@@ -1011,7 +1011,7 @@ def main():
         scene.frame_start = middle
         scene.frame_end = middle
         scene.frame_step = 1
-        print("VOLYA: PREVIEW - 1 frame from 8 angles (a00 = %.0f deg, "
+        print("Slavs: PREVIEW - 1 frame from 8 angles (a00 = %.0f deg, "
               "each step +45 deg)" % cfg["start_angle"])
 
     sweep = int(cfg["weapon_sweep"])
@@ -1027,7 +1027,7 @@ def main():
         os.makedirs(out_dir, exist_ok=True)
         for index in range(sweep):
             for obj in list(bpy.data.objects):
-                if obj.name.startswith("VOLYA_Weapon"):
+                if obj.name.startswith("SLAVS_Weapon"):
                     bpy.data.objects.remove(obj, do_unlink=True)
             cfg["weapon_spin"] = base + gap * index
             attach_weapon(cfg)
@@ -1035,10 +1035,10 @@ def main():
                 apply_toon_shading(cfg)
             scene.render.filepath = os.path.join(
                 out_dir, "%s_a%02d_" % (cfg["name"], index))
-            print("VOLYA: spin %d/%d = %.0f stupnov"
+            print("Slavs: spin %d/%d = %.0f stupnov"
                   % (index + 1, sweep, cfg["weapon_spin"]))
             bpy.ops.render.render(animation=True, write_still=False)
-        print("VOLYA: hotovo - %d natoceni zbrane, kamera stala" % sweep)
+        print("Slavs: hotovo - %d natoceni zbrane, kamera stala" % sweep)
         return
 
     for index in range(total):
@@ -1046,10 +1046,10 @@ def main():
 
     count = len(range(scene.frame_start, scene.frame_end + 1, scene.frame_step))
     if int(cfg["preview"]) != 0:
-        print("VOLYA: pozri sa na subory _a00_ az _a07_ a vyber ten, kde je")
-        print("VOLYA: postava presne z boku. Cislo N pouzi ako --start_angle")
-        print("VOLYA: s hodnotou N*45, a potom renderuj s --angles 1.")
-    print("VOLYA: done - %d angle(s) x %d frames = %d PNG files in %s"
+        print("Slavs: pozri sa na subory _a00_ az _a07_ a vyber ten, kde je")
+        print("Slavs: postava presne z boku. Cislo N pouzi ako --start_angle")
+        print("Slavs: s hodnotou N*45, a potom renderuj s --angles 1.")
+    print("Slavs: done - %d angle(s) x %d frames = %d PNG files in %s"
           % (total, count, total * count, bpy.path.abspath(cfg["out"])))
 
 

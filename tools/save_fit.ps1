@@ -1,4 +1,4 @@
-# VOLYA - read a hand-placed weapon back out of the .blend into art\fits\<name>.json
+# Slavs - read a hand-placed weapon back out of the .blend into art\fits\<name>.json
 #
 #   powershell -ExecutionPolicy Bypass -File tools\save_fit.ps1 -Name gunman
 #
@@ -14,7 +14,7 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
-$blender = $env:VOLYA_BLENDER
+$blender = $env:SLAVS_BLENDER
 if (-not $blender) {
     $found = Get-ChildItem "C:\Program Files\Blender Foundation" -Recurse `
              -Filter blender.exe -ErrorAction SilentlyContinue |

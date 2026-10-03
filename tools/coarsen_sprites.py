@@ -1,4 +1,4 @@
-"""VOLYA - re-pixelate a rendered sprite folder at a different pixel size.
+"""Slavs - re-pixelate a rendered sprite folder at a different pixel size.
 
 Why this exists: how coarse a character's pixels are, relative to the ground it
 walks on, is a question about a picture, and METHOD rule 1 says those are
@@ -12,7 +12,7 @@ the pixel pass twice, so it is very slightly softer than the same frame rendered
 straight from Blender at that height. Good enough to choose with; re-render the
 winner properly (PRIKAZY.md) before it ships.
 
-    python tools/coarsen_sprites.py --in volya/art/run_px --out volya/art/run_px_b --height 108
+    python tools/coarsen_sprites.py --in slavs/art/run_px --out slavs/art/run_px_b --height 108
 
 Writes the PNGs and the frames.gd manifest. It does NOT write .import files -
 `godot --headless --import` (already part of tools/deploy_android.ps1) makes
@@ -117,7 +117,7 @@ def main() -> int:
         written.append(f.name)
 
     # res:// path, not a filesystem path - the manifest is read by the game.
-    res_dir = "res://" + str(dst).replace("\\", "/").split("volya/", 1)[-1]
+    res_dir = "res://" + str(dst).replace("\\", "/").split("slavs/", 1)[-1]
     lines = [MANIFEST_HEADER]
     lines += [f'\t"{res_dir}/{n}",\n' for n in written]
     lines.append("]\n")

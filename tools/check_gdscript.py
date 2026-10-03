@@ -1,5 +1,5 @@
 """
-VOLYA - catch GDScript edits that split a function in half.
+Slavs - catch GDScript edits that split a function in half.
 
 A script that fails to compile takes everything with it: the class stops
 existing, so an enemy pool builds sixty-four nodes that do nothing and the game
@@ -15,7 +15,7 @@ parameter of some OTHER function in the file, but not of this one and not a
 local or a member, is reported. Narrow on purpose - it does not try to be a
 type checker, and it does not guess at Godot's built-ins.
 
-    python tools/check_gdscript.py volya/scripts/*.gd
+    python tools/check_gdscript.py slavs/scripts/*.gd
 
 Exits nonzero if anything is found, so it can gate a deploy.
 """
@@ -145,10 +145,10 @@ def main():
 
     print()
     if total:
-        print("VOLYA: %d podozrivych miest. Skript sa pravdepodobne "
+        print("Slavs: %d podozrivych miest. Skript sa pravdepodobne "
               "neskompiluje a hra pride o cely tento uzol." % total)
         return 1
-    print("VOLYA: ziadne rozdelene funkcie.")
+    print("Slavs: ziadne rozdelene funkcie.")
     return 0
 
 

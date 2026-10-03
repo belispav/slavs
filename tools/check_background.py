@@ -1,5 +1,5 @@
 """
-VOLYA - measure a background before it goes into the game.
+Slavs - measure a background before it goes into the game.
 
 The picture is drawn one pixel to one game unit, so its rows ARE the game's
 geometry. The screen is 720 units tall; if the open ground is shorter than that,
@@ -8,7 +8,7 @@ the whole field fits at once and the camera has nothing to scroll to.
 Reports where the open ground is, whether it is tall enough, and whether the
 left and right edges match well enough to repeat.
 
-    python tools/check_background.py volya/art/env_01.png
+    python tools/check_background.py slavs/art/env_01.png
 
 Prints the two numbers to paste into main.gd if the picture is usable.
 """
@@ -19,7 +19,7 @@ try:
     import numpy as np
     from PIL import Image
 except ImportError:
-    sys.exit("VOLYA: chyba kniznica. Spusti:  pip install pillow numpy")
+    sys.exit("Slavs: chyba kniznica. Spusti:  pip install pillow numpy")
 
 
 SCREEN_HEIGHT = 720          # must match the viewport height in project.godot
@@ -88,10 +88,10 @@ def main():
     share = ground_rows(pixels)
     top, bottom = longest_run(share > GROUND_SHARE)
     if bottom <= top:
-        sys.exit("VOLYA: nenasiel som suvislu zem. Je to vobec pozadie?")
+        sys.exit("Slavs: nenasiel som suvislu zem. Je to vobec pozadie?")
     band = bottom - top
 
-    print("VOLYA: %s" % path)
+    print("Slavs: %s" % path)
     print("  rozmer            %d x %d px" % (width, height))
     print("  volna zem         riadky %d az %d" % (top, bottom))
     print("  vyska pasu        %d px  (%.0f %% obrazka)"
@@ -133,7 +133,7 @@ def main():
             print("  CHYBA: %s" % p)
         return 1
 
-    print("  V poriadku. Do volya/scripts/main.gd nastav:")
+    print("  V poriadku. Do slavs/scripts/main.gd nastav:")
     print("      const BG_WALK_TOP := %.1f" % top)
     print("      const BG_WALK_BOTTOM := %.1f" % bottom)
     return 0

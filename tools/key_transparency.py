@@ -1,5 +1,5 @@
 """
-VOLYA - turn a flat-colour chroma-key background into real transparency.
+Slavs - turn a flat-colour chroma-key background into real transparency.
 
 The AI generator this project uses only outputs JPEG, and JPEG has no alpha
 channel - no prompt wording changes that, it is a property of the format.
@@ -28,7 +28,7 @@ What it does, in order:
      env_* backgrounds (left edge vs right edge against the image's own
      neighbour noise) so a bad tile is caught here, not on the phone.
 
-    python tools/key_transparency.py volya/art/env_05_fg_raw.jpg volya/art/env_05_fg.png
+    python tools/key_transparency.py slavs/art/env_05_fg_raw.jpg slavs/art/env_05_fg.png
 
 Exits nonzero if the result looks unusable (see "problems" at the bottom),
 so it can gate wiring the file into main.gd.
@@ -40,7 +40,7 @@ try:
     import numpy as np
     from PIL import Image
 except ImportError:
-    sys.exit("VOLYA: chyba kniznica. Spusti:  pip install pillow numpy")
+    sys.exit("Slavs: chyba kniznica. Spusti:  pip install pillow numpy")
 
 
 KEY_DEFAULT = (255, 0, 255)
@@ -58,7 +58,7 @@ ROW_CONTENT_SHARE = 0.03
 def parse_key(text):
     text = text.strip().lstrip("#")
     if len(text) != 6:
-        sys.exit("VOLYA: --key potrebuje 6 hex znakov, napr. FF00FF")
+        sys.exit("Slavs: --key potrebuje 6 hex znakov, napr. FF00FF")
     return tuple(int(text[i:i + 2], 16) for i in (0, 2, 4))
 
 
@@ -128,14 +128,14 @@ def main():
     rgb_out, alpha = key_out(pixels, key)
 
     covered = float((alpha > 0.5).mean())
-    print("VOLYA: %s -> %s" % (src, dst))
+    print("Slavs: %s -> %s" % (src, dst))
     print("  vstup               %d x %d px" % (width, height))
     print("  kluc                #%02X%02X%02X" % key)
     print("  podiel nepriehladnych pixelov   %.1f %%" % (covered * 100.0))
 
     top, bottom = content_rows(alpha)
     if top is None:
-        sys.exit("VOLYA: nenasiel som ziadny obsah - je kluc spravne? (--key=RRGGBB)")
+        sys.exit("Slavs: nenasiel som ziadny obsah - je kluc spravne? (--key=RRGGBB)")
 
     band = bottom - top + 1
     print("  obsah                riadky %d az %d (%d px)" % (top, bottom, band))
