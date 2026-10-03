@@ -543,7 +543,7 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   (`player.hurt`, emitted before the god-mode check so it shows while testing;
   god mode now also takes iframes). Vibration (`Input.vibrate_handheld`)
   works on device. **Moved 2026-10-03 (Pavel): buzz only when the HERO is
-  hit** (120 ms, amplitude 1.0), not on kills/barrel bursts - those felt
+  hit** (180 ms, amplitude 1.0 - both confirmed on device by Pavel), not on kills/barrel bursts - those felt
   odd. Max one per 0.08 s. Panel "VIBRACIE", "sila vibracii",
   "dlzka vibracie pri zasahu (ms)".
   **Needs the Vibrate permission ticked in the Android export preset on

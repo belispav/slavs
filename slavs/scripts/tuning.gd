@@ -180,7 +180,7 @@ var fx_enabled: bool = true
 ## on kills and barrel bursts felt odd; it belongs to taking a hit. A longer
 ## buzz also feels stronger - short pulses never reach the motor's full
 ## strength. Needs the VIBRATE permission in the Android export preset.
-const VIBRATE_PLAYER_HIT_MS: int = 120
+const VIBRATE_PLAYER_HIT_MS: int = 180
 var vibrate_player_hit_ms: float = VIBRATE_PLAYER_HIT_MS
 ## Events closer together than this are dropped (s).
 const VIBRATE_MIN_GAP: float = 0.08
