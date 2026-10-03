@@ -30,6 +30,20 @@ starý záznam `volya` v zozname projektov odstráň. ID balíka v telefóne
 
 ---
 
+## VIBRÁCIE — povolenie v exporte (raz, na PC, 2026-10-03)
+
+Android dovolí hre vibrovať, len ak má v exporte povolenie **VIBRATE**.
+`export_presets.cfg` nie je v gite, takže to musíš zapnúť ty:
+
+1. Otvor projekt `slavs\project.godot` v Godot editore.
+2. **Project → Export…** → preset **Android** → záložka **Options**.
+3. Zroluj na **Permissions** a zaškrtni **Vibrate**.
+4. Zavri okno (uloží sa samo) a nasaď ako vždy.
+
+Bez toho hra beží normálne, len nevibruje.
+
+---
+
 ## PIXELLAB — takto teraz vzniká všetka grafika (od 2026-10-02)
 
 Postavy, ich animácie, predmety aj efekty generuje Claude v PixelLabe.

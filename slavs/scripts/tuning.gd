@@ -168,10 +168,25 @@ const FX_BLOOD_HIT: int = 8
 const FX_BLOOD_DEATH: int = 30
 const FX_WOOD_HIT: int = 6
 const FX_WOOD_BREAK: int = 30
+## The hero's own blood when something hits him.
+const FX_BLOOD_PLAYER: int = 14
 ## How long blood/splinters lie on the ground before they are gone (s).
 const FX_STAIN_TIME: float = 3.0
 var fx_stain_time: float = FX_STAIN_TIME
 var fx_enabled: bool = true
+
+# --- Vibration (2026-10-03) ---
+## Phone buzz on an enemy's death and a barrel bursting, in milliseconds.
+## Needs the VIBRATE permission in the Android export preset.
+const VIBRATE_ENEMY_DEATH_MS: int = 35
+const VIBRATE_BARREL_BREAK_MS: int = 70
+## The axe can kill five in one pass; without a gap the buzzes merge into
+## one long drone. Events closer together than this are dropped (s).
+const VIBRATE_MIN_GAP: float = 0.08
+var vibrate_enabled: bool = true
+## 0..1, passed to Android as the amplitude (phones that cannot vary it
+## ignore it and buzz at their fixed strength).
+var vibrate_strength: float = 0.6
 
 # --- Breakable barrel (2026-10-03) ---
 const BARREL_ART_DIR: String = "res://art/barrel_pl"

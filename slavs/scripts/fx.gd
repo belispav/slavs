@@ -11,7 +11,8 @@ extends Node2D
 ## HEIGHT above it (h). It is drawn at (x, y - h). Blood and splinters fly up,
 ## fall back to h = 0 and stay there as a stain where they landed - in front
 ## of or behind a body according to their own ground y - then fade. Smoke
-## rises and grows instead.
+## (rises and grows) is kept in the code but no longer used: Pavel found the
+## death cloud odd and the square smoke wrong for a barrel (2026-10-03).
 ##
 ## Two layers, because a stain on the ground must be covered by whoever walks
 ## over it while a particle in the air must not be: `_ground` sits just above
@@ -61,11 +62,14 @@ func setup(ground_z: int) -> void:
 ## A body was hit (`fatal` = it died). `feet` is where it stands, `height` its
 ## drawn height in world units, `away` +1/-1 the side the blow came FROM the
 ## opposite of, so blood sprays away from the hero.
-func body_hit(feet: Vector2, height: float, away: float, fatal: bool) -> void:
+## `count` > 0 overrides how many drops (the hero's own hits use it).
+func body_hit(feet: Vector2, height: float, away: float, fatal: bool, count: int = 0) -> void:
 	if not Tuning.fx_enabled:
 		return
 	var at_h: float = height * 0.55
 	var n: int = Tuning.FX_BLOOD_DEATH if fatal else Tuning.FX_BLOOD_HIT
+	if count > 0:
+		n = count
 	for i in n:
 		var speed: float = randf_range(60.0, 260.0) if fatal else randf_range(40.0, 160.0)
 		var vx: float = away * speed * randf_range(0.3, 1.0) + randf_range(-40.0, 40.0)
@@ -74,8 +78,6 @@ func body_hit(feet: Vector2, height: float, away: float, fatal: bool) -> void:
 			Vector2(vx, vy), at_h + randf_range(-12, 12), randf_range(80.0, 300.0),
 			Tuning.fx_stain_time, 4.0 if randf() < 0.6 else 6.0,
 			BLOOD_COLOURS[randi() % BLOOD_COLOURS.size()])
-	if fatal:
-		_puff(feet, 8, 14.0)
 
 
 ## A barrel was hit; `broken` = it burst.
@@ -91,8 +93,6 @@ func wood_hit(feet: Vector2, away: float, broken: bool) -> void:
 			randf_range(20.0, 56.0), randf_range(120.0, 360.0),
 			Tuning.fx_stain_time, 4.0 if randf() < 0.6 else 6.0,
 			WOOD_COLOURS[randi() % WOOD_COLOURS.size()])
-	if broken:
-		_puff(feet, 14, 26.0)
 
 
 func _puff(feet: Vector2, n: int, spread: float) -> void:

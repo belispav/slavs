@@ -8,6 +8,9 @@ signal fire_requested(from: Vector2, dir: Vector2)
 signal throw_requested(from: Vector2, dir: Vector2)
 signal health_changed(hp: int)
 signal died()
+## A hit landed (also in god mode): feet, drawn height, and the side the
+## blow pushes toward (+1 right / -1 left). Drives the hero's blood.
+signal hurt(feet: Vector2, height: float, away: float)
 
 const SIZE := Vector2(30, 54)
 
@@ -325,17 +328,20 @@ func _on_body_touched(body: Node) -> void:
 
 ## Called by enemy bodies on contact and by enemy projectiles.
 func take_damage(amount: int, from_pos: Vector2) -> void:
-	if Debug.god_mode:
-		return
 	if _iframes > 0.0 or hp <= 0:
 		return
-	hp -= amount
 	_iframes = Tuning.PLAYER_IFRAMES
 	var away: float = 1.0
 	if from_pos != Vector2.ZERO:
 		away = signf(global_position.x - from_pos.x)
 		if is_zero_approx(away):
 			away = 1.0
+	# Before the god-mode check on purpose: the blood shows while testing
+	# with NESMRTELNOST on, only the health loss and knockback are skipped.
+	hurt.emit(global_position + Vector2(0.0, SIZE.y * 0.5), _drawn_height, away)
+	if Debug.god_mode:
+		return
+	hp -= amount
 	velocity.x = away * Tuning.PLAYER_KNOCKBACK.x
 	velocity.y = Tuning.PLAYER_KNOCKBACK.y
 	health_changed.emit(hp)

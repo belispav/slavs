@@ -294,6 +294,7 @@ var _bullet_next: int = 0
 var axe
 var barrels: Array = []
 var fx   # fx.gd - blood, splinters, smoke
+var _vibrate_cd: float = 0.0
 ## Barrels are stood on the field a few frames in, once the player has been
 ## clamped onto the walkable band - spawn_point alone may be off it. Set
 ## back to a few frames after every death so they come back, whole, in
@@ -343,6 +344,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_vibrate_cd = maxf(_vibrate_cd - delta, 0.0)
 	if player.global_position.y > Tuning.RESPAWN_Y:
 		_restart()
 	_alive = _count_alive()      # spocitane RAZ za snimku, nie trikrat
@@ -1026,6 +1028,7 @@ func _build_fx() -> void:
 		e.hurt.connect(_on_body_hurt)
 	for b in barrels:
 		b.damaged.connect(_on_barrel_damaged)
+	player.hurt.connect(_on_player_hurt)
 
 
 ## Which way debris flies: away from the hero, who is the one hitting.
@@ -1035,10 +1038,26 @@ func _away_from_player(at: Vector2) -> float:
 
 func _on_body_hurt(feet: Vector2, height: float, fatal: bool) -> void:
 	fx.body_hit(feet, height, _away_from_player(feet), fatal)
+	if fatal:
+		_vibrate(Tuning.VIBRATE_ENEMY_DEATH_MS)
 
 
 func _on_barrel_damaged(feet: Vector2, broke: bool) -> void:
 	fx.wood_hit(feet, _away_from_player(feet), broke)
+	if broke:
+		_vibrate(Tuning.VIBRATE_BARREL_BREAK_MS)
+
+
+func _on_player_hurt(feet: Vector2, height: float, away: float) -> void:
+	fx.body_hit(feet, height, away, false, Tuning.FX_BLOOD_PLAYER)
+
+
+## One short buzz, at most one per VIBRATE_MIN_GAP. Does nothing on desktop.
+func _vibrate(ms: int) -> void:
+	if not Tuning.vibrate_enabled or _vibrate_cd > 0.0:
+		return
+	_vibrate_cd = Tuning.VIBRATE_MIN_GAP
+	Input.vibrate_handheld(ms, Tuning.vibrate_strength)
 
 
 func _on_enemy_died(_at: Vector2) -> void:

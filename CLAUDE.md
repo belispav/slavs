@@ -536,6 +536,16 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   the mechanic (0 generations); PixelLab clips can replace the look later.
   Measured: 700 particles (the cap) update in ~0.15 ms. Panel: "EFEKTY"
   toggle + "ako dlho lezi krv na zemi". No explosion yet - nothing explodes.
+- [~] **Effects round 2 + vibration (2026-10-03), not yet on device.**
+  Pavel on device: mechanic works; splinters read as gold coins and the
+  square smoke does not fit (both accepted for now); the death cloud was odd.
+  Smoke puffs removed (code kept, unused). Hero now bleeds when hit
+  (`player.hurt`, emitted before the god-mode check so it shows while testing;
+  god mode now also takes iframes). Vibration: `Input.vibrate_handheld` on
+  enemy death (35 ms) and barrel burst (70 ms), max one per 0.08 s so an axe
+  pass through a crowd does not drone; panel "VIBRACIE" + "sila vibracii".
+  **Needs the Vibrate permission ticked in the Android export preset on
+  Pavel's PC** (PRIKAZY.md -> VIBRACIE) - export_presets.cfg is not in git.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the
