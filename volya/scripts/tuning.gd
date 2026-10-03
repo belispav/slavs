@@ -123,6 +123,81 @@ const FIRE_INTERVAL: float = 0.09
 const BULLET_POOL_SIZE: int = 96
 const MUZZLE_DISTANCE: float = 34.0
 
+# --- Thrown axe (2026-10-03) ---
+## The hero's weapon: a hand-axe thrown along the aim that comes back like a
+## boomerang (plan 3.4). Limited range is the point - it reaches rushers and,
+## with a step forward, gunmen, and it cuts through a whole line twice (out
+## and back). The next throw waits for the catch. Switch back to the old
+## bullets with "SEKERA" on the debug panel.
+const PLAYER_WEAPON_AXE: bool = true
+## Live copy, flipped by the "SEKERA" switch on the debug panel.
+var player_weapon_axe: bool = PLAYER_WEAPON_AXE
+## How far the axe flies before it turns round, in world units. The rusher's
+## reach is 100, so even the slider's minimum outranges him.
+const AXE_RANGE: float = 350.0
+var axe_range: float = AXE_RANGE
+## Outward speed, world units / s. Was 1100 - too fast to follow on device
+## (Pavel 2026-10-03); live on the panel ("rychlost sekery").
+const AXE_SPEED: float = 650.0
+var axe_speed: float = AXE_SPEED
+## The way back is this much faster than the way out, so the wait for the
+## catch stays short even with a slow, readable throw.
+const AXE_RETURN_FACTOR: float = 1.2
+const AXE_SPIN: float = 22.0             # radians / s
+const AXE_HIT_RADIUS: float = 30.0       # generous on purpose (pillar 1)
+const AXE_CATCH_RADIUS: float = 28.0
+## Safety net: if the hero keeps running away from his own axe, it is
+## caught anyway after this long instead of chasing him forever.
+const AXE_MAX_RETURN_TIME: float = 1.5
+## Hits per pass. 1 = an enemy passed through out AND back takes 2.
+const AXE_DAMAGE: int = 1
+const AXE_TEXTURE: String = "res://art/axe_thrown/axe.png"
+## Throw clip: frames listed in art/hero_pl_axe_throw/frames.gd, played at
+## AXE_THROW_FPS; the axe leaves the hand on AXE_RELEASE_FRAME (index into
+## that list - 5 is the frame where the arm is fully forward).
+const PLAYER_AXE_IDLE_ART_DIR: String = "res://art/hero_pl_axe_idle"
+const PLAYER_AXE_RUN_ART_DIR: String = "res://art/hero_pl_axe_run"
+const PLAYER_AXE_THROW_ART_DIR: String = "res://art/hero_pl_axe_throw"
+const AXE_THROW_FPS: float = 14.0
+const AXE_RELEASE_FRAME: int = 5
+
+# --- Breakable barrel (2026-10-03) ---
+const BARREL_ART_DIR: String = "res://art/barrel_pl"
+const BARREL_HP: int = 3
+## Integer like every PixelLab sprite - 2x matches the hero.
+const BARREL_SPRITE_SCALE: float = 2.0
+## Slowed from 12 so the burst can be seen mid-fight (Pavel missed it).
+const BARREL_BREAK_FPS: float = 9.0
+## Hit area in world units, standing on the barrel's feet. The drawn barrel
+## is about 48 x 64 at 2x; the box is a little bigger, in the player's favour.
+const BARREL_HIT_SIZE: Vector2 = Vector2(60.0, 76.0)
+## Where the barrels stand, relative to the hero's feet at the moment they
+## are (re)placed: at the start, after every death, and on the panel button.
+## Ahead of him on the right (where the thumb does not cover them), spread
+## over the field's depth. Clamped to the walkable band.
+const BARREL_OFFSETS: Array[Vector2] = [
+	Vector2(300.0, 0.0), Vector2(420.0, -150.0),
+	Vector2(950.0, 90.0), Vector2(1150.0, -30.0),
+]
+## Kept off the very edge of the walkable band so a barrel never stands on
+## the palisade line or in the river.
+const BARREL_EDGE_INSET: float = 30.0
+## The wall: BARREL_WALL_COUNT barrels side by side along the depth (Y),
+## BARREL_WALL_SPACING apart, centred on the hero's row, BARREL_WALL_X ahead
+## of him - an obstacle to break through rather than step round (Pavel
+## 2026-10-03: one barrel is just stepped round). Rebuilt with the others
+## after every death. It does NOT span the whole field (that is ~970 deep);
+## six barrels edge to edge are ~240.
+const BARREL_WALL_COUNT: int = 6
+const BARREL_WALL_X: float = 600.0
+const BARREL_WALL_SPACING: float = 40.0
+## How far, in depth (Y), a barrel blocks the hero's FEET either side of its
+## own feet. The field is 2.5D: blocking has to compare where the two stand,
+## not whether the drawings overlap. Raised automatically inside the wall so
+## neighbours leave no gap to slip through.
+const BARREL_BLOCK_DEPTH: float = 26.0
+const BARREL_BLOCK_WIDTH: float = 40.0
+
 ## Where on the body a shot leaves from, as a fraction of the drawing's height
 ## measured up from the feet. The collision box is 54 units tall while the
 ## drawing is over twice that, so firing from the box's centre put the muzzle at
@@ -376,3 +451,5 @@ const LAYER_WORLD: int = 1
 const LAYER_PLAYER: int = 2
 const LAYER_TARGET: int = 4
 const LAYER_ENEMY: int = 8
+## Solid props the hero cannot walk through (barrels). Only the player masks it.
+const LAYER_PROP: int = 16

@@ -301,6 +301,24 @@ func _build_panel() -> void:
 	rows.add_child(hero_2x)
 	hero_2x.toggled.connect(func(on: bool) -> void:
 		Tuning.player_sprite_scale = 2.0 if on else 1.0)
+	# Thrown axe (boomerang) vs the old bullets, to compare on the phone.
+	var axe_mode := CheckButton.new()
+	axe_mode.text = "SEKERA (vypnute = gulky)"
+	axe_mode.custom_minimum_size = Vector2(0, 56)
+	axe_mode.button_pressed = Tuning.player_weapon_axe
+	rows.add_child(axe_mode)
+	axe_mode.toggled.connect(func(on: bool) -> void:
+		Tuning.player_weapon_axe = on)
+	_add_slider("dosah sekery", 150.0, 700.0, 10.0, Tuning.axe_range,
+		func(v: float) -> void: Tuning.axe_range = v)
+	_add_slider("rychlost sekery", 250.0, 1400.0, 25.0, Tuning.axe_speed,
+		func(v: float) -> void: Tuning.axe_speed = v)
+	var barrels_btn := Button.new()
+	barrels_btn.text = "NOVE SUDY (postavi ich pred hrdinu)"
+	barrels_btn.custom_minimum_size = Vector2(0, 56)
+	rows.add_child(barrels_btn)
+	barrels_btn.pressed.connect(func() -> void:
+		Debug.barrels_reset_requested = true)
 	_add_slider("aky vysoky kus tela hraca sa da trafit (0-1)", 0.3, 1.0, 0.02,
 		Tuning.player_hurt_height_fraction,
 		func(v: float) -> void: Tuning.player_hurt_height_fraction = v)
@@ -484,6 +502,8 @@ func _dump_values() -> void:
 		"free_move_follow        = %s" % c.free_move_follow,
 		"free_move_gain          = %s" % c.free_move_gain,
 		"player_speed_scale      = %s" % Tuning.player_speed_scale,
+		"axe_range               = %s" % Tuning.axe_range,
+		"axe_speed               = %s" % Tuning.axe_speed,
 		"rusher_speed_scale      = %s" % Tuning.rusher_speed_scale,
 		"thrower_speed_scale     = %s" % Tuning.thrower_speed_scale,
 		"gest / vykonane         = %d / %d" % [Touch.jump_count, Touch.jumps_performed],

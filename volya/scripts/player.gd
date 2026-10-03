@@ -4,6 +4,8 @@ extends CharacterBody2D
 ## Reads only the TouchController API, never raw touches.
 
 signal fire_requested(from: Vector2, dir: Vector2)
+## The axe leaves the hand (Tuning.player_weapon_axe). main.gd throws it.
+signal throw_requested(from: Vector2, dir: Vector2)
 signal health_changed(hp: int)
 signal died()
 
@@ -60,6 +62,17 @@ var _muzzle_height: float = Tuning.MUZZLE_HEIGHT_FALLBACK
 var _has_idle: bool = false
 var _rest_frame: int = 0
 
+## Thrown axe (2026-10-03). The hero holds the axe until he throws it, and
+## gets it back when it returns (main.gd calls catch_axe()). While it is in
+## the air he is drawn with the old empty-handed run/idle - which is also
+## what tells the player the next throw is not ready yet.
+var axe_in_hand: bool = true
+var _throwing: bool = false
+var _throw_time: float = 0.0
+var _throw_released: bool = false
+var _has_axe_clips: bool = false
+var _has_throw: bool = false
+
 ## True head-to-feet body height, in world units - set once art is loaded,
 ## 0.0 with no art (the box fallback, where _fit_hurtbox is never called and
 ## must not be re-driven from here). Kept around so _fit_hurtbox can be
@@ -78,7 +91,9 @@ func _ready() -> void:
 	add_to_group("player")
 	spawn_point = global_position
 	collision_layer = Tuning.LAYER_PLAYER
-	collision_mask = Tuning.LAYER_WORLD
+	# LAYER_PROP: barrels block the hero (not the enemies - they have no
+	# way round an obstacle yet, and would just get stuck on it).
+	collision_mask = Tuning.LAYER_WORLD | Tuning.LAYER_PROP
 	floor_snap_length = 8.0
 
 	var shape := CollisionShape2D.new()
@@ -148,6 +163,16 @@ func _build_sprite() -> void:
 		for tex in idle:
 			sheet.add_frame(&"idle", tex)
 
+	# The axe set. Each clip is optional: a missing folder just falls back
+	# to the empty-handed clips above.
+	var has_idle_axe := _add_clip(sheet, &"idle_axe",
+		Tuning.PLAYER_AXE_IDLE_ART_DIR, Tuning.PLAYER_ANIM_FPS, true)
+	var has_run_axe := _add_clip(sheet, &"run_axe",
+		Tuning.PLAYER_AXE_RUN_ART_DIR, Tuning.PLAYER_ANIM_FPS, true)
+	_has_axe_clips = has_idle_axe and has_run_axe
+	_has_throw = _add_clip(sheet, &"throw",
+		Tuning.PLAYER_AXE_THROW_ART_DIR, Tuning.AXE_THROW_FPS, false)
+
 	_sprite = AnimatedSprite2D.new()
 	_sprite.sprite_frames = sheet
 	_sprite.animation = &"run"
@@ -172,6 +197,22 @@ func _build_sprite() -> void:
 
 	add_child(_sprite)
 	_sprite.play()
+
+
+## One clip from a frames folder. False (and nothing added) if it is empty.
+## Every PixelLab clip of the hero is on the same 96 px canvas with the feet
+## on the same row, so they all share the run cycle's measurements.
+func _add_clip(sheet: SpriteFrames, anim: StringName, dir: String,
+		fps: float, loop: bool) -> bool:
+	var frames := SpriteSequence.load_frames(dir)
+	if frames.is_empty():
+		return false
+	sheet.add_animation(anim)
+	sheet.set_animation_speed(anim, fps)
+	sheet.set_animation_loop(anim, loop)
+	for tex in frames:
+		sheet.add_frame(anim, tex)
+	return true
 
 
 ## Size the drawing and everything measured from it: feet on the bottom of
@@ -251,6 +292,8 @@ func respawn() -> void:
 	velocity = Vector2.ZERO
 	hp = Tuning.PLAYER_MAX_HP
 	_iframes = 0.0
+	axe_in_hand = true
+	_throwing = false
 	health_changed.emit(hp)
 
 
@@ -263,6 +306,9 @@ func revive() -> void:
 	hp = Tuning.PLAYER_MAX_HP
 	_iframes = Tuning.PLAYER_REVIVE_IFRAMES
 	velocity = Vector2.ZERO
+	# Never get up empty-handed - the field clear recalls the axe as well.
+	axe_in_hand = true
+	_throwing = false
 	health_changed.emit(hp)
 
 
@@ -491,10 +537,43 @@ func _update_aim(delta: float) -> void:
 		facing = 1 if velocity.x > 0.0 else -1
 
 	_fire_cooldown = maxf(_fire_cooldown - delta, 0.0)
-	if active and _fire_cooldown <= 0.0:
+	if Tuning.player_weapon_axe:
+		_update_throw(delta, active)
+	elif active and _fire_cooldown <= 0.0:
 		_fire_cooldown = Tuning.FIRE_INTERVAL
 		fire_requested.emit(
 			muzzle_point() + aim_dir * Tuning.MUZZLE_DISTANCE, aim_dir)
+
+
+## Aiming with the axe in hand starts a throw. The axe leaves the hand on
+## the release frame of the throw clip - not when the thumb goes down - so
+## what the player sees and where the axe appears agree. The aim at the
+## moment of release is the one used.
+func _update_throw(delta: float, active: bool) -> void:
+	if _throwing:
+		_throw_time += delta
+		var release_at: float = 0.0
+		var duration: float = 0.0
+		if _has_throw:
+			var fps: float = Tuning.AXE_THROW_FPS
+			release_at = float(Tuning.AXE_RELEASE_FRAME) / fps
+			duration = float(_sprite.sprite_frames.get_frame_count(&"throw")) / fps
+		if not _throw_released and _throw_time >= release_at:
+			_throw_released = true
+			axe_in_hand = false
+			throw_requested.emit(muzzle_point(), aim_dir)
+		if _throw_time >= duration:
+			_throwing = false
+		return
+	if active and axe_in_hand:
+		_throwing = true
+		_throw_time = 0.0
+		_throw_released = false
+
+
+## Called by main.gd when the axe comes back to the hand.
+func catch_axe() -> void:
+	axe_in_hand = true
 
 
 # --------------------------------------------------------------- visuals ---
@@ -511,14 +590,25 @@ func _update_sprite() -> void:
 		else absf(velocity.x)
 	var moving: bool = speed > Tuning.PLAYER_ANIM_MIN_SPEED
 
-	if moving:
-		if _sprite.animation != &"run":
-			_sprite.animation = &"run"
+	# Axe set while the axe is in the hand, empty-handed set while it flies.
+	var armed: bool = Tuning.player_weapon_axe and axe_in_hand \
+		and _has_axe_clips
+	var run_anim: StringName = &"run_axe" if armed else &"run"
+	var idle_anim: StringName = &"idle_axe" if armed else &"idle"
+
+	if _throwing and _has_throw and _sprite.sprite_frames != null:
+		if _sprite.animation != &"throw":
+			_sprite.animation = &"throw"
+			_sprite.frame = 0
+			_sprite.play()
+	elif moving:
+		if _sprite.animation != run_anim:
+			_sprite.animation = run_anim
 		if not _sprite.is_playing():
 			_sprite.play()
-	elif _has_idle:
-		if _sprite.animation != &"idle":
-			_sprite.animation = &"idle"
+	elif armed or _has_idle:
+		if _sprite.animation != idle_anim:
+			_sprite.animation = idle_anim
 			_sprite.play()
 	elif _sprite.is_playing():
 		# No standing animation rendered yet, so hold the least wrong frame of
@@ -544,9 +634,6 @@ func _draw() -> void:
 		draw_rect(Rect2(Vector2(float(facing) * 6.0 - 4.0, -SIZE.y * 0.5 + 8.0),
 			Vector2(8, 8)), Color(0.15, 0.16, 0.2))
 
-	# Drawn from the muzzle, not from the body's origin. Left at the origin it
-	# sat by the character's feet while the shots came from the chest, which
-	# made the aim look wrong at exactly the moment it had been fixed.
-	var muzzle := Vector2(0.0, -_muzzle_height)
-	draw_line(muzzle, muzzle + aim_dir * Tuning.MUZZLE_DISTANCE,
-		Color(1.0, 0.85, 0.35), 5.0)
+	# The yellow aim stick drawn from the muzzle was removed 2026-10-03 at
+	# Pavel's request - with real art and a thrown weapon it only got in the
+	# way. The aim itself is unchanged.

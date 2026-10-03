@@ -289,6 +289,15 @@ var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
 var enemies: Array = []
 var _bullet_next: int = 0
+## The hero's thrown axe and the breakable barrel (2026-10-03). Untyped for
+## the same reason as `player`: scripts attached at runtime.
+var axe
+var barrels: Array = []
+## Barrels are stood on the field a few frames in, once the player has been
+## clamped onto the walkable band - spawn_point alone may be off it. Set
+## back to a few frames after every death so they come back, whole, in
+## front of wherever the hero gets up.
+var _barrel_place_frames: int = 3
 var _spawn_cd: float = 0.0
 
 var kills: int = 0
@@ -325,6 +334,7 @@ func _ready() -> void:
 		_build_targets()
 	_build_bullet_pool()
 	_build_enemy_pool()
+	_build_axe_and_barrel()
 	_build_hud()
 	var overlay_script: GDScript = load("res://scripts/debug_overlay.gd")
 	add_child(overlay_script.new())
@@ -334,6 +344,7 @@ func _process(delta: float) -> void:
 	if player.global_position.y > Tuning.RESPAWN_Y:
 		_restart()
 	_alive = _count_alive()      # spocitane RAZ za snimku, nie trikrat
+	_place_barrel_once()
 	_spawn_tick(delta)
 	_update_hud()
 	_apply_bg_filter()
@@ -1036,6 +1047,9 @@ func _restart() -> void:
 
 
 func _clear_field() -> void:
+	if axe != null:
+		axe.recall()
+	_barrel_place_frames = 2
 	for e in enemies:
 		if e.active:
 			e.despawn()
@@ -1050,6 +1064,70 @@ func _update_hud() -> void:
 
 
 # --------------------------------------------------------------- shooting ---
+
+## The axe (see axe.gd) and the barrel (barrel.gd). One axe: the hero has
+## to catch it before he can throw again, so there is nothing to pool.
+func _build_axe_and_barrel() -> void:
+	axe = Area2D.new()
+	axe.set_script(load("res://scripts/axe.gd"))
+	add_child(axe)
+	axe.thrower = player
+	axe.caught.connect(player.catch_axe)
+	player.throw_requested.connect(_on_throw_requested)
+
+	var barrel_script: GDScript = load("res://scripts/barrel.gd")
+	for i in Tuning.BARREL_OFFSETS.size() + Tuning.BARREL_WALL_COUNT:
+		var b := Area2D.new()
+		b.set_script(barrel_script)
+		add_child(b)
+		b.hide()
+		barrels.append(b)
+
+
+func _place_barrel_once() -> void:
+	if Debug.barrels_reset_requested:
+		Debug.barrels_reset_requested = false
+		_barrel_place_frames = 0
+	if _barrel_place_frames < 0:
+		return
+	_barrel_place_frames -= 1
+	if _barrel_place_frames >= 0:
+		return
+	# Ahead of the hero, to the right - where enemies come from and where
+	# the thumb does not cover them - spread over the depth of the field.
+	var hero_feet: Vector2 = player.global_position \
+		+ Vector2(0.0, player.SIZE.y * 0.5)
+	var n_loose: int = Tuning.BARREL_OFFSETS.size()
+	for i in n_loose:
+		var feet: Vector2 = hero_feet + Tuning.BARREL_OFFSETS[i]
+		var top: float = walk_top_for_x(feet.x) + Tuning.BARREL_EDGE_INSET
+		var bottom: float = walk_bottom_for_x(feet.x) - Tuning.BARREL_EDGE_INSET
+		if bottom > top:
+			feet.y = clampf(feet.y, top, bottom)
+		barrels[i].place(feet)
+
+	# The wall: barrels side by side along the depth (Y), centred on the
+	# hero's row and kept inside the walkable band. Each blocks half the
+	# spacing either side plus a margin, so there is no gap between two
+	# neighbours until one of them is broken.
+	var wx: float = hero_feet.x + Tuning.BARREL_WALL_X
+	var n_wall: int = Tuning.BARREL_WALL_COUNT
+	var step: float = Tuning.BARREL_WALL_SPACING
+	var span: float = step * float(n_wall - 1)
+	var w_top: float = walk_top_for_x(wx) + Tuning.BARREL_EDGE_INSET
+	var w_bottom: float = walk_bottom_for_x(wx) - Tuning.BARREL_EDGE_INSET
+	var first: float = hero_feet.y - span * 0.5
+	if w_bottom - w_top > span:
+		first = clampf(first, w_top, w_bottom - span)
+	var depth: float = maxf(Tuning.BARREL_BLOCK_DEPTH, step * 0.5 + 8.0)
+	for j in n_wall:
+		barrels[n_loose + j].place(Vector2(wx, first + step * float(j)), depth)
+
+
+func _on_throw_requested(from: Vector2, dir: Vector2) -> void:
+	if axe != null and axe.is_held():
+		axe.throw(from, dir)
+
 
 func _on_fire_requested(from: Vector2, dir: Vector2) -> void:
 	_fire(from, dir, false, 0.0)

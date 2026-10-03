@@ -23,6 +23,9 @@ Blender nižšie v tomto súbore je už len história.
 - **Postup:** Claude ti najprv ukáže základný obrázok postavy na schválenie,
   až potom robí animácie a dá ich do hry. V hre je všetko 2× zväčšené.
 - **Pozadia** sa v PixelLabe robiť nedajú (sú príliš veľké) – tie ostávajú po starom.
+- **Snímky do hry** dáva Claude cez `tools\pixellab_export.py` (stiahne,
+  zarovná nohy na spoločné plátno, tvrdá alfa, zapíše `frames.gd`). Ty to
+  nespúšťaš.
 
 ---
 

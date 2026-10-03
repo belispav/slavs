@@ -65,3 +65,8 @@ var smooth_background: bool = false
 ## it shimmers while scrolling, and whether a crowd of enemies still reads
 ## against it (design pillar 1).
 var alt_background: bool = false
+
+
+## Set by the panel's "NOVE SUDY" button; main.gd stands every barrel up
+## again in front of the hero and clears the flag.
+var barrels_reset_requested: bool = false

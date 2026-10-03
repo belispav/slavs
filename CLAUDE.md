@@ -1,5 +1,13 @@
 # VOLYA — Project Memory (read this first)
 
+> **NAME (Pavel, 2026-10-03): the game is "Slavs fight back", working name
+> "Slavs".** "VOLYA" was invented by an AI and Pavel does not like it - do not
+> use it in anything new (docs, strings, store copy, commit messages). The
+> rename of what still carries it (folder `volya/`, Godot project name, docs,
+> deploy script paths) is its own task - planned as the first job of the
+> first cloud session. NEVER change the Android package id in
+> `export_presets.cfg` as part of it: a new id installs as a second app.
+
 You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mobile game (Metal Slug style) built in **Godot 4.7 / GDScript** for **Android first**. The developer (Pavel) is a solo creator with **zero prior game-dev knowledge** — you write the code, he directs, tests on his phone, and learns by reading. Communicate in Slovak; code, comments and commit messages in English.
 
 > **ALL GAME ART IS MADE IN PIXELLAB (since 2026-10-02) — Pavel's choice, and he is very happy with it.**
@@ -75,6 +83,27 @@ down and the work is following it:
 
 If a Sonnet session hits three rounds without progress on the same problem,
 that is the signal to stop and bring it to Opus rather than keep pushing.
+
+## Cloud sessions (from 2026-10-03, see POSTUP_cloud_github.md)
+
+Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
+**`belispav/slavs`** (branch `master`). In a cloud session:
+
+- **Push to `master`** after the headless check passes, then tell Pavel
+  "nasaď" with `git pull` + the deploy command. He only pulls; he does not
+  merge branches or review PRs. Commits therefore come BEFORE his device
+  test - a failed test is fixed forward with the next commit.
+- **Check before every push:** `godot --headless --path volya --import`,
+  then run the scene with `--quit-after N` and a temporary test appended to
+  a copy of the script (see the axe/barrel entry). `tools/cloud_setup.sh`
+  installs Godot; `xvfb-run ... --rendering-driver opengl3` gives screenshots.
+- **PixelLab:** `.mcp.json` points at `https://api.pixellab.ai/mcp`; the key
+  is an environment API credential for `api.pixellab.ai` (Authorization:
+  Bearer), never in the repo. If the MCP server does not come up, call the
+  same API over HTTPS - the proxy attaches the key. Verify with get_balance
+  at the start of the first cloud session.
+- Things that are NOT in the repo: `tools/.pixellab_token`,
+  `export_presets.cfg`, `ref/*.png`, `render/`. Deploy stays on Pavel's PC.
 
 ## Working rules
 
@@ -427,6 +456,71 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
     conflicts with a written rule (the ethnicity rule), say so BEFORE acting.
   - **Old art untouched** in run_px / rusher_*_px; tuning.gd comments say how
     to switch back.
+- [~] **Hero weapon: thrown axe that returns + one breakable barrel
+  (2026-10-03), coded and checked headless, NOT yet tested on device.**
+  - **Decided with Pavel:** no melee attack. A melee reach equal to the
+    rusher's turns the game into dodging single swings, which a mass shooter
+    has no time for. The weapon is a hand-axe thrown along the aim, flying
+    `Tuning.axe_range` (350, panel slider "dosah sekery" 150-700) and coming
+    back like a boomerang, hitting everything it passes through once out and
+    once back (`axe.gd`). Next throw only after the catch. Firearms come later.
+    Panel switch "SEKERA (vypnute = gulky)" puts the old bullets back.
+  - Hero holds the axe -> `hero_pl_axe_idle` / `hero_pl_axe_run`; throw ->
+    `hero_pl_axe_throw` (axe leaves on `AXE_RELEASE_FRAME` 5); while the axe
+    flies he is drawn with the old empty-handed run/idle.
+  - **Art made cheaply on purpose (Pavel: functionality first, final art
+    will be redone):** PixelLab could not add the axe by img2img (it came out
+    as a few pixels), so the axe was drawn by hand into the east rotation
+    (`art/pixellab/hero_axe_base_east.png`) at ~45 deg and the three clips
+    were v3 animations from that custom start frame (1 generation each).
+    The thrown axe sprite is the same hand-drawn axe (`art/axe_thrown`).
+    Whole task cost 6 generations (1 failed img2img, barrel, barrel break,
+    3 hero clips) - 22 left on 2026-10-03.
+  - **Pavel for the next hero redraw:** remove the wrist chains; the axe
+    should be held diagonally (the current run clip lets it wander).
+  - Barrels (`barrel.gd`, art `barrel_pl`): 3 hits from axe or bullets
+    (same LAYER_TARGET + hit() as enemies), shake + flash per hit, then the
+    PixelLab burst clip (9 fps), wreck stays. Four of them, stood ahead of
+    the hero (`Tuning.BARREL_OFFSETS`, clamped to the walk band) at the
+    start, again whole after every death, and on the panel button
+    "NOVE SUDY". They do not block movement.
+  - **First device test 2026-10-03 (Pavel: "výborné", hero clips "super"):**
+    axe too fast -> 650 (was 1100) + slider "rychlost sekery"; thrown axe
+    read smaller than the one in hand -> redrawn 17x27 (was 12x19), same
+    pixel size; and a real bug: dying with the axe in the air left the
+    hero with no weapon for good - `_clear_field()` recalled the axe
+    without telling the player. `axe.recall()` now emits `caught`, and
+    `revive()` resets the hand too. Verified headless (death mid-flight,
+    broken barrel restored).
+  - **Second device test 2026-10-03 (Pavel: much better, barrel burst
+    "výborný"; range and speed OK for now - faster/further later as hero
+    upgrades):** thrown axe +20% (now 21x34 px); the yellow aim stick is
+    gone from `player._draw()`; barrels now BLOCK the hero (StaticBody2D on
+    new `LAYER_PROP`, only the player masks it - enemies pass through, they
+    have no way round obstacles yet; the wreck stops blocking). Blocking is
+    by FEET in depth (+-`BARREL_BLOCK_DEPTH`), worked out from the hero's
+    54-tall box - see `barrel._set_blocking()`. Plus a wall of 6 barrels
+    side by side in Y, 40 apart, `BARREL_WALL_X` 600 ahead, centred on the
+    hero's row, rebuilt with the rest after every death. Verified headless:
+    the wall blocks every feet row it spans, breaking one opens that row;
+    rendered under xvfb to check the look.
+  - **Headless check method that worked (no phone needed):** Godot 4.7.1
+    Linux binary in the cloud workspace, project copied over as a tar,
+    `--headless --import` then `--quit-after N` with a temporary
+    `_physics_process` test appended to a COPY of main.gd (forces
+    Touch.aim_active, prints state). `xvfb-run ... --rendering-driver
+    opengl3` + `get_viewport().get_texture().get_image().save_png()` gives a
+    real screenshot.
+  - New tool: `tools/pixellab_export.py` - downloads a PixelLab clip, pads it
+    onto the shared canvas at a given offset, hard alpha, erase boxes, holds,
+    writes frames.gd. Hero offsets on the 96 canvas: rotation (20,16); v3
+    clips from a custom start frame (20,4) idle, (20,2) run, (18,4) throw -
+    measured by locating the reference frame inside each v3 canvas.
+- [ ] **TODO (Pavel 2026-10-03) — the hero walks a few pixels INTO a barrel
+  before it stops him.** Blocking works; the stop needs to come earlier. Look
+  at `BARREL_BLOCK_WIDTH` (40) against the drawn barrel (~48 wide at 2x) plus
+  the hero's 30-wide box, and the depth strip in `barrel._set_blocking()`.
+  Measure from a screenshot (xvfb), do not guess.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the
