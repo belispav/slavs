@@ -2,6 +2,16 @@
 
 You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mobile game (Metal Slug style) built in **Godot 4.7 / GDScript** for **Android first**. The developer (Pavel) is a solo creator with **zero prior game-dev knowledge** — you write the code, he directs, tests on his phone, and learns by reading. Communicate in Slovak; code, comments and commit messages in English.
 
+> **ALL GAME ART IS MADE IN PIXELLAB (since 2026-10-02) — Pavel's choice, and he is very happy with it.**
+> Characters, their animations, props and effects are generated with the PixelLab
+> MCP tools (`pixellab__*`, connected locally in Pavel's Claude app; frames download
+> from `*.pixellab.ai`, which is allowlisted) and shown in game at an integer 2x.
+> Do NOT go back to the old 3D chain (Meshy -> Mixamo -> Blender -> pixelize) or
+> propose another generator unless Pavel asks. Method, costs and limits: section
+> "Art pipeline switched to PixelLab" under Current status, and `PRIKAZY.md`
+> -> "PIXELLAB". Backgrounds are the exception (too large for PixelLab) - keep
+> making them the way env_08 was made.
+
 ## Key documents in this folder
 
 - `PRIKAZY.md` — **the command cheat sheet.** Deploy, render, the character
@@ -97,7 +107,7 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
   - Python side: `tools/pixelize_sprites.py` — hard alpha, one shared palette for the whole animation, despeckle, 1 px outline, and a pixel-crawl measurement. The crawl thresholds in it are **guesses, not measurements** — Pavel's eye overrules them.
   - **30 fps chosen on device** over 15 and 10; both lower rates read as choppy on a 17-frame cycle.
   - Sprite height moving 96 → 128. The hitbox stays 30×54 on purpose: a body narrower than the drawing is what design pillar 1 means by favouring the player.
-- [x] Character pipeline settled: **image → 3D (Meshy) → Mixamo auto-rigger → our render**. Modelling by hand is weeks of learning and was rejected. This suits the project unusually well — the standard objection to AI meshes is topology and detail, and neither survives 96 px. Documented step by step in `POSTUP_vlastna_postava.md`.
+- [x] ~~Character pipeline settled: **image → 3D (Meshy) → Mixamo auto-rigger → our render**.~~ **SUPERSEDED 2026-10-02 by PixelLab - see the banner at the top.** Kept for history. Modelling by hand is weeks of learning and was rejected. This suits the project unusually well — the standard objection to AI meshes is topology and detail, and neither survives 96 px. Documented step by step in `POSTUP_vlastna_postava.md`.
   - **Hard-won: the export must carry a UV map.** Meshy's FBX has none; its GLB does. Without one there is nowhere on the body for a texture to land and the character is grey forever, and the fault only shows up four steps downstream. `tools/inspect_fbx.py` now refuses to call a model fine without UVs.
   - The T-pose rules in `POSTUP_vlastna_postava.md` are not stylistic. A character holding a weapon, wearing a cape or with a dangling chain fails the auto-rigger two steps later.
   - Meshy free tier cannot download Meshy 6 models; Meshy 5 works. **Licence decision still open**: free tier is CC BY 4.0 and obliges a credit line. Decide before the game is built on it.

@@ -6,6 +6,26 @@ Ak si nie si istý, kde si, napíš `cd "D:\2026\Slavs figh back"`.
 
 ---
 
+## PIXELLAB — takto teraz vzniká všetka grafika (od 2026-10-02)
+
+Postavy, ich animácie, predmety aj efekty generuje Claude v PixelLabe.
+Ty nič nespúšťaš – stačí povedať, čo chceš. Starý postup cez Meshy / Mixamo /
+Blender nižšie v tomto súbore je už len história.
+
+- **Ako je to napojené:** PixelLab je pripojený v aplikácii Claude na tvojom PC
+  (Settings → Developer → Edit Config, položka `pixellab`). Doména `*.pixellab.ai`
+  je povolená v Settings → Capabilities → Domain allowlist. API kľúč je aj v
+  `tools\.pixellab_token` (nikdy nejde do gitu).
+- **Ak ho Claude nevidí:** úplne zavri aplikáciu Claude (aj z lišty pri hodinách)
+  a otvor ju znova.
+- **Cena:** bezplatná verzia = 40 generovaní, potom 5 denne (max 20 nasporených).
+  Postava ≈ 2, animácia ≈ 1. Platená verzia 12 $/mesiac = 2 000 generovaní.
+- **Postup:** Claude ti najprv ukáže základný obrázok postavy na schválenie,
+  až potom robí animácie a dá ich do hry. V hre je všetko 2× zväčšené.
+- **Pozadia** sa v PixelLabe robiť nedajú (sú príliš veľké) – tie ostávajú po starom.
+
+---
+
 ## Nasadiť hru do telefónu
 
 Toto je ten hlavný. Označí build, vyexportuje, nainštaluje, spustí a nechá
