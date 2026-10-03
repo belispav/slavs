@@ -377,6 +377,52 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
   - **Not yet deployed to a phone.** Confirm on device before trusting it in
     a real run - the fraction (0.72) is carried over from the player's own
     measured value, not separately measured for either enemy kind.
+- [x] **Art pipeline switched to PixelLab, 2026-10-02/03.** The 3D chain
+  (image -> Meshy -> Mixamo -> Blender -> pixelize) took several sessions per
+  character and was the bottleneck. Characters and their animations are now
+  generated in PixelLab (pixel-art generator) - side view, then shown in game
+  at an INTEGER 2x. Pavel on device: matches the env_08 background much better
+  than the renders did.
+  - **Access:** PixelLab is connected as a local MCP server in Pavel's Claude
+    desktop app (claude_desktop_config.json, `npx mcp-remote` with the API
+    key) - tools appear as `pixellab__*`. `*.pixellab.ai` is on the network
+    allowlist (Settings -> Capabilities), so frames download straight from
+    backblaze.pixellab.ai into the project. API key also in
+    tools/.pixellab_token (git-ignored).
+  - **Free trial:** 40 generations total, then 5/day (store up to 20). Costs
+    seen: character v3 at 64-76 px = 2; template animation = 1 per direction;
+    custom v3 animation at <=76 px, 6-8 frames = 1. Free tier runs ONE job at a
+    time and sometimes rejects jobs under load (429) - those are not charged,
+    just retry. Paid Tier 1 = 12 USD/month, 2000 generations.
+  - **Method that worked:** generate only the `east` direction of each
+    animation; mirror enemy frames to face west on export (enemy.gd assumes
+    west-facing art); pad every clip onto one square canvas (104 px for the
+    rusher) so feet sit on the same row; hard alpha. Show Pavel the base sprite
+    for approval before animating. Template "fight-stance" is an unarmed boxing
+    guard - wrong for armed enemies; describe a custom ready stance instead.
+    Weapon swings need a custom v3 description; a one-frame strike reads too
+    fast, so hold frames in frames.gd and slow the clip (see
+    art/rusher_pl_attack/frames.gd).
+  - **Done:** hero (art/hero_pl_run, hero_pl_idle; 2x via the debug-panel
+    switch) and rusher (art/rusher_pl_*; RUSHER_SPRITE_SCALE 2, RUSHER_ANIM_FPS
+    10, attack 6 fps, hit at 0.70 and melee range 100 both confirmed on device
+    2026-10-03). The rusher no longer has the turban - helmet + spiked mace -
+    so the ethnicity TODO is closed FOR THE RUSHER; the gunman is still the old
+    render with the turban.
+  - **Deviation to know about:** the rusher's weapon came out as a one-handed
+    spiked mace, not the two-handed club decided 2026-08-06. Pavel accepted it
+    2026-10-02. Lesson recorded with him: when an instruction ("copy it")
+    conflicts with a written rule (the ethnicity rule), say so BEFORE acting.
+  - **Old art untouched** in run_px / rusher_*_px; tuning.gd comments say how
+    to switch back.
+- [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
+  the player has moved on Y.** If the player steps down/up the field while the
+  rusher is mid-swing, the moment the swing ends and he moves to catch up, the
+  sprite briefly "preblikne". Pavel's read: the catch-up is a mostly-vertical
+  move, and the walk clip is made for X movement - so it probably flips
+  facing or toggles walk/idle on the near-zero X component. Was there with the
+  old rusher too. Not urgent; look at _drive_sprite's facing/animation choice
+  when |velocity.x| is small but |velocity.y| is not.
 - [ ] **TODO — unify the colour palette across background, enemies and props
   before final art is generated.** Pavel, 2026-08-13. `env_04` was generated
   independently of the characters, so nothing ties their palettes together

@@ -54,10 +54,23 @@ const THROWER_FIRE_ART_DIR: String = "res://art/gunman_fire_px"
 ## gunman, who is already firing while playing an idle that looks unaware -
 ## noted in CLAUDE.md, not fixed there yet. Fixed here first, on the enemy
 ## that does not exist as art yet, before it gets built the same way twice.
-const RUSHER_IDLE_ART_DIR: String = "res://art/rusher_idle_px"
-const RUSHER_IDLE_READY_ART_DIR: String = "res://art/rusher_ready_px"
-const RUSHER_WALK_ART_DIR: String = "res://art/rusher_walk_px"
-const RUSHER_ATTACK_ART_DIR: String = "res://art/rusher_attack_px"
+##
+## 2026-10-02: the rusher is the PixelLab one now (helmet, spiked mace - no
+## turban, per the content rule). The 3D-rendered rusher is untouched in
+## rusher_idle_px / rusher_ready_px / rusher_walk_px / rusher_attack_px; to go
+## back, point these four there, RUSHER_SPRITE_SCALE to 1.0 and both RUSHER
+## fps constants to ENEMY_ANIM_FPS. Frames are mirrored to face west on
+## export, like every other enemy's.
+const RUSHER_IDLE_ART_DIR: String = "res://art/rusher_pl_idle"
+const RUSHER_IDLE_READY_ART_DIR: String = "res://art/rusher_pl_ready"
+const RUSHER_WALK_ART_DIR: String = "res://art/rusher_pl_walk"
+const RUSHER_ATTACK_ART_DIR: String = "res://art/rusher_pl_attack"
+## The PixelLab clips have 4-12 frames, not the 19-39 the renderer made, so
+## they play slower than ENEMY_ANIM_FPS or every cycle looks sped up.
+const RUSHER_ANIM_FPS: float = 10.0
+## The swing on its own. 6 fps with the wind-up and the strike held (see
+## art/rusher_pl_attack/frames.gd) = ~1.7 s, Pavel's pick of three variants.
+const RUSHER_ATTACK_FPS: float = 6.0
 
 const ENEMY_ANIM_FPS: float = 30.0
 ## PIXEL ART, S = 1. Reverted 2026-08-13 after the S = 2 pass was seen on
@@ -67,6 +80,11 @@ const ENEMY_ANIM_FPS: float = 30.0
 ## the part that got lost last time. See DIZAJN_pozadie_a_rozlisenie.md.
 ## Enemy renders that go with this: gunman -Height 162, rusher -Height 190.
 const ENEMY_SPRITE_SCALE: float = 1.0
+## Per kind since 2026-10-02, because the two kinds no longer share an art
+## pipeline: the gunman is still the 3D render at 1x, the rusher is PixelLab
+## pixel art shown at an INTEGER 2x like the hero (PLAYER_SPRITE_SCALE).
+const THROWER_SPRITE_SCALE: float = ENEMY_SPRITE_SCALE
+const RUSHER_SPRITE_SCALE: float = 2.0
 ## Below this speed the thrower is standing rather than walking. Not zero:
 ## the hold-your-distance logic keeps nudging, and a walk cycle that starts and
 ## stops every few frames reads as a twitch.
@@ -183,7 +201,10 @@ var rusher_melee_range: float = RUSHER_MELEE_RANGE
 ## that this particular swing travels out to the SIDE rather than into the
 ## player - so watch the render next to the hero and drag the slider, do not
 ## trust this number (METHOD rule 2).
-const RUSHER_ATTACK_HIT_AT: float = 0.45
+##
+## 2026-10-02, PixelLab swing: the mace comes down on frame 7 of 10, so the
+## hit is set to 0.70. Still a starting point - the slider has the last word.
+const RUSHER_ATTACK_HIT_AT: float = 0.70
 var rusher_attack_hit_at: float = RUSHER_ATTACK_HIT_AT
 
 ## How close two enemies may get before they push each other apart, in world

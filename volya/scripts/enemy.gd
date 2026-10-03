@@ -129,15 +129,18 @@ func _build_sprite() -> void:
 		# Firing is a one-shot: it must end so the enemy can go back to
 		# standing, otherwise it reloads forever and never looks like a shot.
 		[&"fire", Tuning.THROWER_FIRE_ART_DIR, false],
-	], _thrower_shift, thrower_height)
+	], _thrower_shift, thrower_height,
+		Tuning.THROWER_SPRITE_SCALE, Tuning.ENEMY_ANIM_FPS)
 	_thrower_drawn_height = thrower_height[0]
 	var rusher_height := [0.0]
 	_rusher_sprite = _build_sprite_from(&"idle_unaware", Tuning.RUSHER_IDLE_ART_DIR, [
 		[&"idle_ready", Tuning.RUSHER_IDLE_READY_ART_DIR, true],
 		[&"walk", Tuning.RUSHER_WALK_ART_DIR, true],
-		# One-shot for the same reason as the thrower's fire clip.
-		[&"attack", Tuning.RUSHER_ATTACK_ART_DIR, false],
-	], _rusher_shift, rusher_height)
+		# One-shot for the same reason as the thrower's fire clip. Own fps:
+		# the swing's timing was picked separately from the cycles.
+		[&"attack", Tuning.RUSHER_ATTACK_ART_DIR, false, Tuning.RUSHER_ATTACK_FPS],
+	], _rusher_shift, rusher_height,
+		Tuning.RUSHER_SPRITE_SCALE, Tuning.RUSHER_ANIM_FPS)
 	_rusher_drawn_height = rusher_height[0]
 	if _thrower_sprite != null:
 		add_child(_thrower_sprite)
@@ -154,7 +157,8 @@ func _build_sprite() -> void:
 ## is empty is skipped rather than failing - partial art (say, only the idle
 ## rendered so far) still plays, it just cannot show the missing states yet.
 func _build_sprite_from(base_anim: StringName, base_dir: String,
-		extra: Array, shift_out: Dictionary, height_out: Array) -> AnimatedSprite2D:
+		extra: Array, shift_out: Dictionary, height_out: Array,
+		art_scale: float, fps: float) -> AnimatedSprite2D:
 	var base_frames := SpriteSequence.load_frames(base_dir)
 	if base_frames.is_empty():
 		return null
@@ -166,7 +170,7 @@ func _build_sprite_from(base_anim: StringName, base_dir: String,
 	shift_out[base_anim] = 0.0
 
 	var sheet := SpriteSequence.build_frames(
-		base_frames, String(base_anim), Tuning.ENEMY_ANIM_FPS)
+		base_frames, String(base_anim), fps)
 	for item in extra:
 		var clip_name: StringName = item[0]
 		var dir: String = item[1]
@@ -177,7 +181,9 @@ func _build_sprite_from(base_anim: StringName, base_dir: String,
 		shift_out[clip_name] = \
 			SpriteSequence.body_centre_offset(dir, frames) - base_centre
 		sheet.add_animation(clip_name)
-		sheet.set_animation_speed(clip_name, Tuning.ENEMY_ANIM_FPS)
+		# Optional 4th entry: this clip's own fps, else the kind's.
+		var clip_fps: float = item[3] if item.size() > 3 else fps
+		sheet.set_animation_speed(clip_name, clip_fps)
 		sheet.set_animation_loop(clip_name, loop)
 		for tex in frames:
 			sheet.add_frame(clip_name, tex)
@@ -187,7 +193,7 @@ func _build_sprite_from(base_anim: StringName, base_dir: String,
 	sprite.animation = base_anim
 	# Nearest, or the pixel pass is undone by the GPU smoothing it back.
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	sprite.scale = Vector2.ONE * Tuning.ENEMY_SPRITE_SCALE
+	sprite.scale = Vector2.ONE * art_scale
 	sprite.z_index = -1
 
 	# Feet on the bottom of the collision box, not on the bottom of the image -
@@ -195,14 +201,14 @@ func _build_sprite_from(base_anim: StringName, base_dir: String,
 	var height: float = float(base_frames[0].get_height())
 	var margin: float = float(SpriteSequence.foot_margin(base_frames))
 	sprite.position.y = SIZE.y * 0.5 \
-		- (height * 0.5 - margin) * Tuning.ENEMY_SPRITE_SCALE
+		- (height * 0.5 - margin) * art_scale
 
 	# The true body height, head to feet - same fix as player.gd's _drawn_height.
 	# Canvas height minus only the foot margin still counts the empty rows
 	# above the head as body, which is the bug: it put the hurtbox at roughly
 	# the bottom 45% of the drawing (see CLAUDE.md TODO, reported 2026-08-13).
 	var top_margin: float = float(SpriteSequence.head_margin(base_frames))
-	height_out[0] = (height - margin - top_margin) * Tuning.ENEMY_SPRITE_SCALE
+	height_out[0] = (height - margin - top_margin) * art_scale
 
 	sprite.visible = false
 	sprite.play()
@@ -404,7 +410,8 @@ func _drive_sprite(delta: float) -> void:
 	var shift: float = _clip_shift.get(_sprite.animation, 0.0)
 	if _sprite.flip_h:
 		shift = -shift
-	_sprite.position.x = -shift * Tuning.ENEMY_SPRITE_SCALE
+	# The sprite's own scale: the two kinds are drawn at different multiples.
+	_sprite.position.x = -shift * _sprite.scale.y
 
 
 ## Firing wins while it lasts, then walking or standing by speed. The threshold
