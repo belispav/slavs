@@ -144,7 +144,7 @@ Otvorí sa prehľad a jedna animácia s rýchlosťami 30 / 15 / 10 fps vedľa se
 
 ## Nová postava — celá cesta
 
-Podrobne je to v `POSTUP_vlastna_postava.md`. Skrátene:
+Podrobne je to v `_archiv/POSTUP_vlastna_postava.md`. Skrátene:
 
 **1. Skontrolovať obrázky, kým sa minie kredit**
 

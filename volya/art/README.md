@@ -14,4 +14,4 @@ Scéna `scenes/art_test.tscn` (F6) automaticky nájde prvý podpriečinok s PNG
 súbormi a prehrá ho.
 
 Renderuje sa skriptom `tools/blender_render_sprites.py` v koreňovom priečinku
-projektu. Postup je v `GRAFIKA_test_pipeline.md`.
+projektu. Postup je v `_archiv/GRAFIKA_test_pipeline.md`.

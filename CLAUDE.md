@@ -14,16 +14,18 @@ You are the AI development partner for VOLYA, a 2D side-scrolling run-and-gun mo
 
 ## Key documents in this folder
 
+- `ZACNI_TU_dalsia_session.md` — the starting prompt for the next session. Old prompts, the superseded 3D character pipeline and other finished documents are in `_archiv/`.
+
 - `PRIKAZY.md` — **the command cheat sheet.** Deploy, render, the character
   pipeline, troubleshooting. Pavel does not memorise commands; put anything he
   will need to type again in here.
 
 - `VOLYA_plan_hry.md` — full plan: game design, business case, phase plan (F0–F5), deployment, roadmap, risks.
-- `DIZAJN_pozadie_a_rozlisenie.md` — **the current assignment.** Parallax for the static background, and unifying asset resolution between characters and background. Contains the measured facts, the decisions already made, the hard constraints, and the three questions only Pavel answers. Read it before touching anything about the background, `env_*`, sprite scale or texture filtering.
+- `DIZAJN_pozadie_a_rozlisenie.md` — **closed 2026-09-15** (Pavel satisfied with the parallax/background state; reopens only if he asks). Kept in the root because code comments point at it. Parallax for the static background, and unifying asset resolution between characters and background. Contains the measured facts, the decisions already made, the hard constraints, and the three questions only Pavel answers. Read it before touching anything about the background, `env_*`, sprite scale or texture filtering.
 - `DIZAJN_core_loop.md` — **supersedes the plan's §3.2 and §3.5 on game structure.** The game is a run-based score attack, not 12 handcrafted levels. Cage encounters are the core mechanic and the currency source. Read this before designing anything about levels, progression or economy. The plan's §2 (sensitive topic) is untouched and remains absolute.
 - `SPEC_ovladanie_implementacia.md` — the control system spec + implementation addendum. This is the single source of truth for controls. Controls are the product; everything else comes second.
-- `Phone controls instrucitons.txt` — original control philosophy document (superseded by the SPEC file, kept for reference).
-- `F2P Monetization Strategies Analysis.md` — background research only; the game is PREMIUM (5,99 €), no IAP in v1.0, no ads, no gacha. Ever.
+- `_archiv/Phone controls instrucitons.txt` — original control philosophy document (superseded by the SPEC file, kept for reference).
+- `_archiv/F2P Monetization Strategies Analysis.md` — background research only; the game is PREMIUM (5,99 €), no IAP in v1.0, no ads, no gacha. Ever.
 - `SETUP_F0.md` — Pavel's setup + testing guide (Godot, JDK 17, Android SDK, one-click USB deploy, F1 test protocol).
 - `volya/` — the Godot 4.7 project itself. Scenes are built in code (`main.gd`); only `main.tscn` exists as a scene file. Control tunables live in `volya/config/control_config.tres`, gameplay constants in `volya/scripts/tuning.gd`.
 
@@ -99,7 +101,7 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
   - Open: Pavel still converging on final values. Unintended jumps: none observed. Missed jumps: improving. HUD shows gesture / performed / swallowed counts.
   - **v1.0 requirement discovered here:** left/right-handed switch, because the arc asymmetry depends on which hand holds the phone.
   - Google Play account deferred ~1 month before testing.
-- [x] Graphics direction decided: 3D in Blender → pre-rendered 2D sprites (see `GRAFIKA_test_pipeline.md`, `tools/blender_render_sprites.py`). Chosen because frame-to-frame consistency is structural, and the budget is 0 €. Pipeline test passed on 2026-07-31: silhouette readable, Pavel comfortable with Blender.
+- [x] Graphics direction decided: 3D in Blender → pre-rendered 2D sprites (see `_archiv/GRAFIKA_test_pipeline.md`, `tools/blender_render_sprites.py`). Chosen because frame-to-frame consistency is structural, and the budget is 0 €. Pipeline test passed on 2026-07-31: silhouette readable, Pavel comfortable with Blender.
   - Backgrounds may be generated externally (consistency does not matter there); animation frames may NOT.
   - Style references go in `ref/`, prompts in `ref/PROMPTY.md`.
 - [x] Style decided (2026-08-02): **pixel art, reached from 3D**, not hand-placed. The 18 scene references are all one style — detailed hand-placed pixel art — which this pipeline cannot reproduce directly. It gets close, and the measured requirement is that the flat colour areas must be produced **in Blender**; post-processing a normal render into pixel art was tried and does not work. S2 (pre-rendered, softer) stays as the fallback if this fails on device.
@@ -107,9 +109,9 @@ that is the signal to stop and bring it to Opus rather than keep pushing.
   - Python side: `tools/pixelize_sprites.py` — hard alpha, one shared palette for the whole animation, despeckle, 1 px outline, and a pixel-crawl measurement. The crawl thresholds in it are **guesses, not measurements** — Pavel's eye overrules them.
   - **30 fps chosen on device** over 15 and 10; both lower rates read as choppy on a 17-frame cycle.
   - Sprite height moving 96 → 128. The hitbox stays 30×54 on purpose: a body narrower than the drawing is what design pillar 1 means by favouring the player.
-- [x] ~~Character pipeline settled: **image → 3D (Meshy) → Mixamo auto-rigger → our render**.~~ **SUPERSEDED 2026-10-02 by PixelLab - see the banner at the top.** Kept for history. Modelling by hand is weeks of learning and was rejected. This suits the project unusually well — the standard objection to AI meshes is topology and detail, and neither survives 96 px. Documented step by step in `POSTUP_vlastna_postava.md`.
+- [x] ~~Character pipeline settled: **image → 3D (Meshy) → Mixamo auto-rigger → our render**.~~ **SUPERSEDED 2026-10-02 by PixelLab - see the banner at the top.** Kept for history. Modelling by hand is weeks of learning and was rejected. This suits the project unusually well — the standard objection to AI meshes is topology and detail, and neither survives 96 px. Documented step by step in `_archiv/POSTUP_vlastna_postava.md`.
   - **Hard-won: the export must carry a UV map.** Meshy's FBX has none; its GLB does. Without one there is nowhere on the body for a texture to land and the character is grey forever, and the fault only shows up four steps downstream. `tools/inspect_fbx.py` now refuses to call a model fine without UVs.
-  - The T-pose rules in `POSTUP_vlastna_postava.md` are not stylistic. A character holding a weapon, wearing a cape or with a dangling chain fails the auto-rigger two steps later.
+  - The T-pose rules in `_archiv/POSTUP_vlastna_postava.md` are not stylistic. A character holding a weapon, wearing a cape or with a dangling chain fails the auto-rigger two steps later.
   - Meshy free tier cannot download Meshy 6 models; Meshy 5 works. **Licence decision still open**: free tier is CC BY 4.0 and obliges a credit line. Decide before the game is built on it.
   - Hitem3D was tried as an alternative: 1,014,241 vertices and 242 MB against Meshy's 41,963 and 2.6 MB. Reduced and parked, not rigged.
 - [x] First real character is in the game and rendering in colour (2026-08-02). Player draws whatever sequence sits in `volya/art/run_px/`, so swapping characters means re-rendering that folder and nothing else. Grey box remains the fallback.
