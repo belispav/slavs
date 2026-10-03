@@ -541,9 +541,11 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   square smoke does not fit (both accepted for now); the death cloud was odd.
   Smoke puffs removed (code kept, unused). Hero now bleeds when hit
   (`player.hurt`, emitted before the god-mode check so it shows while testing;
-  god mode now also takes iframes). Vibration: `Input.vibrate_handheld` on
-  enemy death (35 ms) and barrel burst (70 ms), max one per 0.08 s so an axe
-  pass through a crowd does not drone; panel "VIBRACIE" + "sila vibracii".
+  god mode now also takes iframes). Vibration (`Input.vibrate_handheld`)
+  works on device. **Moved 2026-10-03 (Pavel): buzz only when the HERO is
+  hit** (120 ms, amplitude 1.0), not on kills/barrel bursts - those felt
+  odd. Max one per 0.08 s. Panel "VIBRACIE", "sila vibracii",
+  "dlzka vibracie pri zasahu (ms)".
   **Needs the Vibrate permission ticked in the Android export preset on
   Pavel's PC** (PRIKAZY.md -> VIBRACIE) - export_presets.cfg is not in git.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when

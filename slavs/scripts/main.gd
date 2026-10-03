@@ -1038,18 +1038,15 @@ func _away_from_player(at: Vector2) -> float:
 
 func _on_body_hurt(feet: Vector2, height: float, fatal: bool) -> void:
 	fx.body_hit(feet, height, _away_from_player(feet), fatal)
-	if fatal:
-		_vibrate(Tuning.VIBRATE_ENEMY_DEATH_MS)
 
 
 func _on_barrel_damaged(feet: Vector2, broke: bool) -> void:
 	fx.wood_hit(feet, _away_from_player(feet), broke)
-	if broke:
-		_vibrate(Tuning.VIBRATE_BARREL_BREAK_MS)
 
 
 func _on_player_hurt(feet: Vector2, height: float, away: float) -> void:
 	fx.body_hit(feet, height, away, false, Tuning.FX_BLOOD_PLAYER)
+	_vibrate(int(Tuning.vibrate_player_hit_ms))
 
 
 ## One short buzz, at most one per VIBRATE_MIN_GAP. Does nothing on desktop.

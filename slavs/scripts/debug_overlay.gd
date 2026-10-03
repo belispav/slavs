@@ -208,7 +208,7 @@ func _build_panel() -> void:
 	_add_slider("ako dlho lezi krv na zemi (s)", 0.5, 15.0, 0.5, Tuning.fx_stain_time,
 		func(v: float) -> void: Tuning.fx_stain_time = v)
 
-	# Phone buzz on kills and barrel bursts. Added 2026-10-03.
+	# Phone buzz when the hero is hit. Added 2026-10-03.
 	var vib_toggle := CheckButton.new()
 	vib_toggle.text = "VIBRACIE"
 	vib_toggle.custom_minimum_size = Vector2(0, 56)
@@ -217,6 +217,9 @@ func _build_panel() -> void:
 	vib_toggle.toggled.connect(func(on: bool) -> void: Tuning.vibrate_enabled = on)
 	_add_slider("sila vibracii", 0.1, 1.0, 0.05, Tuning.vibrate_strength,
 		func(v: float) -> void: Tuning.vibrate_strength = v)
+	_add_slider("dlzka vibracie pri zasahu (ms)", 20.0, 400.0, 10.0,
+		Tuning.vibrate_player_hit_ms,
+		func(v: float) -> void: Tuning.vibrate_player_hit_ms = v)
 
 	var music_toggle := CheckButton.new()
 	music_toggle.text = "HUDBA"
