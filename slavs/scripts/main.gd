@@ -238,7 +238,11 @@ const WALK_TOP_MAP_PATH := "res://art/env_08_top.json"
 ## art/env_08_bottom.json.
 var _walk_bottom_curve: PackedInt32Array = PackedInt32Array()
 
-const WALK_BOTTOM_MAP_PATH := "res://art/env_08_bottom.json"
+## env_09_bottom.json: env_09's ground is opaque to the last row of the picture
+## (1536), so the front limit is simply the bottom of the picture (the camera
+## stops there too). Pavel 2026-10-04: "neda sa tam dostat". Tuning.walk_edge_inset
+## still pulls the feet in from it.
+const WALK_BOTTOM_MAP_PATH := "res://art/env_09_bottom.json"
 
 
 func _load_walk_top_curve() -> void:
@@ -1032,7 +1036,7 @@ func _spawn_tick(delta: float) -> void:
 	if Touch.config.free_movement:
 		# Anywhere across the open ground. The whole field is on screen, so
 		# there is no part of it an enemy could arrive in unseen.
-		y = randf_range(GROUND_Y - field_height() + 30.0, GROUND_Y - 30.0)
+		y = randf_range(GROUND_Y - field_height() + 30.0, walk_bottom_for_x(x) - 30.0)
 
 	free_enemy.spawn(Vector2(x, y), kind, player)
 
