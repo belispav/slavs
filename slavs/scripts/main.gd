@@ -126,11 +126,15 @@ const SHOW_AIM_TARGETS := false
 ## call 2026-09-14: "jas budeme riesit pri finalnej grafike" (contrast gets
 ## handled with the final art, not this draft). env_07 did not clear that
 ## rule either, so this is not a new gap, just still open.
-const BACKGROUND_PATH := "res://art/env_08.png"
-## The one it replaced, kept on a panel switch. Not a fallback - a reference, so
-## a new background is judged against the last one instead of against a memory
-## of it.
-const BACKGROUND_ALT_PATH := "res://art/env_07.png"
+## env_09 (2026-10-04) = env_08's picture with a new PixelLab ground surface,
+## baked by tools/bake_ground.py: same 2752x1536 size and same top edge, so the
+## walk curves and the forest layers are untouched, but the ground is opaque to
+## the bottom of the picture - no lower band of forest is ever on screen.
+const BACKGROUND_PATH := "res://art/env_09.png"
+## The one it replaced (env_08), kept on the "STARE POZADIE" panel switch. Not a
+## fallback - a reference, so a new background is judged against the last one
+## instead of against a memory of it.
+const BACKGROUND_ALT_PATH := "res://art/env_08.png"
 
 ## Which rows of the background picture are open ground, measured from the art
 ## itself. Above them is the palisade and the props stacked against it, below
