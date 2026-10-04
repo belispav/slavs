@@ -671,3 +671,5 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
 - [ ] F3: content production
 - [ ] F4: polish + closed testing (12 testers / 14 days — mandatory for new personal Google Play accounts)
 - [ ] F5: launch
+
+- [~] **Round after first device test (2026-10-04), headless-checked, not on device.** Cauldron: 6 HP, fuse 5 s, leaves the barrel's burst wreck (burnt dark) after the blast instead of the whole pot. Brute turn window 2 s. Panel RESET now resets the whole run (field, props, hero, counters) - it only zeroed the jump counters before. Brute grab animation does not match the hold point - Pavel: ignore for now.
