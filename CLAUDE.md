@@ -623,11 +623,15 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   TUCNAKOV", "kolko tucnakov naraz"). Until art exists he is a skin box with
   a grey plate on the facing side. Verified headless: front throw 0 damage +
   bounce, from behind 1, grab kills a 5-HP hero in ~4.5 s, blast kills.
-  - Art: PixelLab character `590928a0-2a6c-4813-bbc9-e92ef63a1f46` (v2,
-    84 px). Pavel rejected v1 (back wrong, not fat). v2 still reads muscular
-    rather than obese and the back is covered by a dark shirt + pauldrons.
-    Needs: `brute_pl_idle` (east rotation, mirrored), `brute_pl_walk`,
-    `brute_pl_grab` - no death clip (Pavel).
+  - Art (2026-10-04, in the game, not yet on device): PixelLab character
+    `590928a0-2a6c-4813-bbc9-e92ef63a1f46` (v2, 84 px). Pavel rejected v1
+    (back wrong, not fat); v2 still reads muscular rather than obese and the
+    back is covered by a dark shirt + pauldrons - accepted as a prototype
+    ("riesime mechaniku, nie finalnu podobu"), no v3 to save credits.
+    `brute_pl_idle` (east rotation), `brute_pl_walk` (template, 8 f),
+    `brute_pl_grab` (v3, 7 f, last two frames repeat as the squeeze) on a
+    116 canvas, mirrored to face west, 2x. Cost 3 generations (walk 1,
+    grab 2) + 2 for v2. No death clip (Pavel).
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the
