@@ -30,6 +30,14 @@ const SFX_POOL: int = 16
 const VOICE_POOL: int = 4
 ## At most this many of one effect playing at once.
 const MAX_SAME: int = 3
+## Minimum time between two plays of the same effect (s). Pavel 2026-10-04:
+## the axe passes through a row of barrels in a fraction of a second and the
+## knocks chained into one rattle. Anything not listed uses DEFAULT_GAP.
+const EVENT_GAP: Dictionary = {
+	&"barrel_hit": 0.35,
+	&"enemy_hit": 0.08,
+}
+const DEFAULT_GAP: float = 0.04
 ## Minimum gap between two voice lines anywhere on the field (s). The hero's
 ## own hurt cry ignores it - being hit must always answer.
 const VOICE_GAP: float = 1.2
@@ -48,6 +56,7 @@ var _voice: Array[AudioStreamPlayer2D] = []
 var _next_sfx: int = 0
 var _next_voice: int = 0
 var _voice_cd: float = 0.0
+var _last_play: Dictionary = {}     # event -> time (s) of its last play
 var _sfx_bus: int = -1
 var _voice_bus: int = -1
 
@@ -81,8 +90,13 @@ func play(event: StringName, at: Vector2, force: bool = false) -> bool:
 		if _voice_cd > 0.0 and not force:
 			return false
 		_voice_cd = VOICE_GAP
-	elif _count_playing(event) >= MAX_SAME:
-		return false
+	else:
+		var now: float = Time.get_ticks_msec() / 1000.0
+		if now - float(_last_play.get(event, -100.0)) < float(EVENT_GAP.get(event, DEFAULT_GAP)):
+			return false
+		if _count_playing(event) >= MAX_SAME:
+			return false
+		_last_play[event] = now
 
 	var p: AudioStreamPlayer2D
 	if is_voice:
