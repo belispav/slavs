@@ -167,7 +167,7 @@ func _build_panel() -> void:
 	# env_03 instead of the chosen env_04, so a future background can be judged
 	# against the one it replaces rather than against a memory of it.
 	var bg_alt := CheckButton.new()
-	bg_alt.text = "STARE POZADIE"
+	bg_alt.text = "ZEM Z PIXELLABU (vypnute = Nano Banana)"
 	bg_alt.custom_minimum_size = Vector2(0, 56)
 	bg_alt.button_pressed = Debug.alt_background
 	rows.add_child(bg_alt)

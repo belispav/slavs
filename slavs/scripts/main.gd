@@ -135,11 +135,30 @@ const SHOW_AIM_TARGETS := false
 ## (env_10_top.json) and ground to the last row (env_10_bottom.json). Pavel
 ## wants to judge it on the phone against the PixelLab ground (env_09, on the
 ## STARE POZADIE switch - note env_09 is 1536 tall, so it shows cut at 1287).
-const BACKGROUND_PATH := "res://art/env_10.png"
-## The one it replaced (env_08), kept on the "STARE POZADIE" panel switch. Not a
-## fallback - a reference, so a new background is judged against the last one
-## instead of against a memory of it.
-const BACKGROUND_ALT_PATH := "res://art/env_09.png"
+## Both grounds live side by side (Pavel 2026-10-04, "budem skusat"): the panel
+## switch "ZEM Z PIXELLABU" swaps picture AND edges AND camera limit together,
+## because they differ in size.
+##   nano     = env_10, Nano Banana, 3156x1287, its own top edge.
+##   pixellab = env_09, PixelLab tile, 2752x1536, env_08's top edge.
+## Default (Debug.alt_background false) is nano.
+const GROUNDS := {
+	"nano": {
+		"tex": "res://art/env_10.png",
+		"top": "res://art/env_10_top.json",
+		"bottom": "res://art/env_10_bottom.json",
+	},
+	"pixellab": {
+		"tex": "res://art/env_09.png",
+		"top": "res://art/env_08_top.json",
+		"bottom": "res://art/env_09_bottom.json",
+	},
+}
+const BACKGROUND_PATH := "res://art/env_10.png"   # only the size-independent users
+
+
+## The ground picked by the panel switch. Read at build time and on every swap.
+func _ground() -> Dictionary:
+	return GROUNDS["pixellab" if Debug.alt_background else "nano"]
 
 ## Which rows of the background picture are open ground, measured from the art
 ## itself. Above them is the palisade and the props stacked against it, below
@@ -228,8 +247,6 @@ const BG_WALK_BOTTOM := 1287.0
 ## offset from GROUND_Y instead of a per-column measurement like this one.
 var _walk_top_curve: PackedInt32Array = PackedInt32Array()
 
-const WALK_TOP_MAP_PATH := "res://art/env_10_top.json"
-
 ## Per-column BOTTOM of the walkable ground - the exact same idea as
 ## _walk_top_curve above, mirrored: the front edge of the field frays too
 ## (env_08: rows 1287-1369, see BG_WALK_TOP/BOTTOM's comment), and until
@@ -243,35 +260,27 @@ const WALK_TOP_MAP_PATH := "res://art/env_10_top.json"
 ## art/env_08_bottom.json.
 var _walk_bottom_curve: PackedInt32Array = PackedInt32Array()
 
-## env_09_bottom.json: env_09's ground is opaque to the last row of the picture
-## (1536), so the front limit is simply the bottom of the picture (the camera
-## stops there too). Pavel 2026-10-04: "neda sa tam dostat". Tuning.walk_edge_inset
-## still pulls the feet in from it.
-const WALK_BOTTOM_MAP_PATH := "res://art/env_10_bottom.json"
+func _read_curve(path: String) -> PackedInt32Array:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_warning("Hranica %s sa nenacitala, pouzivam plochu." % path)
+		return PackedInt32Array()
+	var parsed = JSON.parse_string(file.get_as_text())
+	if typeof(parsed) != TYPE_ARRAY:
+		push_warning("Hranica %s ma neocakavany format." % path)
+		return PackedInt32Array()
+	return PackedInt32Array(parsed)
 
 
 func _load_walk_top_curve() -> void:
-	var file := FileAccess.open(WALK_TOP_MAP_PATH, FileAccess.READ)
-	if file == null:
-		push_warning("Horna hranica %s sa nenacitala, pouzivam plochu BG_WALK_TOP." % WALK_TOP_MAP_PATH)
-		return
-	var parsed = JSON.parse_string(file.get_as_text())
-	if typeof(parsed) != TYPE_ARRAY:
-		push_warning("Horna hranica %s ma neocakavany format." % WALK_TOP_MAP_PATH)
-		return
-	_walk_top_curve = PackedInt32Array(parsed)
+	_walk_top_curve = _read_curve(_ground()["top"])
 
 
+## The front limit of the current ground; for both grounds the ground is opaque
+## to the last row, so it is simply the bottom of the picture. Tuning.walk_edge_inset
+## pulls the feet in from it.
 func _load_walk_bottom_curve() -> void:
-	var file := FileAccess.open(WALK_BOTTOM_MAP_PATH, FileAccess.READ)
-	if file == null:
-		push_warning("Dolna hranica %s sa nenacitala, pouzivam plochu BG_WALK_BOTTOM." % WALK_BOTTOM_MAP_PATH)
-		return
-	var parsed = JSON.parse_string(file.get_as_text())
-	if typeof(parsed) != TYPE_ARRAY:
-		push_warning("Dolna hranica %s ma neocakavany format." % WALK_BOTTOM_MAP_PATH)
-		return
-	_walk_bottom_curve = PackedInt32Array(parsed)
+	_walk_bottom_curve = _read_curve(_ground()["bottom"])
 
 
 ## Where the character's feet may stand at the front (rock) edge, at this
@@ -461,10 +470,24 @@ func _apply_bg_filter() -> void:
 			if _bg_smooth_applied else CanvasItem.TEXTURE_FILTER_NEAREST
 	if Debug.alt_background != _bg_alt_applied:
 		_bg_alt_applied = Debug.alt_background
-		var path: String = BACKGROUND_ALT_PATH if _bg_alt_applied else BACKGROUND_PATH
-		var texture: Texture2D = load(path) as Texture2D
-		if texture != null:
-			_bg_sprite.texture = texture
+		_swap_ground()
+
+
+## Switch to the ground the panel asks for: picture, both edges, the ground's
+## z, the sprite's repeat region and the camera limit all change together.
+func _swap_ground() -> void:
+	var def: Dictionary = _ground()
+	var texture: Texture2D = load(def["tex"]) as Texture2D
+	if texture == null:
+		return
+	_load_walk_top_curve()
+	_load_walk_bottom_curve()
+	_bg_sprite.texture = texture
+	var span: float = (LEVEL_RIGHT - LEVEL_LEFT) + texture.get_width() * 2.0
+	_bg_sprite.region_rect = Rect2(0.0, 0.0, span, texture.get_height())
+	_bg_sprite.position = Vector2(LEVEL_LEFT - texture.get_width(), background_top())
+	_bg_sprite.z_index = _ground_z_index()
+	_apply_camera_limits()
 
 
 # ---------------------------------------------------------------- level ---
@@ -481,7 +504,7 @@ func background_top() -> float:
 
 
 func background_height() -> float:
-	var texture: Texture2D = load(BACKGROUND_PATH) as Texture2D
+	var texture: Texture2D = load(_ground()["tex"]) as Texture2D
 	return float(texture.get_height()) if texture != null else 1536.0
 
 
@@ -552,9 +575,9 @@ func _ground_z_index() -> int:
 ## picture's edges match to within a few shades, which is what makes this
 ## possible at all.
 func _build_background() -> void:
-	var texture: Texture2D = load(BACKGROUND_PATH) as Texture2D
+	var texture: Texture2D = load(_ground()["tex"]) as Texture2D
 	if texture == null:
-		push_warning("Pozadie %s sa nenacitalo." % BACKGROUND_PATH)
+		push_warning("Pozadie %s sa nenacitalo." % _ground()["tex"])
 		return
 
 	var sprite := Sprite2D.new()
@@ -895,18 +918,23 @@ func _build_player() -> void:
 	player.set_dynamic_top(walk_top_for_x)
 	player.set_dynamic_bottom(walk_bottom_for_x)
 
+	_apply_camera_limits()
+	player.fire_requested.connect(_on_fire_requested)
+	player.died.connect(_on_player_died)
+
+
+func _apply_camera_limits() -> void:
+	if player == null:
+		return
 	if Touch.config.free_movement:
 		# The camera follows the character up and down, stopping at the edges
-		# of the picture. That is what lets the field use the whole grass while
-		# the palisade and the river are still seen at full height - each comes
-		# into view as the character walks towards it.
+		# of the picture. That is what lets the field use the whole ground
+		# while the forest behind is still seen at full height.
 		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
 			background_top(), background_top() + background_height())
 	else:
 		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
 			player.field_top - 260.0, GROUND_Y + 200.0)
-	player.fire_requested.connect(_on_fire_requested)
-	player.died.connect(_on_player_died)
 
 
 func _build_targets() -> void:
