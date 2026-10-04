@@ -30,6 +30,23 @@ starý záznam `volya` v zozname projektov odstráň. ID balíka v telefóne
 
 ---
 
+## AK `git pull` HLÁSI „Your local changes ... would be overwritten“
+
+Najčastejšie `slavs\project.godot` – Godot editor ho prepíše vždy, keď ho
+otvoríš (napr. kvôli povoleniu vibrácií). Tvoje zmeny v ňom nie sú potrebné,
+všetko dôležité je na GitHube. Zahoď ich a stiahni znova:
+
+```
+cd "D:\2026\Slavs figh back"
+git checkout -- slavs/project.godot
+git pull
+git log --oneline -1
+```
+
+Ak hlási iný súbor, pošli Claudovi výpis – nezahadzuj ho naslepo.
+
+---
+
 ## ZVUKY — kam dať súbory (2026-10-04)
 
 Každá udalosť má svoj priečinok v `slavs\audio\sfx\`. Hra z neho pri každej
