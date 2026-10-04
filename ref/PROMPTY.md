@@ -661,3 +661,13 @@ S9 | `detailed hand placed pixel art, 16 bit, in the style of Metal Slug` | **ni
 
 Tie dva „nie" si aj tak vygeneruj — nech vidíme, o čo presne prichádzame, a či
 sa k tomu nedá priblížiť shaderom.
+
+
+---
+
+## 4g. Zem po úsekoch v Nano Banana (2026-10-04) — 3 obrázky za sebou
+
+Zem s nerovným horným okrajom nad čistou magentou (#FF00FF), úseky na seba
+nadväzujú. Spracovanie (magenta preč, zošitie, nová horná krivka) robí Claude.
+Štýlová referencia pri všetkých troch: `ref/preview/ground_pro_512.png`.
+Hotové prompty sú v chate session z 2026-10-04; sem patrí to, čo sa osvedčí.
