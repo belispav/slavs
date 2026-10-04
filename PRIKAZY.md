@@ -60,6 +60,9 @@ ticho, nič sa nepokazí.
 | `enemy_hit` / `enemy_death` | zásah / smrť nepriateľa (efekt) |
 | `enemy_death_voice` | výkrik umierajúceho (30 % smrtí) |
 | `barrel_hit` / `barrel_break` | zásah / rozbitie suda |
+| `armor_clang` | sekera sa odrazí od brnenia tučniaka |
+| `brute_grab` | tučniak chytí hrdinu |
+| `cauldron_whistle` / `explosion` | pískanie kotla (slučka) / výbuch |
 | `hero_hurt` / `hero_death` | „au“ hrdinu / smrť hrdinu |
 | `rusher_shout` | bežec zakričí pri údere (40 % úderov) |
 | `enemy_bark` / `hero_bark` | náhodné hlášky |

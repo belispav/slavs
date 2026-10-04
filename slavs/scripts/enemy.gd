@@ -9,6 +9,8 @@ extends CharacterBody2D
 ## (CLAUDE.md hard content rule).
 
 signal died(at: Vector2)
+## The brute's plate stopped a hit - sparks at `at`.
+signal armor_deflected(at: Vector2)
 ## Every hit, fatal or not: feet position, drawn height, whether it died.
 ## Drives the blood effect (fx.gd).
 signal hurt(feet: Vector2, height: float, fatal: bool)
@@ -17,7 +19,7 @@ signal throw_requested(from: Vector2, dir: Vector2)
 ## RUSHER_MELEE_RANGE and _update_attack_timer.
 signal melee_hit(from_pos: Vector2)
 
-enum Kind { RUSHER, THROWER }
+enum Kind { RUSHER, THROWER, BRUTE }
 
 const SIZE := Vector2(30, 52)
 
@@ -89,6 +91,19 @@ var _attack_cd: float = 0.0
 var _attack_len: float = 0.0
 var _attack_hit_done: bool = false
 
+## BRUTE (2026-10-04): slow, armoured in front, grabs and holds the hero.
+var _brute_sprite: AnimatedSprite2D
+var _brute_shift: Dictionary = {}
+var _brute_drawn_height: float = 0.0
+## +1 faces right, -1 faces left. Which way the armoured front points - kept
+## here rather than read off the sprite, so the box fallback has armour too.
+var _face: float = -1.0
+var _grabbing: bool = false
+var _grab_tick: float = 0.0
+var _grab_time: float = 0.0
+var _grab_cd: float = 0.0
+var _turn_timer: float = 0.0
+
 
 func _ready() -> void:
 	# Lets the debug panel find and despawn enemies by kind without main.gd
@@ -148,10 +163,19 @@ func _build_sprite() -> void:
 	], _rusher_shift, rusher_height,
 		Tuning.RUSHER_SPRITE_SCALE, Tuning.RUSHER_ANIM_FPS)
 	_rusher_drawn_height = rusher_height[0]
+	var brute_height := [0.0]
+	_brute_sprite = _build_sprite_from(&"idle", Tuning.BRUTE_IDLE_ART_DIR, [
+		[&"walk", Tuning.BRUTE_WALK_ART_DIR, true],
+		[&"grab", Tuning.BRUTE_GRAB_ART_DIR, true],
+	], _brute_shift, brute_height,
+		Tuning.BRUTE_SPRITE_SCALE, Tuning.BRUTE_ANIM_FPS)
+	_brute_drawn_height = brute_height[0]
 	if _thrower_sprite != null:
 		add_child(_thrower_sprite)
 	if _rusher_sprite != null:
 		add_child(_rusher_sprite)
+	if _brute_sprite != null:
+		add_child(_brute_sprite)
 
 
 ## One AnimatedSprite2D from a base animation plus any extra clips whose
@@ -245,7 +269,12 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	global_position = pos
 	kind = new_kind
 	target = player
-	hp = Tuning.RUSHER_HP if kind == Kind.RUSHER else Tuning.THROWER_HP
+	match kind:
+		Kind.RUSHER: hp = Tuning.RUSHER_HP
+		Kind.THROWER: hp = Tuning.THROWER_HP
+		Kind.BRUTE: hp = Tuning.BRUTE_HP
+	_face = -1.0
+	_release_grab()
 	velocity = Vector2.ZERO
 	_flash = 0.0
 	_throw_cd = randf() * Tuning.THROWER_INTERVAL
@@ -268,14 +297,26 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 
 	# Each kind shows only its own body. A rusher wearing the gunman's sprite
 	# would be a lie the player would learn to read wrongly.
-	_sprite = _thrower_sprite if kind == Kind.THROWER else _rusher_sprite
-	_clip_shift = _thrower_shift if kind == Kind.THROWER else _rusher_shift
-	_drawn_height = _thrower_drawn_height if kind == Kind.THROWER else _rusher_drawn_height
+	match kind:
+		Kind.THROWER:
+			_sprite = _thrower_sprite
+			_clip_shift = _thrower_shift
+			_drawn_height = _thrower_drawn_height
+		Kind.BRUTE:
+			_sprite = _brute_sprite
+			_clip_shift = _brute_shift
+			_drawn_height = _brute_drawn_height
+		_:
+			_sprite = _rusher_sprite
+			_clip_shift = _rusher_shift
+			_drawn_height = _rusher_drawn_height
 	_fit_hurtbox(_drawn_height)
 	if _thrower_sprite != null:
 		_thrower_sprite.visible = kind == Kind.THROWER
 	if _rusher_sprite != null:
 		_rusher_sprite.visible = kind == Kind.RUSHER
+	if _brute_sprite != null:
+		_brute_sprite.visible = kind == Kind.BRUTE
 	show()
 	set_physics_process(true)
 	set_deferred("collision_layer", Tuning.LAYER_ENEMY)
@@ -285,6 +326,7 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 
 
 func despawn() -> void:
+	_release_grab()
 	active = false
 	hide()
 	set_physics_process(false)
@@ -308,6 +350,18 @@ func is_melee_kind() -> bool:
 ## Called by the player's bullets (via the hurtbox).
 func hit() -> void:
 	damage(1)
+
+
+## A hit that knows which way the weapon was travelling. Returns false when
+## the brute's front plate stops it - the axe then bounces back (axe.gd).
+## Everything else just takes the hit.
+func hit_from(travel: Vector2) -> bool:
+	if kind == Kind.BRUTE and active and travel.x * _face < -0.2:
+		Sfx.play(&"armor_clang", global_position)
+		armor_deflected.emit(global_position + Vector2(_face * 24.0, -60.0))
+		return false
+	damage(1)
+	return true
 
 
 ## A cauldron's blast - armour does not stop it (Pavel 2026-10-04).
@@ -358,6 +412,8 @@ func _physics_process(delta: float) -> void:
 				_think_rusher(free, delta)
 			Kind.THROWER:
 				_think_thrower(delta, free)
+			Kind.BRUTE:
+				_think_brute(delta, free)
 
 	# An enemy mid-attack stands still. Its clip has the feet planted, so a body
 	# that keeps travelling reads as sliding on ice - caught by Pavel on the
@@ -400,6 +456,13 @@ func _drive_sprite(delta: float) -> void:
 			wanted = _thrower_clip(delta)
 		Kind.RUSHER:
 			wanted = _rusher_clip()
+		Kind.BRUTE:
+			if _grabbing:
+				wanted = &"grab"
+			elif velocity.length() > Tuning.ENEMY_WALK_SPEED_MIN:
+				wanted = &"walk"
+			else:
+				wanted = &"idle"
 		_:
 			wanted = &"idle"
 
@@ -409,9 +472,13 @@ func _drive_sprite(delta: float) -> void:
 	if _sprite.animation != wanted:
 		_sprite.play(wanted)
 
+	# The brute's facing is decided in _think_brute (it is gameplay: the
+	# armour points that way), the sprite only follows it.
+	if kind == Kind.BRUTE:
+		_sprite.flip_h = _face > 0.0
 	# Sprites are rendered facing left, which is the way enemies travel. Flip
 	# only when one is pushed back to the right.
-	if absf(velocity.x) > Tuning.ENEMY_WALK_SPEED_MIN:
+	elif absf(velocity.x) > Tuning.ENEMY_WALK_SPEED_MIN:
 		_sprite.flip_h = velocity.x > 0.0
 	elif target != null:
 		# Not really moving - holding range, firing, or pressed in melee.
@@ -656,6 +723,62 @@ func _weave() -> float:
 	return sin(_weave_time) * Tuning.ENEMY_WEAVE_AMPLITUDE
 
 
+## Slow, straight at the hero. Turns to face him only slowly (BRUTE_TURN_TIME),
+## which is the window for getting round behind the plate. In reach on the
+## hero's own row he grabs: the hero is held in front of him and loses a life
+## every BRUTE_GRAB_TICK until dead - Pavel 2026-10-04: "istá smrť" for now.
+func _think_brute(delta: float, free: bool) -> void:
+	var dx: float = target.global_position.x - global_position.x
+	var want_face: float = signf(dx) if absf(dx) > FACING_DEADZONE else _face
+	if want_face != _face:
+		_turn_timer += delta
+		if _turn_timer >= Tuning.BRUTE_TURN_TIME:
+			_face = want_face
+			_turn_timer = 0.0
+	else:
+		_turn_timer = 0.0
+
+	if _grabbing:
+		velocity = Vector2.ZERO
+		_grab_time += delta
+		_grab_tick -= delta
+		# Held in front of the brute's chest.
+		target.global_position = global_position + Vector2(
+			_face * Tuning.BRUTE_HOLD_DISTANCE, 0.0)
+		if _grab_tick <= 0.0:
+			_grab_tick = Tuning.BRUTE_GRAB_TICK
+			target.take_damage(1, global_position, true)
+		# Immortal hero: let go after a while, or a test run ends here.
+		if Debug.god_mode and _grab_time >= Tuning.BRUTE_GOD_RELEASE:
+			_release_grab()
+			_grab_cd = Tuning.BRUTE_GRAB_COOLDOWN
+		return
+
+	_grab_cd = maxf(_grab_cd - delta, 0.0)
+	var speed: float = Tuning.BRUTE_SPEED
+	var to_target: Vector2 = target.global_position - global_position
+	var reach: bool = absf(to_target.x) <= Tuning.BRUTE_GRAB_RANGE \
+		and absf(to_target.y) <= Tuning.BRUTE_GRAB_DEPTH \
+		and signf(to_target.x) == _face
+	if reach and _grab_cd <= 0.0 and target.has_method("grabbed_by") \
+			and target.grabbed_by(self):
+		_grabbing = true
+		_grab_time = 0.0
+		_grab_tick = Tuning.BRUTE_GRAB_TICK * 0.5
+		Sfx.play(&"brute_grab", global_position)
+		return
+	velocity.x = signf(to_target.x) * speed if absf(to_target.x) > Tuning.BRUTE_GRAB_RANGE * 0.6 else 0.0
+	if free:
+		var goal: float = clampf(to_target.y / 40.0, -1.0, 1.0) * speed * 0.6
+		velocity.y = move_toward(velocity.y, goal, speed * 4.0 * delta)
+
+
+func _release_grab() -> void:
+	if _grabbing and target != null and target.has_method("release_grab"):
+		target.release_grab(self)
+	_grabbing = false
+
+
 ## Close on the player's depth, but smoothly and never exactly.
 ##
 ## Setting the vertical speed outright made a crowd snap onto the player's line
@@ -677,6 +800,16 @@ func _draw() -> void:
 	if _sprite != null and _sprite.visible:
 		return
 	var base := Color(0.62, 0.30, 0.28) if kind == Kind.RUSHER else Color(0.40, 0.34, 0.52)
+	if kind == Kind.BRUTE:
+		# Box fallback: skin-coloured body, grey plate on the facing side.
+		base = Color(0.80, 0.58, 0.45)
+		var big := SIZE * 1.6
+		draw_rect(Rect2(Vector2(-big.x * 0.5, SIZE.y * 0.5 - big.y), big),
+			base.lerp(Color(1.0, 0.96, 0.92), _flash))
+		var plate_x: float = 0.0 if _face > 0.0 else -big.x * 0.5
+		draw_rect(Rect2(Vector2(plate_x, SIZE.y * 0.5 - big.y + 10.0),
+			Vector2(big.x * 0.5, big.y - 24.0)), Color(0.55, 0.58, 0.62))
+		return
 	var col := base.lerp(Color(1.0, 0.96, 0.92), _flash)
 	draw_rect(Rect2(-SIZE * 0.5, SIZE), col)
 	draw_rect(Rect2(-SIZE * 0.5, SIZE), Color(0.10, 0.11, 0.14), false, 3.0)

@@ -296,6 +296,16 @@ func _build_panel() -> void:
 		if on:
 			_despawn_kind(1))
 
+	var no_brute := CheckButton.new()
+	no_brute.text = "VYPNUT TUCNAKOV"
+	no_brute.custom_minimum_size = Vector2(0, 56)
+	no_brute.button_pressed = Debug.disable_brute
+	rows.add_child(no_brute)
+	no_brute.toggled.connect(func(on: bool) -> void:
+		Debug.disable_brute = on
+		if on:
+			_despawn_kind(2))
+
 	# Density, not just on/off - a crowd of thirty makes any one enemy's
 	# animation impossible to watch. Drag to 1 for a single enemy in
 	# isolation, or partway down for a thinned-out crowd instead of none.
@@ -305,6 +315,9 @@ func _build_panel() -> void:
 	_add_slider("kolko strelcov naraz (test)", 1.0, 34.0, 1.0,
 		Debug.max_thrower_alive,
 		func(v: float) -> void: Debug.max_thrower_alive = int(v))
+	_add_slider("kolko tucnakov naraz (test)", 0.0, 5.0, 1.0,
+		Debug.max_brute_alive,
+		func(v: float) -> void: Debug.max_brute_alive = int(v))
 
 	if c.free_movement:
 		_add_note("POHYB")

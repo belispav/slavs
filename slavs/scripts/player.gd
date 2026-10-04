@@ -16,6 +16,8 @@ const SIZE := Vector2(30, 54)
 
 var hp: int = Tuning.PLAYER_MAX_HP
 var _iframes: float = 0.0
+## The brute holding the hero, or null. See grabbed_by().
+var _held_by: Node = null
 var _hurtbox: Area2D
 var _hurt_shape: CollisionShape2D
 
@@ -300,6 +302,7 @@ func muzzle_point() -> Vector2:
 ## Back to the start. Only for falling out of the world, where staying put is
 ## not an option.
 func respawn() -> void:
+	_held_by = null
 	global_position = spawn_point
 	velocity = Vector2.ZERO
 	hp = Tuning.PLAYER_MAX_HP
@@ -315,6 +318,7 @@ func respawn() -> void:
 ## settle into the game - the run kept restarting before it had begun. Dying
 ## still costs, but it costs health and a moment of the fight, not the level.
 func revive() -> void:
+	_held_by = null
 	hp = Tuning.PLAYER_MAX_HP
 	_iframes = Tuning.PLAYER_REVIVE_IFRAMES
 	velocity = Vector2.ZERO
@@ -336,14 +340,16 @@ func _on_body_touched(body: Node) -> void:
 
 
 ## Called by enemy bodies on contact and by enemy projectiles.
-func take_damage(amount: int, from_pos: Vector2) -> void:
+## `force` ignores the invulnerability after a hit (the brute's hold ticks on
+## its own clock) but never god mode.
+func take_damage(amount: int, from_pos: Vector2, force: bool = false) -> void:
 	# God mode ignores the hit completely - no blood, no buzz, no blink.
 	# 2026-10-03 the blood and vibration were let through while immortal, and
 	# on device that read as "god mode no longer works" (Pavel). To see the
 	# hero's own hit effects, switch NESMRTELNOST off.
 	if Debug.god_mode:
 		return
-	if _iframes > 0.0 or hp <= 0:
+	if (_iframes > 0.0 and not force) or hp <= 0:
 		return
 	_iframes = Tuning.PLAYER_IFRAMES
 	var away: float = 1.0
@@ -355,11 +361,32 @@ func take_damage(amount: int, from_pos: Vector2) -> void:
 	hp -= amount
 	# Forced: the hero's own cry is never rationed away by someone's bark.
 	Sfx.play(&"hero_death" if hp <= 0 else &"hero_hurt", global_position, true)
-	velocity.x = away * Tuning.PLAYER_KNOCKBACK.x
-	velocity.y = Tuning.PLAYER_KNOCKBACK.y
+	if _held_by == null:
+		velocity.x = away * Tuning.PLAYER_KNOCKBACK.x
+		velocity.y = Tuning.PLAYER_KNOCKBACK.y
 	health_changed.emit(hp)
 	if hp <= 0:
 		died.emit()
+
+
+## A brute wants to grab the hero. One holder at a time; a dead hero cannot
+## be grabbed. While held the hero does not move by himself - the brute puts
+## him where it wants him (enemy.gd _think_brute).
+func grabbed_by(brute: Node) -> bool:
+	if hp <= 0 or (_held_by != null and is_instance_valid(_held_by)):
+		return false
+	_held_by = brute
+	velocity = Vector2.ZERO
+	return true
+
+
+func release_grab(brute: Node) -> void:
+	if _held_by == brute:
+		_held_by = null
+
+
+func is_held() -> bool:
+	return _held_by != null and is_instance_valid(_held_by)
 
 
 ## A jump gesture never fails outright — it is buffered and fires as soon as
@@ -387,7 +414,9 @@ func _physics_process(delta: float) -> void:
 				randf_range(-_shake, _shake), randf_range(-_shake, _shake))
 		elif _cam.offset != _cam_base_offset:
 			_cam.offset = _cam_base_offset
-	if Touch.config.free_movement:
+	if is_held():
+		velocity = Vector2.ZERO
+	elif Touch.config.free_movement:
 		_move_free(delta)
 	else:
 		_move_platform(delta)

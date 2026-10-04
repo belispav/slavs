@@ -105,6 +105,8 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 	if hostile:
 		victim.call(method, 1, global_position)
+	elif victim.has_method("hit_from"):
+		victim.call("hit_from", dir)
 	else:
 		victim.call(method)
 	despawn()

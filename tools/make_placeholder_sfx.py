@@ -6,7 +6,7 @@ ph_*.wav so it is obvious what to delete once a real sound replaces it.
 
 Writes 16-bit mono WAVs into slavs/audio/sfx/<event>/:
     gunshot, axe_throw, enemy_hit, enemy_death, barrel_hit, barrel_break,
-    cauldron_whistle, explosion
+    cauldron_whistle, explosion, armor_clang, brute_grab
 Voices (hero_hurt, rusher_shout, barks...) are NOT made here - a synthesised
 voice is worse than none.
 
@@ -125,6 +125,24 @@ def explosion(rng):
     return boom + crack + rumble
 
 
+def clang(rng):
+    """Axe glancing off a steel plate: inharmonic ringing partials."""
+    n = len(t(0.6))
+    x = np.zeros(n)
+    for f, d in ((870, 0.25), (1430, 0.18), (2310, 0.12), (3720, 0.08)):
+        f *= rng.uniform(0.95, 1.05)
+        x += np.sin(2 * np.pi * f * t(0.6)) * env(n, 0.0005, d)
+    return x + lowpass(rng.standard_normal(n), 6000) * env(n, 0.0003, 0.01) * 2
+
+
+def grab(rng):
+    """A heavy body thud plus a short cloth/leather rustle."""
+    n = len(t(0.45))
+    thud = np.sin(2 * np.pi * 60 * t(0.45)) * env(n, 0.004, 0.12)
+    rustle = bandpass(rng.standard_normal(n), 300, 2500) * env(n, 0.01, 0.15)
+    return thud * 1.6 + rustle
+
+
 def main():
     rng = np.random.default_rng(7)
     for i in range(3):
@@ -138,6 +156,9 @@ def main():
     save("cauldron_whistle", "ph_whistle.wav", whistle(rng), rng)
     for i in range(2):
         save("explosion", f"ph_explosion_{i}.wav", explosion(rng), rng)
+    for i in range(3):
+        save("armor_clang", f"ph_armor_clang_{i}.wav", clang(rng), rng)
+    save("brute_grab", "ph_brute_grab.wav", grab(rng), rng)
     print("placeholders written to", os.path.normpath(OUT))
 
 

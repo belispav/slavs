@@ -533,6 +533,34 @@ var player_speed_scale: float = 1.0
 ## fast projectiles turned the game into a reflex test and killed the mowing.
 ## 4 since 2026-10-03 (was 2), same reason as RUSHER_HP.
 const THROWER_HP: int = 4
+## BRUTE (2026-10-04, Pavel): slow, fat, armoured in FRONT only. The axe
+## bounces off the plate (enemy.gd hit_from) and only hurts from behind -
+## circle him so the returning axe takes his back. The cauldron's blast
+## ignores the plate. He grabs the hero and does not let go: certain death
+## for now, the others finish the job. All numbers are first guesses.
+const BRUTE_IDLE_ART_DIR: String = "res://art/brute_pl_idle"
+const BRUTE_WALK_ART_DIR: String = "res://art/brute_pl_walk"
+const BRUTE_GRAB_ART_DIR: String = "res://art/brute_pl_grab"
+const BRUTE_SPRITE_SCALE: float = 2.0
+const BRUTE_ANIM_FPS: float = 8.0
+## 10 = exactly one cauldron blast (CAULDRON_DAMAGE): luring him in kills him.
+const BRUTE_HP: int = 10
+const BRUTE_SPEED: float = 50.0
+## How close (X) and how far off the hero's row (Y) he can grab.
+const BRUTE_GRAB_RANGE: float = 80.0
+const BRUTE_GRAB_DEPTH: float = 30.0
+## Held hero loses one life this often (s).
+const BRUTE_GRAB_TICK: float = 1.0
+## Where the held hero is put, in front of the brute's centre.
+const BRUTE_HOLD_DISTANCE: float = 56.0
+## He needs this long (s) to turn round - the window to get behind him.
+const BRUTE_TURN_TIME: float = 0.9
+## God mode only: let go after this long, then wait before grabbing again.
+const BRUTE_GOD_RELEASE: float = 2.0
+const BRUTE_GRAB_COOLDOWN: float = 2.5
+## One spawn in this many is a brute (if the cap allows).
+const BRUTE_SPAWN_ONE_IN: int = 8
+
 ## 76, measured on device 2026-08-04. Slower than a rusher by roughly the same
 ## ratio as before, so the two roles still read apart at a glance.
 const THROWER_SPEED: float = 76.0

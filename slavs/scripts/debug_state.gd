@@ -34,6 +34,9 @@ var disable_rusher: bool = false
 ## Same for throwers.
 var disable_thrower: bool = false
 
+## Same for the brute (2026-10-04).
+var disable_brute: bool = false
+
 ## How many of each kind may be alive at once, for testing - separate from
 ## Tuning.ENEMY_MAX_ALIVE, which stays the real design ceiling (34, per
 ## design pillar 1's "overwhelming numbers"). Watching one enemy's animation
@@ -45,6 +48,7 @@ var disable_thrower: bool = false
 ## The real ceiling for play is Tuning.ENEMY_MAX_ALIVE and it has not moved.
 var max_rusher_alive: int = 3
 var max_thrower_alive: int = 3
+var max_brute_alive: int = 1
 
 ## Background filter: NEAREST (false) or LINEAR (true).
 ##

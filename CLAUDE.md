@@ -607,6 +607,27 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   barrel; burnt wreck stays. Two of them (`CAULDRON_OFFSETS`), reset with the
   barrels. Enemy gained `damage(n)` / `blast(n)`; barrel `smash()`.
   Placeholder whistle + explosion sounds.
+  - Cauldron art has a few bad pixels (left "ear", right leg) - Pavel
+    accepted it as a prototype, not to be regenerated.
+- [~] **Brute (2026-10-04), code checked headless, art waiting for Pavel's
+  approval.** Third kind (`Kind.BRUTE` in `enemy.gd`): slow (50), 10 HP =
+  exactly one cauldron blast, so luring him in kills him. Armour is FRONT
+  only: `hit_from(travel)` - an axe travelling against his facing clangs off
+  (sparks `fx.sparks`, sound `armor_clang`) and the axe turns back at once;
+  travelling with it (the returning axe after circling him) hurts. Bullets
+  go through the same check. He turns slowly (`BRUTE_TURN_TIME` 0.9 s) - the
+  window to get behind. In reach on the hero's row he grabs: hero held in
+  front of him, cannot move, loses 1 life per `BRUTE_GRAB_TICK` (1 s,
+  `take_damage(..., force)` ignores iframes) until dead - "ista smrt" per
+  Pavel. God mode: let go after 2 s. Spawns 1 in 8, cap 1 (panel "VYPNUT
+  TUCNAKOV", "kolko tucnakov naraz"). Until art exists he is a skin box with
+  a grey plate on the facing side. Verified headless: front throw 0 damage +
+  bounce, from behind 1, grab kills a 5-HP hero in ~4.5 s, blast kills.
+  - Art: PixelLab character `590928a0-2a6c-4813-bbc9-e92ef63a1f46` (v2,
+    84 px). Pavel rejected v1 (back wrong, not fat). v2 still reads muscular
+    rather than obese and the back is covered by a dark shirt + pauldrons.
+    Needs: `brute_pl_idle` (east rotation, mirrored), `brute_pl_walk`,
+    `brute_pl_grab` - no death clip (Pavel).
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the

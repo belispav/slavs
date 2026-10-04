@@ -133,5 +133,24 @@ func _hit_overlaps() -> void:
 		if _hit_this_leg.has(victim):
 			continue
 		_hit_this_leg.append(victim)
+		# Armour (the brute's front plate) is decided by the direction the
+		# axe is travelling, not by where it was thrown from - an axe that
+		# flew past and comes back hits him from behind.
+		if victim.has_method("hit_from"):
+			var travel: Vector2 = _dir
+			if state == State.BACK:
+				travel = (_catch_point() - global_position).normalized()
+			var landed: bool = false
+			for i in Tuning.AXE_DAMAGE:
+				landed = victim.call("hit_from", travel)
+				if not landed:
+					break
+			if not landed and state == State.OUT:
+				# Bounced off the plate: turn round now. The victim stays on
+				# this leg's list, so it is not struck again on the spot.
+				state = State.BACK
+				_hit_this_leg.clear()
+				_hit_this_leg.append(victim)
+			continue
 		for i in Tuning.AXE_DAMAGE:
 			victim.call("hit")

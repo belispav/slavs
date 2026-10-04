@@ -996,19 +996,26 @@ func _spawn_tick(delta: float) -> void:
 			+ randf() * Tuning.SPAWN_JITTER,
 		LEVEL_LEFT + 60.0, LEVEL_RIGHT - 60.0)
 	var kind: int = 1 if randf() < Tuning.THROWER_RATIO else 0
+	# The brute is rare and has its own switch and cap; a roll that does not
+	# produce one falls through to the usual two kinds.
+	var brute: bool = not Debug.disable_brute \
+		and randi() % Tuning.BRUTE_SPAWN_ONE_IN == 0 \
+		and _count_alive_kind(2) < Debug.max_brute_alive
 	# Debug panel switches. Force to the other kind if only one is off; if
 	# both are off there is nothing left to spawn this tick.
 	if kind == 0 and Debug.disable_rusher:
 		kind = 1
 	elif kind == 1 and Debug.disable_thrower:
 		kind = 0
-	if (kind == 0 and Debug.disable_rusher) or (kind == 1 and Debug.disable_thrower):
+	if brute:
+		kind = 2
+	elif (kind == 0 and Debug.disable_rusher) or (kind == 1 and Debug.disable_thrower):
 		return
 	# Debug density cap - separate from the on/off switches above. Lets a
 	# crowd be thinned to a handful, or to one, instead of only ever being
 	# fully on or fully off.
 	var cap: int = Debug.max_rusher_alive if kind == 0 else Debug.max_thrower_alive
-	if _count_alive_kind(kind) >= cap:
+	if kind != 2 and _count_alive_kind(kind) >= cap:
 		return
 
 	# In free movement there is no floor to walk in on, so they arrive spread
@@ -1030,9 +1037,15 @@ func _build_fx() -> void:
 	fx.setup(_ground_z_index())
 	for e in enemies:
 		e.hurt.connect(_on_body_hurt)
+		e.armor_deflected.connect(_on_armor_deflected)
 	for b in barrels:
 		b.damaged.connect(_on_barrel_damaged)
 	player.hurt.connect(_on_player_hurt)
+
+
+## The axe glanced off a brute's plate: a spray of sparks, no blood.
+func _on_armor_deflected(at: Vector2) -> void:
+	fx.sparks(at, _away_from_player(at))
 
 
 ## Which way debris flies: away from the hero, who is the one hitting.
