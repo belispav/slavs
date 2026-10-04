@@ -79,3 +79,7 @@ var alt_background: bool = false
 ## Set by the panel's "NOVE SUDY" button; main.gd stands every barrel up
 ## again in front of the hero and clears the flag.
 var barrels_reset_requested: bool = false
+
+## Set by the panel's RESET button; main.gd resets the whole run (field,
+## hero, counters, props) and clears the flag.
+var game_reset_requested: bool = false

@@ -26,6 +26,8 @@ var _block_shape: CollisionShape2D
 var _flash: float = 0.0
 var _art_height: float = 64.0
 var _foot_margin: float = 0.0
+var _whole_tex: Texture2D
+var _whole_pos: Vector2
 
 
 func _ready() -> void:
@@ -44,6 +46,8 @@ func _ready() -> void:
 	var s: float = Tuning.CAULDRON_SPRITE_SCALE
 	_sprite.scale = Vector2.ONE * s
 	_sprite.position = Vector2(0.0, -(_art_height * 0.5 - _foot_margin) * s)
+	_whole_tex = _sprite.texture
+	_whole_pos = _sprite.position
 
 	var shape := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
@@ -96,6 +100,9 @@ func place(feet: Vector2) -> void:
 	_whistle.stop()
 	_sprite.modulate = Color.WHITE
 	_sprite.offset = Vector2.ZERO
+	_sprite.texture = _whole_tex
+	_sprite.scale = Vector2.ONE * Tuning.CAULDRON_SPRITE_SCALE
+	_sprite.position = _whole_pos
 	collision_layer = Tuning.LAYER_TARGET
 	_block_shape.set_deferred("disabled", false)
 	show()
@@ -156,6 +163,20 @@ func _process(delta: float) -> void:
 		_explode()
 
 
+## The pot is gone; what stays is the last frame of the barrel burst
+## (splintered wreck), burnt dark. Costs no art.
+func _show_debris() -> void:
+	var debris := SpriteSequence.load_frames(Tuning.BARREL_ART_DIR)
+	if debris.is_empty():
+		return
+	var last: Texture2D = debris[debris.size() - 1]
+	var s: float = Tuning.BARREL_SPRITE_SCALE
+	_sprite.texture = last
+	_sprite.scale = Vector2.ONE * s
+	_sprite.position = Vector2(0.0, -(float(last.get_height()) * 0.5
+		- float(SpriteSequence.foot_margin(debris))) * s)
+
+
 func _explode() -> void:
 	spent = true
 	lit = false
@@ -164,6 +185,7 @@ func _explode() -> void:
 	_sprite.offset = Vector2.ZERO
 	# The wreck: burnt black, no longer a target, no longer in the way.
 	_sprite.modulate = Color(0.25, 0.22, 0.2)
+	_show_debris()
 	set_deferred("collision_layer", 0)
 	_block_shape.set_deferred("disabled", true)
 	Sfx.play(&"explosion", global_position)

@@ -351,6 +351,9 @@ func _process(delta: float) -> void:
 	_barks(delta)
 	if player.global_position.y > Tuning.RESPAWN_Y:
 		_restart()
+	if Debug.game_reset_requested:
+		Debug.game_reset_requested = false
+		_reset_game()
 	_alive = _count_alive()      # spocitane RAZ za snimku, nie trikrat
 	_place_barrel_once()
 	_spawn_tick(delta)
@@ -1154,6 +1157,16 @@ func _on_player_died() -> void:
 func _restart() -> void:
 	deaths += 1
 	_clear_field()
+	_spawn_cd = 1.2
+	player.respawn()
+
+
+## Panel RESET: a fresh run - field cleared, props rebuilt, hero back at the
+## start with full health, counters zeroed.
+func _reset_game() -> void:
+	_clear_field()
+	kills = 0
+	deaths = 0
 	_spawn_cd = 1.2
 	player.respawn()
 

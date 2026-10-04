@@ -233,9 +233,9 @@ var vibrate_strength: float = 1.0
 const CAULDRON_ART_DIR: String = "res://art/cauldron_pl"
 const CAULDRON_SPRITE_SCALE: float = 2.0
 ## Hits to light the fuse (axe out + back = 2 per throw).
-const CAULDRON_HP: int = 4
+const CAULDRON_HP: int = 6
 ## Seconds from the last hit to the bang. Live on the panel.
-const CAULDRON_FUSE: float = 3.0
+const CAULDRON_FUSE: float = 5.0
 var cauldron_fuse: float = CAULDRON_FUSE
 ## A cauldron lit by a neighbour's blast goes off this soon after.
 const CAULDRON_CHAIN_FUSE: float = 0.25
@@ -554,7 +554,7 @@ const BRUTE_GRAB_TICK: float = 1.0
 ## Where the held hero is put, in front of the brute's centre.
 const BRUTE_HOLD_DISTANCE: float = 56.0
 ## He needs this long (s) to turn round - the window to get behind him.
-const BRUTE_TURN_TIME: float = 0.9
+const BRUTE_TURN_TIME: float = 2.0
 ## God mode only: let go after this long, then wait before grabbing again.
 const BRUTE_GOD_RELEASE: float = 2.0
 const BRUTE_GRAB_COOLDOWN: float = 2.5

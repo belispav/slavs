@@ -483,6 +483,7 @@ func _build_panel() -> void:
 	reset.pressed.connect(func() -> void:
 		Touch.jump_count = 0
 		Touch.jumps_performed = 0
+		Debug.game_reset_requested = true
 	)
 
 	_layout_panel()
