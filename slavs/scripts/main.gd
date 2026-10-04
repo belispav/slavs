@@ -130,11 +130,16 @@ const SHOW_AIM_TARGETS := false
 ## baked by tools/bake_ground.py: same 2752x1536 size and same top edge, so the
 ## walk curves and the forest layers are untouched, but the ground is opaque to
 ## the bottom of the picture - no lower band of forest is ever on screen.
-const BACKGROUND_PATH := "res://art/env_09.png"
+## env_10 (2026-10-04) = the ground made in Nano Banana (two chained sections,
+## magenta-keyed edge, see tools/bake_ground_nb.py): 3156x1287, its own top edge
+## (env_10_top.json) and ground to the last row (env_10_bottom.json). Pavel
+## wants to judge it on the phone against the PixelLab ground (env_09, on the
+## STARE POZADIE switch - note env_09 is 1536 tall, so it shows cut at 1287).
+const BACKGROUND_PATH := "res://art/env_10.png"
 ## The one it replaced (env_08), kept on the "STARE POZADIE" panel switch. Not a
 ## fallback - a reference, so a new background is judged against the last one
 ## instead of against a memory of it.
-const BACKGROUND_ALT_PATH := "res://art/env_08.png"
+const BACKGROUND_ALT_PATH := "res://art/env_09.png"
 
 ## Which rows of the background picture are open ground, measured from the art
 ## itself. Above them is the palisade and the props stacked against it, below
@@ -223,7 +228,7 @@ const BG_WALK_BOTTOM := 1287.0
 ## offset from GROUND_Y instead of a per-column measurement like this one.
 var _walk_top_curve: PackedInt32Array = PackedInt32Array()
 
-const WALK_TOP_MAP_PATH := "res://art/env_08_top.json"
+const WALK_TOP_MAP_PATH := "res://art/env_10_top.json"
 
 ## Per-column BOTTOM of the walkable ground - the exact same idea as
 ## _walk_top_curve above, mirrored: the front edge of the field frays too
@@ -242,7 +247,7 @@ var _walk_bottom_curve: PackedInt32Array = PackedInt32Array()
 ## (1536), so the front limit is simply the bottom of the picture (the camera
 ## stops there too). Pavel 2026-10-04: "neda sa tam dostat". Tuning.walk_edge_inset
 ## still pulls the feet in from it.
-const WALK_BOTTOM_MAP_PATH := "res://art/env_09_bottom.json"
+const WALK_BOTTOM_MAP_PATH := "res://art/env_10_bottom.json"
 
 
 func _load_walk_top_curve() -> void:
