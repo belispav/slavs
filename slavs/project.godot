@@ -21,6 +21,7 @@ Tuning="*res://scripts/tuning.gd"
 Touch="*res://scripts/touch_controller.gd"
 Debug="*res://scripts/debug_state.gd"
 Music="*res://scripts/music_player.gd"
+Sfx="*res://scripts/sfx.gd"
 
 [display]
 

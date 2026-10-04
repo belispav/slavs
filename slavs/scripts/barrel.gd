@@ -133,6 +133,7 @@ func hit() -> void:
 	_shake = 0.18
 	_flash = 1.0
 	damaged.emit(global_position, hp <= 0)
+	Sfx.play(&"barrel_break" if hp <= 0 else &"barrel_hit", global_position)
 	if hp <= 0:
 		is_broken = true
 		set_deferred("collision_layer", 0)

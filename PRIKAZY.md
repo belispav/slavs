@@ -30,6 +30,29 @@ starý záznam `volya` v zozname projektov odstráň. ID balíka v telefóne
 
 ---
 
+## ZVUKY — kam dať súbory (2026-10-04)
+
+Každá udalosť má svoj priečinok v `slavs\audio\sfx\`. Hra z neho pri každej
+udalosti vyberie náhodný súbor (.wav, .ogg alebo .mp3). Prázdny priečinok =
+ticho, nič sa nepokazí.
+
+| priečinok | kedy zaznie |
+|---|---|
+| `gunshot` | strelec vystrelí |
+| `axe_throw` | hrdina hodí sekeru |
+| `enemy_hit` / `enemy_death` | zásah / smrť nepriateľa (efekt) |
+| `enemy_death_voice` | výkrik umierajúceho (30 % smrtí) |
+| `barrel_hit` / `barrel_break` | zásah / rozbitie suda |
+| `hero_hurt` / `hero_death` | „au“ hrdinu / smrť hrdinu |
+| `rusher_shout` | bežec zakričí pri údere (40 % úderov) |
+| `enemy_bark` / `hero_bark` | náhodné hlášky |
+
+Súbory `ph_*.wav` sú dočasné, vyrobené v kóde
+(`python tools\make_placeholder_sfx.py`) - keď dáš skutočný zvuk, `ph_` zmaž.
+Viac súborov v priečinku = viac variácií.
+
+---
+
 ## VIBRÁCIE — povolenie v exporte (raz, na PC, 2026-10-03)
 
 Android dovolí hre vibrovať, len ak má v exporte povolenie **VIBRATE**.

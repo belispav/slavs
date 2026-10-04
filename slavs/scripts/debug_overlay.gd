@@ -215,6 +215,21 @@ func _build_panel() -> void:
 	_add_slider("ako dlho lezi krv na zemi (s)", 0.5, 15.0, 0.5, Tuning.fx_stain_time,
 		func(v: float) -> void: Tuning.fx_stain_time = v)
 
+	# Sounds (sfx.gd). Added 2026-10-04.
+	var sfx_toggle := CheckButton.new()
+	sfx_toggle.text = "ZVUKY"
+	sfx_toggle.custom_minimum_size = Vector2(0, 56)
+	sfx_toggle.button_pressed = Sfx.enabled
+	rows.add_child(sfx_toggle)
+	sfx_toggle.toggled.connect(func(on: bool) -> void: Sfx.enabled = on)
+	_add_slider("hlasitost efektov (dB)", -30.0, 6.0, 1.0, Sfx.sfx_volume_db,
+		func(v: float) -> void: Sfx.sfx_volume_db = v)
+	_add_slider("hlasitost hlasov (dB)", -30.0, 6.0, 1.0, Sfx.voice_volume_db,
+		func(v: float) -> void: Sfx.voice_volume_db = v)
+	_add_slider("ako casto hovoria nepriatelia (s)", 2.0, 30.0, 1.0,
+		Tuning.enemy_bark_every,
+		func(v: float) -> void: Tuning.enemy_bark_every = v)
+
 	# Phone buzz when the hero is hit. Added 2026-10-03.
 	var vib_toggle := CheckButton.new()
 	vib_toggle.text = "VIBRACIE"

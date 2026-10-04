@@ -295,6 +295,8 @@ var axe
 var barrels: Array = []
 var fx   # fx.gd - blood, splinters, smoke
 var _vibrate_cd: float = 0.0
+var _enemy_bark_cd: float = 4.0
+var _hero_bark_cd: float = 8.0
 ## Barrels are stood on the field a few frames in, once the player has been
 ## clamped onto the walkable band - spawn_point alone may be off it. Set
 ## back to a few frames after every death so they come back, whole, in
@@ -345,6 +347,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_vibrate_cd = maxf(_vibrate_cd - delta, 0.0)
+	_barks(delta)
 	if player.global_position.y > Tuning.RESPAWN_Y:
 		_restart()
 	_alive = _count_alive()      # spocitane RAZ za snimku, nie trikrat
@@ -1059,6 +1062,30 @@ func _vibrate(ms: int) -> void:
 
 func _on_enemy_died(_at: Vector2) -> void:
 	kills += 1
+	if randf() < Tuning.HERO_BARK_ON_KILL:
+		Sfx.play(&"hero_bark", player.global_position)
+
+
+## Random lines - an enemy on screen now and then, the hero while there is a
+## fight. Sfx rations voices itself, so a bark that collides with another line
+## is simply skipped and its timer restarts.
+func _barks(delta: float) -> void:
+	_enemy_bark_cd -= delta
+	_hero_bark_cd -= delta
+	if _enemy_bark_cd <= 0.0:
+		var span: float = Tuning.ENEMY_BARK_MAX - Tuning.ENEMY_BARK_MIN
+		_enemy_bark_cd = Tuning.enemy_bark_every + randf() * span
+		var near: Array = []
+		for e in enemies:
+			if e.active and absf(e.global_position.x - player.global_position.x) < 700.0:
+				near.append(e)
+		if not near.is_empty():
+			var who = near[randi() % near.size()]
+			Sfx.play(&"enemy_bark", who.global_position)
+	if _hero_bark_cd <= 0.0:
+		_hero_bark_cd = randf_range(Tuning.HERO_BARK_MIN, Tuning.HERO_BARK_MAX)
+		if _alive > 0:
+			Sfx.play(&"hero_bark", player.global_position)
 
 
 func _on_enemy_throw(from: Vector2, dir: Vector2) -> void:

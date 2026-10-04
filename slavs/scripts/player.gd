@@ -344,6 +344,8 @@ func take_damage(amount: int, from_pos: Vector2) -> void:
 			away = 1.0
 	hurt.emit(global_position + Vector2(0.0, SIZE.y * 0.5), _drawn_height, away)
 	hp -= amount
+	# Forced: the hero's own cry is never rationed away by someone's bark.
+	Sfx.play(&"hero_death" if hp <= 0 else &"hero_hurt", global_position, true)
 	velocity.x = away * Tuning.PLAYER_KNOCKBACK.x
 	velocity.y = Tuning.PLAYER_KNOCKBACK.y
 	health_changed.emit(hp)
@@ -570,6 +572,7 @@ func _update_throw(delta: float, active: bool) -> void:
 			_throw_released = true
 			axe_in_hand = false
 			throw_requested.emit(muzzle_point(), aim_dir)
+			Sfx.play(&"axe_throw", global_position)
 		if _throw_time >= duration:
 			_throwing = false
 		return

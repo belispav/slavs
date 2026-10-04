@@ -313,6 +313,12 @@ func hit() -> void:
 	_flash = 1.0
 	hurt.emit(global_position + Vector2(0.0, SIZE.y * 0.5), _drawn_height, hp <= 0)
 	if hp <= 0:
+		Sfx.play(&"enemy_death", global_position)
+		if randf() < Tuning.ENEMY_DEATH_VOICE_CHANCE:
+			Sfx.play(&"enemy_death_voice", global_position)
+	else:
+		Sfx.play(&"enemy_hit", global_position)
+	if hp <= 0:
 		died.emit(global_position)
 		despawn()
 
@@ -567,6 +573,9 @@ func _update_attack_timer(in_range: bool, delta: float) -> void:
 		_attack_len = _attack_anim_duration()
 		_attack_timer = _attack_len
 		_attack_hit_done = false
+		# Not every swing - a shout on each one, from a crowd, is a choir.
+		if randf() < Tuning.RUSHER_SHOUT_CHANCE:
+			Sfx.play(&"rusher_shout", global_position)
 
 
 ## How long the attack clip actually runs, read from the art itself once it
@@ -627,6 +636,7 @@ func _release_shot() -> void:
 		SIZE.y * 0.5 - Tuning.THROWER_MUZZLE_HEIGHT)
 	var aim_at: Vector2 = target.global_position + Vector2(0.0, -Tuning.THROWER_AIM_RAISE)
 	throw_requested.emit(muzzle, (aim_at - muzzle).normalized())
+	Sfx.play(&"gunshot", muzzle)
 
 
 ## A sideways drift across the approach, so the path curves instead of being a

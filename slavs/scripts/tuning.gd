@@ -199,6 +199,22 @@ const FX_STAIN_TIME: float = 3.0
 var fx_stain_time: float = FX_STAIN_TIME
 var fx_enabled: bool = true
 
+# --- Sounds (2026-10-04, sfx.gd) ---
+## Chance that a rusher shouts when it starts a swing.
+const RUSHER_SHOUT_CHANCE: float = 0.4
+## Chance that a dying enemy cries out (on top of the generic death sound).
+const ENEMY_DEATH_VOICE_CHANCE: float = 0.3
+## Random enemy barks: one enemy on screen says something every N seconds,
+## N random between these two. Live on the panel ("ako casto hovoria...").
+const ENEMY_BARK_MIN: float = 6.0
+const ENEMY_BARK_MAX: float = 12.0
+var enemy_bark_every: float = ENEMY_BARK_MIN
+## Hero barks: while there is a fight, every N seconds (random in range),
+## plus this chance on every kill.
+const HERO_BARK_MIN: float = 12.0
+const HERO_BARK_MAX: float = 22.0
+const HERO_BARK_ON_KILL: float = 0.08
+
 # --- Vibration (2026-10-03) ---
 ## Phone buzz when the HERO is hit, in milliseconds. Pavel on device: a buzz
 ## on kills and barrel bursts felt odd; it belongs to taking a hit. A longer

@@ -575,6 +575,25 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   anchors, aim line and rings were drawn whenever the debug panel was
   expanded, so they showed in normal play. Now behind `Debug.show_touches`
   (panel "DOTYKY NA OBRAZOVKE", off); the text readout still follows the panel.
+- [~] **Sound system (2026-10-04), checked headless, not yet on device.**
+  `sfx.gd` (autoload `Sfx`): one folder per event under `audio/sfx/<event>/`,
+  random file + random pitch per play, listed with
+  `ResourceLoader.list_directory` (works in the APK). Buses "Sfx" and "Voice"
+  made at runtime, separate volumes on the panel. Voices rationed to one line
+  at a time (`VOICE_GAP` 1.2 s; hero hurt/death forced through), effects to
+  3 of a kind at once. Events wired: gunshot (on the muzzle flash),
+  axe_throw, enemy_hit/death (+30 % death voice), barrel_hit/break,
+  hero_hurt/death, rusher_shout (40 % of swings), enemy_bark every 6-12 s
+  from an enemy near the hero, hero_bark every 12-22 s in a fight + 8 % per
+  kill. Folder table in PRIKAZY.md -> ZVUKY.
+  - Generic effects are PLACEHOLDERS synthesised by
+    `tools/make_placeholder_sfx.py` (`ph_*.wav`). Voice folders are empty.
+  - **Pavel's plan:** generic effects from CC0 libraries (shots, hits, blood,
+    barrels); the hero, bosses and story lines are HIS - recorded or made in
+    ElevenLabs - because the story and its lines are a big part of the game.
+    Line texts: proposals given 2026-10-04, his decision. Network: kenney.nl /
+    freesound.org / api.elevenlabs.io are blocked by the environment's
+    allowlist until he adds them.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the
