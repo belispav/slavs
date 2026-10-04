@@ -591,7 +591,7 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   - **Pavel's plan:** generic effects from CC0 libraries (shots, hits, blood,
     barrels); the hero, bosses and story lines are HIS - recorded or made in
     ElevenLabs - because the story and its lines are a big part of the game.
-    Line texts: proposals given 2026-10-04, his decision. Network: kenney.nl /
+    Line texts: English (Pavel 2026-10-04), proposals in `HLASKY.md`, his decision. Network: kenney.nl /
     freesound.org / api.elevenlabs.io are blocked by the environment's
     allowlist until he adds them.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when

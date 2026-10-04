@@ -250,6 +250,8 @@ func _build_panel() -> void:
 	rows.add_child(music_toggle)
 	music_toggle.toggled.connect(func(on: bool) -> void:
 		Music.set_enabled(on))
+	_add_slider("hlasitost hudby (dB)", -30.0, 6.0, 1.0, Music.volume_db,
+		func(v: float) -> void: Music.set_volume_db(v))
 
 	var pause_mode := CheckButton.new()
 	pause_mode.text = "PAUZA"

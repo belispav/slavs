@@ -20,6 +20,8 @@ const TRACK_PROTOTYPE: String = "res://audio/music/protomusic.mp3"
 var enabled: bool = false
 
 var _player: AudioStreamPlayer
+## Music volume in dB, panel slider "hlasitost hudby (dB)". 0 = as mastered.
+var volume_db: float = 0.0
 
 
 func _ready() -> void:
@@ -48,6 +50,12 @@ func play_track(path: String) -> void:
 	_player.stream = stream
 	if enabled:
 		_player.play()
+
+
+func set_volume_db(db: float) -> void:
+	volume_db = db
+	if _player != null:
+		_player.volume_db = db
 
 
 func set_enabled(on: bool) -> void:
