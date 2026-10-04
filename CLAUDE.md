@@ -540,8 +540,10 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   Pavel on device: mechanic works; splinters read as gold coins and the
   square smoke does not fit (both accepted for now); the death cloud was odd.
   Smoke puffs removed (code kept, unused). Hero now bleeds when hit
-  (`player.hurt`, emitted before the god-mode check so it shows while testing;
-  god mode now also takes iframes). Vibration (`Input.vibrate_handheld`)
+  (`player.hurt`). **God mode ignores hits completely again (2026-10-04):**
+  letting blood + vibration through while immortal read on device as "god
+  mode is broken" (Pavel). Turn NESMRTELNOST off to see the hero's hit
+  effects. Vibration (`Input.vibrate_handheld`)
   works on device. **Moved 2026-10-03 (Pavel): buzz only when the HERO is
   hit** (180 ms, amplitude 1.0 - both confirmed on device by Pavel), not on kills/barrel bursts - those felt
   odd. Max one per 0.08 s. Panel "VIBRACIE", "sila vibracii",
@@ -569,6 +571,10 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   - Old 3D gunman untouched in `gunman_*_px`; tuning.gd says how to go back.
   - Open: an idle clip and a ready idle (the awareness split) when credits
     allow.
+- [x] **Touch helpers off by default (2026-10-04).** The move zone, thumb
+  anchors, aim line and rings were drawn whenever the debug panel was
+  expanded, so they showed in normal play. Now behind `Debug.show_touches`
+  (panel "DOTYKY NA OBRAZOVKE", off); the text readout still follows the panel.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the

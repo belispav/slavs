@@ -328,6 +328,12 @@ func _on_body_touched(body: Node) -> void:
 
 ## Called by enemy bodies on contact and by enemy projectiles.
 func take_damage(amount: int, from_pos: Vector2) -> void:
+	# God mode ignores the hit completely - no blood, no buzz, no blink.
+	# 2026-10-03 the blood and vibration were let through while immortal, and
+	# on device that read as "god mode no longer works" (Pavel). To see the
+	# hero's own hit effects, switch NESMRTELNOST off.
+	if Debug.god_mode:
+		return
 	if _iframes > 0.0 or hp <= 0:
 		return
 	_iframes = Tuning.PLAYER_IFRAMES
@@ -336,11 +342,7 @@ func take_damage(amount: int, from_pos: Vector2) -> void:
 		away = signf(global_position.x - from_pos.x)
 		if is_zero_approx(away):
 			away = 1.0
-	# Before the god-mode check on purpose: the blood shows while testing
-	# with NESMRTELNOST on, only the health loss and knockback are skipped.
 	hurt.emit(global_position + Vector2(0.0, SIZE.y * 0.5), _drawn_height, away)
-	if Debug.god_mode:
-		return
 	hp -= amount
 	velocity.x = away * Tuning.PLAYER_KNOCKBACK.x
 	velocity.y = Tuning.PLAYER_KNOCKBACK.y

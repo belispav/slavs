@@ -21,6 +21,11 @@ extends Node
 ## knockback would still throw the character around while "immortal".
 var god_mode: bool = true
 
+## Draw the touch helpers (move zone, thumb anchors, aim line, rings). Off by
+## default since 2026-10-03: they were tied to the panel being open, so they
+## showed during normal play whenever the panel was left expanded.
+var show_touches: bool = false
+
 ## Stops rushers being spawned. Enemies already on screen are despawned the
 ## moment this is switched on, so the effect is immediate instead of waiting
 ## for the current wave to die off.

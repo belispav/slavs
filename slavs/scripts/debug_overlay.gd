@@ -157,6 +157,13 @@ func _build_panel() -> void:
 	god_mode.toggled.connect(func(on: bool) -> void:
 		Debug.god_mode = on)
 
+	var touches := CheckButton.new()
+	touches.text = "DOTYKY NA OBRAZOVKE"
+	touches.custom_minimum_size = Vector2(0, 56)
+	touches.button_pressed = Debug.show_touches
+	rows.add_child(touches)
+	touches.toggled.connect(func(on: bool) -> void: Debug.show_touches = on)
+
 	# env_03 instead of the chosen env_04, so a future background can be judged
 	# against the one it replaces rather than against a memory of it.
 	var bg_alt := CheckButton.new()
@@ -575,11 +582,11 @@ func _on_draw() -> void:
 	var vp: Vector2 = draw_layer.size
 	# The boundary is no longer the screen midline but a rectangle, so draw the
 	# rectangle. A line here would be describing a rule that no longer applies.
-	_draw_move_zone()
-	_draw_field_edges()
-
-	_draw_left(vp)
-	_draw_right()
+	if Debug.show_touches:
+		_draw_move_zone()
+		_draw_field_edges()
+		_draw_left(vp)
+		_draw_right()
 	_draw_hud()
 
 
