@@ -594,6 +594,19 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
     Line texts: English (Pavel 2026-10-04), proposals in `HLASKY.md`, his decision. Network: kenney.nl /
     freesound.org / api.elevenlabs.io are blocked by the environment's
     allowlist until he adds them.
+- [~] **Explosive cauldron (2026-10-04), checked headless, not yet on device.**
+  Pavel's "lure them in" test. `cauldron.gd`: PixelLab still image
+  (`art/cauldron_pl`, create_image_pixflux, 1 generation), 2x. 4 hits light a
+  fuse (`cauldron_fuse` 3 s, panel); while lit it shakes harder, pulses red,
+  whistles higher (looped `cauldron_whistle`, pitch +1.2 over the fuse) and
+  shows the seconds as a number (test aid). Then `exploded` -> main.gd: every
+  enemy in the blast ellipse (`cauldron_radius` 220, depth counts double)
+  takes 10 damage (armour ignored), barrels smash, other cauldrons chain
+  (0.25 s), the hero loses 1 life if inside (panel switch "VYBUCH ZRANI AJ
+  HRDINU"), camera shake, fire/smoke/scorch particles. Blocks the hero like a
+  barrel; burnt wreck stays. Two of them (`CAULDRON_OFFSETS`), reset with the
+  barrels. Enemy gained `damage(n)` / `blast(n)`; barrel `smash()`.
+  Placeholder whistle + explosion sounds.
 - [ ] **TODO (Pavel 2026-10-03, later) — rusher flickers after a swing when
   the player has moved on Y.** If the player steps down/up the field while the
   rusher is mid-swing, the moment the swing ends and he moves to catch up, the

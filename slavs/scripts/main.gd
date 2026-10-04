@@ -293,6 +293,7 @@ var _bullet_next: int = 0
 ## the same reason as `player`: scripts attached at runtime.
 var axe
 var barrels: Array = []
+var cauldrons: Array = []
 var fx   # fx.gd - blood, splinters, smoke
 var _vibrate_cd: float = 0.0
 var _enemy_bark_cd: float = 4.0
@@ -1043,6 +1044,35 @@ func _on_body_hurt(feet: Vector2, height: float, fatal: bool) -> void:
 	fx.body_hit(feet, height, _away_from_player(feet), fatal)
 
 
+## A cauldron went off at `feet`. Every enemy, barrel and other cauldron
+## inside the blast ellipse is hit; the hero too if the switch says so.
+## Depth (Y) counts double - the blast spreads over the ground, it does not
+## reach up the screen as far as it reaches sideways.
+func _on_cauldron_exploded(feet: Vector2) -> void:
+	var r: float = Tuning.cauldron_radius
+	fx.explosion(feet)
+	player.shake(14.0)
+	for e in enemies:
+		if e.active and _in_blast(e.global_position + Vector2(0.0, e.SIZE.y * 0.5), feet, r):
+			e.blast(Tuning.CAULDRON_DAMAGE)
+	for b in barrels:
+		if b.visible and _in_blast(b.global_position, feet, r):
+			b.smash()
+	for c in cauldrons:
+		if c.visible and _in_blast(c.global_position, feet, r):
+			c.chain_light()
+	if Tuning.cauldron_hurts_player:
+		var pf: Vector2 = player.global_position + Vector2(0.0, player.SIZE.y * 0.5)
+		if _in_blast(pf, feet, r):
+			player.take_damage(1, feet)
+
+
+func _in_blast(at: Vector2, centre: Vector2, r: float) -> bool:
+	var d: Vector2 = at - centre
+	d.y *= 2.0
+	return d.length() <= r
+
+
 func _on_barrel_damaged(feet: Vector2, broke: bool) -> void:
 	fx.wood_hit(feet, _away_from_player(feet), broke)
 
@@ -1152,6 +1182,15 @@ func _build_axe_and_barrel() -> void:
 		b.hide()
 		barrels.append(b)
 
+	var cauldron_script: GDScript = load("res://scripts/cauldron.gd")
+	for i in Tuning.CAULDRON_OFFSETS.size():
+		var c := Area2D.new()
+		c.set_script(cauldron_script)
+		add_child(c)
+		c.hide()
+		c.exploded.connect(_on_cauldron_exploded)
+		cauldrons.append(c)
+
 
 func _place_barrel_once() -> void:
 	if Debug.barrels_reset_requested:
@@ -1166,6 +1205,14 @@ func _place_barrel_once() -> void:
 	# the thumb does not cover them - spread over the depth of the field.
 	var hero_feet: Vector2 = player.global_position \
 		+ Vector2(0.0, player.SIZE.y * 0.5)
+	for i in cauldrons.size():
+		var cf: Vector2 = hero_feet + Tuning.CAULDRON_OFFSETS[i]
+		var ctop: float = walk_top_for_x(cf.x) + Tuning.BARREL_EDGE_INSET
+		var cbottom: float = walk_bottom_for_x(cf.x) - Tuning.BARREL_EDGE_INSET
+		if cbottom > ctop:
+			cf.y = clampf(cf.y, ctop, cbottom)
+		cauldrons[i].place(cf)
+
 	var n_loose: int = Tuning.BARREL_OFFSETS.size()
 	for i in n_loose:
 		var feet: Vector2 = hero_feet + Tuning.BARREL_OFFSETS[i]

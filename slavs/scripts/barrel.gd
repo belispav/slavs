@@ -126,6 +126,14 @@ func place(feet: Vector2, block_depth: float = 0.0) -> void:
 	z_index = Tuning.depth_z(feet.y - 27.0)
 
 
+## Destroyed outright - a cauldron's blast.
+func smash() -> void:
+	if is_broken:
+		return
+	hp = 1
+	hit()
+
+
 func hit() -> void:
 	if is_broken:
 		return

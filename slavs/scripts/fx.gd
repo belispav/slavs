@@ -45,6 +45,13 @@ const BLOOD_COLOURS: Array[Color] = [
 	Color(0.80, 0.06, 0.06), Color(0.95, 0.16, 0.12), Color(0.60, 0.03, 0.05)]
 const WOOD_COLOURS: Array[Color] = [
 	Color(0.86, 0.66, 0.38), Color(0.95, 0.80, 0.52), Color(0.62, 0.42, 0.22)]
+const FIRE_COLOURS: Array[Color] = [
+	Color(1.0, 0.85, 0.3), Color(1.0, 0.55, 0.1), Color(0.95, 0.3, 0.05),
+	Color(1.0, 0.95, 0.7)]
+const DARK_SMOKE_COLOURS: Array[Color] = [
+	Color(0.25, 0.23, 0.22), Color(0.35, 0.33, 0.3), Color(0.18, 0.17, 0.16)]
+const SCORCH_COLOURS: Array[Color] = [
+	Color(0.15, 0.13, 0.12), Color(0.3, 0.2, 0.15), Color(0.6, 0.25, 0.08)]
 const SMOKE_COLOURS: Array[Color] = [
 	Color(0.85, 0.83, 0.78), Color(0.72, 0.70, 0.66), Color(0.95, 0.93, 0.88)]
 
@@ -93,6 +100,35 @@ func wood_hit(feet: Vector2, away: float, broken: bool) -> void:
 			randf_range(20.0, 56.0), randf_range(120.0, 360.0),
 			Tuning.fx_stain_time, 4.0 if randf() < 0.6 else 6.0,
 			WOOD_COLOURS[randi() % WOOD_COLOURS.size()])
+
+
+## A cauldron going off: a burst of fire that rises and fades, dark smoke
+## above it, and burnt debris that lands as a scorch around the spot.
+func explosion(feet: Vector2) -> void:
+	if not Tuning.fx_enabled:
+		return
+	for i in 46:
+		var a: float = randf() * TAU
+		var sp: float = randf_range(60.0, 260.0)
+		_spawn(Type.SMOKE, feet + Vector2(randf_range(-20, 20), randf_range(-6, 6)),
+			Vector2(cos(a) * sp, sin(a) * sp * 0.35),
+			randf_range(10.0, 70.0), randf_range(40.0, 160.0),
+			randf_range(0.25, 0.55), randf_range(8.0, 16.0),
+			FIRE_COLOURS[randi() % FIRE_COLOURS.size()])
+	for i in 18:
+		_spawn(Type.SMOKE, feet + Vector2(randf_range(-30, 30), randf_range(-6, 6)),
+			Vector2(randf_range(-40.0, 40.0), randf_range(-10.0, 10.0)),
+			randf_range(40.0, 100.0), randf_range(30.0, 80.0),
+			randf_range(0.8, 1.4), randf_range(12.0, 20.0),
+			DARK_SMOKE_COLOURS[randi() % DARK_SMOKE_COLOURS.size()])
+	for i in 34:
+		var a2: float = randf() * TAU
+		var sp2: float = randf_range(100.0, 420.0)
+		_spawn(Type.WOOD, feet,
+			Vector2(cos(a2) * sp2, sin(a2) * sp2 * 0.4),
+			randf_range(20.0, 60.0), randf_range(120.0, 380.0),
+			Tuning.fx_stain_time, 4.0 if randf() < 0.6 else 6.0,
+			SCORCH_COLOURS[randi() % SCORCH_COLOURS.size()])
 
 
 func _puff(feet: Vector2, n: int, spread: float) -> void:

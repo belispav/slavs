@@ -307,9 +307,18 @@ func is_melee_kind() -> bool:
 
 ## Called by the player's bullets (via the hurtbox).
 func hit() -> void:
+	damage(1)
+
+
+## A cauldron's blast - armour does not stop it (Pavel 2026-10-04).
+func blast(amount: int) -> void:
+	damage(amount)
+
+
+func damage(amount: int) -> void:
 	if not active:
 		return
-	hp -= 1
+	hp -= amount
 	_flash = 1.0
 	hurt.emit(global_position + Vector2(0.0, SIZE.y * 0.5), _drawn_height, hp <= 0)
 	if hp <= 0:

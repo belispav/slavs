@@ -114,6 +114,13 @@ func play(event: StringName, at: Vector2, force: bool = false) -> bool:
 	return true
 
 
+## A random sound of `event`, for callers that drive their own player (the
+## cauldron's whistle loops and bends pitch). null if the folder is empty.
+func pick(event: StringName) -> AudioStream:
+	var list: Array = _streams.get(event, [])
+	return null if list.is_empty() else list[randi() % list.size()]
+
+
 ## True if `event` has any sound files - lets callers skip work for events
 ## that would be silent anyway.
 func has(event: StringName) -> bool:

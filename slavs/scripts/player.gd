@@ -29,6 +29,14 @@ var _jump_buffer: float = 0.0
 var _use_keyboard: bool = false
 var _kb_jump_was_down: bool = false
 var _cam: Camera2D
+var _cam_base_offset: Vector2 = Vector2.ZERO
+var _shake: float = 0.0
+
+
+## Shake the camera - a cauldron going off. `strength` in world units,
+## decays over ~0.4 s.
+func shake(strength: float) -> void:
+	_shake = maxf(_shake, strength)
 var _sprite: AnimatedSprite2D          # null when no frames have been rendered yet
 
 ## Bounds of the walkable field in free movement, set by the level. Limits
@@ -113,6 +121,7 @@ func _ready() -> void:
 	# offset silently eats the band at the bottom where the river is drawn -
 	# which is exactly the edge the player reads position from.
 	_cam.offset = Vector2.ZERO if Touch.config.free_movement else Vector2(0, -60)
+	_cam_base_offset = _cam.offset
 	add_child(_cam)
 
 	# Contact damage from enemy bodies, AND the target enemy bullets look for.
@@ -371,6 +380,13 @@ func _consume_jump_buffer(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _cam != null:
+		if _shake > 0.0:
+			_shake = maxf(_shake - delta * 40.0, 0.0)
+			_cam.offset = _cam_base_offset + Vector2(
+				randf_range(-_shake, _shake), randf_range(-_shake, _shake))
+		elif _cam.offset != _cam_base_offset:
+			_cam.offset = _cam_base_offset
 	if Touch.config.free_movement:
 		_move_free(delta)
 	else:

@@ -215,6 +215,18 @@ func _build_panel() -> void:
 	_add_slider("ako dlho lezi krv na zemi (s)", 0.5, 15.0, 0.5, Tuning.fx_stain_time,
 		func(v: float) -> void: Tuning.fx_stain_time = v)
 
+	# Explosive cauldron (cauldron.gd). Added 2026-10-04.
+	_add_slider("kotol: odpocet do vybuchu (s)", 0.5, 8.0, 0.5, Tuning.cauldron_fuse,
+		func(v: float) -> void: Tuning.cauldron_fuse = v)
+	_add_slider("kotol: dosah vybuchu", 80.0, 400.0, 10.0, Tuning.cauldron_radius,
+		func(v: float) -> void: Tuning.cauldron_radius = v)
+	var cauldron_hurt := CheckButton.new()
+	cauldron_hurt.text = "VYBUCH ZRANI AJ HRDINU"
+	cauldron_hurt.custom_minimum_size = Vector2(0, 56)
+	cauldron_hurt.button_pressed = Tuning.cauldron_hurts_player
+	rows.add_child(cauldron_hurt)
+	cauldron_hurt.toggled.connect(func(on: bool) -> void: Tuning.cauldron_hurts_player = on)
+
 	# Sounds (sfx.gd). Added 2026-10-04.
 	var sfx_toggle := CheckButton.new()
 	sfx_toggle.text = "ZVUKY"

@@ -229,6 +229,37 @@ var vibrate_enabled: bool = true
 ## phones that cannot vary it ignore it and buzz at their fixed strength).
 var vibrate_strength: float = 1.0
 
+# --- Explosive cauldron (2026-10-04, cauldron.gd) ---
+const CAULDRON_ART_DIR: String = "res://art/cauldron_pl"
+const CAULDRON_SPRITE_SCALE: float = 2.0
+## Hits to light the fuse (axe out + back = 2 per throw).
+const CAULDRON_HP: int = 4
+## Seconds from the last hit to the bang. Live on the panel.
+const CAULDRON_FUSE: float = 3.0
+var cauldron_fuse: float = CAULDRON_FUSE
+## A cauldron lit by a neighbour's blast goes off this soon after.
+const CAULDRON_CHAIN_FUSE: float = 0.25
+## Blast radius in world units. Depth (Y) counts double, so on the 2.5D field
+## the blast is an ellipse flat like the ground, not a circle up the screen.
+const CAULDRON_RADIUS: float = 220.0
+var cauldron_radius: float = CAULDRON_RADIUS
+## Damage to every enemy in the radius. 10 = every enemy so far dies; the
+## armoured brute's armour does not stop it.
+const CAULDRON_DAMAGE: int = 10
+## The blast hurts the hero too if he stands in it (1 life). Off = only
+## enemies. Live on the panel.
+var cauldron_hurts_player: bool = true
+## The whistle climbs this much in pitch over the fuse (1.0 = an octave).
+const CAULDRON_WHISTLE_RISE: float = 1.2
+## Hit area and foot blocking, from the art: the pot is ~52 x 52 at 2x
+## ~104 wide; blocking derived like the barrel's (see BARREL_BLOCK_WIDTH).
+const CAULDRON_HIT_SIZE: Vector2 = Vector2(100.0, 100.0)
+const CAULDRON_BLOCK_WIDTH: float = 150.0
+## Where they stand relative to the hero's feet at each (re)placement.
+const CAULDRON_OFFSETS: Array[Vector2] = [
+	Vector2(480.0, 140.0), Vector2(1050.0, -120.0),
+]
+
 # --- Breakable barrel (2026-10-03) ---
 const BARREL_ART_DIR: String = "res://art/barrel_pl"
 ## 6 since 2026-10-03 (was 3): the returning axe hits twice per throw.

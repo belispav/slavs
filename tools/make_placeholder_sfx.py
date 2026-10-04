@@ -5,7 +5,8 @@ before real samples (CC0 libraries, or recorded) exist. Every file is named
 ph_*.wav so it is obvious what to delete once a real sound replaces it.
 
 Writes 16-bit mono WAVs into slavs/audio/sfx/<event>/:
-    gunshot, axe_throw, enemy_hit, enemy_death, barrel_hit, barrel_break
+    gunshot, axe_throw, enemy_hit, enemy_death, barrel_hit, barrel_break,
+    cauldron_whistle, explosion
 Voices (hero_hurt, rusher_shout, barks...) are NOT made here - a synthesised
 voice is worse than none.
 
@@ -106,6 +107,24 @@ def crack(rng):
     return x + splinter * 0.6
 
 
+def whistle(rng):
+    """A kettle whistle, one second, meant to LOOP (the game bends its pitch)."""
+    n = len(t(1.0))
+    x = t(1.0)
+    f = 1400 + 25 * np.sin(2 * np.pi * 6 * x)
+    tone = np.sin(2 * np.pi * np.cumsum(f) / RATE)
+    hiss = bandpass(rng.standard_normal(n), 2000, 6000) * 0.25
+    return tone * 0.6 + hiss
+
+
+def explosion(rng):
+    n = len(t(1.6))
+    boom = lowpass(rng.standard_normal(n), 180) * env(n, 0.003, 0.5) * 8
+    crack = lowpass(rng.standard_normal(n), 4000) * env(n, 0.001, 0.08)
+    rumble = np.sin(2 * np.pi * 40 * t(1.6)) * env(n, 0.01, 0.6)
+    return boom + crack + rumble
+
+
 def main():
     rng = np.random.default_rng(7)
     for i in range(3):
@@ -116,6 +135,9 @@ def main():
     for i in range(2):
         save("enemy_death", f"ph_enemy_death_{i}.wav", death(rng), rng)
         save("barrel_break", f"ph_barrel_break_{i}.wav", crack(rng), rng)
+    save("cauldron_whistle", "ph_whistle.wav", whistle(rng), rng)
+    for i in range(2):
+        save("explosion", f"ph_explosion_{i}.wav", explosion(rng), rng)
     print("placeholders written to", os.path.normpath(OUT))
 
 
