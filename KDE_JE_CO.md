@@ -19,8 +19,8 @@ T07 Druhý telefón s iným DPI (ovládanie overené len na 450 dpi). [Open 7]
 T08 Google Play: pravidlá a IARC (jeho stopa); developer účet odložený; uzavreté testovanie 12 testerov/14 dní = F4; licencie generovaných assetov. [Open 10]
 T09 Rozhodnutia o jadre pred stavaním: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4]
 T10 Odložené: monetizácia (premium 5,99 EUR vs. F2P). [core_loop §4]
-T11 Na jeho PC: `git push` (commity čakajú). [stav gitu]
-T20 Vyčistiť históriu GitHubu od starých 3D súborov: v priečinku hry `python tools\github_cistenie.py`, na konci napísať ANO (robí zálohu, overí, že projekt ostane rovnaký). [PRIKAZY.md, tools/github_cistenie.py]
+T11 HOTOVÉ 2026-10-05: zmeny poslané na GitHub pri čistení histórie (T20).
+T20 HOTOVÉ 2026-10-05: história GitHubu vyčistená od starých 3D súborov (`tools/github_cistenie.py`, jednorazový). Pavel: priečinok `slavs_cisty_...` v D:6 zmazať hneď, `slavs_zaloha_...` po týždni.
 
 ### Čaká na Claude (po OK od Pavla)
 T12 Horný okraj chodnej zeme je odrezaný rovno; treba prirodzený prechod. [Open 3a]
@@ -90,4 +90,4 @@ Samostatný scenár neexistuje. Odsúhlasené je jadro:
 - `.gitattributes` (`* text=auto`) odstraňuje falošné „zmeny" kvôli koncovkám riadkov.
 - Starý 3D reťazec (`render/`, `art/fits/`, `tools/blender/`, staré skripty, 3D modely z `ref/`, staré `*_px` sprity, staré sekcie `PRIKAZY.md`) -> `_archiv/3d_stary/`, gitignored; v `CLAUDE.md` je pravidlo, že sa neberie do úvahy.
 - `tools/preview_framing.py` prepnutý na PixelLab hrdinu (`hero_pl_run`, 2x).
-- GitHub: história už obsahuje ~305 MiB starých súborov; nové sa nepridávajú. Zbaviť sa ich = prepísať históriu (rozhodnutie Pavla, zatiaľ nie)
+- GitHub: história vyčistená od 3D súborov (T20), dnes ~417 MiB; zvyšok sú obrázky v `ref/` a pozadia.

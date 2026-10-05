@@ -210,7 +210,7 @@ def main():
     shrink(repo)
     say("")
     say("HOTOVO.")
-    say("  Obsah historie: %s -> %s (stiahnutie je zhruba o 30 % mensie)" % (before, after))
+    say("  Obsah historie: %s -> %s (stiahnutie je zhruba o 30 %% mensie)" % (before, after))
     say("  Tvoj projekt: subory a necommitnute zmeny su nedotknute, historia je nova.")
     say("  Zaloha (zmazat po tyzdni, ak je vsetko v poriadku): " + backup)
     say("  Pomocny priecinok (mozes hned zmazat): " + clean)
