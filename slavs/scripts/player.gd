@@ -616,8 +616,11 @@ func _update_throw(delta: float, active: bool) -> void:
 		var duration: float = 0.0
 		if _has_throw:
 			var fps: float = Tuning.AXE_THROW_FPS
-			release_at = float(Tuning.AXE_RELEASE_FRAME) / fps
-			duration = float(_sprite.sprite_frames.get_frame_count(&"throw")) / fps
+			# The wind-up (frames before the release) plays Tuning.throw_windup_speed
+			# times faster; the follow-through after the release plays at normal speed.
+			release_at = float(Tuning.AXE_RELEASE_FRAME) / (fps * Tuning.throw_windup_speed)
+			duration = release_at + float(_sprite.sprite_frames.get_frame_count(&"throw")
+				- Tuning.AXE_RELEASE_FRAME) / fps
 		if not _throw_released and _throw_time >= release_at:
 			_throw_released = true
 			axe_in_hand = false
@@ -657,11 +660,16 @@ func _update_sprite() -> void:
 	var run_anim: StringName = &"run_axe" if armed else &"run"
 	var idle_anim: StringName = &"idle_axe" if armed else &"idle"
 
+	# Only the throw clip's wind-up is sped up; everything else plays at 1x.
+	_sprite.speed_scale = 1.0
 	if _throwing and _has_throw and _sprite.sprite_frames != null:
 		if _sprite.animation != &"throw":
 			_sprite.animation = &"throw"
 			_sprite.frame = 0
 			_sprite.play()
+		if _throw_time < float(Tuning.AXE_RELEASE_FRAME) \
+				/ (Tuning.AXE_THROW_FPS * Tuning.throw_windup_speed):
+			_sprite.speed_scale = Tuning.throw_windup_speed
 	elif moving:
 		if _sprite.animation != run_anim:
 			_sprite.animation = run_anim

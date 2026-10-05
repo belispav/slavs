@@ -189,6 +189,11 @@ const AXE_RELEASE_FRAME: int = 5
 ## found on the phone with the panel slider. Added 2026-10-05.
 const THROW_MOVE_FACTOR: float = 0.25
 var throw_move_factor: float = THROW_MOVE_FACTOR
+## Speed of the throw's wind-up (the standing part before the axe leaves the hand),
+## 1.0 = as drawn. Faster = a shorter moment where the hero must stand (a feature:
+## he has to pick the moment of the throw). The follow-through stays 1x.
+const THROW_WINDUP_SPEED: float = 1.0
+var throw_windup_speed: float = THROW_WINDUP_SPEED
 
 # --- Hit / death effects (2026-10-03, fx.gd) ---
 ## Pixel particles per event. Code-drawn placeholders for trying the

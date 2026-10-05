@@ -385,6 +385,8 @@ func _build_panel() -> void:
 		func(v: float) -> void: Tuning.player_speed_scale = v)
 	_add_slider("pohyb pocas hodu (0 = stoji)", 0.0, 1.0, 0.05, Tuning.throw_move_factor,
 		func(v: float) -> void: Tuning.throw_move_factor = v)
+	_add_slider("rychlost zamachu pri hode (1 = povodna)", 0.5, 4.0, 0.1, Tuning.throw_windup_speed,
+		func(v: float) -> void: Tuning.throw_windup_speed = v)
 	# PixelLab hero size: only whole multiples keep every pixel the same size.
 	var hero_2x := CheckButton.new()
 	hero_2x.text = "HRDINA 2x (vypnute = 1x)"
