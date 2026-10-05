@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa projektu Slavs</title>
+</head>
+<body>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600&display=swap">
+<style>
+/* Layout: one column; summary tiles that double as filters, story card, filterable file list, folder size bars. */
+:root{
+  --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --font-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --bg:#f2f4f1; --surface:#ffffff; --ink:#18211e; --muted:#58665f; --line:#d8ded9;
+  --accent:#1c6b58; --accent-soft:#dcebe5;
+  --c-teba:#1f5fa8; --c-teba-bg:#e1ecf8;
+  --c-claude:#6b3fa0; --c-claude-bg:#eee6f7;
+  --c-oboch:#1c6b58; --c-oboch-bg:#dcebe5;
+  --c-archiv:#5c6460; --c-archiv-bg:#e6e9e6;
+  --c-tech:#8a5a00; --c-tech-bg:#f7ecd2;
+  --bar-old:#c9a24a;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111715; --surface:#192220; --ink:#e4ebe8; --muted:#92a39c; --line:#2a3733;
+  --accent:#5cc2a3; --accent-soft:#1f3b33;
+  --c-teba:#8fbdf0; --c-teba-bg:#1d3047;
+  --c-claude:#c3a2ee; --c-claude-bg:#33274a;
+  --c-oboch:#5cc2a3; --c-oboch-bg:#1f3b33;
+  --c-archiv:#a3aeaa; --c-archiv-bg:#27302d;
+  --c-tech:#e2bb6a; --c-tech-bg:#3d3319;
+  --bar-old:#a3822f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111715; --surface:#192220; --ink:#e4ebe8; --muted:#92a39c; --line:#2a3733;
+  --accent:#5cc2a3; --accent-soft:#1f3b33;
+  --c-teba:#8fbdf0; --c-teba-bg:#1d3047;
+  --c-claude:#c3a2ee; --c-claude-bg:#33274a;
+  --c-oboch:#5cc2a3; --c-oboch-bg:#1f3b33;
+  --c-archiv:#a3aeaa; --c-archiv-bg:#27302d;
+  --c-tech:#e2bb6a; --c-tech-bg:#3d3319;
+  --bar-old:#a3822f; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+*{box-sizing:border-box}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:flex;flex-direction:column;gap:28px}
+h1,h2{font-family:var(--font-display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,2.9rem);line-height:1.05}
+h2{font-size:1.5rem;line-height:1.1}
+p{margin:0}
+.eyebrow{font-family:var(--font-mono);font-size:.78rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.lede{color:var(--muted);max-width:62ch;margin-top:8px}
+header{display:flex;flex-direction:column;gap:6px}
+
+/* tiles = filters */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{appearance:none;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tile:hover{border-color:var(--muted)}
+.tile[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.tile:focus-visible,.chip:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tile .n{font-family:var(--font-display);font-size:2rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.tile .l{font-size:.9rem;font-weight:600}
+.tile .d{font-size:.8rem;color:var(--muted)}
+.tile[data-g="teba"] .n{color:var(--c-teba)}
+.tile[data-g="claude"] .n{color:var(--c-claude)}
+.tile[data-g="oboch"] .n{color:var(--c-oboch)}
+.tile[data-g="archiv"] .n{color:var(--c-archiv)}
+.tile[data-g="tech"] .n{color:var(--c-tech)}
+
+/* story */
+.story{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px}
+@media(max-width:760px){.story{grid-template-columns:minmax(0,1fr)}}
+.story h2{margin-bottom:10px}
+.facts{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.facts li{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:10px}
+@media(max-width:480px){.facts li{grid-template-columns:minmax(0,1fr);gap:0}}
+.facts b{font-weight:600;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.04em}
+.src h3{font-family:var(--font-display);font-size:1.15rem;margin:0 0 8px;font-weight:600}
+.src ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:.92rem}
+code,.mono{font-family:var(--font-mono);font-size:.86em;overflow-wrap:anywhere}
+.note{margin-top:12px;padding:10px 12px;border-radius:4px;background:var(--c-tech-bg);color:var(--ink);font-size:.9rem}
+
+/* list */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font:inherit;font-size:.85rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.search{flex:1 1 220px;max-width:340px;font:inherit;font-size:.92rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.row{display:grid;grid-template-columns:minmax(0,17rem) 7.5rem minmax(0,1fr);gap:6px 16px;padding:12px 16px;border-top:1px solid var(--line);align-items:start}
+.row:first-child{border-top:0}
+.row .name{font-family:var(--font-mono);font-size:.84rem;font-weight:500;overflow-wrap:anywhere}
+.row .name small{display:block;color:var(--muted);font-weight:400;font-size:.76rem;margin-top:2px}
+.row .what{min-width:0}
+.row .what span{display:block;color:var(--muted);font-size:.88rem;margin-top:2px}
+@media(max-width:760px){.row{grid-template-columns:minmax(0,1fr) auto}.row .what{grid-column:1 / -1}}
+.badge{justify-self:start;font-size:.76rem;font-weight:600;letter-spacing:.03em;border-radius:3px;padding:2px 8px;white-space:nowrap}
+.b-teba{color:var(--c-teba);background:var(--c-teba-bg)}
+.b-claude{color:var(--c-claude);background:var(--c-claude-bg)}
+.b-oboch{color:var(--c-oboch);background:var(--c-oboch-bg)}
+.b-archiv{color:var(--c-archiv);background:var(--c-archiv-bg)}
+.b-tech{color:var(--c-tech);background:var(--c-tech-bg)}
+.empty{padding:22px 16px;color:var(--muted)}
+
+/* sizes */
+.sizes{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.srow{display:grid;grid-template-columns:8.5rem minmax(0,1fr) 5.2rem;gap:12px;align-items:center}
+.srow .lab{font-family:var(--font-mono);font-size:.84rem}
+.srow .val{text-align:right;font-variant-numeric:tabular-nums;font-size:.9rem}
+.track{height:14px;background:var(--bg);border-radius:2px;position:relative}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--accent);border-radius:2px;min-width:3px}
+.fill.old{background:var(--bar-old)}
+.sdesc{grid-column:2 / -1;color:var(--muted);font-size:.82rem;margin-top:-6px}
+@media(max-width:560px){.srow{grid-template-columns:minmax(0,1fr) 5rem}.srow .track{grid-column:1 / -1;order:3}.sdesc{grid-column:1 / -1}}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--accent)}
+.legend i.old{background:var(--bar-old)}
+
+/* two column bottom */
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media(max-width:760px){.duo{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px}
+.card h2{margin-bottom:10px}
+.card ul,.card ol{margin:0;padding-left:1.15rem;display:flex;flex-direction:column;gap:7px;font-size:.94rem}
+section{display:flex;flex-direction:column;gap:12px;min-width:0}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Slavs fight back · stav k 5. 10. 2026</span>
+    <h1>Mapa projektu: kde je čo</h1>
+    <p class="lede">Každý súbor v hlavnom priečinku s údajom, pre koho je. Kliknutím na dlaždicu odfiltruješ len svoje súbory. Rovnaký obsah v textovej podobe pre Claude je v <code>KDE_JE_CO.md</code>.</p>
+  </header>
+
+  <div class="tiles" id="tiles" role="group" aria-label="Filter podľa určenia"></div>
+
+  <section class="story" aria-labelledby="story-h">
+    <div>
+      <h2 id="story-h">Odsúhlasený príbeh a popis hry</h2>
+      <ul class="facts">
+        <li><b>Hrdina</b><span>Utečený slovanský otrok, 15. storočie, bojuje proti otrokárom. Nepriatelia sú definovaní rolou, nikdy etnikom. Bez mena, bez cutscén, len textové karty.</span></li>
+        <li><b>Hra</b><span>2D side-scroller run-and-gun v štýle Metal Slug, Android, Godot 4.7. Platená, 5,99 €, bez reklám a bez nákupov v hre.</span></li>
+        <li><b>Jadro</b><span>Opakované behy na skóre. V klietkach sú zajatci a mena je počet tých, ktorí prežili. Zbraň je sekera, ktorá sa vracia ako bumerang. Nepriatelia idú len sprava, hrdina sa hýbe voľne bez skákania.</span></li>
+      </ul>
+      <p class="note">Samostatný scenár ani dej neexistuje. Draupnir koncept (Vladan, Zorica, 24 levelov) nie je odsúhlasený a leží v archíve.</p>
+    </div>
+    <div class="src">
+      <h3>Kde je to napísané</h3>
+      <ul>
+        <li><code>PLAN_hry.md</code> kap. 1 a 3. Éra v texte je zastaraná, platí 15. storočie.</li>
+        <li><code>DIZAJN_core_loop.md</code> štruktúra hry, nahrádza kap. 3.2 a 3.5 plánu.</li>
+        <li><code>CLAUDE.md</code> aktuálny stav a rozhodnutia.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="files-h">
+    <h2 id="files-h">Súbory a priečinky</h2>
+    <div class="toolbar">
+      <div class="chips" id="chips" role="group" aria-label="Filter"></div>
+      <input class="search" id="q" type="search" placeholder="Hľadať súbor alebo tému" aria-label="Hľadať">
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section aria-labelledby="size-h">
+    <h2 id="size-h">Čo zaberá miesto</h2>
+    <div class="sizes">
+      <div class="legend"><span><i></i>Aktuálne</span><span><i class="old"></i>Starý 3D reťazec a staré podklady</span></div>
+      <div id="bars"></div>
+    </div>
+  </section>
+
+  <div class="duo">
+    <section class="card" aria-labelledby="done-h">
+      <h2 id="done-h">Upratané 5. 10.</h2>
+      <ul>
+        <li><code>CLAUDE.md</code> mal sekciu aktuálneho stavu dvakrát. Zlúčená do jednej, súbor je z 26 KB na 22 KB.</li>
+        <li>Draupnir zložka a lexikón sú v <code>_archiv/draupnir_koncept/</code> s poznámkou.</li>
+        <li>Hotová odovzdávka pozadia je v <code>_archiv/</code>.</li>
+        <li>Zmluva o aute je v <code>_archiv/mimo_projektu/</code>.</li>
+        <li>Analýza pravidiel Google Play je v <code>docs/vyskum/</code>.</li>
+        <li>Pribudol <code>.gitattributes</code>, ktorý zruší falošné zmeny kvôli koncovkám riadkov.</li>
+      </ul>
+    </section>
+    <section class="card" aria-labelledby="todo-h">
+      <h2 id="todo-h">Čaká na tvoje rozhodnutie</h2>
+      <ol>
+        <li>Má sa z Draupnir konceptu niečo prebrať do príbehu, napríklad mená alebo kódex s históriou? Zosúladenie dvoch konceptov je dizajnové rozhodnutie.</li>
+        <li>Presunúť starý 3D reťazec (<code>render/</code>, <code>art/fits/</code>, <code>tools/blender/</code>, spolu okolo 260 MB) do archívu? Staré skripty, ktoré sa už nemajú používať, by prestali fungovať.</li>
+      </ol>
+    </section>
+  </div>
+</div>
+
+<script>
+var GROUPS = {
+  teba:   {label:"Pre teba",   desc:"Návody a veci na schválenie"},
+  claude: {label:"Pre Claude", desc:"Pamäť a štart session"},
+  oboch:  {label:"Pre oboch",  desc:"Plán, dizajn, výskum"},
+  archiv: {label:"Archív a staré", desc:"Nepoužívať, len referencia"},
+  tech:   {label:"Technické",  desc:"Konfigurácia a git"}
+};
+var ITEMS = [
+  {n:"CLAUDE.md", g:"claude", w:"Pamäť projektu. Claude ju číta na začiatku každej session.", s:"Otváraj ju len, keď chceš vidieť, čo Claude o projekte vie."},
+  {n:"ZACNI_TU_dalsia_session.md", g:"claude", w:"Štartovací prompt ďalšej session a zoznam, čo príde na rad.", s:"Aktuálny, aktualizovaný 5. 10."},
+  {n:"KDE_JE_CO.md / KDE_JE_CO.html", g:"oboch", w:"Táto mapa. Markdown je pre Claude, dashboard pre teba.", s:"Claude ju aktualizuje pri každom presune súborov."},
+  {n:"PRIKAZY.md", g:"teba", w:"Ťahák príkazov: nasadenie na telefón, PixelLab, riešenie problémov.", s:"Otvor, keď potrebuješ niečo napísať do PowerShellu."},
+  {n:"SETUP_F0.md", g:"teba", w:"Inštalácia (Godot, JDK, Android SDK) a testovací protokol na telefóne.", s:"Pri novom počítači alebo novom telefóne."},
+  {n:"POSTUP_cloud_github.md", g:"teba", w:"Ako pracovať v cloude a cez GitHub namiesto na svojom PC.", s:"Pri prepínaní medzi lokálom a cloudom."},
+  {n:"HLASKY.md", g:"teba", w:"Návrh hlášok postáv (v angličtine) na schválenie. Škrtni, prepíš, dopíš.", s:"Čaká na tvoje schválenie, kým sa nahrajú zvuky."},
+  {n:"PLAN_hry.md", g:"oboch", w:"Plán hry, business case, fázy F0 až F5, riziká. Kapitola 2 o citlivej téme je nemenná.", s:"Éra v texte je zastaraná, platí 15. storočie."},
+  {n:"DIZAJN_core_loop.md", g:"oboch", w:"Štruktúra hry: opakované behy, klietky so zajatcami, bossovia.", s:"Nahrádza kapitoly 3.2 a 3.5 plánu."},
+  {n:"SPEC_ovladanie_implementacia.md", g:"oboch", w:"Ovládanie. Jediný zdroj pravdy pre to, ako sa hra ovláda.", s:"Ovládanie je produkt, všetko ostatné je druhé."},
+  {n:"DIZAJN_pozadie_a_rozlisenie.md", g:"oboch", w:"Pozadie, parallax a rozlíšenie postáv. Uzavreté 15. 9.", s:"V koreni zostalo, lebo naň odkazuje kód."},
+  {n:"docs/vyskum/", g:"oboch", w:"Výskum pravidiel Google Play (nenávistný obsah, násilie).", s:"Súbor: Gemini - Analyza pravidiel Google Play.md"},
+  {n:"commit_msg.txt", g:"tech", w:"Záložný text commitu, keď commit zo sandboxu zlyhá.", s:"Používa ho PRIKAZY.md. Git ho ignoruje."},
+  {n:".mcp.json  .gitignore  .gitattributes  .claude/", g:"tech", w:"Konfigurácia: PixelLab, ignorované súbory, koncovky riadkov, hook na synchronizáciu gitu.", s:"Nemeniť bez dôvodu."},
+  {n:"slavs/", g:"claude", w:"Hra samotná (Godot projekt). Scény, skripty, obrázky, zvuky.", s:"Dnes 211 MB, z toho 52 MB cache .godot a 76 MB build."},
+  {n:"tools/", g:"claude", w:"Skripty na nasadenie, PixelLab a spracovanie obrázkov.", s:"Podpriečinok blender/ (146 MB) je starý 3D reťazec."},
+  {n:"ref/", g:"oboch", w:"Štýlové referencie a návrhy. Priečinok preview/ je v gite, veľké obrázky nie.", s:"22 voľných obrázkov v ref/ je z júla, teda staré."},
+  {n:"Claude outputs/", g:"teba", w:"Obrázky z našich pracovných session (2. až 4. 10.): animácie, štýly, pozadia.", s:"Môžeš prezrieť a zmazať, čo už nepotrebuješ."},
+  {n:"render/", g:"archiv", w:"Výstupy starého 3D reťazca (Meshy, Mixamo, Blender). Nepoužívať.", s:"114 MB, mimo gitu. Staré skripty ho ešte spomínajú."},
+  {n:"art/fits/", g:"archiv", w:"Nastavenia zbraní pre starý 3D reťazec.", s:"Spomína ich starý skript save_weapon_fit.py."},
+  {n:"_archiv/", g:"archiv", w:"Dokončené prompty, História CLAUDE.md, staré návody.", s:"CLAUDE_historia.md čítať len na požiadanie."},
+  {n:"_archiv/draupnir_koncept/", g:"archiv", w:"Draupnir koncept od druhej AI: 7 zadaní pre agentov a lexikón sloganov.", s:"Iný koncept hry, nie je odsúhlasený. Chýba SPEC_MASTER.md, výstupy neexistujú."},
+  {n:"_archiv/mimo_projektu/", g:"archiv", w:"Návrh kúpnopredajnej zmluvy na auto.", s:"Nepatrí do projektu. Vyber ho z repa ručne, ak chceš."}
+];
+var SIZES = [
+  {n:"ref/", mb:607, f:725, d:"Referencie, väčšina sú veľké obrázky mimo gitu", old:false},
+  {n:"slavs/", mb:211, f:3457, d:"Hra", old:false},
+  {n:"tools/", mb:147, f:95, d:"Skripty; 146 MB z toho je tools/blender/ (starý 3D reťazec)", old:true},
+  {n:"render/", mb:114, f:783, d:"Starý 3D reťazec", old:true},
+  {n:"Claude outputs/", mb:8, f:14, d:"Obrázky z pracovných session", old:false},
+  {n:"_archiv/", mb:2, f:24, d:"Archív", old:false},
+  {n:"art/", mb:1, f:7, d:"Nastavenia zbraní starého 3D reťazca", old:true},
+  {n:"docs/", mb:1, f:1, d:"Výskum", old:false}
+];
+var state = {g:"all", q:""};
+function el(t,c,h){var e=document.createElement(t); if(c) e.className=c; if(h!=null) e.textContent=h; return e;}
+function count(g){return ITEMS.filter(function(i){return g==="all"||i.g===g}).length;}
+function renderTiles(){
+  var box=document.getElementById("tiles"); box.textContent="";
+  ["teba","claude","oboch","archiv","tech"].forEach(function(k){
+    var b=el("button","tile"); b.type="button"; b.dataset.g=k; b.setAttribute("aria-pressed",String(state.g===k));
+    b.appendChild(el("span","n",String(count(k)))); b.appendChild(el("span","l",GROUPS[k].label)); b.appendChild(el("span","d",GROUPS[k].desc));
+    b.onclick=function(){state.g=(state.g===k?"all":k); render();}; box.appendChild(b);
+  });
+}
+function renderChips(){
+  var box=document.getElementById("chips"); box.textContent="";
+  var all=[["all","Všetko ("+count("all")+")"]].concat(Object.keys(GROUPS).map(function(k){return [k,GROUPS[k].label]}));
+  all.forEach(function(p){
+    var b=el("button","chip",p[1]); b.type="button"; b.setAttribute("aria-pressed",String(state.g===p[0]));
+    b.onclick=function(){state.g=p[0]; render();}; box.appendChild(b);
+  });
+}
+function renderList(){
+  var box=document.getElementById("list"); box.textContent="";
+  var q=state.q.trim().toLowerCase(), n=0;
+  ITEMS.forEach(function(i){
+    if(state.g!=="all" && i.g!==state.g) return;
+    if(q && (i.n+" "+i.w+" "+i.s).toLowerCase().indexOf(q)<0) return;
+    n++;
+    var r=el("div","row"), nm=el("div","name",i.n), bd=el("span","badge b-"+i.g,GROUPS[i.g].label), wh=el("div","what");
+    wh.appendChild(document.createTextNode(i.w)); wh.appendChild(el("span",null,i.s));
+    r.appendChild(nm); r.appendChild(bd); r.appendChild(wh); box.appendChild(r);
+  });
+  if(!n) box.appendChild(el("div","empty","Nič nezodpovedá filtru."));
+}
+function renderBars(){
+  var box=document.getElementById("bars"); box.textContent="";
+  var max=Math.max.apply(null,SIZES.map(function(s){return s.mb}));
+  SIZES.forEach(function(s){
+    var row=el("div","srow"); row.appendChild(el("span","lab",s.n));
+    var t=el("div","track"), f=el("div","fill"+(s.old?" old":"")); f.style.width=(s.mb/max*100)+"%"; t.appendChild(f); row.appendChild(t);
+    row.appendChild(el("span","val",s.mb+" MB"));
+    row.appendChild(el("div","sdesc",s.d+" · "+s.f.toLocaleString("sk-SK")+" súborov"));
+    box.appendChild(row);
+  });
+}
+function render(){renderTiles();renderChips();renderList();}
+document.getElementById("q").addEventListener("input",function(e){state.q=e.target.value;renderList();});
+render(); renderBars();
+</script>
+
+</body>
+</html>
