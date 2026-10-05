@@ -110,6 +110,21 @@ Ty nič nespúšťaš – stačí povedať, čo chceš. Starý postup cez Meshy 
 
 ---
 
+## ČISTENIE GITHUBU — jednorazovo (T20)
+
+Odstráni zo starej histórie na GitHube staré 3D súbory. Aktuálny stav projektu sa nezmení.
+
+1. Vypni rozpracované cloud session (nech nič nerobia).
+2. Otvor PowerShell v priečinku hry a spusti: `python tools\github_cistenie.py`
+3. Skript sám: pošle čakajúce commity, spraví **zálohu** vedľa projektu (`slavs_zaloha_...`), overí, že posledný stav je po čistení identický, a ukáže veľkosť pred a po.
+4. Až potom sa opýta. Napíš `ANO` a Enter. Čokoľvek iné = koniec, nič sa nezmení.
+5. Trvá niekoľko minút (sťahuje sa celá história).
+
+Po úspechu môžeš hneď zmazať priečinok `slavs_cisty_...`; zálohu `slavs_zaloha_...` zmaž po týždni.
+Ak by sa niečo pokazilo, záloha obsahuje celú pôvodnú históriu.
+
+---
+
 ## Nasadiť hru do telefónu
 
 Toto je ten hlavný. Označí build, vyexportuje, nainštaluje, spustí a nechá

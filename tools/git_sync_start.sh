@@ -2,6 +2,7 @@
 # Slavs - runs at the start of every session (hook in .claude/settings.json).
 # Brings a clean `master` checkout up to date so work never starts on stale files.
 # Its output is shown to Claude, so a problem is reported instead of hidden.
+echo "Slavs: at the start of any file-heavy or multi-step work invoke the token-saver skill (anthropic-skills:token-saver) - see CLAUDE.md, section Tokens."
 git rev-parse --git-dir >/dev/null 2>&1 || exit 0
 git remote get-url origin >/dev/null 2>&1 || exit 0
 branch=$(git branch --show-current)
