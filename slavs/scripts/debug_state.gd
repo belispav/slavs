@@ -91,10 +91,8 @@ var barrels_reset_requested: bool = false
 var game_reset_requested: bool = false
 
 
-## Simulates a NON-scrolling single-screen scene (Pavel 2026-10-05): the camera
-## is fixed on picture rows Tuning.SCENE_TOP_ROW .. +720 (the size of one PixelLab
-## 1376x768 image), and the hero walks only on the lower part of the screen,
-## Tuning.scene_walk_depth tall. Panel: "SCENA BEZ SCROLLU".
+## One-screen scene mode (pixen A): camera and walk band follow Tuning.SCENE_*.
+## Always true while only ground A exists; main.gd sets it from Tuning.GROUNDS.
 var fixed_screen: bool = false
 
 ## FULL SCENE (Pavel 2026-10-05): the whole screen is the dirt ground, the camera does

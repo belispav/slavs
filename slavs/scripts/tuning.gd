@@ -359,6 +359,7 @@ const PLAYER_KNOCKBACK: Vector2 = Vector2(240.0, -320.0)
 
 # --- Enemies ---
 const ENEMY_POOL_SIZE: int = 64
+const ENEMY_COUNT_RANGE: float = 2200.0   # only enemies this close count for the cap
 const ENEMY_MAX_ALIVE: int = 34       # design pillar: overwhelming numbers
 const ENEMY_GRAVITY: float = 2200.0
 const ENEMY_CONTACT_DAMAGE: int = 1
@@ -448,14 +449,18 @@ var bg_parallax_speed: float = BG_PARALLAX_SPEED
 const WALK_EDGE_INSET: float = 20.0
 var walk_edge_inset: float = WALK_EDGE_INSET
 
-## Non-scrolling scene simulation (Debug.fixed_screen). The screen shows picture
-## rows SCENE_TOP_ROW .. SCENE_TOP_ROW + 720: the forest and the ground edge sit
-## in the upper part, the walkable band is the bottom `scene_walk_depth` units of
-## the screen. 330 is a first guess (a bit under half the 720 screen), found by
-## the slider, not measured. Added 2026-10-05.
-const SCENE_TOP_ROW: float = 160.0
-const SCENE_WALK_DEPTH: float = 330.0
-var scene_walk_depth: float = SCENE_WALK_DEPTH
+## The scene (Pavel 2026-10-05, ground pixen A): the walkable ground is exactly one
+## screen tall (SCENE_FIELD_HEIGHT) and starts at picture row SCENE_GROUND_ROW (the
+## first ground row of ground_pixen_a_top.json). Above it is the dynamic top strip
+## (forest/sky), about one hero tall: the camera may scroll up until the strip is
+## `scene_strip_height` tall on screen (so the hero's head meets the top edge when
+## he stands on the back edge) and down until the strip is gone. Panel slider.
+## The same camera rule is used when walking and in a frozen (FULL SCENE) screen;
+## the only difference is that FULL SCENE also locks horizontal scrolling.
+const SCENE_GROUND_ROW: float = 350.0
+const SCENE_FIELD_HEIGHT: float = 720.0
+const SCENE_STRIP_HEIGHT: float = 190.0
+var scene_strip_height: float = SCENE_STRIP_HEIGHT
 
 
 ## Draw order for anything standing on the ground plane.
@@ -485,9 +490,11 @@ const ENEMY_KEEP_RIGHT_MARGIN: float = 8.0
 ## it a crowd converges onto one line and reads as a queue rather than a mob.
 const ENEMY_DEPTH_SPREAD: float = 34.0
 
-## How far behind the player an enemy may fall before it is recycled. Generous,
-## so nothing vanishes while it is still on screen.
-const ENEMY_CULL_BEHIND: float = 900.0
+## How far behind the player an enemy may fall before it is recycled. Pavel
+## 2026-10-05: enemies left behind off-screen must still exist and keep coming
+## (he runs back and they are there), so this is only a pool-safety limit now.
+## Far stragglers do not count against ENEMY_MAX_ALIVE (see Tuning.ENEMY_COUNT_RANGE).
+const ENEMY_CULL_BEHIND: float = 4000.0
 
 ## A body walking toward you does not travel in a straight line. Each enemy
 ## drifts across its approach, at its own speed and phase, which is enough to
@@ -616,12 +623,6 @@ const GROUNDS := {
 ## Pavel 2026-10-05: A (calm PixelLab dirt) + walk-through objects won; the other
 ## grounds (pixen D/E/F, Nano Banana, PixelLab strip) were dropped from the game.
 ## Their files stay in art/ and their history is in _archiv/CLAUDE_historia.md.
-
-## FULL SCENE (panel button): the whole screen is dirt, no scroll, no dynamic top
-## strip. The camera shows picture rows FULL_SCENE_TOP_ROW .. + screen height. 350 =
-## the first ground row of pixen A (ground_pixen_a_top.json); the ground is
-## opaque for 768 rows below it. Added 2026-10-05.
-const FULL_SCENE_TOP_ROW: float = 350.0
 
 ## Walk-through ground objects (stones, pebbles, grass+moss patches cut from the
 ## PixelLab ground tile - art/ground_objects.png). Plain sprites, NO collision:

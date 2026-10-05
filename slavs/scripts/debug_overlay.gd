@@ -164,15 +164,9 @@ func _build_panel() -> void:
 	rows.add_child(touches)
 	touches.toggled.connect(func(on: bool) -> void: Debug.show_touches = on)
 
-	# Non-scrolling single-screen scene (what one PixelLab 1376x768 image would be).
-	var scene_mode := CheckButton.new()
-	scene_mode.text = "SCENA BEZ SCROLLU (simulacia)"
-	scene_mode.custom_minimum_size = Vector2(0, 56)
-	scene_mode.button_pressed = Debug.fixed_screen
-	rows.add_child(scene_mode)
-	scene_mode.toggled.connect(func(on: bool) -> void: Debug.fixed_screen = on)
-	_add_slider("scena: hlbka chodenia", 150.0, 600.0, 10.0, Tuning.scene_walk_depth,
-		func(v: float) -> void: Tuning.scene_walk_depth = v)
+	# Height of the dynamic top strip the camera may show (about one hero tall).
+	_add_slider("scena: vyska horneho pasu", 0.0, 400.0, 10.0, Tuning.scene_strip_height,
+		func(v: float) -> void: Tuning.scene_strip_height = v)
 
 	# FULL SCENE: whole screen is dirt, no scrolling, no dynamic top strip. Locks the
 	# camera on the current screen; switch off to go back to walking and scrolling.

@@ -284,12 +284,7 @@ func _ground_top_for_x(world_x: float) -> float:
 
 
 func walk_top_for_x(world_x: float) -> float:
-	var top: float = _ground_top_for_x(world_x)
-	if Debug.full_scene:
-		return top
-	if Debug.fixed_screen:
-		top = maxf(top, walk_bottom_for_x(world_x) - Tuning.scene_walk_depth)
-	return top
+	return _ground_top_for_x(world_x)
 
 
 ## The bottom-edge mirror of walk_top_for_x() above - same wrap, same
@@ -301,11 +296,15 @@ func walk_bottom_for_x(world_x: float) -> float:
 		var width: int = _walk_bottom_curve.size()
 		var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
 		bottom = background_top() + float(_walk_bottom_curve[col])
-	if Debug.full_scene:
-		bottom = minf(bottom, background_top() + Tuning.FULL_SCENE_TOP_ROW + _full_h)
-	elif Debug.fixed_screen:
-		bottom = minf(bottom, background_top() + Tuning.SCENE_TOP_ROW + 720.0)
+	if Debug.fixed_screen:
+		bottom = minf(bottom, _scene_bottom())
 	return bottom
+
+
+## World y of the last walkable row of the scene: one screen of ground below the
+## first ground row.
+func _scene_bottom() -> float:
+	return background_top() + Tuning.SCENE_GROUND_ROW + Tuning.SCENE_FIELD_HEIGHT
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
@@ -340,11 +339,11 @@ var _decor: Node2D
 var _decor_rects: Array = []
 var _fixed_screen_applied: bool = false
 ## FULL SCENE state (Debug.full_scene): left edge of the locked screen in world x,
-## and the visible screen size at the moment it was switched on.
+## and the visible screen width at the moment it was switched on.
 var _full_applied: bool = false
 var _full_x0: float = 0.0
 var _full_w: float = 1280.0
-var _full_h: float = 720.0
+var _strip_applied: float = -1.0
 ## Parallax2D nodes built from BG_LAYERS entries marked "front": true (drawn
 ## ahead of the player - currently none; env_05_fg.png was the last one).
 ## Kept so the "rychlost popredia" panel slider can drive their speed live.
@@ -488,6 +487,9 @@ func _apply_bg_filter() -> void:
 	if Debug.full_scene != _full_applied:
 		_full_applied = Debug.full_scene
 		_apply_full_scene()
+	if not is_equal_approx(Tuning.scene_strip_height, _strip_applied):
+		_strip_applied = Tuning.scene_strip_height
+		_apply_camera_limits()
 	var decor_key: String = "%s|%s|%s|%s|%d" % [Debug.decor_on, Debug.ground_key,
 		Debug.fixed_screen, Debug.full_scene, int(Tuning.decor_density)]
 	if decor_key != _decor_key_applied:
@@ -1015,7 +1017,6 @@ func _apply_full_scene() -> void:
 	if Debug.full_scene:
 		var vp: Vector2 = get_viewport().get_visible_rect().size
 		_full_w = vp.x
-		_full_h = minf(vp.y, 760.0)
 		_full_x0 = clampf(player.global_position.x - _full_w * 0.5,
 			LEVEL_LEFT, LEVEL_RIGHT - _full_w)
 		player.set_foot_field(GROUND_Y - field_height(), GROUND_Y,
@@ -1028,27 +1029,23 @@ func _apply_full_scene() -> void:
 
 ## Lowest ground row decor may use: the screen bottom in scene mode, else the walk limit.
 func _decor_bottom_for_x(world_x: float) -> float:
-	if Debug.full_scene:
-		return background_top() + Tuning.FULL_SCENE_TOP_ROW + _full_h
-	if Debug.fixed_screen:
-		return background_top() + Tuning.SCENE_TOP_ROW + 720.0
 	return walk_bottom_for_x(world_x)
 
 
 func _apply_camera_limits() -> void:
 	if player == null:
 		return
-	if Debug.full_scene:
-		# FULL SCENE: x and y both locked to exactly one screen of pure dirt.
-		player.set_camera_limits(_full_x0, _full_x0 + _full_w,
-			background_top() + Tuning.FULL_SCENE_TOP_ROW,
-			background_top() + Tuning.FULL_SCENE_TOP_ROW + _full_h)
-	elif Debug.fixed_screen:
-		# One fixed screen, like a single non-scrolling scene image: the limits
-		# are exactly one screen tall, so the camera cannot move vertically.
-		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
-			background_top() + Tuning.SCENE_TOP_ROW,
-			background_top() + Tuning.SCENE_TOP_ROW + 720.0)
+	if Debug.fixed_screen:
+		# Vertical scroll is allowed only between "top strip about one hero tall" and
+		# "strip gone" (the walkable ground is one screen tall). FULL SCENE also locks x.
+		var x0: float = LEVEL_LEFT - 80.0
+		var x1: float = LEVEL_RIGHT + 80.0
+		if Debug.full_scene:
+			x0 = _full_x0
+			x1 = _full_x0 + _full_w
+		player.set_camera_limits(x0, x1,
+			background_top() + Tuning.SCENE_GROUND_ROW - Tuning.scene_strip_height,
+			_scene_bottom())
 	elif Touch.config.free_movement:
 		# The camera follows the character up and down, stopping at the edges
 		# of the picture. That is what lets the field use the whole ground
@@ -1119,9 +1116,14 @@ func _build_hud() -> void:
 # --------------------------------------------------------------- spawning ---
 
 func _count_alive() -> int:
+	# Enemies far behind the hero still exist and keep coming (Pavel 2026-10-05) but
+	# do not use up the cap, or a long run would starve the spawner.
+	if player == null:
+		return 0
 	var n: int = 0
 	for e in enemies:
-		if e.active:
+		if e.active and absf(e.global_position.x - player.global_position.x) \
+				< Tuning.ENEMY_COUNT_RANGE:
 			n += 1
 	return n
 
