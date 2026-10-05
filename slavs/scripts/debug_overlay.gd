@@ -164,16 +164,6 @@ func _build_panel() -> void:
 	rows.add_child(touches)
 	touches.toggled.connect(func(on: bool) -> void: Debug.show_touches = on)
 
-	# env_03 instead of the chosen env_04, so a future background can be judged
-	# against the one it replaces rather than against a memory of it.
-	var bg_alt := CheckButton.new()
-	bg_alt.text = "ZEM Z PIXELLABU (vypnute = Nano Banana)"
-	bg_alt.custom_minimum_size = Vector2(0, 56)
-	bg_alt.button_pressed = Debug.alt_background
-	rows.add_child(bg_alt)
-	bg_alt.toggled.connect(func(on: bool) -> void:
-		Debug.alt_background = on)
-
 	# Non-scrolling single-screen scene (what one PixelLab 1376x768 image would be).
 	var scene_mode := CheckButton.new()
 	scene_mode.text = "SCENA BEZ SCROLLU (simulacia)"
@@ -183,6 +173,31 @@ func _build_panel() -> void:
 	scene_mode.toggled.connect(func(on: bool) -> void: Debug.fixed_screen = on)
 	_add_slider("scena: hlbka chodenia", 150.0, 600.0, 10.0, Tuning.scene_walk_depth,
 		func(v: float) -> void: Tuning.scene_walk_depth = v)
+
+	# Ground picker: one button that cycles Tuning.GROUND_ORDER. A one-screen ground
+	# (PixelLab pixen) also turns SCENA BEZ SCROLLU on, a long strip turns it off.
+	var ground_btn := Button.new()
+	ground_btn.custom_minimum_size = Vector2(0, 64)
+	var ground_text := func() -> String:
+		return "ZEM (klikni = dalsia): %s" % Tuning.GROUNDS[Debug.ground_key]["label"]
+	ground_btn.text = ground_text.call()
+	rows.add_child(ground_btn)
+	ground_btn.pressed.connect(func() -> void:
+		var i: int = Tuning.GROUND_ORDER.find(Debug.ground_key)
+		Debug.ground_key = Tuning.GROUND_ORDER[(i + 1) % Tuning.GROUND_ORDER.size()]
+		Debug.fixed_screen = Tuning.GROUNDS[Debug.ground_key]["scene"]
+		scene_mode.button_pressed = Debug.fixed_screen
+		ground_btn.text = ground_text.call())
+
+	# Walk-through stones and grass patches on the ground (no collision).
+	var decor_toggle := CheckButton.new()
+	decor_toggle.text = "OBJEKTY NA ZEMI (prechodne)"
+	decor_toggle.custom_minimum_size = Vector2(0, 56)
+	decor_toggle.button_pressed = Debug.decor_on
+	rows.add_child(decor_toggle)
+	decor_toggle.toggled.connect(func(on: bool) -> void: Debug.decor_on = on)
+	_add_slider("objekty: kolko na obrazovku", 0.0, 40.0, 1.0, Tuning.decor_density,
+		func(v: float) -> void: Tuning.decor_density = v)
 
 	var bg_filter := CheckButton.new()
 	bg_filter.text = "HLADKE POZADIE"

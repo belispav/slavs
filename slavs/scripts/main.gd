@@ -135,30 +135,16 @@ const SHOW_AIM_TARGETS := false
 ## (env_10_top.json) and ground to the last row (env_10_bottom.json). Pavel
 ## wants to judge it on the phone against the PixelLab ground (env_09, on the
 ## STARE POZADIE switch - note env_09 is 1536 tall, so it shows cut at 1287).
-## Both grounds live side by side (Pavel 2026-10-04, "budem skusat"): the panel
-## switch "ZEM Z PIXELLABU" swaps picture AND edges AND camera limit together,
-## because they differ in size.
-##   nano     = env_10, Nano Banana, 3156x1287, its own top edge.
-##   pixellab = env_09, PixelLab tile, 2752x1536, env_08's top edge.
-## Default (Debug.alt_background false) is nano.
-const GROUNDS := {
-	"nano": {
-		"tex": "res://art/env_10.png",
-		"top": "res://art/env_10_top.json",
-		"bottom": "res://art/env_10_bottom.json",
-	},
-	"pixellab": {
-		"tex": "res://art/env_09.png",
-		"top": "res://art/env_08_top.json",
-		"bottom": "res://art/env_09_bottom.json",
-	},
-}
+## The grounds live in Tuning.GROUNDS; the panel button cycles Debug.ground_key.
+## Switching swaps picture, both edges and the camera limit together (they differ
+## in size), and a one-screen ground also turns SCENA BEZ SCROLLU on.
 const BACKGROUND_PATH := "res://art/env_10.png"   # only the size-independent users
 
 
-## The ground picked by the panel switch. Read at build time and on every swap.
+## The ground picked on the panel. Read at build time and on every swap.
 func _ground() -> Dictionary:
-	return GROUNDS["pixellab" if Debug.alt_background else "nano"]
+	return Tuning.GROUNDS[Debug.ground_key]
+
 
 ## Which rows of the background picture are open ground, measured from the art
 ## itself. Above them is the palisade and the props stacked against it, below
@@ -289,12 +275,16 @@ func _load_walk_bottom_curve() -> void:
 ## (_build_background() repeats the texture every texture.get_width()
 ## units), so this lines up exactly with what is on screen at every repeat.
 ## Falls back to the flat BG_WALK_TOP if the curve failed to load.
+func _ground_top_for_x(world_x: float) -> float:
+	if _walk_top_curve.is_empty():
+		return background_top() + BG_WALK_TOP
+	var width: int = _walk_top_curve.size()
+	var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
+	return background_top() + float(_walk_top_curve[col])
+
+
 func walk_top_for_x(world_x: float) -> float:
-	var top: float = background_top() + BG_WALK_TOP
-	if not _walk_top_curve.is_empty():
-		var width: int = _walk_top_curve.size()
-		var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
-		top = background_top() + float(_walk_top_curve[col])
+	var top: float = _ground_top_for_x(world_x)
 	if Debug.fixed_screen:
 		top = maxf(top, walk_bottom_for_x(world_x) - Tuning.scene_walk_depth)
 	return top
@@ -340,7 +330,10 @@ var _alive: int = 0
 ## Kept so the debug panel can flip its filter live. See _apply_bg_filter().
 var _bg_sprite: Sprite2D
 var _bg_smooth_applied: bool = false
-var _bg_alt_applied: bool = false
+var _ground_key_applied: String = "pixen_a"
+var _decor_key_applied: String = ""
+var _decor: Node2D
+var _decor_rects: Array = []
 var _fixed_screen_applied: bool = false
 ## Parallax2D nodes built from BG_LAYERS entries marked "front": true (drawn
 ## ahead of the player - currently none; env_05_fg.png was the last one).
@@ -357,6 +350,7 @@ var _bg_parallax_layers: Array = []
 
 
 func _ready() -> void:
+	Debug.fixed_screen = Tuning.GROUNDS[Debug.ground_key]["scene"]
 	_load_walk_top_curve()
 	_load_walk_bottom_curve()
 	_build_level()
@@ -475,12 +469,17 @@ func _apply_bg_filter() -> void:
 		# minifying.
 		_bg_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR \
 			if _bg_smooth_applied else CanvasItem.TEXTURE_FILTER_NEAREST
-	if Debug.alt_background != _bg_alt_applied:
-		_bg_alt_applied = Debug.alt_background
+	if Debug.ground_key != _ground_key_applied:
+		_ground_key_applied = Debug.ground_key
 		_swap_ground()
 	if Debug.fixed_screen != _fixed_screen_applied:
 		_fixed_screen_applied = Debug.fixed_screen
 		_apply_camera_limits()
+	var decor_key: String = "%s|%s|%s|%d" % [Debug.decor_on, Debug.ground_key,
+		Debug.fixed_screen, int(Tuning.decor_density)]
+	if decor_key != _decor_key_applied:
+		_decor_key_applied = decor_key
+		_build_decor()
 
 
 ## Switch to the ground the panel asks for: picture, both edges, the ground's
@@ -931,6 +930,74 @@ func _build_player() -> void:
 	_apply_camera_limits()
 	player.fire_requested.connect(_on_fire_requested)
 	player.died.connect(_on_player_died)
+
+
+## Scatter the walk-through ground objects over the whole level: seeded, so the same
+## ground looks the same every time. Rebuilt whenever the ground, the scene mode, the
+## switch or the density changes. They are plain Sprite2Ds - no collision, nobody is
+## ever blocked by them (a barrel is the thing that blocks).
+func _build_decor() -> void:
+	if _decor != null:
+		_decor.queue_free()
+		_decor = null
+	if not Debug.decor_on or Tuning.decor_density < 1.0:
+		return
+	if _decor_rects.is_empty():
+		var file := FileAccess.open("res://art/ground_objects.json", FileAccess.READ)
+		if file == null:
+			return
+		var parsed = JSON.parse_string(file.get_as_text())
+		if typeof(parsed) != TYPE_ARRAY:
+			return
+		_decor_rects = parsed
+	var atlas: Texture2D = load("res://art/ground_objects.png") as Texture2D
+	if atlas == null or _bg_sprite == null:
+		return
+	_decor = Node2D.new()
+	_decor.z_index = _ground_z_index() + 1
+	add_child(_decor)
+	move_child(_decor, 0)       # before fx and everything else with this z
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 424242
+	var kinds: Dictionary = {"stone": [], "pebble": [], "tuft": []}
+	for r in _decor_rects:
+		kinds[r["k"]].append(r)
+	var span: float = LEVEL_RIGHT - LEVEL_LEFT
+	var avg_band: float = 0.0
+	for i in range(0, int(span), 400):
+		var x: float = LEVEL_LEFT + i
+		avg_band += _decor_bottom_for_x(x) - _ground_top_for_x(x)
+	avg_band /= maxf(span / 400.0, 1.0)
+	var count: int = int(Tuning.decor_density * (span / 1280.0) * (avg_band / 720.0))
+	for n in count:
+		var x: float = LEVEL_LEFT + rng.randf() * span
+		var top: float = _ground_top_for_x(x) + 12.0
+		var bottom: float = _decor_bottom_for_x(x) - 8.0
+		if bottom <= top:
+			continue
+		var y: float = top + rng.randf() * (bottom - top)
+		var roll: float = rng.randf()
+		var pool: Array = kinds["stone"] if roll < 0.50 else (kinds["pebble"] if roll < 0.75 else kinds["tuft"])
+		if pool.is_empty():
+			continue
+		var r: Dictionary = pool[rng.randi() % pool.size()]
+		var tex := AtlasTexture.new()
+		tex.atlas = atlas
+		tex.region = Rect2(r["x"], r["y"], r["w"], r["h"])
+		var sp := Sprite2D.new()
+		sp.texture = tex
+		sp.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		sp.scale = Vector2(2.0, 2.0)
+		sp.flip_h = rng.randf() < 0.5
+		sp.position = Vector2(x, y - float(r["h"]))   # y = where it sits on the ground
+		_decor.add_child(sp)
+
+
+## Lowest ground row decor may use: the screen bottom in scene mode, else the walk limit.
+func _decor_bottom_for_x(world_x: float) -> float:
+	if Debug.fixed_screen:
+		return background_top() + Tuning.SCENE_TOP_ROW + 720.0
+	return walk_bottom_for_x(world_x)
 
 
 func _apply_camera_limits() -> void:

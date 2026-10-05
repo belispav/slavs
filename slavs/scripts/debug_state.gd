@@ -73,7 +73,13 @@ var smooth_background: bool = false
 ## the one thing that actually matters about a background this dense: whether
 ## it shimmers while scrolling, and whether a crowd of enemies still reads
 ## against it (design pillar 1).
-var alt_background: bool = false
+var alt_background: bool = false   # superseded by ground_key, kept so old references compile
+
+## Which ground is shown - a key of Tuning.GROUNDS. Cycled by the panel button.
+var ground_key: String = "pixen_a"
+
+## Scatter the walk-through ground objects (stones, grass patches) on the ground.
+var decor_on: bool = true
 
 
 ## Set by the panel's "NOVE SUDY" button; main.gd stands every barrel up
