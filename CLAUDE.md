@@ -18,8 +18,9 @@ You are the AI development partner for Slavs fight back, a 2D side-scrolling run
 > Do NOT go back to the old 3D chain (Meshy -> Mixamo -> Blender -> pixelize) or
 > propose another generator unless Pavel asks. Method, costs and limits: section
 > "Art pipeline switched to PixelLab" under Current status, and `PRIKAZY.md`
-> -> "PIXELLAB". Backgrounds are the exception (too large for PixelLab) - keep
-> making them the way env_08 was made.
+> -> "PIXELLAB". Backgrounds too: since 2026-10-05 a whole
+> screen is ONE `create_image_pixen` image (672x384 art px = 1344x768 at 2x, 1
+> generation) - see the 2026-10-05 ground entry at the end of Current status.
 
 ## Key documents in this folder
 
@@ -85,6 +86,30 @@ down and the work is following it:
 If a Sonnet session hits three rounds without progress on the same problem,
 that is the signal to stop and bring it to Opus rather than keep pushing.
 
+## TODO FIRST in the next session (Pavel, 2026-10-05)
+
+**Shorten this file.** It is 675+ lines and is re-read at the start of every
+session, which costs tokens every single time. Do it as its own single-topic
+session (Sonnet is enough): keep the rules, the design pillars, the content rules
+and a SHORT current status (what is in the game, what is open); move the history
+(every dated `[x]` entry, measured numbers, old pipelines) verbatim to
+`_archiv/CLAUDE_historia.md` and leave one line pointing at it. Do not lose any
+decision - move it, do not delete it. Commit, push, tell Pavel.
+
+## Tokens - read before working (Pavel, 2026-10-05)
+
+- **Use the `token-saver` skill** (Skill tool, `anthropic-skills:token-saver`) on
+  long or file-heavy work. Pavel forgets to ask for it, so Claude should invoke it
+  by itself at the start of any session that reads big files or runs many steps.
+- **Images cost real tokens** - roughly 1-5k each depending on size, and every
+  image stays in the context for the rest of the session, so it is paid for again
+  on every later turn. Pavel did not know this. Rules: show an image only when a
+  decision needs it; put several options on ONE contact sheet instead of many
+  files; keep sheets small (a 1280x2880 sheet is ~5k); never "look" at an image
+  that a number can answer (measure it instead); when Pavel pastes images, do not
+  re-open them. Prefer sending Pavel the file over reading it back myself.
+- One session, one subject (already a rule); do not re-read documents already read.
+
 ## Cloud sessions (from 2026-10-03, see POSTUP_cloud_github.md)
 
 Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
@@ -105,6 +130,26 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   at the start of the first cloud session.
 - Things that are NOT in the repo: `tools/.pixellab_token`,
   `export_presets.cfg`, `ref/*.png`, `render/`. Deploy stays on Pavel's PC.
+
+## Local Claude Desktop AND cloud (from 2026-10-05)
+
+Pavel may now work either in a cloud session or in Claude Desktop on his PC
+(his credits there). **GitHub `belispav/slavs`, branch `master`, is the single
+shared state.** Rules for switching:
+
+- Whoever finishes a piece of work **commits and pushes to `master`** (always;
+  that is what makes the other side current). The deploy to the phone stays local
+  (`tools/deploy_android.ps1`, `export_presets.cfg` is not in git).
+- Whoever starts a session **runs `git pull` first** (cloud sessions clone fresh,
+  local ones may be behind).
+- **Never work in both at once** on the same files - the changes diverge. Push on
+  the old side before starting on the new one.
+- Local Claude has the PixelLab MCP as `pixellab__*` (Pavel's desktop config);
+  cloud has `mcp__pixellab__*` plus the proxy credential. Same account, same
+  generation balance, so check `get_balance` either way. Files that are not in git
+  (`ref/*.png`, `render/`, `tools/.pixellab_token`) exist only on the PC.
+- Cloud sessions are told to use a designated branch; if so, push there AND to
+  `master` only when Pavel says so. On the PC, push straight to `master`.
 
 ## Working rules
 
@@ -673,3 +718,44 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
 - [ ] F5: launch
 
 - [~] **Round after first device test (2026-10-04), headless-checked, not on device.** Cauldron: 6 HP, fuse 5 s, leaves the barrel's burst wreck (burnt dark) after the blast instead of the whole pot. Brute turn window 2 s. Panel RESET now resets the whole run (field, props, hero, counters) - it only zeroed the jump counters before. Brute grab animation does not match the hold point - Pavel: ignore for now.
+
+- [~] **Ground / background work, 2026-10-05 (cloud, Sonnet) - on `master`, not yet on a phone.**
+  Pavel's verdicts and what exists:
+  - **Style decision:** the PixelLab ground texture is the look he likes (it matches the
+    characters); it is only too busy (too many stones/tufts, "too colourful"). Nano Banana
+    grounds are calmer but lose the dithered grain and read as flat flakes of colour -
+    **rejected for the ground** (kept only as idea generator). The moss patch under each
+    PixelLab grass tuft (irregular green blotch) is a detail he loves: grass must grow
+    from it, never sit straight on brown.
+  - **Cheap model found:** `create_image_pixen` = **1 generation**, up to 672x384 (area
+    <= 512x512) = exactly ONE SCREEN at 2x, real pixel art, 34-58 colours. `create_image_pro`
+    cost 40 for one 512 image. Tried: a_minimal (Pavel: "verzia 1 is our go"), d_smooth,
+    e_flat (too dark), f_burned (pixen drew ruined walls/roof - a scene, not a floor; good
+    for scene B). Pixen sometimes invents borders/walls: add "no walls, no borders".
+    Balance after today ~1949 of 2000 (40 + 6 spent). Model is for iteration; Pavel will
+    switch to a better model for the final art.
+  - **Direction (open, his call):** a generic parallax band for the whole level (forest /
+    town) + one 1376x768 scene image per screen, with a transparent top so the band shows
+    through. Pavel feels the Y field is too deep (1.5 screens); wants to test a one-screen,
+    non-scrolling scene. Scene B = burned village, scene A = slavers' camp with cage wagons
+    (fits the cage mechanic). Long continuous strip vs chain of scenes is NOT decided.
+  - **In the game (debug panel):** "ZEM (klikni = dalsia)" cycles pixen A/D/E/F, Nano Banana
+    strip (`env_10`), PixelLab strip (`env_09`); `Tuning.GROUNDS` holds the table, `main.gd
+    _swap_ground()` swaps picture + both edge curves + camera limit together. A pixen pick
+    turns on **"SCENA BEZ SCROLLU"** (camera fixed on picture rows 160..880, walk band =
+    bottom `scene_walk_depth` = 330 units, slider; first guess). "OBJEKTY NA ZEMI" scatters
+    walk-through stones / pebbles / grass+moss patches (plain sprites, NO collision, unlike
+    barrels) from `art/ground_objects.png`, density slider (20 per screen).
+  - **Tools (all in `tools/`):** `bake_pixen_grounds.py` (pixen png -> 2x, mirrored, picture
+    + top/bottom json + object atlas), `extract_ground_objects.py` (445 stones, 67 grass+moss
+    patches, 33 moss patches cut from `ref/preview/ground_pro_512.png`), `bake_ground.py`
+    (PixelLab tile -> env_09, min-cut stitching), `bake_ground_nb.py` (Nano Banana
+    sections -> env_10), plus the `*_mock.py` scene composers. Jpeg/Gemini images are NOT on
+    a pixel grid (5 px blocks, unreliable); PixelLab output is exact.
+  - **Walk limits fixed:** with the ground opaque to the bottom, hero/enemies now reach the
+    picture bottom (curves `env_09_bottom.json` / `env_10_bottom.json`); a tall picture no
+    longer ends in a forest strip.
+  - **Open:** scene walk depth (330) to be tuned on the phone; objects look small at 2x
+    (bigger stones / more tufts is a density+selection change); pixen grounds repeat by
+    mirroring only because the test strip is wider than one screen; still no real
+    scene-change system (a level as a chain of screens) - that is the next design step.
