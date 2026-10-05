@@ -137,6 +137,12 @@ Pavel may now work either in a cloud session or in Claude Desktop on his PC
 (his credits there). **GitHub `belispav/slavs`, branch `master`, is the single
 shared state.** Rules for switching:
 
+- **Pavel does not have to remember any of this - Claude does it, and a hook enforces it**
+  (`.claude/settings.json`): at session start `tools/git_sync_start.sh` pulls a clean
+  `master` (fast-forward only) and reports if the copy is behind, diverged or has unpushed
+  commits; when Claude is about to finish, `tools/git_sync_stop.sh` blocks once if anything
+  is uncommitted or unpushed. If either message appears, act on it before doing anything
+  else. Claude must also say "pushnute" with the commit hash at the end of each task.
 - Whoever finishes a piece of work **commits and pushes to `master`** (always;
   that is what makes the other side current). The deploy to the phone stays local
   (`tools/deploy_android.ps1`, `export_presets.cfg` is not in git).

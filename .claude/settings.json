@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "bash tools/git_sync_start.sh" } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "bash tools/git_sync_stop.sh" } ] }
+    ]
+  }
+}
