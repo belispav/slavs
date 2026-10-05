@@ -15,6 +15,7 @@ Samostatný scenár neexistuje. Odsúhlasené je jadro:
 - Zdroje: `PLAN_hry.md` (§1, §3; éra v texte zastaraná, platí 15. storočie), `DIZAJN_core_loop.md`
   (štruktúra, nahrádza §3.2 a §3.5 plánu), `CLAUDE.md` (aktuálny stav).
 - Draupnir koncept (Vladan, Zorica, 24 levelov) NIE je odsúhlasený, je v `_archiv/draupnir_koncept/`.
+- Príbeh sa bude prerábať (Pavel pracuje offline), viď ToDo nižšie.
 
 ## Súbory v koreni
 
@@ -57,7 +58,7 @@ Samostatný scenár neexistuje. Odsúhlasené je jadro:
 - `.gitattributes` (`* text=auto`) odstraňuje falošné „zmeny" kvôli koncovkám riadkov.
 - Ponechané (používajú ich staré skripty): `render/`, `art/fits/`, `tools/blender/`, voľné obrázky v `ref/`.
 
-## Čaká na rozhodnutie Pavla
+## Čaká na Pavla (ToDo a rozhodnutia)
 
-1. Má sa z Draupnir konceptu niečo prebrať do príbehu? (zosúladenie = dizajnové rozhodnutie, Opus)
+1. **TODO: prerobiť príbeh.** Pavel na ňom pracuje offline, bez termínu. Claude ho nezačína, kým Pavel neprinesie návrh. Draupnir koncept v archíve je len možný zdroj nápadov (mená, kódex s históriou); zosúladenie s `DIZAJN_core_loop.md` je dizajnové rozhodnutie (Opus). Úloha je aj v Open Brain (Biznis, P3).
 2. Presunúť starý 3D reťazec (`render/`, `art/fits/`, `tools/blender/`) do archívu? Rozbijú sa staré skripty, ktoré sa nemajú používať.
