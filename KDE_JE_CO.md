@@ -20,7 +20,8 @@ T08 Google Play: pravidlá a IARC (jeho stopa); developer účet odložený; uza
 T09 Rozhodnutia o jadre pred stavaním: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4]
 T10 Odložené: monetizácia (premium 5,99 EUR vs. F2P). [core_loop §4]
 T11 HOTOVÉ 2026-10-05: zmeny poslané na GitHub pri čistení histórie (T20).
-T20 HOTOVÉ 2026-10-05: história GitHubu vyčistená od starých 3D súborov (`tools/github_cistenie.py`, jednorazový). Pavel: priečinok `slavs_cisty_...` v D:6 zmazať hneď, `slavs_zaloha_...` po týždni.
+T20 HOTOVÉ 2026-10-05: história GitHubu vyčistená od starých 3D súborov (`tools/github_cistenie.py`, jednorazový). Pavel: priečinok `slavs_cisty_...` v D:\2026 zmazať hneď, `slavs_zaloha_...` po týždni.
+T21 Po 2026-10-12: zmazať zálohu `slavs_zaloha_...` v D:\2026 (Pavel, v Prieskumníku). Priečinok `slavs_cisty_...` sa maže hneď. [T20]
 
 ### Čaká na Claude (po OK od Pavla)
 T12 Horný okraj chodnej zeme je odrezaný rovno; treba prirodzený prechod. [Open 3a]
