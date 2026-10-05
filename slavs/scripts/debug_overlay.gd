@@ -174,20 +174,14 @@ func _build_panel() -> void:
 	_add_slider("scena: hlbka chodenia", 150.0, 600.0, 10.0, Tuning.scene_walk_depth,
 		func(v: float) -> void: Tuning.scene_walk_depth = v)
 
-	# Ground picker: one button that cycles Tuning.GROUND_ORDER. A one-screen ground
-	# (PixelLab pixen) also turns SCENA BEZ SCROLLU on, a long strip turns it off.
-	var ground_btn := Button.new()
-	ground_btn.custom_minimum_size = Vector2(0, 64)
-	var ground_text := func() -> String:
-		return "ZEM (klikni = dalsia): %s" % Tuning.GROUNDS[Debug.ground_key]["label"]
-	ground_btn.text = ground_text.call()
-	rows.add_child(ground_btn)
-	ground_btn.pressed.connect(func() -> void:
-		var i: int = Tuning.GROUND_ORDER.find(Debug.ground_key)
-		Debug.ground_key = Tuning.GROUND_ORDER[(i + 1) % Tuning.GROUND_ORDER.size()]
-		Debug.fixed_screen = Tuning.GROUNDS[Debug.ground_key]["scene"]
-		scene_mode.button_pressed = Debug.fixed_screen
-		ground_btn.text = ground_text.call())
+	# FULL SCENE: whole screen is dirt, no scrolling, no dynamic top strip. Locks the
+	# camera on the current screen; switch off to go back to walking and scrolling.
+	var full_toggle := CheckButton.new()
+	full_toggle.text = "CELA OBRAZOVKA HLINA (bez scrollu)"
+	full_toggle.custom_minimum_size = Vector2(0, 56)
+	full_toggle.button_pressed = Debug.full_scene
+	rows.add_child(full_toggle)
+	full_toggle.toggled.connect(func(on: bool) -> void: Debug.full_scene = on)
 
 	# Walk-through stones and grass patches on the ground (no collision).
 	var decor_toggle := CheckButton.new()
@@ -196,7 +190,7 @@ func _build_panel() -> void:
 	decor_toggle.button_pressed = Debug.decor_on
 	rows.add_child(decor_toggle)
 	decor_toggle.toggled.connect(func(on: bool) -> void: Debug.decor_on = on)
-	_add_slider("objekty: kolko na obrazovku", 0.0, 40.0, 1.0, Tuning.decor_density,
+	_add_slider("objekty: kolko na obrazovku", 0.0, 100.0, 1.0, Tuning.decor_density,
 		func(v: float) -> void: Tuning.decor_density = v)
 
 	var bg_filter := CheckButton.new()

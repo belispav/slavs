@@ -607,30 +607,24 @@ const LAYER_PROP: int = 16
 ## skusat"). Order = the order the panel button cycles through. "scene": true
 ## marks a one-screen ground (PixelLab pixen, 672x384 art px shown at 2x), which is
 ## only meant for SCENA BEZ SCROLLU - picking one turns that mode on by itself.
-const GROUND_ORDER: Array = ["pixen_a", "pixen_d", "pixen_e", "pixen_f", "nano", "pixellab"]
+const GROUND_ORDER: Array = ["pixen_a"]
 const GROUNDS := {
 	"pixen_a": {"label": "PIXEN A: pokojna hlina", "scene": true,
 		"tex": "res://art/ground_pixen_a.png", "top": "res://art/ground_pixen_a_top.json",
 		"bottom": "res://art/ground_pixen_a_bottom.json"},
-	"pixen_d": {"label": "PIXEN D: hladsia", "scene": true,
-		"tex": "res://art/ground_pixen_d.png", "top": "res://art/ground_pixen_d_top.json",
-		"bottom": "res://art/ground_pixen_d_bottom.json"},
-	"pixen_e": {"label": "PIXEN E: rovna tmava", "scene": true,
-		"tex": "res://art/ground_pixen_e.png", "top": "res://art/ground_pixen_e_top.json",
-		"bottom": "res://art/ground_pixen_e_bottom.json"},
-	"pixen_f": {"label": "PIXEN F: spalena dedina", "scene": true,
-		"tex": "res://art/ground_pixen_f.png", "top": "res://art/ground_pixen_f_top.json",
-		"bottom": "res://art/ground_pixen_f_bottom.json"},
-	"nano": {"label": "NANO BANANA (dlhy pas)", "scene": false,
-		"tex": "res://art/env_10.png", "top": "res://art/env_10_top.json",
-		"bottom": "res://art/env_10_bottom.json"},
-	"pixellab": {"label": "PIXELLAB dlazdica (dlhy pas)", "scene": false,
-		"tex": "res://art/env_09.png", "top": "res://art/env_08_top.json",
-		"bottom": "res://art/env_09_bottom.json"},
 }
+## Pavel 2026-10-05: A (calm PixelLab dirt) + walk-through objects won; the other
+## grounds (pixen D/E/F, Nano Banana, PixelLab strip) were dropped from the game.
+## Their files stay in art/ and their history is in _archiv/CLAUDE_historia.md.
+
+## FULL SCENE (panel button): the whole screen is dirt, no scroll, no dynamic top
+## strip. The camera shows picture rows FULL_SCENE_TOP_ROW .. + screen height. 350 =
+## the first ground row of pixen A (ground_pixen_a_top.json); the ground is
+## opaque for 768 rows below it. Added 2026-10-05.
+const FULL_SCENE_TOP_ROW: float = 350.0
 
 ## Walk-through ground objects (stones, pebbles, grass+moss patches cut from the
 ## PixelLab ground tile - art/ground_objects.png). Plain sprites, NO collision:
 ## unlike a barrel they never block anybody. Panel: "OBJEKTY NA ZEMI" + density.
 ## `decor_density` is objects per screen-sized area (1280x720). 20 is a guess.
-var decor_density: float = 20.0
+var decor_density: float = 40.0

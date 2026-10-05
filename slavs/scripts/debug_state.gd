@@ -96,3 +96,7 @@ var game_reset_requested: bool = false
 ## 1376x768 image), and the hero walks only on the lower part of the screen,
 ## Tuning.scene_walk_depth tall. Panel: "SCENA BEZ SCROLLU".
 var fixed_screen: bool = false
+
+## FULL SCENE (Pavel 2026-10-05): the whole screen is the dirt ground, the camera does
+## not scroll at all and the dynamic top strip is out of sight. Panel button.
+var full_scene: bool = false

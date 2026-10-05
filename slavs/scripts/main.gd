@@ -285,6 +285,8 @@ func _ground_top_for_x(world_x: float) -> float:
 
 func walk_top_for_x(world_x: float) -> float:
 	var top: float = _ground_top_for_x(world_x)
+	if Debug.full_scene:
+		return top
 	if Debug.fixed_screen:
 		top = maxf(top, walk_bottom_for_x(world_x) - Tuning.scene_walk_depth)
 	return top
@@ -299,7 +301,9 @@ func walk_bottom_for_x(world_x: float) -> float:
 		var width: int = _walk_bottom_curve.size()
 		var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
 		bottom = background_top() + float(_walk_bottom_curve[col])
-	if Debug.fixed_screen:
+	if Debug.full_scene:
+		bottom = minf(bottom, background_top() + Tuning.FULL_SCENE_TOP_ROW + _full_h)
+	elif Debug.fixed_screen:
 		bottom = minf(bottom, background_top() + Tuning.SCENE_TOP_ROW + 720.0)
 	return bottom
 
@@ -335,6 +339,12 @@ var _decor_key_applied: String = ""
 var _decor: Node2D
 var _decor_rects: Array = []
 var _fixed_screen_applied: bool = false
+## FULL SCENE state (Debug.full_scene): left edge of the locked screen in world x,
+## and the visible screen size at the moment it was switched on.
+var _full_applied: bool = false
+var _full_x0: float = 0.0
+var _full_w: float = 1280.0
+var _full_h: float = 720.0
 ## Parallax2D nodes built from BG_LAYERS entries marked "front": true (drawn
 ## ahead of the player - currently none; env_05_fg.png was the last one).
 ## Kept so the "rychlost popredia" panel slider can drive their speed live.
@@ -475,8 +485,11 @@ func _apply_bg_filter() -> void:
 	if Debug.fixed_screen != _fixed_screen_applied:
 		_fixed_screen_applied = Debug.fixed_screen
 		_apply_camera_limits()
-	var decor_key: String = "%s|%s|%s|%d" % [Debug.decor_on, Debug.ground_key,
-		Debug.fixed_screen, int(Tuning.decor_density)]
+	if Debug.full_scene != _full_applied:
+		_full_applied = Debug.full_scene
+		_apply_full_scene()
+	var decor_key: String = "%s|%s|%s|%s|%d" % [Debug.decor_on, Debug.ground_key,
+		Debug.fixed_screen, Debug.full_scene, int(Tuning.decor_density)]
 	if decor_key != _decor_key_applied:
 		_decor_key_applied = decor_key
 		_build_decor()
@@ -993,8 +1006,30 @@ func _build_decor() -> void:
 		_decor.add_child(sp)
 
 
+## FULL SCENE on/off: lock the camera on the screen the hero is in now (whole screen
+## is dirt, nothing scrolls) or release it. The hero is boxed into that screen; enemies
+## still come from the right edge of it.
+func _apply_full_scene() -> void:
+	if player == null:
+		return
+	if Debug.full_scene:
+		var vp: Vector2 = get_viewport().get_visible_rect().size
+		_full_w = vp.x
+		_full_h = minf(vp.y, 760.0)
+		_full_x0 = clampf(player.global_position.x - _full_w * 0.5,
+			LEVEL_LEFT, LEVEL_RIGHT - _full_w)
+		player.set_foot_field(GROUND_Y - field_height(), GROUND_Y,
+			_full_x0 + 40.0, _full_x0 + _full_w - 40.0)
+	else:
+		player.set_foot_field(GROUND_Y - field_height(), GROUND_Y,
+			LEVEL_LEFT + 40.0, LEVEL_RIGHT - 40.0)
+	_apply_camera_limits()
+
+
 ## Lowest ground row decor may use: the screen bottom in scene mode, else the walk limit.
 func _decor_bottom_for_x(world_x: float) -> float:
+	if Debug.full_scene:
+		return background_top() + Tuning.FULL_SCENE_TOP_ROW + _full_h
 	if Debug.fixed_screen:
 		return background_top() + Tuning.SCENE_TOP_ROW + 720.0
 	return walk_bottom_for_x(world_x)
@@ -1003,7 +1038,12 @@ func _decor_bottom_for_x(world_x: float) -> float:
 func _apply_camera_limits() -> void:
 	if player == null:
 		return
-	if Debug.fixed_screen:
+	if Debug.full_scene:
+		# FULL SCENE: x and y both locked to exactly one screen of pure dirt.
+		player.set_camera_limits(_full_x0, _full_x0 + _full_w,
+			background_top() + Tuning.FULL_SCENE_TOP_ROW,
+			background_top() + Tuning.FULL_SCENE_TOP_ROW + _full_h)
+	elif Debug.fixed_screen:
 		# One fixed screen, like a single non-scrolling scene image: the limits
 		# are exactly one screen tall, so the camera cannot move vertically.
 		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
@@ -1122,6 +1162,9 @@ func _spawn_tick(delta: float) -> void:
 		player.global_position.x + 640.0 + Tuning.SPAWN_MARGIN
 			+ randf() * Tuning.SPAWN_JITTER,
 		LEVEL_LEFT + 60.0, LEVEL_RIGHT - 60.0)
+	if Debug.full_scene:
+		# Locked screen: arrive just past its right edge.
+		x = _full_x0 + _full_w + Tuning.SPAWN_MARGIN * 0.5 + randf() * Tuning.SPAWN_JITTER
 	var kind: int = 1 if randf() < Tuning.THROWER_RATIO else 0
 	# The brute is rare and has its own switch and cap; a roll that does not
 	# produce one falls through to the usual two kinds.
