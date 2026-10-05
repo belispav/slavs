@@ -20,7 +20,7 @@ BLOCK = 5
 rng = np.random.default_rng(11)
 
 
-def to_art_grid(path):
+def to_art_grid(path, BLOCK=BLOCK):
     a = np.asarray(Image.open(path).convert("RGB")).astype(np.int32)
     best = None
     for off in range(BLOCK):
@@ -142,24 +142,29 @@ def scene(gr, x0=800, y0=160):
     return c.convert("RGB")
 
 
-a8 = to_art_grid("ref/preview/nb_ground_current_prompt.jpg")
-a9 = to_art_grid("ref/preview/nb_ground_calm_prompt.jpg")
-print("art tiles", a8.shape, a9.shape)
-s8, s9 = seamless(a8), seamless(a9)
-brown = tint(s9, (112, 88, 64))
-sprites = objects(a8)
-print("objects cut from the busy tile:", len(sprites))
-print("after size filter:", len(sprites))
+def main():
+    a8 = to_art_grid("ref/preview/nb_ground_current_prompt.jpg")
+    a9 = to_art_grid("ref/preview/nb_ground_calm_prompt.jpg")
+    print("art tiles", a8.shape, a9.shape)
+    s8, s9 = seamless(a8), seamless(a9)
+    brown = tint(s9, (112, 88, 64))
+    sprites = objects(a8)
+    print("objects cut from the busy tile:", len(sprites))
+    print("after size filter:", len(sprites))
 
-bare = tint(remove_objects(s9), (112, 88, 64))
-panels = [
-    scene(ground(s9)),
-    scene(ground(bare)),
-    scene(ground(bare, sprites, 70)),
-]
-for i, p in enumerate(panels):
-    p.save("ref/preview/nbg_%d.png" % i)
-sheet = Image.new("RGB", (1280, 720 * 3))
-for i, p in enumerate(panels):
-    sheet.paste(p, (0, 720 * i))
-sheet.save("ref/preview/nbg_compare.png")
+    bare = tint(remove_objects(s9), (112, 88, 64))
+    panels = [
+        scene(ground(s9)),
+        scene(ground(bare)),
+        scene(ground(bare, sprites, 70)),
+    ]
+    for i, p in enumerate(panels):
+        p.save("ref/preview/nbg_%d.png" % i)
+    sheet = Image.new("RGB", (1280, 720 * 3))
+    for i, p in enumerate(panels):
+        sheet.paste(p, (0, 720 * i))
+    sheet.save("ref/preview/nbg_compare.png")
+
+
+if __name__ == "__main__":
+    main()
