@@ -1,3 +1,5 @@
+> **Pozor (2026-10-05):** starý 3D reťazec (Blender sprajty, `*_px` priečinky) je v `_archiv/3d_stary/` mimo gitu. Aktuálna grafika je PixelLab (`*_pl_*`). Text nižšie je história, nebrať do úvahy.
+
 # art/
 
 Sem patria PNG sekvencie vyrenderované z Blenderu, každá animácia vo vlastnom

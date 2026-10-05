@@ -23,3 +23,11 @@ preview_framing.png
 
 # PixelLab API kluc - nikdy do gitu
 tools/.pixellab_token
+
+# starý 3D reťazec (Meshy/Mixamo/Blender) - archív len na lokálnom disku, nie na GitHube
+/_archiv/3d_stary/
+*.fbx
+*.glb
+*.blend
+*.blend1
+*.max

@@ -25,7 +25,7 @@ except ImportError:
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAIN = os.path.join(ROOT, "slavs", "scripts", "main.gd")
-SPRITES = os.path.join(ROOT, "slavs", "art", "run_px")
+SPRITES = os.path.join(ROOT, "slavs", "art", "hero_pl_run")   # PixelLab hero, shown at 2x in the game
 
 # What the phone shows. The game renders 1280x720 units but stretches to fit,
 # uncovering more at the sides: about 1600x720 of world is visible.
@@ -84,7 +84,7 @@ def main():
     cam_max = bg_top + bg_h - VIEW_H * 0.5
 
     body = character()
-    body_h = body.height if body else 130
+    body_h = body.height * 2 if body else 130   # game draws PixelLab sprites at an integer 2x
     feet_offset = 27.0        # half the collision box: player.gd SIZE.y * 0.5
 
     shots = [

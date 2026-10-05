@@ -3,6 +3,35 @@
 Stav k 2026-10-05. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
 Claude: túto mapu aktualizuj pri každom presune alebo pridaní súboru v koreni.
 
+## ToDo's (snímka 2026-10-05; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, DIZAJN_core_loop.md §3-4)
+
+Claude: pri zmene stavu aktualizuj zdroje aj túto snímku aj `KDE_JE_CO.html`.
+
+### Čaká na Pavla
+1. Test na telefóne: zem (výber, scéna bez scrollu, objekty na prechod) a verzie pozadia. [CLAUDE Open 1-2, ZACNI 1]
+2. Rozhodnutie: hod sekerou, hrdina sa šmýka. Zastaviť pri hode, alebo nový klip "hod za pohybu" (1-2 generácie). [Open 3, ZACNI 2]
+3. Rozhodnutie: scény alebo dlhý pás; ak scény, návrh prepínania. [ZACNI 3, Open 2]
+4. Offline: prerobiť príbeh; Claude nezačne, kým Pavel neprinesie návrh. [Open 12, Open Brain Biznis P3]
+5. Pri nasadení skontrolovať: viac HP, efekty zásahov kolo 2, zvuky, kotol, brute, nepriatelia za obrazovkou ho dobehnú. [Open 3b, 9]
+6. Schváliť hlášky v `HLASKY.md` (angl.). [HLASKY.md]
+7. Druhý telefón s iným DPI (ovládanie overené len na 450 dpi). [Open 7]
+8. Google Play: pravidlá a IARC (jeho stopa); developer účet odložený; uzavreté testovanie 12 testerov/14 dní = F4; licencie generovaných assetov. [Open 10]
+9. Rozhodnutia o jadre pred stavaním: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4]
+10. Odložené: monetizácia (premium 5,99 EUR vs. F2P). [core_loop §4]
+11. Na jeho PC: `git push` (commity čakajú). [stav gitu]
+
+### Čaká na Claude (po OK od Pavla)
+12. Horný okraj chodnej zeme je odrezaný rovno; treba prirodzený prechod. [Open 3a]
+13. Prepínanie chôdza <-> zamknutá obrazovka (zoom-in), bossovia a klietky, sudy v zamknutej obrazovke. [Open 2]
+14. Scéna B (vypálená dedina) v PixelLab pixen, 1 generácia na pokus; bez opakujúcich sa vzorov. [ZACNI 4]
+15. Boj na blízko v 2.5D nevyriešený (dizajnové rozhodnutie, Opus). [Open 4]
+16. Bežec bliká po švihu pri pohybe v Y. [Open 5]
+17. Zjednotiť farebnú paletu; v pamäti zapísané ako uzavreté, overiť s Pavlom. [Open 6]
+18. Gunman: chýba idle a ready idle. Brute: úchop nesedí (zatiaľ ignorovať). [Open 8]
+
+### Neskôr
+19. F2 vertikálny rez, F3 obsah, F4 doladenie + uzavreté testovanie, F5 vydanie. [Open 11, PLAN_hry]
+
 ## Odsúhlasený príbeh a popis hry (kde to je)
 
 Samostatný scenár neexistuje. Odsúhlasené je jadro:
@@ -39,14 +68,15 @@ Samostatný scenár neexistuje. Odsúhlasené je jadro:
 
 | Priečinok | Veľkosť | Čo to je |
 |---|---|---|
-| `slavs/` | 211 MB | Hra (Godot projekt). `.godot/` a `build/` sú cache |
-| `tools/` | 147 MB | Skripty (nasadenie, PixelLab). `tools/blender/` 146 MB = starý 3D reťazec |
-| `ref/` | 607 MB | Štýlové referencie. 22 voľných obrázkov z júla je staré, `preview/` je v gite |
-| `render/` | 114 MB | STARÝ 3D reťazec (výstupy); nepoužívať, mimo gitu |
-| `art/` | 1 MB | `fits/` = nastavenia zbraní pre starý 3D reťazec |
+| `slavs/` | 205 MB | Hra (Godot projekt). `.godot/` a `build/` sú cache |
+| `tools/` | 1 MB | Skripty (nasadenie, PixelLab, zem, kontrola kódu) |
+| `ref/` | 368 MB | Štýlové referencie (obrázky). 22 voľných obrázkov z júla je staré, mimo gitu |
+| `art/` | 1 MB | PixelLab podklady |
 | `docs/vyskum/` | 1 MB | Výskum: analýza pravidiel Google Play |
-| `Claude outputs/` | 8 MB | Obrázky z pracovných session (2.–4. 10.) |
-| `_archiv/` | 2 MB | Dokončené prompty, história, `draupnir_koncept/`, `mimo_projektu/` |
+| `Claude outputs/` | 8 MB | Obrázky z pracovných session (2.-4. 10.) |
+| `_archiv/` | 506 MB | Archív. Claude ho NEČÍTA a nebere do úvahy, len ak Pavel požiada |
+| `_archiv/3d_stary/` | 505 MB | Starý 3D reťazec (Meshy/Mixamo/Blender): renderov, modely, skripty, `*_px` sprity, staré sekcie PRIKAZY. LEN lokálne, gitignored, NIE na GitHube. Nepoužívať |
+| `_archiv/draupnir_koncept/` | 0 MB | Iný koncept príbehu od druhej AI, neodsúhlasený |
 
 ## Upratané 2026-10-05
 
@@ -56,9 +86,6 @@ Samostatný scenár neexistuje. Odsúhlasené je jadro:
 - Zmluva o aute -> `_archiv/mimo_projektu/` (nepatrí do projektu; vyber ju z repa ručne, ak chceš).
 - Gemini analýza -> `docs/vyskum/`.
 - `.gitattributes` (`* text=auto`) odstraňuje falošné „zmeny" kvôli koncovkám riadkov.
-- Ponechané (používajú ich staré skripty): `render/`, `art/fits/`, `tools/blender/`, voľné obrázky v `ref/`.
-
-## Čaká na Pavla (ToDo a rozhodnutia)
-
-1. **TODO: prerobiť príbeh.** Pavel na ňom pracuje offline, bez termínu. Claude ho nezačína, kým Pavel neprinesie návrh. Draupnir koncept v archíve je len možný zdroj nápadov (mená, kódex s históriou); zosúladenie s `DIZAJN_core_loop.md` je dizajnové rozhodnutie (Opus). Úloha je aj v Open Brain (Biznis, P3).
-2. Presunúť starý 3D reťazec (`render/`, `art/fits/`, `tools/blender/`) do archívu? Rozbijú sa staré skripty, ktoré sa nemajú používať.
+- Starý 3D reťazec (`render/`, `art/fits/`, `tools/blender/`, staré skripty, 3D modely z `ref/`, staré `*_px` sprity, staré sekcie `PRIKAZY.md`) -> `_archiv/3d_stary/`, gitignored; v `CLAUDE.md` je pravidlo, že sa neberie do úvahy.
+- `tools/preview_framing.py` prepnutý na PixelLab hrdinu (`hero_pl_run`, 2x).
+- GitHub: história už obsahuje ~305 MiB starých súborov; nové sa nepridávajú. Zbaviť sa ich = prepísať históriu (rozhodnutie Pavla, zatiaľ nie)

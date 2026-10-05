@@ -116,6 +116,21 @@ code,.mono{font-family:var(--font-mono);font-size:.86em;overflow-wrap:anywhere}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--accent)}
 .legend i.old{background:var(--bar-old)}
 
+/* todos */
+.todos{display:flex;flex-direction:column;gap:14px}
+.tgroup{background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.tgroup h3{margin:0;padding:10px 16px;font-family:var(--font-display);font-size:1.15rem;font-weight:600;letter-spacing:.02em;display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}
+.tgroup h3 span{font-family:var(--font-mono);font-size:.78rem;font-weight:500;color:var(--muted)}
+.tgroup.g-teba h3{color:var(--c-teba);background:var(--c-teba-bg)}
+.tgroup.g-claude h3{color:var(--c-claude);background:var(--c-claude-bg)}
+.tgroup.g-later h3{color:var(--c-archiv);background:var(--c-archiv-bg)}
+.trow{display:grid;grid-template-columns:8.2rem minmax(0,1fr);gap:4px 16px;padding:11px 16px;border-top:1px solid var(--line)}
+.tgroup h3+.trow{border-top:0}
+.trow .k{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.trow .t b{font-weight:600}
+.trow .src{display:block;color:var(--muted);font-size:.8rem;margin-top:3px;font-family:var(--font-mono)}
+@media(max-width:560px){.trow{grid-template-columns:minmax(0,1fr)}}
+
 /* two column bottom */
 .duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 @media(max-width:760px){.duo{grid-template-columns:minmax(0,1fr)}}
@@ -132,7 +147,11 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
     <p class="lede">Každý súbor v hlavnom priečinku s údajom, pre koho je. Kliknutím na dlaždicu odfiltruješ len svoje súbory. Rovnaký obsah v textovej podobe pre Claude je v <code>KDE_JE_CO.md</code>.</p>
   </header>
 
-  <div class="tiles" id="tiles" role="group" aria-label="Filter podľa určenia"></div>
+  <section aria-labelledby="todo-h">
+    <h2 id="todo-h">ToDo's</h2>
+    <p class="lede" id="todo-sum"></p>
+    <div id="todos" class="todos"></div>
+  </section>
 
   <section class="story" aria-labelledby="story-h">
     <div>
@@ -142,7 +161,7 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
         <li><b>Hra</b><span>2D side-scroller run-and-gun v štýle Metal Slug, Android, Godot 4.7. Platená, 5,99 €, bez reklám a bez nákupov v hre.</span></li>
         <li><b>Jadro</b><span>Opakované behy na skóre. V klietkach sú zajatci a mena je počet tých, ktorí prežili. Zbraň je sekera, ktorá sa vracia ako bumerang. Nepriatelia idú len sprava, hrdina sa hýbe voľne bez skákania.</span></li>
       </ul>
-      <p class="note">Samostatný scenár ani dej neexistuje. Draupnir koncept (Vladan, Zorica, 24 levelov) nie je odsúhlasený a leží v archíve.</p>
+      <p class="note">Samostatný scenár ani dej neexistuje. Draupnir koncept (Vladan, Zorica, 24 levelov) nie je odsúhlasený a leží v archíve. Príbeh sa bude prerábať, Pavel na ňom pracuje offline.</p>
     </div>
     <div class="src">
       <h3>Kde je to napísané</h3>
@@ -156,6 +175,7 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
 
   <section aria-labelledby="files-h">
     <h2 id="files-h">Súbory a priečinky</h2>
+    <div class="tiles" id="tiles" role="group" aria-label="Filter podľa určenia"></div>
     <div class="toolbar">
       <div class="chips" id="chips" role="group" aria-label="Filter"></div>
       <input class="search" id="q" type="search" placeholder="Hľadať súbor alebo tému" aria-label="Hľadať">
@@ -166,31 +186,25 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
   <section aria-labelledby="size-h">
     <h2 id="size-h">Čo zaberá miesto</h2>
     <div class="sizes">
-      <div class="legend"><span><i></i>Aktuálne</span><span><i class="old"></i>Starý 3D reťazec a staré podklady</span></div>
+      <div class="legend"><span><i></i>Aktuálne</span><span><i class="old"></i>Archív, len lokálne (nie na GitHube)</span></div>
       <div id="bars"></div>
+      <p class="lede">GitHub: história už obsahuje okolo 305 MiB starých súborov z čias 3D reťazca. Nové sa tam už nepridávajú; zo starej histórie by ich odstránilo len prepísanie histórie.</p>
     </div>
   </section>
 
-  <div class="duo">
-    <section class="card" aria-labelledby="done-h">
+  <section class="card" aria-labelledby="done-h">
       <h2 id="done-h">Upratané 5. 10.</h2>
       <ul>
         <li><code>CLAUDE.md</code> mal sekciu aktuálneho stavu dvakrát. Zlúčená do jednej, súbor je z 26 KB na 22 KB.</li>
         <li>Draupnir zložka a lexikón sú v <code>_archiv/draupnir_koncept/</code> s poznámkou.</li>
         <li>Hotová odovzdávka pozadia je v <code>_archiv/</code>.</li>
+        <li>Starý 3D reťazec (<code>render/</code>, modely, staré skripty, staré pixel priečinky) je v <code>_archiv/3d_stary/</code>, mimo GitHubu. Claude ho nečíta (pravidlo v <code>CLAUDE.md</code>).</li>
+        <li>Ťahák <code>PRIKAZY.md</code> je očistený od 3D postupov; nástroj <code>preview_framing.py</code> používa PixelLab hrdinu.</li>
         <li>Zmluva o aute je v <code>_archiv/mimo_projektu/</code>.</li>
         <li>Analýza pravidiel Google Play je v <code>docs/vyskum/</code>.</li>
         <li>Pribudol <code>.gitattributes</code>, ktorý zruší falošné zmeny kvôli koncovkám riadkov.</li>
       </ul>
     </section>
-    <section class="card" aria-labelledby="todo-h">
-      <h2 id="todo-h">Čaká na tvoje rozhodnutie</h2>
-      <ol>
-        <li>Má sa z Draupnir konceptu niečo prebrať do príbehu, napríklad mená alebo kódex s históriou? Zosúladenie dvoch konceptov je dizajnové rozhodnutie.</li>
-        <li>Presunúť starý 3D reťazec (<code>render/</code>, <code>art/fits/</code>, <code>tools/blender/</code>, spolu okolo 260 MB) do archívu? Staré skripty, ktoré sa už nemajú používať, by prestali fungovať.</li>
-      </ol>
-    </section>
-  </div>
 </div>
 
 <script>
@@ -217,25 +231,60 @@ var ITEMS = [
   {n:"commit_msg.txt", g:"tech", w:"Záložný text commitu, keď commit zo sandboxu zlyhá.", s:"Používa ho PRIKAZY.md. Git ho ignoruje."},
   {n:".mcp.json  .gitignore  .gitattributes  .claude/", g:"tech", w:"Konfigurácia: PixelLab, ignorované súbory, koncovky riadkov, hook na synchronizáciu gitu.", s:"Nemeniť bez dôvodu."},
   {n:"slavs/", g:"claude", w:"Hra samotná (Godot projekt). Scény, skripty, obrázky, zvuky.", s:"Dnes 211 MB, z toho 52 MB cache .godot a 76 MB build."},
-  {n:"tools/", g:"claude", w:"Skripty na nasadenie, PixelLab a spracovanie obrázkov.", s:"Podpriečinok blender/ (146 MB) je starý 3D reťazec."},
-  {n:"ref/", g:"oboch", w:"Štýlové referencie a návrhy. Priečinok preview/ je v gite, veľké obrázky nie.", s:"22 voľných obrázkov v ref/ je z júla, teda staré."},
+  {n:"tools/", g:"claude", w:"Skripty na nasadenie, PixelLab, zem a kontrolu kódu.", s:"Staré 3D skripty sú v _archiv/3d_stary/."},
+  {n:"ref/", g:"oboch", w:"Štýlové referencie a návrhy (obrázky). 3D modely odtiaľ odišli do archívu.", s:"22 voľných obrázkov v ref/ je z júla, teda staré; sú mimo gitu."},
   {n:"Claude outputs/", g:"teba", w:"Obrázky z našich pracovných session (2. až 4. 10.): animácie, štýly, pozadia.", s:"Môžeš prezrieť a zmazať, čo už nepotrebuješ."},
-  {n:"render/", g:"archiv", w:"Výstupy starého 3D reťazca (Meshy, Mixamo, Blender). Nepoužívať.", s:"114 MB, mimo gitu. Staré skripty ho ešte spomínajú."},
-  {n:"art/fits/", g:"archiv", w:"Nastavenia zbraní pre starý 3D reťazec.", s:"Spomína ich starý skript save_weapon_fit.py."},
-  {n:"_archiv/", g:"archiv", w:"Dokončené prompty, História CLAUDE.md, staré návody.", s:"CLAUDE_historia.md čítať len na požiadanie."},
+  {n:"_archiv/3d_stary/", g:"archiv", w:"Celý starý 3D reťazec (Meshy, Mixamo, Blender): výstupy renderov, modely .blend a .fbx, staré skripty, staré pixel priečinky, staré sekcie PRIKAZY.", s:"505 MB, len na tvojom disku, NIE na GitHube. Claude ho nebere do úvahy."},
+  {n:"_archiv/", g:"archiv", w:"Dokončené prompty, história CLAUDE.md, staré návody a archívy nižšie.", s:"Claude ho nečíta, len ak o to požiadaš (CLAUDE_historia.md na požiadanie)."},
   {n:"_archiv/draupnir_koncept/", g:"archiv", w:"Draupnir koncept od druhej AI: 7 zadaní pre agentov a lexikón sloganov.", s:"Iný koncept hry, nie je odsúhlasený. Chýba SPEC_MASTER.md, výstupy neexistujú."},
   {n:"_archiv/mimo_projektu/", g:"archiv", w:"Návrh kúpnopredajnej zmluvy na auto.", s:"Nepatrí do projektu. Vyber ho z repa ručne, ak chceš."}
 ];
 var SIZES = [
-  {n:"ref/", mb:607, f:725, d:"Referencie, väčšina sú veľké obrázky mimo gitu", old:false},
-  {n:"slavs/", mb:211, f:3457, d:"Hra", old:false},
-  {n:"tools/", mb:147, f:95, d:"Skripty; 146 MB z toho je tools/blender/ (starý 3D reťazec)", old:true},
-  {n:"render/", mb:114, f:783, d:"Starý 3D reťazec", old:true},
+  {n:"_archiv/", mb:506, f:2260, d:"505 MB z toho je starý 3D reťazec, len na tvojom disku, nie na GitHube", old:true},
+  {n:"ref/", mb:368, f:697, d:"Referencie, väčšina sú obrázky", old:false},
+  {n:"slavs/", mb:205, f:2085, d:"Hra", old:false},
   {n:"Claude outputs/", mb:8, f:14, d:"Obrázky z pracovných session", old:false},
-  {n:"_archiv/", mb:2, f:24, d:"Archív", old:false},
-  {n:"art/", mb:1, f:7, d:"Nastavenia zbraní starého 3D reťazca", old:true},
+  {n:"tools/", mb:1, f:49, d:"Skripty", old:false},
+  {n:"art/", mb:1, f:1, d:"PixelLab", old:false},
   {n:"docs/", mb:1, f:1, d:"Výskum", old:false}
 ];
+var TODOS = [
+  {g:"teba", k:"Test", t:"<b>Vyskúšať na telefóne zem</b>: výber zeme, scéna bez scrollu (hĺbka chôdze), objekty, cez ktoré sa dá prejsť, a verzie pozadia. Stačí jedna veta, ako sa to hralo.", s:"CLAUDE.md Otvorené 1–2, ZACNI_TU 1"},
+  {g:"teba", k:"Rozhodnutie", t:"<b>Hod sekerou</b>: hrdina sa počas hodu šmýka. Buď sa pri hode zastaví (vtedy si musíš vybrať chvíľu hodu), alebo vznikne nový klip „hod za pohybu“ (1–2 generácie PixelLab). Na paneli sú dva posuvníky na vyskúšanie.", s:"CLAUDE.md Otvorené 3, ZACNI_TU 2"},
+  {g:"teba", k:"Rozhodnutie", t:"<b>Scény alebo dlhý pás?</b> Ak scény, treba navrhnúť prepínanie: zámok kamery počas boja, „GO →“, obrázok pre každú obrazovku, spoločný pás parallaxu.", s:"ZACNI_TU 3, CLAUDE.md Otvorené 2"},
+  {g:"teba", k:"Offline", t:"<b>Prerobiť príbeh.</b> Pracuješ na ňom offline, bez termínu. Claude ho nezačne, kým neprinesieš návrh. Úloha je aj v Open Brain (Biznis, P3).", s:"CLAUDE.md Otvorené 12, Open Brain"},
+  {g:"teba", k:"Test", t:"<b>Pri ďalšom nasadení skontrolovať</b>: viac životov hrdinu, efekty zásahov (kolo 2), zvukový systém, výbušný kotol, brute a to, že nepriatelia, ktorých necháš za obrazovkou, ťa dobehnú.", s:"CLAUDE.md Otvorené 3b, 9"},
+  {g:"teba", k:"Schváliť", t:"<b>Hlášky postáv</b> (angl.): návrh je v HLASKY.md. Škrtni, prepíš, dopíš; čo ostane, to sa nahrá. Hlasové priečinky sú zatiaľ prázdne.", s:"HLASKY.md, CLAUDE.md Sound"},
+  {g:"teba", k:"Test", t:"<b>Druhý telefón s iným DPI.</b> Všetko ovládanie je overené len na 450 dpi.", s:"CLAUDE.md Otvorené 7"},
+  {g:"teba", k:"Tvoja stopa", t:"<b>Google Play</b>: kontrola pravidiel a hodnotenia IARC. Developer účet je odložený, uzavreté testovanie (12 testerov, 14 dní) je fáza F4. Otvorené sú aj otázky licencie a kreditov pre generované assety.", s:"CLAUDE.md Otvorené 10"},
+  {g:"teba", k:"Rozhodnutie", t:"<b>Jadro hry, otvorené otázky pred stavaním</b>: čo ukončí beh (len smrť, alebo aj koniec úseku), ekonomika klietok (koľko klietok a zajatcov, koľko je zajatec menou), zoznam vylepšení, odomykanie levelov (za menu, alebo za bossa), prepínanie zbraní poklepaním (riziko pomýlenia).", s:"DIZAJN_core_loop §3–4"},
+  {g:"teba", k:"Odložené", t:"<b>Monetizácia</b>: plán je platená hra za 5,99 € bez nákupov, ale zvažovalo sa aj F2P. Rozhodnutie je odložené, lebo nemení kód. Platí: kombinácia platenej hry a nákupov je najhoršia.", s:"DIZAJN_core_loop §4"},
+  {g:"teba", k:"Na tvojom PC", t:"<b>Poslať zmeny na GitHub</b>: v priečinku hry napíš <code>git push</code>. Z cloudu sa neviem prihlásiť, commity už čakajú.", s:"stav gitu 5. 10."},
+  {g:"claude", k:"Práca", t:"<b>Horný okraj chodnej zeme</b> je odrezaný rovno. Treba prirodzený prechod (nepravidelná silueta alebo prelínanie) v obrázku, prípadne v hranici chôdze.", s:"CLAUDE.md Otvorené 3a"},
+  {g:"claude", k:"Práca", t:"<b>Prepínanie chôdza ↔ zamknutá obrazovka</b> (zoom-in), bossovia a klietky na nej, sudy a predmety v zamknutej obrazovke.", s:"CLAUDE.md Otvorené 2"},
+  {g:"claude", k:"Práca", t:"<b>Scéna B (vypálená dedina)</b> v PixelLab pixen, 1 generácia na pokus. Pozor na opakujúce sa vzory (šachovnica).", s:"ZACNI_TU 4, CLAUDE.md Otvorené 1"},
+  {g:"claude", k:"Dizajn", t:"<b>Boj na blízko v 2.5D nie je vyriešený</b>: nepriatelia sa prekrývajú alebo ťa nedosiahnu, švih mimo hĺbky zasiahne vzduch. Potrebuje dizajnové rozhodnutie (Opus).", s:"CLAUDE.md Otvorené 4"},
+  {g:"claude", k:"Oprava", t:"<b>Bežec bliká po švihu</b>, keď sa hráč pohol v osi Y (chodiaci klip sa prepína pri takmer nulovej rýchlosti).", s:"CLAUDE.md Otvorené 5"},
+  {g:"claude", k:"Overiť", t:"<b>Zjednotiť farebnú paletu</b> pozadia, nepriateľov a predmetov pred finálnou grafikou. V pamäti je táto vec zapísaná ako uzavretá, treba si s tebou overiť, či platí.", s:"CLAUDE.md Otvorené 6, pamäť"},
+  {g:"claude", k:"Práca", t:"<b>Gunman</b> nemá idle klip ani „ready idle“. <b>Brute</b>: úchop nesedí s miestom držania (zatiaľ ignorovať).", s:"CLAUDE.md Otvorené 8"},
+  {g:"later", k:"Fázy", t:"<b>F2</b> vertikálny rez, <b>F3</b> obsah, <b>F4</b> doladenie a uzavreté testovanie, <b>F5</b> vydanie. Všetko otvorené.", s:"CLAUDE.md Otvorené 11, PLAN_hry.md"}
+];
+var TG = {teba:"Čaká na teba", claude:"Čaká na Claude", later:"Neskôr"};
+function renderTodos(){
+  var box=document.getElementById("todos"); box.textContent="";
+  ["teba","claude","later"].forEach(function(g){
+    var items=TODOS.filter(function(x){return x.g===g});
+    var grp=el("div","tgroup g-"+g), h=el("h3",null,TG[g]); h.appendChild(el("span",null,String(items.length)));
+    grp.appendChild(h);
+    items.forEach(function(x){
+      var r=el("div","trow"); r.appendChild(el("div","k",x.k));
+      var d=el("div","t"); d.innerHTML=x.t; d.appendChild(el("span","src",x.s)); r.appendChild(d); grp.appendChild(r);
+    });
+    box.appendChild(grp);
+  });
+  var n=TODOS.filter(function(x){return x.g==="teba"}).length, c=TODOS.filter(function(x){return x.g==="claude"}).length;
+  document.getElementById("todo-sum").textContent=n+" vecí čaká na teba, "+c+" na Claude. Zdroje: CLAUDE.md (Otvorené), ZACNI_TU_dalsia_session.md, DIZAJN_core_loop.md, pamäť a Open Brain. Pri každej veci je uvedený zdroj.";
+}
 var state = {g:"all", q:""};
 function el(t,c,h){var e=document.createElement(t); if(c) e.className=c; if(h!=null) e.textContent=h; return e;}
 function count(g){return ITEMS.filter(function(i){return g==="all"||i.g===g}).length;}
@@ -281,7 +330,7 @@ function renderBars(){
 }
 function render(){renderTiles();renderChips();renderList();}
 document.getElementById("q").addEventListener("input",function(e){state.q=e.target.value;renderList();});
-render(); renderBars();
+render(); renderBars(); renderTodos();
 </script>
 
 </body>

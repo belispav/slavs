@@ -90,8 +90,8 @@ Bez toho hra beží normálne, len nevibruje.
 ## PIXELLAB — takto teraz vzniká všetka grafika (od 2026-10-02)
 
 Postavy, ich animácie, predmety aj efekty generuje Claude v PixelLabe.
-Ty nič nespúšťaš – stačí povedať, čo chceš. Starý postup cez Meshy / Mixamo /
-Blender nižšie v tomto súbore je už len história.
+Ty nič nespúšťaš – stačí povedať, čo chceš. Starý postup cez Meshy / Mixamo / Blender je v archíve `_archiv/3d_stary/`
+(mimo GitHubu); nepoužívať a nebrať do úvahy.
 
 - **Ako je to napojené:** PixelLab je pripojený v aplikácii Claude na tvojom PC
   (Settings → Developer → Edit Config, položka `pixellab`). Doména `*.pixellab.ai`
@@ -149,124 +149,7 @@ Prepínače na porovnávanie grafiky:
 | `STARE POZADIE` | vráti `env_03`. Nové `env_04` je predvolené. |
 | `HLADKE POZADIE` | NEAREST ↔ LINEAR na pozadí. Zmerané: robí rozdiel 0,36 %, čiže skoro nič. Nechané ako meracia pomôcka. |
 
-Hrubšiu sadu vyrába `tools/coarsen_sprites.py` z už vyrenderovaných snímok —
-netreba na to Blender:
-
-```
-python tools\coarsen_sprites.py --in slavs\art\run_px --out slavs\art\run_px_b --height 108
-```
-
-Je to **len na výber**, nie na vydanie: taká snímka prešla pixelovým prechodom
-dvakrát a je o kúsok mäkšia než render priamo z Blenderu v tej výške. Keď sa
-hrúbka vyberie, víťaz sa prerenderuje poriadne príkazmi nižšie.
-
----
-
-## RENDER NEPRIATEĽOV — pixel art (platné od 2026-08-13)
-
-**Hra je pixel art.** Skúšala sa hladká varianta (S = 2, 64 farieb, bez
-obrysu), Pavel ju videl na telefóne a je zrušená — viď
-`DIZAJN_pozadie_a_rozlisenie.md`. **Nikdy nerenderuj s `-Colours 64
--NoOutline`**; presne tie dva prepínače prestali robiť hru pixel artom.
-
-Hrdinu renderovať netreba — jeho pixel-artové snímky sú v gite a sú obnovené.
-**Gunmana a rushera áno**: ich pixel-artové rendery sa stratili, prepísali sa
-hladkými skôr, než sa stihli commitnúť.
-
-**Gunman:**
-
-```
-powershell -ExecutionPolicy Bypass -File tools\render_enemy.ps1 -Name gunman -Height 162 -Anims "idle=Enemy_gunman_01 Rifle Idle:19-157, walk=Enemy_gunman_01 Rifle Walk, fire=Enemy_gunman_01 Firing Rifle"
-```
-
-**Rusher:**
-
-```
-powershell -ExecutionPolicy Bypass -File tools\render_enemy.ps1 -Name rusher -Height 190 -Anims "idle=Enemy_rusher_02 Great Sword Idle, walk=Enemy_rusher_02 Great Sword Run, attack=Enemy_rusher_02 Great Sword Slash"
-```
-
-Bez `-Colours` a bez `-NoOutline` — vtedy platia predvolené hodnoty, čiže
-16 farieb a 1 px obrys, teda pixel art.
-
-`-Height` 162 a 190 sú overené z 2026-08-10: pri nich ani jeden nečítal
-primalo vedľa hrdinu. **Po rendere aj tak zmeraj skutočnú výšku**
-(METHOD pravidlo 2).
-
----
-
-## Postava z modelu do hry (starší príklad, menšie rozlíšenie)
-
-Vyrenderuje sprajty a uloží ich rovno tam, odkiaľ ich hra načítava. Po ňom už
-stačí spustiť nasadenie vyššie.
-
-```
-powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Model "tools\blender\hrdina_run.fbx" -Texture "ref\characters\Meshy_AI_The_Tattered_Wanderer_0802131405_texture_basecolor.jpg" -Height 128
-```
-
-**Postava má dve animácie.** Chôdzu vyrenderuj do `run_px`, státie do
-`idle_px` — hra si obe načíta sama:
-
-```
-powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Model "tools\blender\hrdina_idle.fbx" -Name idle -Height 160 -Texture "ref\characters\Meshy_AI_The_Tattered_Wanderer_0802131405_texture_basecolor.jpg"
-```
-
-(Rozhoduje `-Name` — z neho vznikne názov priečinka `<name>_px`.)
-
-Čo sa dá meniť:
-
-| | |
-|---|---|
-| `-Height 128` | výška postavy v pixeloch. Väčšie číslo = väčšia postava |
-| `-Colours 16` | koľko farieb má paleta |
-| `-Bands 3` | koľko stupňov svetla a tieňa |
-| `-Model` | `.fbx`, `.glb` aj `.blend` — Blender otvárať netreba |
-| `-Texture` | farebná mapa. Bez nej je postava sivá |
-
-Otvorí sa prehľad a jedna animácia s rýchlosťami 30 / 15 / 10 fps vedľa seba.
-
----
-
-## Nová postava — celá cesta
-
-Podrobne je to v `_archiv/POSTUP_vlastna_postava.md`. Skrátene:
-
-**1. Skontrolovať obrázky, kým sa minie kredit**
-
-```
-python tools\check_character_sheet.py ref\characters\02_main
-```
-
-**2. Orezať obrázok pre generátor 3D** (odstráni vodoznak, vycentruje)
-
-```
-python tools\prepare_character_image.py ref\characters\02_main_front.png
-```
-
-**3. Vytiahnuť farbu z GLB**, ktoré príde z generátora
-
-```
-python tools\extract_glb_texture.py ref\characters\model.glb
-```
-
-**4. Pripraviť model pre Mixamo** — postaví do stoja, spojí do jednej siete
-
-```
-& "C:\Program Files\Blender Foundation\Blender 5.2\blender.exe" --background --python "tools\prepare_for_mixamo.py" -- --in "ref\characters\model.glb" --tris 0 --out "ref\characters\hrdina_pre_mixamo.fbx"
-```
-
-Vo výpise musí byť **`UV mapy: 1`**. Bez nej bude postava navždy sivá.
-
-**5. Skontrolovať, čo je v súbore**, kým sa niekam nahrá
-
-```
-python tools\inspect_fbx.py "ref\characters\hrdina_pre_mixamo.fbx"
-```
-
-**6.** Nahrať na `mixamo.com` → Upload Character → označiť kĺby → Animations →
-`Fast Run` → **In Place** → Download: FBX Binary, 30 fps, With Skin,
-Keyframe Reduction none → uložiť do `tools\blender\`
-
-**7.** Spustiť render (príkaz vyššie) a nasadiť do telefónu.
+Hrubšiu sadu `art/*_b` robil starý 3D reťazec (nástroje sú v archíve `_archiv/3d_stary/`, nepoužívať).
 
 ---
 
@@ -407,20 +290,12 @@ Spúšťajú sa `python tools\<nazov>.py`, ak nie je uvedené inak.
 |---|---|
 | `preview_framing.py` | **nakreslí, ako to bude vyzerať na telefóne.** Pred každou zmenou rámovania |
 | `check_background.py` | zmeria pozadie a povie, kde je voľná zem |
-| `check_character_sheet.py` | skontroluje obrázky postavy, kým sa minie kredit |
-| `prepare_character_image.py` | oreže obrázok pre generátor 3D, odstráni vodoznak |
-| `extract_glb_texture.py` | vytiahne farebnú mapu z GLB |
-| `inspect_fbx.py` | čo je v FBX — UV mapa, kostra, počet vrcholov |
 | `check_gdscript.py` | nájde rozdelené funkcie, kým zmizne pol hry |
-| `pixelize_sprites.py` | pixel-art prechod nad vyrenderovanými snímkami |
+| `pixellab_export.py` | stiahne snímky z PixelLabu a zapíše ich do hry (spúšťa Claude) |
+| `bake_pixen_grounds.py` | upečie zem z obrázkov pixen |
+| `deploy_android.ps1`, `get_tuning.ps1`, `diag_android.ps1` | nasadenie do telefónu, hodnoty z panelu, diagnostika |
 
-Cez Blender (`blender.exe ... --background --python tools\<nazov>.py --`):
-
-| | |
-|---|---|
-| `blender_render_sprites.py` | render postavy na sprajty |
-| `prepare_for_mixamo.py` | postaví model do stoja, spojí siete, prípadne zredukuje |
-| `blender_attach_weapon.py` | pripne zbraň na kosť ruky |
+Starý 3D reťazec (Blender, Mixamo, Meshy a nástroje k nemu) je v `_archiv/3d_stary/`, mimo GitHubu. Nepoužívať.
 
 ## Keď niečo nejde
 
@@ -466,12 +341,8 @@ rovnakým číslom** a nedá sa rozoznať, ktorá verzia je v telefóne.
 
 **V editore postava beží, v telefóne je sivý box.** Godot pri exporte obrázky
 prebalí a pôvodné `.png` v nainštalovanej hre už nie sú, takže sa priečinok
-nedá prechádzať. Rieši to zoznam snímok `frames.gd`, ktorý zapisuje render.
-Ak chýba, vyrob ho:
-
-```
-python -c "import sys,os,glob; sys.path.insert(0,'tools'); from pixelize_sprites import write_frame_manifest; write_frame_manifest('slavs/art/run_px',[os.path.basename(p) for p in sorted(glob.glob('slavs/art/run_px/*.png'))])"
-```
+nedá prechádzať. Rieši to zoznam snímok `frames.gd`, ktorý zapisuje
+`tools/pixellab_export.py`. Ak chýba, povedz to Claudovi, vyrobí ho.
 
 **Vidí telefón vôbec počítač?**
 
@@ -500,87 +371,3 @@ git commit -m "popis toho, co sa zmenilo"
 
 ---
 
-## ZBRANE — postav ju myšou, nie slovami
-
-Opisovať slovami, kde má zbraň sedieť, je najpomalšia cesta, aká existuje.
-Namiesto toho ju raz chytíš myšou v Blenderi a číslo si uložíme.
-
-**Krok 1 — otvor si postavu so zbraňou v ruke:**
-
-```
-powershell -ExecutionPolicy Bypass -File tools\fit_weapon.ps1 -Model "ref\characters\Enemy_gunman_01 Rifle Idle.fbx" -Weapon arquebus -Name gunman
-```
-
-Skript najprv v pozadí postaví scénu a uloží ju, potom ju Blender otvorí.
-Postavu vidíš cez hernú kameru a **zbraň je už vybratá**.
-
-- `G` a pohyb myšou — posúvaš zbraň (`G X` / `G Y` / `G Z` zamkne os)
-- `R` a pohyb myšou — otáčaš (`R X` / `R Y` / `R Z` zamkne os)
-- `S` — zväčšuješ
-- `Ctrl+S` — ulož (nechaj ten istý súbor)
-
-**Zbraň neodpájaj od kosti.** Len ju posúvaj a otáčaj.
-
-Prečo dva kroky a nie jeden: import FBX zo skriptu **v okne** Blenderu zlyhá,
-lebo importér potrebuje kontext okna, ktorý pri štarte ešte neexistuje.
-V pozadí je to bez problému. Nie je to elegancia, je to obchádzka chyby.
-
-**Krok 2 — ulož umiestnenie do súboru:**
-
-```
-powershell -ExecutionPolicy Bypass -File tools\save_fit.ps1 -Name gunman
-```
-
-Vznikne `art\fits\gunman.json`.
-
-**Krok 3 — renderuj čokoľvek od tej postavy s tým umiestnením:**
-
-```
-powershell -ExecutionPolicy Bypass -File tools\render_pixel_test.ps1 -Model "ref\characters\Enemy_gunman_01 Rifle Walk.fbx" -Name gunman_walk -Height 128 -Weapon arquebus -WFit art\fits\gunman.json -Angle 45 -Elevation 12
-```
-
-**POZOR, `-Height 128` v tomto príklade je zastaraná hodnota — nekopíruj ju bez rozmyslu.**
-Presne toto `-Height 128` sa použilo na gunmana a vyrobilo postavu citeľne
-menšiu než hrdina (zmerané 2026-08-07: hrdina má vykreslenú výšku ~120 px pri
-`-Height` okolo 162; gunman len ~97 px pri `-Height 128` — rovnaký pomer
-vykreslené/plátno ~0,74 v oboch prípadoch, takže na zhodu s hrdinom treba
-`-Height` okolo **162**, nie 128. Pre rushera (má byť o kúsok väčší než
-hrdina) skús **175–185** a po renderi zmeraj skutočnú výšku, neuhádni ju.
-
-**Umiestnenie sa ukladá voči kosti ruky, nie voči animácii.** Preto ho fituješ
-**raz na postavu** a platí pre jej idle, chôdzu aj útok. Osem nepriateľov = osem
-fitovaní po pár sekundách, nie osemkrát dvadsať kôl dohadovania.
-
-### Stiahnutá zbraň namiesto našej
-
-Ak nájdeš lepší model zbrane (Sketchfab s filtrom CC0, Poly Pizza, Quaternius,
-Kenney — alebo si ju vygeneruj v Meshy tak ako postavy):
-
-```
-... tools\fit_weapon.ps1 ... -WModel "ref\objects\arkebuza.glb"
-... tools\render_pixel_test.ps1 ... -WModel "ref\objects\arkebuza.glb" -WFit art\fits\gunman.json
-```
-
-Skript ju sám otočí pozdĺž správnej osi a zvyšok je rovnaký — fitni myšou, ulož,
-používaj. Pri sťahovaní si **vždy over licenciu**, rovnako ako pri Meshy.
-
-**Formáty:** `.blend`, `.glb`, `.gltf`, `.fbx`, `.obj`. Ak ti stránka ponúkne
-viac, ber `.blend` alebo `.glb`. **`.3ds` nepoužívaj** — Blender ho vie len cez
-vypnutý doplnok a nič navyše neponúka.
-
-**Otáčanie zbrane v Blenderi okolo jej vlastnej osi:** `R`, potom **dvakrát**
-`X`. Prvé `X` je globálna os, druhé prepne na vlastnú os objektu. Zbrane sú
-stavané pozdĺž svojej osi X, takže `R X X` točí hlavňou. Rovnako `R Y Y`,
-`R Z Z`.
-
-### Ako zistiť, či animácia vôbec drží zbraň
-
-Názvy animácií z Mixama klamú. „Standing Melee Attack Downward" má ruky 167 cm
-od seba, čo nie je obojručný úder, ale rozhodené ruky. Zmeraj to pred renderom:
-
-```
-& "C:\Program Files\Blender Foundation\Blender 5.2\blender.exe" --background --python tools\inspect_grip.py -- "ref\characters\A.fbx" "ref\characters\B.fbx"
-```
-
-Vypíše rozostup rúk a povie, či je úchop obojručný, jednoručný alebo žiadny.
-Trvá sekundy a ušetrí kolá renderovania.

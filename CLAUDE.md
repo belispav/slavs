@@ -26,6 +26,7 @@ You are the AI development partner for Slavs fight back, a 2D side-scrolling run
 
 - `_archiv/CLAUDE_historia.md` — the full dated history that used to be the Current status section of this file (every measured number, old pipeline and reasoning, verbatim). Read it only on demand, not every session.
 - `KDE_JE_CO.md` — one-page map of the folder: what is for Pavel, what is for Claude, what is archived. Update it whenever files are moved or added in the root. The same map as a dashboard for Pavel: `KDE_JE_CO.html`.
+- `_archiv/` — finished and old material. **Do NOT read it and do NOT take it into account** unless Pavel explicitly asks (only exception: `_archiv/CLAUDE_historia.md`, on demand). Two parts are dead: `_archiv/3d_stary/` = the old Meshy -> Mixamo -> Blender -> pixelize chain (render outputs, .blend/.fbx models, old scripts, old `*_px` sprites, old PRIKAZY sections); it exists ONLY on Pavel's local disk (gitignored, not on GitHub) - never use it, never propose going back, never refer to it. `_archiv/draupnir_koncept/` = a different story concept from a second AI, NOT agreed (see the story TODO below).
 - `ZACNI_TU_dalsia_session.md` — the starting prompt for the next session. Old prompts, the superseded 3D character pipeline and other finished documents are in `_archiv/`.
 
 - `PRIKAZY.md` — **the command cheat sheet.** Deploy, render, the character
@@ -121,7 +122,7 @@ Pavel is moving work to Claude Code cloud sessions on the private GitHub repo
   same API over HTTPS - the proxy attaches the key. Verify with get_balance
   at the start of the first cloud session.
 - Things that are NOT in the repo: `tools/.pixellab_token`,
-  `export_presets.cfg`, `ref/*.png`, `render/`. Deploy stays on Pavel's PC.
+  `export_presets.cfg`, `ref/*.png`, `_archiv/3d_stary/`. Deploy stays on Pavel's PC.
 
 ## Local Claude Desktop AND cloud (from 2026-10-05)
 
@@ -145,7 +146,7 @@ shared state.** Rules for switching:
 - Local Claude has the PixelLab MCP as `pixellab__*` (Pavel's desktop config);
   cloud has `mcp__pixellab__*` plus the proxy credential. Same account, same
   generation balance, so check `get_balance` either way. Files that are not in git
-  (`ref/*.png`, `render/`, `tools/.pixellab_token`) exist only on the PC.
+  (`ref/*.png`, `_archiv/3d_stary/`, `tools/.pixellab_token`) exist only on the PC.
 - Cloud sessions are told to use a designated branch; if so, push there AND to
   `master` only when Pavel says so. On the PC, push straight to `master`.
 
