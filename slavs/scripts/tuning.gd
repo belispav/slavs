@@ -448,6 +448,15 @@ var bg_parallax_speed: float = BG_PARALLAX_SPEED
 const WALK_EDGE_INSET: float = 20.0
 var walk_edge_inset: float = WALK_EDGE_INSET
 
+## Non-scrolling scene simulation (Debug.fixed_screen). The screen shows picture
+## rows SCENE_TOP_ROW .. SCENE_TOP_ROW + 720: the forest and the ground edge sit
+## in the upper part, the walkable band is the bottom `scene_walk_depth` units of
+## the screen. 330 is a first guess (a bit under half the 720 screen), found by
+## the slider, not measured. Added 2026-10-05.
+const SCENE_TOP_ROW: float = 160.0
+const SCENE_WALK_DEPTH: float = 330.0
+var scene_walk_depth: float = SCENE_WALK_DEPTH
+
 
 ## Draw order for anything standing on the ground plane.
 ##

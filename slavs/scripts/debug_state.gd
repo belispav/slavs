@@ -83,3 +83,10 @@ var barrels_reset_requested: bool = false
 ## Set by the panel's RESET button; main.gd resets the whole run (field,
 ## hero, counters, props) and clears the flag.
 var game_reset_requested: bool = false
+
+
+## Simulates a NON-scrolling single-screen scene (Pavel 2026-10-05): the camera
+## is fixed on picture rows Tuning.SCENE_TOP_ROW .. +720 (the size of one PixelLab
+## 1376x768 image), and the hero walks only on the lower part of the screen,
+## Tuning.scene_walk_depth tall. Panel: "SCENA BEZ SCROLLU".
+var fixed_screen: bool = false

@@ -290,22 +290,28 @@ func _load_walk_bottom_curve() -> void:
 ## units), so this lines up exactly with what is on screen at every repeat.
 ## Falls back to the flat BG_WALK_TOP if the curve failed to load.
 func walk_top_for_x(world_x: float) -> float:
-	if _walk_top_curve.is_empty():
-		return background_top() + BG_WALK_TOP
-	var width: int = _walk_top_curve.size()
-	var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
-	return background_top() + float(_walk_top_curve[col])
+	var top: float = background_top() + BG_WALK_TOP
+	if not _walk_top_curve.is_empty():
+		var width: int = _walk_top_curve.size()
+		var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
+		top = background_top() + float(_walk_top_curve[col])
+	if Debug.fixed_screen:
+		top = maxf(top, walk_bottom_for_x(world_x) - Tuning.scene_walk_depth)
+	return top
 
 
 ## The bottom-edge mirror of walk_top_for_x() above - same wrap, same
 ## fallback pattern, read by player.gd's set_dynamic_bottom() instead of
 ## set_dynamic_top().
 func walk_bottom_for_x(world_x: float) -> float:
-	if _walk_bottom_curve.is_empty():
-		return background_top() + BG_WALK_BOTTOM
-	var width: int = _walk_bottom_curve.size()
-	var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
-	return background_top() + float(_walk_bottom_curve[col])
+	var bottom: float = background_top() + BG_WALK_BOTTOM
+	if not _walk_bottom_curve.is_empty():
+		var width: int = _walk_bottom_curve.size()
+		var col: int = int(fposmod(world_x - LEVEL_LEFT, float(width)))
+		bottom = background_top() + float(_walk_bottom_curve[col])
+	if Debug.fixed_screen:
+		bottom = minf(bottom, background_top() + Tuning.SCENE_TOP_ROW + 720.0)
+	return bottom
 
 var player            # untyped on purpose: the script is attached at runtime
 var bullets: Array = []
@@ -335,6 +341,7 @@ var _alive: int = 0
 var _bg_sprite: Sprite2D
 var _bg_smooth_applied: bool = false
 var _bg_alt_applied: bool = false
+var _fixed_screen_applied: bool = false
 ## Parallax2D nodes built from BG_LAYERS entries marked "front": true (drawn
 ## ahead of the player - currently none; env_05_fg.png was the last one).
 ## Kept so the "rychlost popredia" panel slider can drive their speed live.
@@ -471,6 +478,9 @@ func _apply_bg_filter() -> void:
 	if Debug.alt_background != _bg_alt_applied:
 		_bg_alt_applied = Debug.alt_background
 		_swap_ground()
+	if Debug.fixed_screen != _fixed_screen_applied:
+		_fixed_screen_applied = Debug.fixed_screen
+		_apply_camera_limits()
 
 
 ## Switch to the ground the panel asks for: picture, both edges, the ground's
@@ -926,7 +936,13 @@ func _build_player() -> void:
 func _apply_camera_limits() -> void:
 	if player == null:
 		return
-	if Touch.config.free_movement:
+	if Debug.fixed_screen:
+		# One fixed screen, like a single non-scrolling scene image: the limits
+		# are exactly one screen tall, so the camera cannot move vertically.
+		player.set_camera_limits(LEVEL_LEFT - 80.0, LEVEL_RIGHT + 80.0,
+			background_top() + Tuning.SCENE_TOP_ROW,
+			background_top() + Tuning.SCENE_TOP_ROW + 720.0)
+	elif Touch.config.free_movement:
 		# The camera follows the character up and down, stopping at the edges
 		# of the picture. That is what lets the field use the whole ground
 		# while the forest behind is still seen at full height.
@@ -1069,7 +1085,8 @@ func _spawn_tick(delta: float) -> void:
 	if Touch.config.free_movement:
 		# Anywhere across the open ground. The whole field is on screen, so
 		# there is no part of it an enemy could arrive in unseen.
-		y = randf_range(GROUND_Y - field_height() + 30.0, walk_bottom_for_x(x) - 30.0)
+		y = randf_range(maxf(GROUND_Y - field_height(), walk_top_for_x(x)) + 30.0,
+			walk_bottom_for_x(x) - 30.0)
 
 	free_enemy.spawn(Vector2(x, y), kind, player)
 
