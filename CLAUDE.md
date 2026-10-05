@@ -179,6 +179,34 @@ shared state.** Rules for switching:
 ### Open (Pavel decides unless stated)
 1. **Graphics for the ground are DONE (Pavel 2026-10-05): pixen A + walk-through objects** (he tried 100, would take more; tune count/placement/QUALITY later and approve before the final version). Other grounds removed (B had borders; D/E/F/burned village had a repeating "checkerboard" pattern - **watch for repeating patterns in every future ground**).
 2. **Scene camera (2026-10-05, on `master`, awaiting Pavel's device test).** One rule for walking AND frozen screens: walkable ground = exactly one screen tall (`Tuning.SCENE_FIELD_HEIGHT` 720 from picture row `SCENE_GROUND_ROW` 350) with the dynamic top strip above it, about one hero tall (`scene_strip_height` 190, panel slider). Vertical scroll is allowed only between "strip gone" (down) and "hero's head at the top edge" (up). Frozen screens (panel button "CELA OBRAZOVKA HLINA") differ only by locking horizontal scroll. Pavel's fallback if the screen feels small: shrink the characters slightly (enemies maybe a bit large). **Open: how to switch organically between walking and frozen screens (zoom-in effect), boss / cage encounters on it, barrels/props inside a frozen screen.**
+3. **Hero slid during the axe-throw clip (standing pose, but movable) - first fix 2026-10-05, awaiting device test:** speed during the throw is multiplied by `Tuning.throw_move_factor` (0.25, panel slider "pohyb pocas hodu"; 0 = rooted). Better but costlier option if it still looks wrong: a throw-while-moving clip in PixelLab (~1-2 generations).
+3a. **TODO: the TOP EDGE of the walkable ground is cut off straight** (Pavel 2026-10-05): the transition from the dynamic strip to the dirt needs a proper edge (irregular silhouette / blend), in the art and/or the walk limit.
+3b. **Anything about framing, sizes or proportions: draw it first.** `tools/preview_framing.py` composites the real background, the real sprite and the real camera arithmetic into a picture of the finished shot. Five rounds were lost describing framing in numbers, each making it worse, because a number cannot say whether the water is on screen. Produce the picture, agree on it, then build.
+4. **Weekly refactor.** When asked (or when a file exceeds ~300 lines), clean up before adding features.
+5. **Performance target:** 60 fps on a ~150 € Android phone. Object pooling for enemies/projectiles from the start.
+6. **Tunables in one place.** All gameplay constants (control thresholds, damage, speeds) in exported variables / a single config resource so Pavel can tune without code.
+
+## Current status (SHORT - the full dated history is in `_archiv/CLAUDE_historia.md`)
+
+> The history file holds every dated entry, measured number and old pipeline,
+> verbatim. Read it only when a topic below says "see history" or you need the
+> reason behind a decision. Update THIS section briefly as you work; put long
+> dated detail straight into the history file, not here.
+
+### What is in the game (as of 2026-10-05)
+- Godot 4.7 project `slavs/`, Android deploy via `tools/deploy_android.ps1` (F0 done, F1 controls GO).
+- **Movement:** free 2.5D movement, NO jumping (decided 2026-08-03). Control values in `control_config.tres` are measured on device - never change them by guessing. Enemies come only from the right.
+- **Hero:** PixelLab art at 2x (`hero_pl_*`). Weapon = thrown axe that returns like a boomerang (`axe.gd`), no melee; panel switch can put bullets back.
+- **Enemies (all PixelLab, 2x):** rusher (helmet + spiked mace, melee swing with its own hit beat), gunman (iron helmet, arquebus, shot leaves on the muzzle flash), brute (front armour, grabs = slow death, 10 HP = one cauldron blast). Awareness split (unaware idle vs ready idle) built for the rusher only.
+- **Props:** barrels (block the hero by feet depth, 6 HP), explosive cauldron (fuse, blast ellipse, chain reaction).
+- **Effects/feel:** code-drawn blood/splinter particles (`fx.gd`), vibration only when the hero is hit, god mode ignores hits fully.
+- **Sound:** `sfx.gd` event folders under `audio/sfx/<event>/`, generic effects are placeholders, voice folders empty (lines are Pavel's, English, drafts in `HLASKY.md`). Music prototype `Music` autoload.
+- **Background:** `env_08` with per-column walk edges (closed 2026-09-15). Ground work 2026-10-05 is on `master` but not yet on a phone: PixelLab pixen one-screen ground pictures (1 generation each, 672x384 art px = 1 screen at 2x), debug-panel ground picker, "SCENA BEZ SCROLLU" fixed camera with shallow walk band (`scene_walk_depth` 330), walk-through ground objects. Tools in `tools/` (`bake_pixen_grounds.py` etc.), details in history.
+- **Debug panel:** autoload `Debug`, never ships; PAUZA, god mode, enemy toggles/caps, many live sliders. Pattern: find a value live on the phone, Pavel confirms, then bake it into `tuning.gd` and reset the slider.
+
+### Open (Pavel decides unless stated)
+1. **Graphics for the ground are DONE (Pavel 2026-10-05): pixen A + walk-through objects** (he tried 100, would take more; tune count/placement/QUALITY later and approve before the final version). Other grounds removed (B had borders; D/E/F/burned village had a repeating "checkerboard" pattern - **watch for repeating patterns in every future ground**).
+2. **Scene camera (2026-10-05, on `master`, awaiting Pavel's device test).** One rule for walking AND frozen screens: walkable ground = exactly one screen tall (`Tuning.SCENE_FIELD_HEIGHT` 720 from picture row `SCENE_GROUND_ROW` 350) with the dynamic top strip above it, about one hero tall (`scene_strip_height` 190, panel slider). Vertical scroll is allowed only between "strip gone" (down) and "hero's head at the top edge" (up). Frozen screens (panel button "CELA OBRAZOVKA HLINA") differ only by locking horizontal scroll. Pavel's fallback if the screen feels small: shrink the characters slightly (enemies maybe a bit large). **Open: how to switch organically between walking and frozen screens (zoom-in effect), boss / cage encounters on it, barrels/props inside a frozen screen.**
 3. **NEW 2026-10-05: hero slides during the axe-throw animation.** The throw clip is a standing pose, but the hero can still be moved while it plays, so he looks like he glides. Options to weigh: root him during the throw, or add a throw-while-moving clip. Needs Pavel's decision (touches the controls feel).
 3b. **DONE 2026-10-05: enemies left behind off-screen are no longer recycled** (Pavel: they must keep existing and chase at their own speed). `ENEMY_CULL_BEHIND` 900 -> 4000 (pool safety only); enemies farther than `ENEMY_COUNT_RANGE` (2200) do not count against `ENEMY_MAX_ALIVE`. Check on device that running ahead and coming back finds them.
 4. **Melee enemies on a 2.5D field are unsolved** (rushers overlap or cannot reach; a swing at a different Y hits air). Design decision, probably an Opus session; do not tune it away.

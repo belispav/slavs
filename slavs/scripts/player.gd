@@ -488,6 +488,11 @@ func _move_free(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, goal.x, accel * delta)
 		velocity.y = move_toward(velocity.y, goal.y, accel * delta)
 
+	# The throw clip is a standing pose, so full-speed travel during it reads as
+	# gliding (Pavel 2026-10-05). Slowed while it plays; panel slider.
+	if _throwing:
+		velocity *= Tuning.throw_move_factor
+
 	_coyote = 0.0
 	_jump_buffer = 0.0
 

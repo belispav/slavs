@@ -184,6 +184,11 @@ const PLAYER_AXE_RUN_ART_DIR: String = "res://art/hero_pl_axe_run"
 const PLAYER_AXE_THROW_ART_DIR: String = "res://art/hero_pl_axe_throw"
 const AXE_THROW_FPS: float = 14.0
 const AXE_RELEASE_FRAME: int = 5
+## Share of normal walking speed while the throw clip plays (the clip is a standing
+## pose; full speed looked like sliding). 0 = rooted. 0.25 is a first guess, to be
+## found on the phone with the panel slider. Added 2026-10-05.
+const THROW_MOVE_FACTOR: float = 0.25
+var throw_move_factor: float = THROW_MOVE_FACTOR
 
 # --- Hit / death effects (2026-10-03, fx.gd) ---
 ## Pixel particles per event. Code-drawn placeholders for trying the
