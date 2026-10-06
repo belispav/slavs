@@ -436,21 +436,21 @@ const RUSHER_WALK_START_SPEED: float = 40.0
 const RUSHER_ATTACK_HIT_AT: float = 0.70
 var rusher_attack_hit_at: float = RUSHER_ATTACK_HIT_AT
 
-## STRIKE ZONE (T29, 2026-10-06, Pavel: the club hits only if the hero's body is
-## at the place where it lands, or within a width around it).
-## At the hit moment (RUSHER_ATTACK_HIT_AT) the club lands STRIKE_FORWARD px in
-## front of the rusher's origin (measured from the PixelLab swing: the mace head
-## is ~32 art px = ~64 px in front of the body, at ~50 px above the feet). The
-## hero is hit if his body (PLAYER_HURT_WIDTH wide) overlaps a zone
-## STRIKE_WIDTH wide around that point AND his feet are within +-STRIKE_DEPTH of
-## the rusher's feet in depth (Y). The depth limit is also what the rusher needs
-## to line up before it stops to swing. All three live on the panel.
-const RUSHER_STRIKE_FORWARD: float = 70.0
-const RUSHER_STRIKE_WIDTH: float = 64.0
-const RUSHER_STRIKE_DEPTH: float = 50.0
+## STRIKE ZONE (T29, 2026-10-06; circle since the phone test the same day).
+## At the hit moment (RUSHER_ATTACK_HIT_AT) the club lands at a point
+## STRIKE_FORWARD px in front of the rusher's origin and STRIKE_HEIGHT px above
+## its feet (the mace head in the PixelLab swing is ~50 px above the feet). The
+## zone is a CIRCLE of STRIKE_RADIUS around that point, in screen space. The
+## hero is hit if his hurt rectangle (PLAYER_HURT_WIDTH wide, hung from his
+## feet, see Player.hurt_rect) touches the circle. The rusher stops to swing as
+## soon as the hero touches the circle (and stays stopped while he is within
+## RUSHER_MELEE_LEAVE_FACTOR x the radius). All three live on the panel.
+const RUSHER_STRIKE_FORWARD: float = 40.0
+const RUSHER_STRIKE_RADIUS: float = 35.0
+const RUSHER_STRIKE_HEIGHT: float = 52.0
 var rusher_strike_forward: float = RUSHER_STRIKE_FORWARD
-var rusher_strike_width: float = RUSHER_STRIKE_WIDTH
-var rusher_strike_depth: float = RUSHER_STRIKE_DEPTH
+var rusher_strike_radius: float = RUSHER_STRIKE_RADIUS
+var rusher_strike_height: float = RUSHER_STRIKE_HEIGHT
 
 ## How close two enemies may get before they push each other apart, in world
 ## units. Rushers all head for the same point - the player - so without this
@@ -509,6 +509,10 @@ var bg_parallax_speed: float = BG_PARALLAX_SPEED
 ## here and the slider sits back at the value it now represents.
 const WALK_EDGE_INSET: float = 20.0
 var walk_edge_inset: float = WALK_EDGE_INSET
+## The bottom edge only (Pavel 2026-10-06: the strip at the bottom was too wide,
+## halved). The top keeps WALK_EDGE_INSET. Applies to the hero and to enemies.
+const WALK_BOTTOM_INSET: float = 10.0
+var walk_bottom_inset: float = WALK_BOTTOM_INSET
 
 ## The scene (Pavel 2026-10-05, ground pixen A): the walkable ground is exactly one
 ## screen tall (SCENE_FIELD_HEIGHT) and starts at picture row SCENE_GROUND_ROW (the

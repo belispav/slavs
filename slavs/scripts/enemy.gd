@@ -696,15 +696,10 @@ func _think_rusher(free: bool, delta: float) -> void:
 			# setting): aim at the hero instead of standing there.
 			to_target = target.global_position - global_position
 			distance = maxf(to_target.length(), 0.001)
-		# T29: it stops when the hero is within the stop distance sideways AND
-		# lined up in depth - otherwise the swing could never land (the zone is
-		# a thin slice in depth). Wider limits while already stopped.
-		var dx_abs: float = absf(target.global_position.x - global_position.x)
-		var dy_abs: float = absf(target.global_position.y - global_position.y)
-		var depth_enter: float = Tuning.rusher_strike_depth
-		var depth_hold: float = depth_enter * 1.25
-		in_range = dx_abs <= (hold_range if _stopped else enter_range) \
-			and dy_abs <= (depth_hold if _stopped else depth_enter)
+		# T29: it stops as soon as the hero touches its strike circle (and
+		# stays stopped while he is within LEAVE_FACTOR x the radius), so a
+		# swing is only ever started when it can land.
+		in_range = _hero_in_strike(Tuning.RUSHER_MELEE_LEAVE_FACTOR if _stopped else 1.0)
 		_stopped = in_range
 
 		if not in_range:
@@ -768,19 +763,27 @@ func _facing() -> float:
 	return -1.0
 
 
-## Where the club lands, in world x (T29).
-func _strike_x() -> float:
-	return global_position.x + _facing() * Tuning.rusher_strike_forward
+## Centre of the strike circle in world space: STRIKE_FORWARD in front of the
+## rusher, STRIKE_HEIGHT above its feet (T29).
+func _strike_centre() -> Vector2:
+	return Vector2(global_position.x + _facing() * Tuning.rusher_strike_forward,
+		global_position.y + SIZE.y * 0.5 - Tuning.rusher_strike_height)
 
 
-## The swing's hit: the hero's body overlaps the zone around the landing point
-## (STRIKE_WIDTH wide) and he is within STRIKE_DEPTH of this enemy in depth.
-func _strike_connects() -> bool:
-	if target == null:
+## Does the hero's body touch the strike circle (radius scaled by `grow`)?
+func _hero_in_strike(grow: float) -> bool:
+	if target == null or not target.has_method("hurt_rect"):
 		return false
-	var half: float = Tuning.rusher_strike_width * 0.5 + Tuning.PLAYER_HURT_WIDTH * 0.5
-	return absf(target.global_position.x - _strike_x()) <= half \
-		and absf(target.global_position.y - global_position.y) <= Tuning.rusher_strike_depth
+	var rect: Rect2 = target.hurt_rect()
+	var c: Vector2 = _strike_centre()
+	var nearest := Vector2(clampf(c.x, rect.position.x, rect.end.x),
+		clampf(c.y, rect.position.y, rect.end.y))
+	return nearest.distance_to(c) <= Tuning.rusher_strike_radius * grow
+
+
+## The swing's hit: the hero's body touches the circle around the landing point.
+func _strike_connects() -> bool:
+	return _hero_in_strike(1.0)
 
 
 ## How long the attack clip actually runs, read from the art itself once it
@@ -1005,14 +1008,11 @@ func _draw() -> void:
 	# A drawn character replaces the box entirely. Leaving the box behind the
 	# sprite showed as a coloured slab around the legs.
 	if Debug.show_strike_zone and kind == Kind.RUSHER and _attack_timer > 0.0:
-		var cx: float = _facing() * Tuning.rusher_strike_forward
-		var feet: float = SIZE.y * 0.5
-		var zone := Rect2(cx - Tuning.rusher_strike_width * 0.5,
-			feet - Tuning.rusher_strike_depth,
-			Tuning.rusher_strike_width, Tuning.rusher_strike_depth * 2.0)
-		var zc := Color(1.0, 0.15, 0.1, 0.55 if _attack_hit_done else 0.25)
-		draw_rect(zone, zc)
-		draw_rect(zone, Color(1.0, 0.15, 0.1, 0.9), false, 2.0)
+		var zc := to_local(_strike_centre())
+		draw_circle(zc, Tuning.rusher_strike_radius,
+			Color(1.0, 0.15, 0.1, 0.55 if _attack_hit_done else 0.25))
+		draw_arc(zc, Tuning.rusher_strike_radius, 0.0, TAU, 48,
+			Color(1.0, 0.15, 0.1, 0.9), 2.0)
 	if _sprite != null and _sprite.visible:
 		return
 	var base := Color(0.62, 0.30, 0.28) if kind == Kind.RUSHER else Color(0.40, 0.34, 0.52)

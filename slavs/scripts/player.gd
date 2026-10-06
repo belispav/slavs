@@ -382,8 +382,16 @@ func walk_y_limits(x: float) -> Vector2:
 	if _foot_bottom_at.is_valid():
 		bottom_bound = float(_foot_bottom_at.call(x)) - SIZE.y * 0.5
 	top_bound = minf(top_bound + Tuning.walk_edge_inset, field_bottom)
-	bottom_bound = maxf(bottom_bound - Tuning.walk_edge_inset, top_bound)
+	bottom_bound = maxf(bottom_bound - Tuning.walk_bottom_inset, top_bound)
 	return Vector2(top_bound, bottom_bound)
+
+
+## The hero's body that a weapon can hit, as a rectangle in world space (the
+## hurtbox hung from his feet). Enemies' strike zones are tested against it.
+func hurt_rect() -> Rect2:
+	var r := _hurt_shape.shape as RectangleShape2D
+	var centre: Vector2 = global_position + _hurt_shape.position
+	return Rect2(centre - r.size * 0.5, r.size)
 
 
 ## A brute wants to grab the hero. One holder at a time; a dead hero cannot
@@ -537,7 +545,7 @@ func _move_free(delta: float) -> void:
 	# large enough to invert the two bounds (top below bottom) on a field
 	# this narrow.
 	top_bound = minf(top_bound + Tuning.walk_edge_inset, field_bottom)
-	bottom_bound = maxf(bottom_bound - Tuning.walk_edge_inset, top_bound)
+	bottom_bound = maxf(bottom_bound - Tuning.walk_bottom_inset, top_bound)
 	if next.y < top_bound or next.y > bottom_bound:
 		global_position.y = clampf(global_position.y, top_bound, bottom_bound)
 		velocity.y = 0.0

@@ -212,6 +212,8 @@ func _build_panel() -> void:
 	# from the picture - see Tuning.walk_edge_inset. Added 2026-09-15.
 	_add_slider("odstup od okraja", 0.0, 60.0, 1.0, Tuning.walk_edge_inset,
 		func(v: float) -> void: Tuning.walk_edge_inset = v)
+	_add_slider("odstup od SPODNEHO okraja", 0.0, 60.0, 1.0, Tuning.walk_bottom_inset,
+		func(v: float) -> void: Tuning.walk_bottom_inset = v)
 
 	# How early a barrel stops the hero - see Tuning.BARREL_BLOCK_WIDTH.
 	# Added 2026-10-03.
@@ -425,9 +427,6 @@ func _build_panel() -> void:
 	_add_slider("na aku vzdialenost si bezec vsimne hraca (px)", 100.0, 1200.0,
 		10.0, Tuning.enemy_detection_range,
 		func(v: float) -> void: Tuning.enemy_detection_range = v)
-	_add_slider("na aku vzdialenost (do strany) sa bezec zastavi (px)",
-		20.0, 160.0, 2.0, Tuning.rusher_melee_range,
-		func(v: float) -> void: Tuning.rusher_melee_range = v)
 	# The dodge window. Everything before this point in the swing can be stepped
 	# out of; at this point the range is re-checked and the hit either lands or
 	# misses. Live because the right answer is wherever the club is furthest
@@ -442,12 +441,12 @@ func _build_panel() -> void:
 	_add_slider("zona uderu: ako daleko pred bezcom dopadne zbran (px)",
 		0.0, 160.0, 2.0, Tuning.rusher_strike_forward,
 		func(v: float) -> void: Tuning.rusher_strike_forward = v)
-	_add_slider("zona uderu: sirka okolo miesta dopadu (px)",
-		10.0, 160.0, 2.0, Tuning.rusher_strike_width,
-		func(v: float) -> void: Tuning.rusher_strike_width = v)
-	_add_slider("zona uderu: kolko hore/dole v hlbke zasiahne (px)",
-		10.0, 120.0, 2.0, Tuning.rusher_strike_depth,
-		func(v: float) -> void: Tuning.rusher_strike_depth = v)
+	_add_slider("zona uderu: vyska dopadu nad nohami bezca (px)",
+		0.0, 140.0, 2.0, Tuning.rusher_strike_height,
+		func(v: float) -> void: Tuning.rusher_strike_height = v)
+	_add_slider("zona uderu: polomer kruhu okolo miesta dopadu (px)",
+		5.0, 100.0, 1.0, Tuning.rusher_strike_radius,
+		func(v: float) -> void: Tuning.rusher_strike_radius = v)
 	_add_slider("kedy v animacii uderu zasah plati (0 = hned, 1 = na konci)",
 		0.05, 0.95, 0.05, Tuning.rusher_attack_hit_at,
 		func(v: float) -> void: Tuning.rusher_attack_hit_at = v)
