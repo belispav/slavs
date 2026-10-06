@@ -342,7 +342,8 @@ func _on_body_touched(body: Node) -> void:
 ## Called by enemy bodies on contact and by enemy projectiles.
 ## `force` ignores the invulnerability after a hit (the brute's hold ticks on
 ## its own clock) but never god mode.
-func take_damage(amount: int, from_pos: Vector2, force: bool = false) -> void:
+func take_damage(amount: int, from_pos: Vector2, force: bool = false,
+		knockback: Vector2 = Vector2.ZERO) -> void:
 	# God mode ignores the hit completely - no blood, no buzz, no blink.
 	# 2026-10-03 the blood and vibration were let through while immortal, and
 	# on device that read as "god mode no longer works" (Pavel). To see the
@@ -361,12 +362,28 @@ func take_damage(amount: int, from_pos: Vector2, force: bool = false) -> void:
 	hp -= amount
 	# Forced: the hero's own cry is never rationed away by someone's bark.
 	Sfx.play(&"hero_death" if hp <= 0 else &"hero_hurt", global_position, true)
-	if _held_by == null:
-		velocity.x = away * Tuning.PLAYER_KNOCKBACK.x
-		velocity.y = Tuning.PLAYER_KNOCKBACK.y
+	# Knockback is the ATTACKER's config (Pavel 2026-10-06), zero = none.
+	if _held_by == null and knockback != Vector2.ZERO:
+		velocity.x = away * knockback.x
+		velocity.y = knockback.y
 	health_changed.emit(hp)
 	if hp <= 0:
 		died.emit()
+
+
+## The walkable depth band (top, bottom) of the origin at column x - the same
+## limits _move_free applies to the hero. Enemies use it when walking round an
+## obstacle so they do not leave the field.
+func walk_y_limits(x: float) -> Vector2:
+	var top_bound: float = field_top
+	if _foot_top_at.is_valid():
+		top_bound = float(_foot_top_at.call(x)) - SIZE.y * 0.5
+	var bottom_bound: float = field_bottom
+	if _foot_bottom_at.is_valid():
+		bottom_bound = float(_foot_bottom_at.call(x)) - SIZE.y * 0.5
+	top_bound = minf(top_bound + Tuning.walk_edge_inset, field_bottom)
+	bottom_bound = maxf(bottom_bound - Tuning.walk_edge_inset, top_bound)
+	return Vector2(top_bound, bottom_bound)
 
 
 ## A brute wants to grab the hero. One holder at a time; a dead hero cannot

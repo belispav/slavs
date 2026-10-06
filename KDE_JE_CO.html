@@ -267,7 +267,9 @@ var TODOS = [
   {id:"T24", g:"claude", k:"Oprava", t:"<b>Nepriateľ sa pri švihu uzamkne na mieste</b>, ako hrdina pri hode. <b>Hotové 6. 10.</b> (test OK): kĺzanie robilo rozstrkávanie nepriateľov, teraz švihajúceho nepohne. Neskôr lepší nepriatelia dostanú útok za pohybu.", s:"Pavel 6. 10."},
   {id:"T25", g:"claude", k:"Oprava", t:"<b>Sudy majú blokovať aj nepriateľov</b>, rovnako ako hrdinu. <b>Opravené v kóde 6. 10., čaká na test na telefóne.</b> Sleduj, či sa nepriatelia nezasekávajú za stenou sudov.", s:"Pavel 6. 10."},
   {id:"T26", g:"claude", k:"Oprava", t:"<b>Zóna zásahu bežca nebola vycentrovaná na hrdinu</b> (posun až ±80 px). <b>Opravené v kóde 6. 10., čaká na test na telefóne.</b> Dosah je zatiaľ kruh, rovnaký hore/dole aj do strán.", s:"Pavel 6. 10."},
-  {id:"T27", g:"claude", k:"Info", t:"<b>Poskočenie hrdinu po zásahu je zámer</b> (odhodenie, nastavenie <code>PLAYER_KNOCKBACK</code> v tuning.gd, bez slidera). Nič sa nemení.", s:"Pavel 6. 10."},
+  {id:"T27", g:"claude", k:"Oprava", t:"<b>Poskočenie po zásahu patrí len bežcovi</b>; každý nepriateľ má vlastný účinok zásahu v tuning.gd. <b>Opravené v kóde 6. 10., čaká na test.</b>", s:"Pavel 6. 10."},
+  {id:"T28", g:"claude", k:"Oprava", t:"<b>Nepriatelia obchádzajú prekážky</b>: keď sa dlhšie nehýbu za sudmi, vyberú si jeden smer hore/dole a idú ním, kým sa môžu posunúť k hrdinovi, alebo kým nenarazia na okraj. <b>Opravené v kóde 6. 10., čaká na test na telefóne.</b>", s:"Pavel 6. 10."},
+  {id:"T29", g:"teba", k:"Rozhodnúť", t:"<b>Zásah bežca sa meria medzi stredmi postáv</b> (úroveň kolien), nie podľa zbrane ani tela hrdinu. Chceš zónu zásahu v mieste švihu vs. zraniteľná zóna hrdinu?", s:"Pavel 6. 10."},
 ];
 var TG = {teba:"Čaká na teba", claude:"Čaká na Claude", later:"Neskôr"};
 function renderTodos(){

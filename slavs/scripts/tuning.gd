@@ -369,6 +369,27 @@ const PLAYER_IFRAMES: float = 0.9     # invulnerable window after taking a hit
 ## immediately fatal again.
 const PLAYER_REVIVE_IFRAMES: float = 2.0
 const PLAYER_KNOCKBACK: Vector2 = Vector2(240.0, -320.0)
+## What a hit FROM EACH ENEMY KIND does to the hero (Pavel 2026-10-06: the hop
+## belongs to the rusher only; every enemy gets its own hit effect in config,
+## later maybe slow or poison). Vector2.ZERO = no knockback. The cauldron blast
+## still uses PLAYER_KNOCKBACK above.
+const RUSHER_HIT_KNOCKBACK: Vector2 = Vector2(240.0, -320.0)
+const THROWER_HIT_KNOCKBACK: Vector2 = Vector2.ZERO
+const BRUTE_HIT_KNOCKBACK: Vector2 = Vector2.ZERO
+
+## Walking round obstacles (T28, 2026-10-06). An enemy that wants to approach
+## but has moved less than DETOUR_STUCK_FRACTION of its wished speed for
+## DETOUR_STUCK_TIME seconds is stuck behind something (a barrel wall) and picks
+## ONE direction along Y. It keeps it until it can step towards the hero in X
+## again for DETOUR_CLEAR_TIME seconds, or reaches the edge of the field (then
+## it turns the other way). DETOUR_HOLD keeps the Y direction a moment longer so
+## it does not turn straight back into the obstacle. DETOUR_Y_FACTOR scales the
+## sideways speed against the wished speed.
+const DETOUR_STUCK_TIME: float = 0.35
+const DETOUR_STUCK_FRACTION: float = 0.3
+const DETOUR_CLEAR_TIME: float = 0.25
+const DETOUR_HOLD: float = 0.6
+const DETOUR_Y_FACTOR: float = 0.7
 
 # --- Enemies ---
 const ENEMY_POOL_SIZE: int = 64

@@ -1261,7 +1261,7 @@ func _on_cauldron_exploded(feet: Vector2) -> void:
 	if Tuning.cauldron_hurts_player:
 		var pf: Vector2 = player.global_position + Vector2(0.0, player.SIZE.y * 0.5)
 		if _in_blast(pf, feet, r):
-			player.take_damage(1, feet)
+			player.take_damage(1, feet, false, Tuning.PLAYER_KNOCKBACK)
 
 
 func _in_blast(at: Vector2, centre: Vector2, r: float) -> bool:
@@ -1320,8 +1320,8 @@ func _on_enemy_throw(from: Vector2, dir: Vector2) -> void:
 
 
 ## A rusher's swing landing - see enemy.gd's melee_hit and is_melee_kind.
-func _on_enemy_melee_hit(from_pos: Vector2) -> void:
-	player.take_damage(Tuning.ENEMY_CONTACT_DAMAGE, from_pos)
+func _on_enemy_melee_hit(from_pos: Vector2, knockback: Vector2) -> void:
+	player.take_damage(Tuning.ENEMY_CONTACT_DAMAGE, from_pos, false, knockback)
 
 
 ## Death clears the field and gives the player a moment, but leaves them where

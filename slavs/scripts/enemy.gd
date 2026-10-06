@@ -17,7 +17,8 @@ signal hurt(feet: Vector2, height: float, fatal: bool)
 signal throw_requested(from: Vector2, dir: Vector2)
 ## A rusher's swing landing. Not the same moment as touching the player - see
 ## RUSHER_MELEE_RANGE and _update_attack_timer.
-signal melee_hit(from_pos: Vector2)
+## `knockback` is this enemy kind's own hit effect (hit_knockback()).
+signal melee_hit(from_pos: Vector2, knockback: Vector2)
 
 enum Kind { RUSHER, THROWER, BRUTE }
 
@@ -99,6 +100,17 @@ var _stopped: bool = false
 var _weave_value: float = 0.0
 ## T16: walk-clip state with two speed thresholds (see _rusher_clip).
 var _walk_clip: bool = false
+## T28 walking round obstacles - see Tuning.DETOUR_*. _wish_speed is set by the
+## think functions each frame: how fast this enemy WANTS to close in (0 = not
+## trying to move closer), so being blocked can be told apart from standing.
+var _wish_speed: float = 0.0
+var _prev_pos: Vector2 = Vector2.ZERO
+var _stuck_time: float = 0.0
+var _detour_dir: int = 0
+var _clear_time: float = 0.0
+var _block_time: float = 0.0
+var _hold_dir: int = 0
+var _hold_time: float = 0.0
 
 ## BRUTE (2026-10-04): slow, armoured in front, grabs and holds the hero.
 var _brute_sprite: AnimatedSprite2D
@@ -307,6 +319,13 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	_stopped = false
 	_weave_value = 0.0
 	_walk_clip = false
+	_wish_speed = 0.0
+	_prev_pos = pos
+	_stuck_time = 0.0
+	_detour_dir = 0
+	_clear_time = 0.0
+	_block_time = 0.0
+	_hold_time = 0.0
 
 	# Each kind shows only its own body. A rusher wearing the gunman's sprite
 	# would be a lie the player would learn to read wrongly.
@@ -419,6 +438,7 @@ func _physics_process(delta: float) -> void:
 		if _shot_delay < 0.0:
 			_release_shot()
 
+	_wish_speed = 0.0
 	if target != null:
 		match kind:
 			Kind.RUSHER:
@@ -427,6 +447,7 @@ func _physics_process(delta: float) -> void:
 				_think_thrower(delta, free)
 			Kind.BRUTE:
 				_think_brute(delta, free)
+		_avoid_obstacles(delta)
 
 	# An enemy mid-attack stands still. Its clip has the feet planted, so a body
 	# that keeps travelling reads as sliding on ice - caught by Pavel on the
@@ -535,6 +556,18 @@ func _is_attacking() -> bool:
 ## sliding (the body's own velocity was already zeroed during the swing).
 func is_locked() -> bool:
 	return _is_attacking()
+
+
+## What a hit from this enemy does to the hero's movement (config in tuning.gd,
+## one entry per kind). Vector2.ZERO = none.
+func hit_knockback() -> Vector2:
+	match kind:
+		Kind.RUSHER:
+			return Tuning.RUSHER_HIT_KNOCKBACK
+		Kind.THROWER:
+			return Tuning.THROWER_HIT_KNOCKBACK
+		_:
+			return Tuning.BRUTE_HIT_KNOCKBACK
 
 
 ## The timer itself is counted down in _physics_process, NOT here. It used to
@@ -659,6 +692,7 @@ func _think_rusher(free: bool, delta: float) -> void:
 		else:
 			velocity = velocity.move_toward(Vector2.ZERO, speed * 6.0 * delta)
 
+	_wish_speed = 0.0 if in_range else speed
 	_update_attack_timer(in_range, delta)
 
 
@@ -684,7 +718,7 @@ func _update_attack_timer(in_range: bool, delta: float) -> void:
 			if elapsed >= _attack_len * Tuning.rusher_attack_hit_at:
 				_attack_hit_done = true
 				if in_range:
-					melee_hit.emit(global_position)
+					melee_hit.emit(global_position, hit_knockback())
 		return
 	if not in_range:
 		_attack_cd = Tuning.RUSHER_ATTACK_INTERVAL * 0.5
@@ -727,6 +761,7 @@ func _think_thrower(delta: float, free: bool) -> void:
 	# hold the preferred range: close in if far, back off if too close
 	if dist > _keep_distance + 60.0:
 		velocity.x = dir * speed
+		_wish_speed = speed
 	elif dist < _keep_distance - 60.0:
 		velocity.x = -dir * speed
 	else:
@@ -759,6 +794,81 @@ func _release_shot() -> void:
 	var aim_at: Vector2 = target.global_position + Vector2(0.0, -Tuning.THROWER_AIM_RAISE)
 	throw_requested.emit(muzzle, (aim_at - muzzle).normalized())
 	Sfx.play(&"gunshot", muzzle)
+
+
+## T28: walking round an obstacle (barrel wall). Runs after the think function,
+## so it may overrule the velocity it chose. See Tuning.DETOUR_* for the rule.
+func _avoid_obstacles(delta: float) -> void:
+	var moved: Vector2 = global_position - _prev_pos
+	_prev_pos = global_position
+	if _wish_speed <= 0.0 or _is_attacking() or _grabbing:
+		_stuck_time = 0.0
+		_detour_dir = 0
+		_clear_time = 0.0
+		_hold_time = 0.0
+		return
+
+	if _detour_dir == 0:
+		# Just after a detour, keep going the same way along Y for a moment.
+		if _hold_time > 0.0:
+			_hold_time -= delta
+			velocity.y = _hold_dir * _wish_speed * Tuning.DETOUR_Y_FACTOR
+			return
+		if moved.length() / maxf(delta, 0.0001) < _wish_speed * Tuning.DETOUR_STUCK_FRACTION:
+			_stuck_time += delta
+		else:
+			_stuck_time = maxf(_stuck_time - delta * 2.0, 0.0)
+		if _stuck_time < Tuning.DETOUR_STUCK_TIME:
+			return
+		# Stuck: pick ONE direction along Y - towards the hero's row, or by
+		# chance when he is level with us.
+		var dy: float = target.global_position.y - global_position.y
+		if absf(dy) > 10.0:
+			_detour_dir = 1 if dy > 0.0 else -1
+		else:
+			_detour_dir = 1 if randf() < 0.5 else -1
+		_clear_time = 0.0
+		_block_time = 0.0
+
+	# Detour running.
+	var toward: float = signf(target.global_position.x - global_position.x)
+	if is_zero_approx(toward):
+		toward = -1.0
+	var x_free: bool = not test_move(global_transform, Vector2(toward * 10.0, 0.0))
+
+	# Edge of the field: turn the other way. Also when something blocks Y.
+	var turn: bool = false
+	if target.has_method("walk_y_limits"):
+		var lim: Vector2 = target.walk_y_limits(global_position.x)
+		if _detour_dir < 0 and global_position.y <= lim.x + 2.0:
+			turn = true
+		elif _detour_dir > 0 and global_position.y >= lim.y - 2.0:
+			turn = true
+	var cmd_y: float = _wish_speed * Tuning.DETOUR_Y_FACTOR
+	if absf(moved.y) / maxf(delta, 0.0001) < cmd_y * 0.25:
+		_block_time += delta
+		if _block_time > 0.3:
+			turn = true
+	else:
+		_block_time = 0.0
+	if turn:
+		_detour_dir = -_detour_dir
+		_block_time = 0.0
+		_clear_time = 0.0
+
+	velocity.y = _detour_dir * cmd_y
+	if x_free:
+		velocity.x = toward * _wish_speed
+		_clear_time += delta
+		if _clear_time >= Tuning.DETOUR_CLEAR_TIME:
+			_hold_dir = _detour_dir
+			_hold_time = Tuning.DETOUR_HOLD
+			_detour_dir = 0
+			_stuck_time = 0.0
+			_clear_time = 0.0
+	else:
+		velocity.x = 0.0
+		_clear_time = 0.0
 
 
 ## A sideways drift across the approach, so the path curves instead of being a
@@ -814,6 +924,8 @@ func _think_brute(delta: float, free: bool) -> void:
 		Sfx.play(&"brute_grab", global_position)
 		return
 	velocity.x = signf(to_target.x) * speed if absf(to_target.x) > Tuning.BRUTE_GRAB_RANGE * 0.6 else 0.0
+	if absf(to_target.x) > Tuning.BRUTE_GRAB_RANGE * 0.6:
+		_wish_speed = speed
 	if free:
 		var goal: float = clampf(to_target.y / 40.0, -1.0, 1.0) * speed * 0.6
 		velocity.y = move_toward(velocity.y, goal, speed * 4.0 * delta)

@@ -37,7 +37,9 @@ T24 HOTOVÉ 2026-10-06 (test OK): nepriateľ sa pri švihu (aj strelec pri výst
 
 T25 OPRAVENÉ V KÓDE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: sudy majú blokovať nepriateľov rovnako ako hrdinu (nepriatelia cez ne prechádzali). Oprava: maska kolízií nepriateľa obsahuje vrstvu rekvizít. Pozor na zaseknutie nepriateľov za stenou sudov. (Pavel 2026-10-06)
 T26 OPRAVENÉ V KÓDE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: zóna zásahu bežca nebola vycentrovaná na hrdinu. Príčina: dosah sa meral k cieľovému bodu posunutému o hĺbkový posun bežca + kývanie (až ±80 px). Teraz sa dosah meria k hrdinovi samotnému. Dosah je stále kruh (rovnaký v X aj Y); či má byť v hĺbke menší, je rozhodnutie na neskôr. (Pavel 2026-10-06)
-T27 POTVRDENÉ, NIČ SA NEMENÍ: hrdina po zásahu poskočí = zámerná vlastnosť, `PLAYER_KNOCKBACK` (240, -320) v `tuning.gd`: odhodí ho od bežca a hore po obrazovke (z čias platformovky). Nemá slider. Ak ho chceš ladiť alebo vypnúť, treba pridať slider. (Pavel 2026-10-06)
+T27 OPRAVENÉ V KÓDE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: poskočenie hrdinu po zásahu patrí len bežcovi (strelec ho mal omylom). Každý nepriateľ má v `tuning.gd` vlastný účinok zásahu (`RUSHER_HIT_KNOCKBACK`, `THROWER_HIT_KNOCKBACK`, `BRUTE_HIT_KNOCKBACK`; neskôr môže byť spomalenie, otrava...). Výbuch kotla má pôvodný odhod. (Pavel 2026-10-06)
+T28 OPRAVENÉ V KÓDE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: nepriatelia sa zasekávali za stenou sudov. Teraz: ak sa dlhšie nehýbu, hoci chcú k hrdinovi, vyberú si JEDEN smer v osi Y (k riadku hrdinu) a idú ním, kým sa môžu znova posunúť v X k hrdinovi alebo kým nenarazia na okraj plochy (vtedy sa otočia). Nastavenia `DETOUR_*` v `tuning.gd`. (Pavel 2026-10-06)
+T29 OTVORENÉ (Pavel 2026-10-06): zásah bežca sa počíta ako vzdialenosť stredu bežca od stredu hrdinu (obaja v úrovni kolien), nie podľa zbrane ani podľa tela hrdinu. Otázka, či prerobiť na zónu zásahu v mieste švihu, voči zraniteľnej zóne hrdinu. Čaká na rozhodnutie.
 
 ### Neskôr
 T19 ZMAZANÉ 2026-10-06: fázy F2-F5 sú plán výroby, nie úloha; keď sa odrobia všetky úlohy, ďalší krok sa berie z `PLAN_hry.md`.
