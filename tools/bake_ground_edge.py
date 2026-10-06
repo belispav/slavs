@@ -40,6 +40,12 @@ IMG_TOP = 350            # first ground row of the straight picture (even)
 S = 2                    # art pixel -> picture pixel
 MIN_D, MAX_D = 1, 22     # how far the edge sits below IMG_TOP, art px
 SEED = 12
+# Edge objects must be low (they stand on the back edge of the ground, behind the hero's feet):
+# sprites taller or wider than this (art px) are not used there. Tufts carry a moss blob under
+# the grass, so they also need a nearly flat stretch of edge (max edge difference, art px).
+MAX_OBJ_H = 20
+MAX_OBJ_W = 50
+MAX_EDGE_SLOPE = 4
 SOLID_EXTRA = 3         # plain-brown art rows below the darkened rows (no cracks)
 
 # darkening, multiplier per art-pixel row counted from the outermost one
@@ -66,6 +72,8 @@ def load_sprites():
     for r in rects:
         kind = "tuft" if r["k"] == "tuft" else ("stone" if r["k"] == "stone" else None)
         if kind is None:
+            continue
+        if r["h"] > MAX_OBJ_H or r["w"] > MAX_OBJ_W:
             continue
         t = atlas.crop((r["x"], r["y"], r["x"] + r["w"], r["y"] + r["h"]))
         out[kind].append(t.resize((t.width * S, t.height * S), Image.NEAREST))
@@ -130,11 +138,12 @@ def build(lip, density, seed=SEED):
             t = t.transpose(Image.FLIP_LEFT_RIGHT)
         tw = t.width // S
         cc = min(c, na - tw)
-        lowest = int(edge[cc:cc + tw].max())
-        base = lowest + (S * 3 if stone else S)   # stones half sunk, tufts rooted in the dirt
-        if stone:
-            base = min(base, int(edge[cc:cc + tw].min()) + t.height - S)
-            base = max(base, lowest + S)
+        span = edge[cc:cc + tw]
+        if not stone and span.max() - span.min() > MAX_EDGE_SLOPE * S:   # steep edge: the moss blob would hang in the air
+            c += 3
+            continue
+        lowest = int(span.max())
+        base = lowest + S * 2                                # rooted in the dirt in every column
         pic.alpha_composite(t, (cc * S, base - t.height))
         n_s += stone
         n_t += not stone
