@@ -15,9 +15,9 @@ T03 HOTOVÉ 2026-10-06: chôdza aj boss scény majú ROVNAKÚ vertikálnu logiku
 T04 Offline: prerobiť príbeh; Claude nezačne, kým Pavel neprinesie návrh. [Open 12, Open Brain Biznis P3]
 T05 HOTOVÉ 2026-10-06: skontrolované na telefóne, všetko v poriadku (viac HP, efekty zásahov, zvuky, kotol, brute, nepriatelia za obrazovkou ho dobehnú).
 T06 Schváliť hlášky v `HLASKY.md` (angl.). [HLASKY.md]
-T07 Krátky test (cca 10 min) na inom telefóne: ovládanie (overené len na 450 dpi) a či sedí obrazovka pri inom pomere strán (zamknutá scéna, horný pás). Plné ladenie DPI až neskôr, pred uzavretým testovaním. [Open 7]
-T08 Google Play: pravidlá a IARC (jeho stopa); developer účet odložený; uzavreté testovanie 12 testerov/14 dní = F4; licencie generovaných assetov. [Open 10]
-T09 Rozhodnutia o jadre pred stavaním: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4]
+T07 AKTÍVNE (Pavel urobí v najbližších dňoch): krátky test (cca 10 min) na inom telefóne: ovládanie a či sedí obrazovka pri inom pomere strán (zamknutá scéna, horný pás). Plné ladenie DPI až neskôr. [Open 7]
+T08 ODLOŽENÉ (Pavel 2026-10-06): kontrola Google Play pravidiel/IARC až keď bude hotová kostra hry (príbeh, hlášky...). Nemá zmysel kontrolovať hru, ktorá je z 10 % hotová. [Open 10]
+T09 AKTÍVNE (Pavel 2026-10-06): základy grafiky sú hotové, teraz sa riešia herné mechanizmy: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4]
 T10 Odložené: monetizácia (premium 5,99 EUR vs. F2P). [core_loop §4]
 T11 HOTOVÉ 2026-10-05: zmeny poslané na GitHub pri čistení histórie (T20).
 T20 HOTOVÉ 2026-10-05: história GitHubu vyčistená od starých 3D súborov (`tools/github_cistenie.py`, jednorazový). Pavel: priečinok `slavs_cisty_...` v D:\2026 zmazať hneď, `slavs_zaloha_...` po týždni.
