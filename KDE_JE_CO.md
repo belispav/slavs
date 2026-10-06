@@ -13,9 +13,9 @@ T01 HOTOVÉ 2026-10-06: test na telefóne. Pozadie A (pokojná hlina) + objekty 
 T02 HOTOVÉ 2026-10-06: hod sekerou. Počas hodu sa hrdina nehýbe (0 = vlastnosť, treba vybrať moment hodu), zamach 3x rýchlejší; zapečené v `tuning.gd`. Nápad: v hre začať s nižším číslom (napr. 1) a levelovať. Nový klip netreba; pri iných zbraniach (kúzla) bude animácia spojená s útokom.
 T03 HOTOVÉ 2026-10-06: chôdza aj boss scény majú ROVNAKÚ vertikálnu logiku (jemný zvislý scroll, hracia plocha = výška obrazovky, horný pás navyše len aby bolo vidieť celé telo). Pri bossoch/klietkach sa zamkne LEN horizontálny scroll (nedá sa odísť vľavo ani vpravo). Prepínanie (zoom-in) ostáva v T13.
 T04 Offline: prerobiť príbeh; Claude nezačne, kým Pavel neprinesie návrh. [Open 12, Open Brain Biznis P3]
-T05 Pri nasadení skontrolovať: viac HP, efekty zásahov kolo 2, zvuky, kotol, brute, nepriatelia za obrazovkou ho dobehnú. [Open 3b, 9]
+T05 HOTOVÉ 2026-10-06: skontrolované na telefóne, všetko v poriadku (viac HP, efekty zásahov, zvuky, kotol, brute, nepriatelia za obrazovkou ho dobehnú).
 T06 Schváliť hlášky v `HLASKY.md` (angl.). [HLASKY.md]
-T07 Druhý telefón s iným DPI (ovládanie overené len na 450 dpi). [Open 7]
+T07 Krátky test (cca 10 min) na inom telefóne: ovládanie (overené len na 450 dpi) a či sedí obrazovka pri inom pomere strán (zamknutá scéna, horný pás). Plné ladenie DPI až neskôr, pred uzavretým testovaním. [Open 7]
 T08 Google Play: pravidlá a IARC (jeho stopa); developer účet odložený; uzavreté testovanie 12 testerov/14 dní = F4; licencie generovaných assetov. [Open 10]
 T09 Rozhodnutia o jadre pred stavaním: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4]
 T10 Odložené: monetizácia (premium 5,99 EUR vs. F2P). [core_loop §4]
