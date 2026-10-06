@@ -13,3 +13,4 @@ IDs [T..] = Pavel's ToDo list, see `KDE_JE_CO.md`.
 2. [T09] Core mechanics (what ends a run, cage economy, upgrades, unlocks, weapon switching) - marked active, but Pavel decides WHEN to start. Do not start it unprompted.
 3. [T07] Pavel tests on another phone in the coming days (controls + screen at another aspect ratio); wait for his feedback.
 4. [T04] **TODO - story rework (Pavel, 2026-10-05).** Pavel works on a new story offline, no rush. Do not start it; wait until he brings his draft. Draupnir material in `_archiv/draupnir_koncept/` is not agreed.
+5. [T25-T30] Waiting for Pavel's phone-test feedback (barrels block enemies, rusher strike zone with panel sliders, per-enemy knockback, obstacle detour already confirmed OK, enemies clamped above the bottom edge). Fix what he reports; do not start new work on T31-T40 (ideas, only recorded in `KDE_JE_CO.md`) until he says which one.

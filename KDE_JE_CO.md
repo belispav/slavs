@@ -42,6 +42,18 @@ T28 HOTOVÉ 2026-10-06 (Pavel: obchádzanie funguje dobre): nepriatelia sa zasek
 T29 ZMENENÉ V KÓDE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: zásah bežca = zóna v mieste dopadu zbrane (Pavel schválil). Zbraň zasiahne, len ak telo hrdinu zasahuje do zóny širokej `RUSHER_STRIKE_WIDTH` okolo bodu `RUSHER_STRIKE_FORWARD` px pred bežcom a hrdina je v hĺbke do `RUSHER_STRIKE_DEPTH` px od bežca. Bežec sa zastaví, až keď je hrdina v tejto hĺbke. V paneli sú 3 slidery a prepínač „UKAZ ZONU UDERU BEZCA“ (červený obdĺžnik pri údere; po zásahu tmavší).
 T30 OPRAVENÉ V KÓDE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: nepriateľ nesmie mať ani pixel pod hracou plochou. Spodný limit je rovnaký ako pre hrdinu (`Enemy.clamp_to_field`, volá sa aj po rozstrkávaní). Hore sa zatiaľ neobmedzuje. (Pavel 2026-10-06)
 
+### Zapísané 2026-10-06 (Pavel: len zapísať, v tejto session sa neriešia)
+T31 Postavy a veci majú mať tieň. (Pavel 2026-10-06)
+T32 Zvuky majú mať náhodnosť, aby nezneli mechanicky: mierne náhodná hlasitosť (nie veľmi) a náhodná výška tónu (pitch). (Pavel 2026-10-06)
+T33 Odhodenie po zásahu (knockback) má fungovať obojsmerne a pre viac zbraní. Pri zásahu nepriateľa hrdinom majú obaja odskočiť, každý na opačnú stranu. Odskok hrdinu po zásahu bežcom má byť vždy v smere útoku nepriateľa. Vzdialenosť odskoku môže škálovať podľa sily úderu (veľké zbrane odstrčia viac). Stav kódu: odhodenie je zatiaľ len od bežca, X smeruje od bežca, Y zložka je vždy hore (-320), takže nie je vždy v smere útoku. (Pavel 2026-10-06)
+T34 NA ZVÁŽENIE/VYSKÚŠANIE: úder zbrane má mať okolo seba „vlnu“ znázorňujúcu švih alebo sek (oblúk švihu, pich v tvare U alebo V), nakreslenú akoby zo vzduchu. To isté skúsiť pri zásahu nepriateľa, aby bol vidieť „úder“, hoci tam už je krv. (Pavel 2026-10-06)
+T35 Vo vzduchu má občas niečo poletovať podľa prostredia: lístie, dážď, sneh, hmla. Rôzna veľkosť (ten istý tvar raz v pôvodných pixeloch, inokedy 2x alebo 3x väčší). (Pavel 2026-10-06)
+T36 NA ZVÁŽENIE: ako miznú nepriatelia po smrti. Zatiaľ úvaha o strate v dyme, možno príde iný nápad. (Pavel 2026-10-06)
+T37 NA VYSKÚŠANIE: za postavami pri chôdzi občas efekt zvíreného prachu, snehu alebo dymu; v podstate tá istá animácia, farba podľa podkladu, po ktorom chodia. (Pavel 2026-10-06)
+T38 Útočníci vo vzduchu a hádzané veci s oblúkovou dráhou sa napodobnia tieňom: predmet opustí ruku a opisuje oblúk, tieň ide lineárne po zemi a nakoniec sa stretnú, čo vytvorí dojem letu. (Pavel 2026-10-06)
+T39 Niektoré veci majú znázorniť vietor: vlajky, trsy trávy, hmla, dym. (Pavel 2026-10-06)
+T40 Používať shadery, napr. na osvetlenú oblasť (fakľa, oheň, chvíľu po výbuchu kotla), asi aj na hmlu. Pridá hre hĺbku a rozmanitosť. (Pavel 2026-10-06)
+
 ### Neskôr
 T19 ZMAZANÉ 2026-10-06: fázy F2-F5 sú plán výroby, nie úloha; keď sa odrobia všetky úlohy, ďalší krok sa berie z `PLAN_hry.md`.
 
