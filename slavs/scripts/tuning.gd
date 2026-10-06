@@ -436,6 +436,22 @@ const RUSHER_WALK_START_SPEED: float = 40.0
 const RUSHER_ATTACK_HIT_AT: float = 0.70
 var rusher_attack_hit_at: float = RUSHER_ATTACK_HIT_AT
 
+## STRIKE ZONE (T29, 2026-10-06, Pavel: the club hits only if the hero's body is
+## at the place where it lands, or within a width around it).
+## At the hit moment (RUSHER_ATTACK_HIT_AT) the club lands STRIKE_FORWARD px in
+## front of the rusher's origin (measured from the PixelLab swing: the mace head
+## is ~32 art px = ~64 px in front of the body, at ~50 px above the feet). The
+## hero is hit if his body (PLAYER_HURT_WIDTH wide) overlaps a zone
+## STRIKE_WIDTH wide around that point AND his feet are within +-STRIKE_DEPTH of
+## the rusher's feet in depth (Y). The depth limit is also what the rusher needs
+## to line up before it stops to swing. All three live on the panel.
+const RUSHER_STRIKE_FORWARD: float = 70.0
+const RUSHER_STRIKE_WIDTH: float = 64.0
+const RUSHER_STRIKE_DEPTH: float = 50.0
+var rusher_strike_forward: float = RUSHER_STRIKE_FORWARD
+var rusher_strike_width: float = RUSHER_STRIKE_WIDTH
+var rusher_strike_depth: float = RUSHER_STRIKE_DEPTH
+
 ## How close two enemies may get before they push each other apart, in world
 ## units. Rushers all head for the same point - the player - so without this
 ## they arrive as one pile of overlapping bodies. Throwers barely need it; they

@@ -471,6 +471,9 @@ func _separate_enemies() -> void:
 			else:
 				a.global_position += push
 				b.global_position -= push
+	# T30: the nudges above must not push anybody below the field.
+	for e in live:
+		e.clamp_to_field()
 
 
 ## Follow the debug panel's background switches. Only touches the sprite when a

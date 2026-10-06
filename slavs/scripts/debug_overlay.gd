@@ -425,13 +425,29 @@ func _build_panel() -> void:
 	_add_slider("na aku vzdialenost si bezec vsimne hraca (px)", 100.0, 1200.0,
 		10.0, Tuning.enemy_detection_range,
 		func(v: float) -> void: Tuning.enemy_detection_range = v)
-	_add_slider("na aku vzdialenost sa bezec zastavi a siaha zbranou (px)",
+	_add_slider("na aku vzdialenost (do strany) sa bezec zastavi (px)",
 		20.0, 160.0, 2.0, Tuning.rusher_melee_range,
 		func(v: float) -> void: Tuning.rusher_melee_range = v)
 	# The dodge window. Everything before this point in the swing can be stepped
 	# out of; at this point the range is re-checked and the hit either lands or
 	# misses. Live because the right answer is wherever the club is furthest
 	# forward, which is a thing to watch, not to compute.
+	var zone_btn := CheckButton.new()
+	zone_btn.text = "UKAZ ZONU UDERU BEZCA"
+	zone_btn.custom_minimum_size = Vector2(0, 56)
+	zone_btn.button_pressed = Debug.show_strike_zone
+	rows.add_child(zone_btn)
+	zone_btn.toggled.connect(func(on: bool) -> void:
+		Debug.show_strike_zone = on)
+	_add_slider("zona uderu: ako daleko pred bezcom dopadne zbran (px)",
+		0.0, 160.0, 2.0, Tuning.rusher_strike_forward,
+		func(v: float) -> void: Tuning.rusher_strike_forward = v)
+	_add_slider("zona uderu: sirka okolo miesta dopadu (px)",
+		10.0, 160.0, 2.0, Tuning.rusher_strike_width,
+		func(v: float) -> void: Tuning.rusher_strike_width = v)
+	_add_slider("zona uderu: kolko hore/dole v hlbke zasiahne (px)",
+		10.0, 120.0, 2.0, Tuning.rusher_strike_depth,
+		func(v: float) -> void: Tuning.rusher_strike_depth = v)
 	_add_slider("kedy v animacii uderu zasah plati (0 = hned, 1 = na konci)",
 		0.05, 0.95, 0.05, Tuning.rusher_attack_hit_at,
 		func(v: float) -> void: Tuning.rusher_attack_hit_at = v)

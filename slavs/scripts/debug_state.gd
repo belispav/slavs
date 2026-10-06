@@ -31,6 +31,9 @@ var show_touches: bool = false
 ## for the current wave to die off.
 var disable_rusher: bool = false
 
+## Draw each rusher's strike zone while it swings (T29). Debug only.
+var show_strike_zone: bool = false
+
 ## Same for throwers.
 var disable_thrower: bool = false
 

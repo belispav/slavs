@@ -379,6 +379,20 @@ func is_melee_kind() -> bool:
 	return kind == Kind.RUSHER
 
 
+## Nothing of an enemy may be below the playing field (T30, Pavel 2026-10-06):
+## the bottom limit is the one the hero obeys, converted for this body's own
+## feet offset. Public: main.gd calls it again after pushing enemies apart.
+## Only the bottom is limited here.
+func clamp_to_field() -> void:
+	if target == null or not target.has_method("walk_y_limits"):
+		return
+	var lim: Vector2 = target.walk_y_limits(global_position.x)
+	var hi: float = lim.y + (target.SIZE.y - SIZE.y) * 0.5
+	if global_position.y > hi:
+		global_position.y = hi
+		velocity.y = minf(velocity.y, 0.0)
+
+
 ## Called by the player's bullets (via the hurtbox).
 func hit() -> void:
 	damage(1)
@@ -462,6 +476,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_keep_out_of_the_left()
+	clamp_to_field()
 	# Depth is Y. The sprite's own z_index is relative to this, so it keeps
 	# sitting behind the body's flash exactly as before.
 	z_index = Tuning.depth_z(global_position.y)
@@ -471,6 +486,8 @@ func _physics_process(delta: float) -> void:
 	if _flash > 0.0:
 		_flash = maxf(_flash - delta * 6.0, 0.0)
 		queue_redraw()
+	elif Debug.show_strike_zone and kind == Kind.RUSHER:
+		queue_redraw()   # strike zone overlay, debug only
 	# Cheap enough to redo every frame, and it is what makes the hurtbox
 	# slider in the debug panel actually live instead of only taking effect
 	# after the next redeploy - same reasoning as player.gd's own call.
@@ -679,8 +696,15 @@ func _think_rusher(free: bool, delta: float) -> void:
 			# setting): aim at the hero instead of standing there.
 			to_target = target.global_position - global_position
 			distance = maxf(to_target.length(), 0.001)
-		var reach: float = (target.global_position - global_position).length()
-		in_range = reach <= (hold_range if _stopped else enter_range)
+		# T29: it stops when the hero is within the stop distance sideways AND
+		# lined up in depth - otherwise the swing could never land (the zone is
+		# a thin slice in depth). Wider limits while already stopped.
+		var dx_abs: float = absf(target.global_position.x - global_position.x)
+		var dy_abs: float = absf(target.global_position.y - global_position.y)
+		var depth_enter: float = Tuning.rusher_strike_depth
+		var depth_hold: float = depth_enter * 1.25
+		in_range = dx_abs <= (hold_range if _stopped else enter_range) \
+			and dy_abs <= (depth_hold if _stopped else depth_enter)
 		_stopped = in_range
 
 		if not in_range:
@@ -717,7 +741,7 @@ func _update_attack_timer(in_range: bool, delta: float) -> void:
 			var elapsed: float = _attack_len - _attack_timer
 			if elapsed >= _attack_len * Tuning.rusher_attack_hit_at:
 				_attack_hit_done = true
-				if in_range:
+				if _strike_connects():
 					melee_hit.emit(global_position, hit_knockback())
 		return
 	if not in_range:
@@ -732,6 +756,31 @@ func _update_attack_timer(in_range: bool, delta: float) -> void:
 		# Not every swing - a shout on each one, from a crowd, is a choir.
 		if randf() < Tuning.RUSHER_SHOUT_CHANCE:
 			Sfx.play(&"rusher_shout", global_position)
+
+
+## Which way this enemy faces: +1 right, -1 left. The art faces left, flip_h
+## turns it right.
+func _facing() -> float:
+	if _sprite != null and _sprite.visible:
+		return 1.0 if _sprite.flip_h else -1.0
+	if target != null and target.global_position.x > global_position.x:
+		return 1.0
+	return -1.0
+
+
+## Where the club lands, in world x (T29).
+func _strike_x() -> float:
+	return global_position.x + _facing() * Tuning.rusher_strike_forward
+
+
+## The swing's hit: the hero's body overlaps the zone around the landing point
+## (STRIKE_WIDTH wide) and he is within STRIKE_DEPTH of this enemy in depth.
+func _strike_connects() -> bool:
+	if target == null:
+		return false
+	var half: float = Tuning.rusher_strike_width * 0.5 + Tuning.PLAYER_HURT_WIDTH * 0.5
+	return absf(target.global_position.x - _strike_x()) <= half \
+		and absf(target.global_position.y - global_position.y) <= Tuning.rusher_strike_depth
 
 
 ## How long the attack clip actually runs, read from the art itself once it
@@ -955,6 +1004,15 @@ func _track_depth(speed: float) -> void:
 func _draw() -> void:
 	# A drawn character replaces the box entirely. Leaving the box behind the
 	# sprite showed as a coloured slab around the legs.
+	if Debug.show_strike_zone and kind == Kind.RUSHER and _attack_timer > 0.0:
+		var cx: float = _facing() * Tuning.rusher_strike_forward
+		var feet: float = SIZE.y * 0.5
+		var zone := Rect2(cx - Tuning.rusher_strike_width * 0.5,
+			feet - Tuning.rusher_strike_depth,
+			Tuning.rusher_strike_width, Tuning.rusher_strike_depth * 2.0)
+		var zc := Color(1.0, 0.15, 0.1, 0.55 if _attack_hit_done else 0.25)
+		draw_rect(zone, zc)
+		draw_rect(zone, Color(1.0, 0.15, 0.1, 0.9), false, 2.0)
 	if _sprite != null and _sprite.visible:
 		return
 	var base := Color(0.62, 0.30, 0.28) if kind == Kind.RUSHER else Color(0.40, 0.34, 0.52)
