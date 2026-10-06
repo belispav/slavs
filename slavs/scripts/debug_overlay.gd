@@ -478,6 +478,21 @@ func _build_panel() -> void:
 	_add_slider("ako daleko od seba sa nepriatelia odtlacaju (px; len bez pevnych tiel)",
 		0.0, 120.0, 2.0, Tuning.enemy_separation,
 		func(v: float) -> void: Tuning.enemy_separation = v)
+	# T33: push ("odhodenie") after a hit, distances in px along the attack.
+	_add_note("ODHODENIE PO ZASAHU")
+	_add_slider("bezec odhodi hrdinu (px)", 0.0, 300.0, 5.0, Tuning.rusher_push,
+		func(v: float) -> void: Tuning.rusher_push = v)
+	_add_slider("strela strelca odhodi hrdinu (px)", 0.0, 300.0, 5.0,
+		Tuning.thrower_push,
+		func(v: float) -> void: Tuning.thrower_push = v)
+	_add_slider("sekera odhodi nepriatela (px)", 0.0, 300.0, 5.0, Tuning.axe_push,
+		func(v: float) -> void: Tuning.axe_push = v)
+	_add_slider("sekera na ceste SPAT: kolko odhodenia (0 = vobec, 1 = rovnako)",
+		0.0, 1.0, 0.05, Tuning.axe_return_push_factor,
+		func(v: float) -> void: Tuning.axe_return_push_factor = v)
+	_add_slider("odhodenie: ako dlho trva (s)", 0.08, 0.6, 0.02,
+		Tuning.knockback_time,
+		func(v: float) -> void: Tuning.knockback_time = v)
 	# T31: shadows under characters and props.
 	_add_slider("tien pod postavami: sila (0 = vypnuty)", 0.0, 1.0, 0.05,
 		Tuning.shadow_alpha,

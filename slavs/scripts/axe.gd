@@ -141,8 +141,12 @@ func _hit_overlaps() -> void:
 			if state == State.BACK:
 				travel = (_catch_point() - global_position).normalized()
 			var landed: bool = false
+			# T33: the way back pushes too, by a panel factor (0 = it does not).
+			var push_dist: float = Tuning.axe_push
+			if state == State.BACK:
+				push_dist *= Tuning.axe_return_push_factor
 			for i in Tuning.AXE_DAMAGE:
-				landed = victim.call("hit_from", travel)
+				landed = victim.call("hit_from", travel, push_dist)
 				if not landed:
 					break
 			if not landed and state == State.OUT:

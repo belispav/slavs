@@ -106,9 +106,11 @@ func _on_area_entered(area: Area2D) -> void:
 	if not victim.has_method(method):
 		return
 	if hostile:
-		victim.call(method, 1, global_position)
+		# T33: a gunman's bullet pushes the hero a little along its flight.
+		victim.call(method, 1, global_position, false, Vector2.ZERO,
+			Tuning.push_vector(dir, Tuning.thrower_push))
 	elif victim.has_method("hit_from"):
-		victim.call("hit_from", dir)
+		victim.call("hit_from", dir, Tuning.BULLET_PUSH_DIST)
 	else:
 		victim.call(method)
 	despawn()

@@ -1351,8 +1351,9 @@ func _on_enemy_throw(from: Vector2, dir: Vector2) -> void:
 
 
 ## A rusher's swing landing - see enemy.gd's melee_hit and is_melee_kind.
-func _on_enemy_melee_hit(from_pos: Vector2, knockback: Vector2) -> void:
-	player.take_damage(Tuning.ENEMY_CONTACT_DAMAGE, from_pos, false, knockback)
+func _on_enemy_melee_hit(from_pos: Vector2, push: Vector2) -> void:
+	player.take_damage(Tuning.ENEMY_CONTACT_DAMAGE, from_pos, false,
+		Vector2.ZERO, push)
 
 
 ## Death clears the field and gives the player a moment, but leaves them where

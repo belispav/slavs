@@ -104,6 +104,13 @@ var _mask_applied: int = -1
 ## T31: ground shadow.
 var _shadow: Node2D
 const ShadowScript := preload("res://scripts/shadow.gd")
+## T33: running push after a hit. Speed (px/s) falls linearly to zero over
+## _push_total seconds, so the distance is exactly the requested one. It is added
+## on top of the controlled movement and does not touch `velocity`, so the
+## measured control feel is unchanged.
+var _push_vel: Vector2 = Vector2.ZERO
+var _push_time: float = 0.0
+var _push_total: float = 0.1
 var _art_head_margin: float = 0.0
 var _applied_scale: float = 0.0
 
@@ -391,7 +398,7 @@ func _on_body_touched(body: Node) -> void:
 ## `force` ignores the invulnerability after a hit (the brute's hold ticks on
 ## its own clock) but never god mode.
 func take_damage(amount: int, from_pos: Vector2, force: bool = false,
-		knockback: Vector2 = Vector2.ZERO) -> void:
+		knockback: Vector2 = Vector2.ZERO, push: Vector2 = Vector2.ZERO) -> void:
 	# God mode ignores the hit completely - no blood, no buzz, no blink.
 	# 2026-10-03 the blood and vibration were let through while immortal, and
 	# on device that read as "god mode no longer works" (Pavel). To see the
@@ -414,9 +421,29 @@ func take_damage(amount: int, from_pos: Vector2, force: bool = false,
 	if _held_by == null and knockback != Vector2.ZERO:
 		velocity.x = away * knockback.x
 		velocity.y = knockback.y
+	# T33: the push along the attack (displacement in px, see Tuning.push_vector).
+	if _held_by == null and push != Vector2.ZERO and hp > 0:
+		_push_total = maxf(Tuning.knockback_time, 0.05)
+		_push_time = _push_total
+		_push_vel = push * 2.0 / _push_total
 	health_changed.emit(hp)
 	if hp <= 0:
 		died.emit()
+
+
+## T33: move along the running push, stopped by solid bodies, kept in the field.
+func _apply_push(delta: float) -> void:
+	if _push_time <= 0.0:
+		return
+	if is_held() or hp <= 0:
+		_push_time = 0.0
+		return
+	var speed_k: float = clampf((_push_time - delta * 0.5) / _push_total, 0.0, 1.0)
+	_push_time = maxf(_push_time - delta, 0.0)
+	move_and_collide(_push_vel * speed_k * delta)
+	var lim: Vector2 = walk_y_limits(global_position.x)
+	global_position.y = clampf(global_position.y, lim.x, maxf(lim.y, lim.x))
+	global_position.x = clampf(global_position.x, field_left, field_right)
 
 
 ## The walkable depth band (top, bottom) of the origin at column x - the same
@@ -500,6 +527,7 @@ func _physics_process(delta: float) -> void:
 			or not is_equal_approx(_fit_w, Tuning.body_feet_width):
 		_fit_body()
 	move_and_slide()
+	_apply_push(delta)
 	# Depth is Y, same rule as the enemies - the player is not special, and an
 	# enemy standing nearer the camera should cover him.
 	z_index = Tuning.depth_z(global_position.y)

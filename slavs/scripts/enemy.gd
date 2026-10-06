@@ -17,8 +17,9 @@ signal hurt(feet: Vector2, height: float, fatal: bool)
 signal throw_requested(from: Vector2, dir: Vector2)
 ## A rusher's swing landing. Not the same moment as touching the player - see
 ## RUSHER_MELEE_RANGE and _update_attack_timer.
-## `knockback` is this enemy kind's own hit effect (hit_knockback()).
-signal melee_hit(from_pos: Vector2, knockback: Vector2)
+## `push` is this enemy kind's own hit effect: the displacement the hero gets
+## (hit_push(), T33). ZERO = none.
+signal melee_hit(from_pos: Vector2, push: Vector2)
 
 enum Kind { RUSHER, THROWER, BRUTE }
 
@@ -46,6 +47,10 @@ var _weave_rate: float = 1.0
 var _keep_distance: float = Tuning.THROWER_KEEP_DISTANCE
 var _hurtbox: Area2D
 var _hurt_shape: CollisionShape2D
+## T33: running push after a hit (see apply_push).
+var _push_vel: Vector2 = Vector2.ZERO
+var _push_time: float = 0.0
+var _push_total: float = 0.1
 ## T22: the solid part of the body (feet only) and what was last fitted.
 var _body_shape: CollisionShape2D
 var _fit_h: float = -1.0
@@ -451,12 +456,17 @@ func hit() -> void:
 ## A hit that knows which way the weapon was travelling. Returns false when
 ## the brute's front plate stops it - the axe then bounces back (axe.gd).
 ## Everything else just takes the hit.
-func hit_from(travel: Vector2) -> bool:
+func hit_from(travel: Vector2, push_dist: float = -1.0) -> bool:
 	if kind == Kind.BRUTE and active and travel.x * _face < -0.2:
 		Sfx.play(&"armor_clang", global_position)
 		armor_deflected.emit(global_position + Vector2(_face * 24.0, -60.0))
 		return false
 	damage(1)
+	# T33: the hero's weapon pushes the victim along its travel (not the brute,
+	# not a kill). push_dist < 0 = the axe's distance.
+	if active:
+		apply_push(Tuning.push_vector(travel,
+			Tuning.axe_push if push_dist < 0.0 else push_dist))
 	return true
 
 
@@ -511,6 +521,9 @@ func _physics_process(delta: float) -> void:
 				_think_thrower(delta, free)
 			Kind.BRUTE:
 				_think_brute(delta, free)
+		# T33: a pushed enemy is not trying to close in (no stuck detour).
+		if _push_time > 0.0:
+			_wish_speed = 0.0
 		_avoid_obstacles(delta)
 
 	# An enemy mid-attack stands still. Its clip has the feet planted, so a body
@@ -521,7 +534,7 @@ func _physics_process(delta: float) -> void:
 	# Deliberately for every kind, not just the thrower: an attack is a
 	# commitment, and it also gives the player a readable moment where an enemy
 	# has chosen to shoot instead of chase. Any future enemy type gets this free.
-	if _is_attacking():
+	if _is_attacking() or _push_time > 0.0:
 		velocity = Vector2.ZERO
 
 	_apply_mask()
@@ -529,6 +542,7 @@ func _physics_process(delta: float) -> void:
 			or not is_equal_approx(_fit_w, Tuning.body_feet_width):
 		_fit_body()
 	move_and_slide()
+	_apply_push(delta)
 	_keep_out_of_the_left()
 	clamp_to_field()
 	# Depth is Y. The sprite's own z_index is relative to this, so it keeps
@@ -629,16 +643,39 @@ func is_locked() -> bool:
 	return _is_attacking()
 
 
-## What a hit from this enemy does to the hero's movement (config in tuning.gd,
-## one entry per kind). Vector2.ZERO = none.
-func hit_knockback() -> Vector2:
-	match kind:
-		Kind.RUSHER:
-			return Tuning.RUSHER_HIT_KNOCKBACK
-		Kind.THROWER:
-			return Tuning.THROWER_HIT_KNOCKBACK
-		_:
-			return Tuning.BRUTE_HIT_KNOCKBACK
+## What a melee hit from this enemy does to the hero's position (T33): the
+## rusher pushes him Tuning.rusher_push px along the blow, from the rusher
+## towards him. The thrower's bullets push in bullet.gd; the brute pushes
+## nothing (it grabs). Vector2.ZERO = none.
+func hit_push() -> Vector2:
+	if kind == Kind.RUSHER and target != null:
+		return Tuning.push_vector(target.global_position - global_position,
+			Tuning.rusher_push)
+	return Vector2.ZERO
+
+
+## T33: pushed by a hit, `push` = displacement in px. The brute is too big to be
+## pushed. A pushed enemy is stunned for the push: it stops walking and a swing
+## or shot in progress is dropped. Speed falls linearly to zero over
+## Tuning.knockback_time, so the distance is exactly `push`.
+func apply_push(push: Vector2) -> void:
+	if kind == Kind.BRUTE or push == Vector2.ZERO or not active:
+		return
+	_push_total = maxf(Tuning.knockback_time, 0.05)
+	_push_time = _push_total
+	_push_vel = push * 2.0 / _push_total
+	_attack_timer = 0.0
+	_attack_hit_done = true
+	_fire_timer = 0.0
+	_shot_delay = -1.0
+
+
+func _apply_push(delta: float) -> void:
+	if _push_time <= 0.0:
+		return
+	var speed_k: float = clampf((_push_time - delta * 0.5) / _push_total, 0.0, 1.0)
+	_push_time = maxf(_push_time - delta, 0.0)
+	move_and_collide(_push_vel * speed_k * delta)
 
 
 ## The timer itself is counted down in _physics_process, NOT here. It used to
@@ -791,7 +828,7 @@ func _update_attack_timer(in_range: bool, delta: float) -> void:
 			if elapsed >= _attack_len * Tuning.rusher_attack_hit_at:
 				_attack_hit_done = true
 				if _strike_connects():
-					melee_hit.emit(global_position, hit_knockback())
+					melee_hit.emit(global_position, hit_push())
 		return
 	if not in_range:
 		_attack_cd = Tuning.RUSHER_ATTACK_INTERVAL * 0.5

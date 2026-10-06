@@ -373,9 +373,37 @@ const PLAYER_KNOCKBACK: Vector2 = Vector2(240.0, -320.0)
 ## belongs to the rusher only; every enemy gets its own hit effect in config,
 ## later maybe slow or poison). Vector2.ZERO = no knockback. The cauldron blast
 ## still uses PLAYER_KNOCKBACK above.
-const RUSHER_HIT_KNOCKBACK: Vector2 = Vector2(240.0, -320.0)
-const THROWER_HIT_KNOCKBACK: Vector2 = Vector2.ZERO
-const BRUTE_HIT_KNOCKBACK: Vector2 = Vector2.ZERO
+## T33 (Pavel 2026-10-07) PUSH ("odhodenie"), both ways. A hit moves the victim a
+## set distance (px) along the direction of the attack, over KNOCKBACK_TIME
+## seconds (speed falls linearly to zero), stopped by solid bodies and the field
+## edge. The old per-kind velocity hop (RUSHER_/THROWER_/BRUTE_HIT_KNOCKBACK, T27)
+## is gone; only the cauldron blast above still uses the old velocity hop.
+## Hero hit by a rusher's club: far (a heavy blow). Hero hit by a gunman's bullet:
+## short. Brute: none, it only grabs. Enemies hit by the hero's axe: all pushed
+## the same, except the brute (too big). Barrels and cauldrons are not pushed
+## (open idea). The axe's way BACK counts as a hit too (factor 0 = no push).
+const KNOCKBACK_TIME: float = 0.22
+var knockback_time: float = KNOCKBACK_TIME
+## Depth (screen Y) part of a push is scaled by this, the ground is foreshortened.
+const KNOCKBACK_Y_FACTOR: float = 0.6
+const RUSHER_PUSH_DIST: float = 90.0
+var rusher_push: float = RUSHER_PUSH_DIST
+const THROWER_PUSH_DIST: float = 35.0
+var thrower_push: float = THROWER_PUSH_DIST
+const AXE_PUSH_DIST: float = 70.0
+var axe_push: float = AXE_PUSH_DIST
+const AXE_RETURN_PUSH_FACTOR: float = 1.0
+var axe_return_push_factor: float = AXE_RETURN_PUSH_FACTOR
+## The hero's plain bullets (the panel can switch the axe off) push a little.
+const BULLET_PUSH_DIST: float = 20.0
+
+## The displacement for a hit travelling along `dir`: `dist` px, depth part
+## foreshortened. ZERO for no direction or no distance.
+static func push_vector(dir: Vector2, dist: float) -> Vector2:
+	var d := Vector2(dir.x, dir.y * KNOCKBACK_Y_FACTOR)
+	if dist <= 0.0 or d.length_squared() < 0.0001:
+		return Vector2.ZERO
+	return d.normalized() * dist
 
 ## Walking round obstacles (T28, 2026-10-06). An enemy that wants to approach
 ## but has moved less than DETOUR_STUCK_FRACTION of its wished speed for
