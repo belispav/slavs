@@ -24,7 +24,7 @@ T20 HOTOVÉ 2026-10-05: história GitHubu vyčistená od starých 3D súborov (`
 T21 Po 2026-10-12: zmazať zálohu `slavs_zaloha_...` v D:\2026 (Pavel, v Prieskumníku). Priečinok `slavs_cisty_...` sa maže hneď. [T20]
 
 ### Čaká na Claude (po OK od Pavla)
-T12 PRIORITA (Pavel 2026-10-06, riešiť čím skôr): horný okraj chodnej zeme je odrezaný rovno; treba prirodzený prechod. [Open 3a]
+T12 HOTOVÉ NA GITHUBE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: horný okraj zeme má nerovný lem (až ~44 px) s trsmi trávy a machu; chodná dráha sa nezmenila. Ak sa Pavlovi nepáči, upraví sa `tools/bake_ground_edge.py` (výška/počet trsov). [Open 3a]
 T13 ZRUŠENÉ 2026-10-06: mechanika je dohodnutá (hra na určitom mieste zamkne vodorovný scroll). Samotné zamykanie sa naprogramuje spolu s bossmi a klietkami, nie ako samostatná úloha.
 T14 ZMAZANÉ 2026-10-06: počet ani obsah scén nie je určený; vypálená dedina bola len skúška grafiky, nepadlo rozhodnutie, že je druhou scénou.
 T15 UZAVRETÉ 2026-10-06: boj na blízko. Prekrývanie bežcov je prijateľné (Pavel: "je to srandovné, hlavne keď ich je veľa"). Konkrétne zlepšenia sú T22-T24.
