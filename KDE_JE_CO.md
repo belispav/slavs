@@ -27,10 +27,13 @@ T21 Po 2026-10-12: zmazať zálohu `slavs_zaloha_...` v D:\2026 (Pavel, v Priesk
 T12 PRIORITA (Pavel 2026-10-06, riešiť čím skôr): horný okraj chodnej zeme je odrezaný rovno; treba prirodzený prechod. [Open 3a]
 T13 ZRUŠENÉ 2026-10-06: mechanika je dohodnutá (hra na určitom mieste zamkne vodorovný scroll). Samotné zamykanie sa naprogramuje spolu s bossmi a klietkami, nie ako samostatná úloha.
 T14 ZMAZANÉ 2026-10-06: počet ani obsah scén nie je určený; vypálená dedina bola len skúška grafiky, nepadlo rozhodnutie, že je druhou scénou.
-T15 Boj na blízko v 2.5D nevyriešený (dizajnové rozhodnutie, Opus). [Open 4]
-T16 Bežec bliká po švihu pri pohybe v Y. [Open 5]
-T17 Zjednotiť farebnú paletu; v pamäti zapísané ako uzavreté, overiť s Pavlom. [Open 6]
+T15 UZAVRETÉ 2026-10-06: boj na blízko. Prekrývanie bežcov je prijateľné (Pavel: "je to srandovné, hlavne keď ich je veľa"). Konkrétne zlepšenia sú T22-T24.
+T16 Bežec bliká po švihu pri pohybe v Y. Pavel: pravdepodobne to vyrieši T24 (zámok pri útoku); stále bliká (2026-10-06). [Open 5]
+T17 AKTÍVNE, DÔLEŽITÉ (Pavel 2026-10-06): farebná paleta nie je zjednotená (PixelLab je primárny zdroj grafiky). MUSÍ sa vyriešiť PRED generovaním finálnej hernej grafiky; kým robíme prototypy, nemusí byť rozhodnuté. [Open 6]
 T18 Gunman: chýba idle a ready idle. Brute: úchop nesedí (zatiaľ ignorovať). [Open 8]
+T22 Nepriatelia majú mať pevné telo: nedá sa cez nich prejsť a ani oni cez seba (ako sud). Dôsledok: pri mnohých (cca 32+) sa vzájomne zablokujú a nenakopia sa na jednu kopu; treba dať pozor na zaseknutie. (Pavel 2026-10-06)
+T23 NÁPAD (neskôr, dizajn): nepriatelia hľadajú inú trasu a obídu hrdinu. Dôsledok: obkľúčia ho a nebude vedieť ujsť. Rozhodnúť neskôr, či to chceme. (Pavel 2026-10-06)
+T24 Nepriateľ sa v momente začiatku švihu uzamkne na mieste (rovnako ako hrdina pri hode); útok je v stoji a pohyb ho "kĺže". Neskôr lepší nepriatelia dostanú animáciu útoku za pohybu. Pozn.: kód už nuluje rýchlosť počas útoku od 2026-08-13, preto najprv zistiť, prečo to stále bliká/kĺže. (Pavel 2026-10-06)
 
 ### Neskôr
 T19 F2 vertikálny rez, F3 obsah, F4 doladenie + uzavreté testovanie, F5 vydanie. [Open 11, PLAN_hry]
