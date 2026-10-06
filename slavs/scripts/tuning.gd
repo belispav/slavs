@@ -485,7 +485,7 @@ var body_feet_width: float = BODY_FEET_WIDTH
 ## T31 SHADOWS (Pavel 2026-10-06): flat ellipse on the ground under characters,
 ## barrels and cauldrons (shadow.gd). Strength 0 = off; scale multiplies every
 ## shadow's width. Width per object comes from its drawn size (SHADOW_WIDTH_*).
-const SHADOW_ALPHA: float = 0.55
+const SHADOW_ALPHA: float = 0.3
 var shadow_alpha: float = SHADOW_ALPHA
 const SHADOW_SCALE: float = 1.0
 var shadow_scale: float = SHADOW_SCALE

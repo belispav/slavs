@@ -37,6 +37,8 @@ func spawn(pos: Vector2, direction: Vector2, is_hostile: bool = false,
 	global_position = pos
 	dir = direction
 	hostile = is_hostile
+	# Enemy shots freeze with the world, the hero's shots keep flying.
+	process_mode = Node.PROCESS_MODE_PAUSABLE if hostile else Node.PROCESS_MODE_ALWAYS
 	speed = shot_speed if shot_speed > 0.0 else Tuning.BULLET_SPEED
 	life = Tuning.BULLET_LIFETIME
 	# Player shots look for enemies and dummy targets; enemy shots for the player.

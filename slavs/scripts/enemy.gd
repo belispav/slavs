@@ -138,6 +138,8 @@ func _ready() -> void:
 	# Lets the debug panel find and despawn enemies by kind without main.gd
 	# having to hand out its pool array.
 	add_to_group("enemy")
+	# Frozen by the panel's ZMRAZIT SVET switch (the hero is not).
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 	collision_layer = Tuning.LAYER_ENEMY
 	# T25 (2026-10-06): barrels stop enemies exactly like the hero.
 	# T22: and, with solid bodies, the hero and the other enemies.

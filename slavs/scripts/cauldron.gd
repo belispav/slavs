@@ -33,6 +33,8 @@ const ShadowScript := preload("res://scripts/shadow.gd")
 
 
 func _ready() -> void:
+	# Frozen by the panel's ZMRAZIT SVET switch (the fuse stops).
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 	collision_layer = Tuning.LAYER_TARGET
 	collision_mask = 0
 	monitoring = false

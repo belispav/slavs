@@ -361,6 +361,10 @@ var _bg_parallax_layers: Array = []
 
 
 func _ready() -> void:
+	# Panel switch ZMRAZIT SVET pauses the tree; everything under main keeps
+	# running (hero, his axe and shots, effects) except the nodes that opt in
+	# with PROCESS_MODE_PAUSABLE: enemies, cauldrons, enemy shots.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	Debug.fixed_screen = Tuning.GROUNDS[Debug.ground_key]["scene"]
 	_load_walk_top_curve()
 	_load_walk_bottom_curve()
@@ -390,13 +394,15 @@ func _process(delta: float) -> void:
 		_reset_game()
 	_alive = _count_alive()      # spocitane RAZ za snimku, nie trikrat
 	_place_barrel_once()
-	_spawn_tick(delta)
+	if not get_tree().paused:
+		_spawn_tick(delta)
 	_update_hud()
 	_apply_bg_filter()
 	_apply_fg_parallax_speed()
 	_apply_bg_parallax_speed()
 	_refit_prop_blocks()
-	_separate_enemies()
+	if not get_tree().paused:
+		_separate_enemies()
 
 
 ## Follows the "rychlost popredia" panel slider (Tuning.fg_parallax_factor)

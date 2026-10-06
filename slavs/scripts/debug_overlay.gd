@@ -289,14 +289,16 @@ func _build_panel() -> void:
 		func(v: float) -> void: Music.set_volume_db(v))
 
 	var pause_mode := CheckButton.new()
-	pause_mode.text = "PAUZA"
+	pause_mode.text = "ZMRAZIT SVET (hybe sa len hrdina)"
 	pause_mode.custom_minimum_size = Vector2(0, 56)
 	pause_mode.button_pressed = get_tree().paused
 	rows.add_child(pause_mode)
 	pause_mode.toggled.connect(func(on: bool) -> void:
-		# The panel's own CanvasLayer is PROCESS_MODE_ALWAYS (see _ready), and
-		# every row here is its child, so the sliders and buttons keep working
-		# while the rest of the tree - player, enemies, spawner - freezes.
+		# Pavel 2026-10-06: the old PAUZA froze the hero too, which made it
+		# useless for looking at solid bodies. Now only enemies, cauldrons,
+		# enemy shots and the spawner freeze (they are PROCESS_MODE_PAUSABLE,
+		# everything else runs ALWAYS - see main.gd _ready). The panel is
+		# ALWAYS as before.
 		get_tree().paused = on)
 
 	var no_rusher := CheckButton.new()

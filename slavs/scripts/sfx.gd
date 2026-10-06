@@ -43,13 +43,13 @@ const DEFAULT_GAP: float = 0.04
 const VOICE_GAP: float = 1.2
 ## Random pitch range: effects vary more than voices (a voice pitched too far
 ## stops sounding like the same person).
-const SFX_PITCH: float = 0.08
+const SFX_PITCH: float = 0.25
 const VOICE_PITCH: float = 0.03
 ## T32 (Pavel 2026-10-06): sounds must not sound mechanical. Besides the random
 ## pitch above, each play gets a slightly random volume: +-this many dB, a
 ## little, not much. Live on the debug panel (effects); voices keep a smaller
 ## constant spread.
-const SFX_VOLUME_JITTER_DB: float = 1.5
+const SFX_VOLUME_JITTER_DB: float = 2.5
 const VOICE_VOLUME_JITTER_DB: float = 1.0
 
 var enabled: bool = true
@@ -71,6 +71,9 @@ var _voice_bus: int = -1
 
 
 func _ready() -> void:
+	# Keeps playing while the panel's FREEZE switch pauses the world (the hero's
+	# own sounds must still be heard); see debug_overlay.gd.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_sfx_bus = _make_bus(&"Sfx")
 	_voice_bus = _make_bus(&"Voice")
 	for i in SFX_POOL:
