@@ -253,6 +253,14 @@ func _build_panel() -> void:
 		func(v: float) -> void: Sfx.sfx_volume_db = v)
 	_add_slider("hlasitost hlasov (dB)", -30.0, 6.0, 1.0, Sfx.voice_volume_db,
 		func(v: float) -> void: Sfx.voice_volume_db = v)
+	# T32: every effect gets a slightly random volume and pitch so repeated
+	# sounds do not sound mechanical. 0 = identical every time.
+	_add_slider("nahodnost efektov: hlasitost +- (dB)", 0.0, 6.0, 0.5,
+		Sfx.sfx_volume_jitter_db,
+		func(v: float) -> void: Sfx.sfx_volume_jitter_db = v)
+	_add_slider("nahodnost efektov: vyska tonu +- (%)", 0.0, 25.0, 1.0,
+		Sfx.sfx_pitch * 100.0,
+		func(v: float) -> void: Sfx.sfx_pitch = v / 100.0)
 	_add_slider("ako casto hovoria nepriatelia (s)", 2.0, 30.0, 1.0,
 		Tuning.enemy_bark_every,
 		func(v: float) -> void: Tuning.enemy_bark_every = v)
@@ -450,9 +458,31 @@ func _build_panel() -> void:
 	_add_slider("kedy v animacii uderu zasah plati (0 = hned, 1 = na konci)",
 		0.05, 0.95, 0.05, Tuning.rusher_attack_hit_at,
 		func(v: float) -> void: Tuning.rusher_attack_hit_at = v)
-	_add_slider("ako daleko od seba sa nepriatelia odtlacaju (px)",
+	# T22: solid bodies. On = hero and enemies cannot pass through each other
+	# (only the feet are solid); off = the old soft push below.
+	var solid_btn := CheckButton.new()
+	solid_btn.text = "PEVNE TELA (nikto cez nikoho neprejde)"
+	solid_btn.custom_minimum_size = Vector2(0, 56)
+	solid_btn.button_pressed = Tuning.solid_bodies
+	rows.add_child(solid_btn)
+	solid_btn.toggled.connect(func(on: bool) -> void:
+		Tuning.solid_bodies = on)
+	_add_slider("pevne telo: hlbka nohy (px; 54 = cele telo)", 8.0, 54.0, 1.0,
+		Tuning.body_feet_height,
+		func(v: float) -> void: Tuning.body_feet_height = v)
+	_add_slider("pevne telo: sirka nohy (px)", 16.0, 90.0, 1.0,
+		Tuning.body_feet_width,
+		func(v: float) -> void: Tuning.body_feet_width = v)
+	_add_slider("ako daleko od seba sa nepriatelia odtlacaju (px; len bez pevnych tiel)",
 		0.0, 120.0, 2.0, Tuning.enemy_separation,
 		func(v: float) -> void: Tuning.enemy_separation = v)
+	# T31: shadows under characters and props.
+	_add_slider("tien pod postavami: sila (0 = vypnuty)", 0.0, 1.0, 0.05,
+		Tuning.shadow_alpha,
+		func(v: float) -> void: Tuning.shadow_alpha = v)
+	_add_slider("tien pod postavami: velkost (x)", 0.4, 2.0, 0.05,
+		Tuning.shadow_scale,
+		func(v: float) -> void: Tuning.shadow_scale = v)
 	_add_slider("aky vysoky kus tela nepriatela sa da trafit (0-1)", 0.3, 1.0,
 		0.02, Tuning.enemy_hurt_height_fraction,
 		func(v: float) -> void: Tuning.enemy_hurt_height_fraction = v)

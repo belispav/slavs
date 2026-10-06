@@ -28,6 +28,8 @@ var _shake: float = 0.0
 var _flash: float = 0.0
 var _art_height: float = 64.0
 var _foot_margin: float = 0.0
+var _shadow: Node2D
+const ShadowScript := preload("res://scripts/shadow.gd")
 
 
 func _ready() -> void:
@@ -69,6 +71,10 @@ func _ready() -> void:
 	_block.add_child(_block_shape)
 	_fit()
 	_set_blocking(Tuning.BARREL_BLOCK_DEPTH)
+	# T31: ground shadow, wider than the hit box (the barrel bulges).
+	_shadow = ShadowScript.new()
+	add_child(_shadow)
+	_shadow.setup(Vector2(0.0, -2.0), Tuning.BARREL_HIT_SIZE.x * 1.5)
 
 
 ## The node's origin is the barrel's FEET - where it stands on the field -
@@ -97,12 +103,18 @@ func _set_blocking(depth: float) -> void:
 	# when hf > t and hf - H < b, i.e. hf in (t, b + H). For hf in
 	# (bf - depth, bf + depth): t = bf - depth, b = bf + depth - H. Needs
 	# 2*depth > H; below that the strip is clamped to 2 units.
-	var h_box: float = 54.0
+	var h_box: float = clampf(Tuning.body_feet_height, 4.0, 54.0)
 	var top: float = -depth
 	var bottom: float = maxf(depth - h_box, top + 2.0)
 	var r := _block_shape.shape as RectangleShape2D
 	r.size = Vector2(_block_width, bottom - top)
 	_block_shape.position = Vector2(0.0, (top + bottom) * 0.5)
+
+
+## main.gd calls this when the panel changes the feet height (T22): the strip
+## is computed from it.
+func refit_block() -> void:
+	_set_blocking(_block_depth)
 
 
 ## Whole again and stood at `feet`. Barrels are reused, never freed.
@@ -118,6 +130,7 @@ func place(feet: Vector2, block_depth: float = 0.0) -> void:
 	collision_layer = Tuning.LAYER_TARGET
 	_sprite.animation = &"whole"
 	_sprite.stop()
+	_shadow.show()
 	show()
 	global_position = feet
 	# Depth from where a body standing here would have its ORIGIN - the
@@ -147,6 +160,7 @@ func hit() -> void:
 		set_deferred("collision_layer", 0)
 		# The wreck is flat - walk over it.
 		_block_shape.set_deferred("disabled", true)
+		_shadow.hide()
 		_sprite.play(&"break")
 		broken.emit(global_position)
 

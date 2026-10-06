@@ -463,6 +463,38 @@ var rusher_strike_height: float = RUSHER_STRIKE_HEIGHT
 const ENEMY_SEPARATION: float = 46.0
 var enemy_separation: float = ENEMY_SEPARATION
 
+## T22 SOLID BODIES (Pavel 2026-10-06). Hero and enemies cannot walk through each
+## other (hero <-> enemy and enemy <-> enemy), like barrels and cauldrons. The
+## collision body of every character is only its FEET - a flat box hanging from
+## the feet - because the camera is frontal and characters may walk behind each
+## other (upper bodies may overlap, only the feet are solid). Replaces the soft
+## push of main.gd _separate_enemies while on (that function is skipped).
+## Off = old behaviour (soft push, nobody blocks anybody) - panel switch, for
+## comparing and as an escape if a crowd of 30+ jams.
+const SOLID_BODIES: bool = true
+var solid_bodies: bool = SOLID_BODIES
+## Footprint of one character: height = depth of the solid part (about 40 % of
+## the 52-54 px body box; 54 = the whole old box), width across the feet.
+## Also drives how far barrels and cauldrons block in depth (their strips are
+## computed from this height, see barrel.gd _set_blocking).
+const BODY_FEET_HEIGHT: float = 22.0
+var body_feet_height: float = BODY_FEET_HEIGHT
+const BODY_FEET_WIDTH: float = 30.0
+var body_feet_width: float = BODY_FEET_WIDTH
+
+## T31 SHADOWS (Pavel 2026-10-06): flat ellipse on the ground under characters,
+## barrels and cauldrons (shadow.gd). Strength 0 = off; scale multiplies every
+## shadow's width. Width per object comes from its drawn size (SHADOW_WIDTH_*).
+const SHADOW_ALPHA: float = 0.55
+var shadow_alpha: float = SHADOW_ALPHA
+const SHADOW_SCALE: float = 1.0
+var shadow_scale: float = SHADOW_SCALE
+## Shadow width as a fraction of a character's drawn height.
+const SHADOW_WIDTH_PER_HEIGHT: float = 0.55
+## Absolute z of every shadow: above the ground, its decorations and the blood
+## stains, under every character. main.gd sets it from the ground's z.
+var shadow_z: int = -100
+
 ## How fast the foreground parallax strip (env_05_fg.png, main.gd's BG_LAYERS)
 ## scrolls relative to the ground it sits in front of. 1.0 would move with the
 ## ground like it was painted on it; > 1.0 reads as closer to the eye - see

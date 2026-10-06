@@ -28,6 +28,8 @@ var _art_height: float = 64.0
 var _foot_margin: float = 0.0
 var _whole_tex: Texture2D
 var _whole_pos: Vector2
+var _shadow: Node2D
+const ShadowScript := preload("res://scripts/shadow.gd")
 
 
 func _ready() -> void:
@@ -63,14 +65,14 @@ func _ready() -> void:
 	_block.collision_mask = 0
 	add_child(_block)
 	_block_shape = CollisionShape2D.new()
-	var r := RectangleShape2D.new()
-	var depth: float = Tuning.BARREL_BLOCK_DEPTH
-	var top: float = -depth
-	var bottom: float = maxf(depth - 54.0, top + 2.0)
-	r.size = Vector2(Tuning.CAULDRON_BLOCK_WIDTH, bottom - top)
-	_block_shape.shape = r
-	_block_shape.position = Vector2(0.0, (top + bottom) * 0.5)
+	_block_shape.shape = RectangleShape2D.new()
 	_block.add_child(_block_shape)
+	refit_block()
+
+	# T31: ground shadow.
+	_shadow = ShadowScript.new()
+	add_child(_shadow)
+	_shadow.setup(Vector2(0.0, -2.0), Tuning.CAULDRON_HIT_SIZE.x * 1.5)
 
 	# The countdown number - a test aid, Pavel asked for it until the whistle
 	# alone carries the warning.
@@ -89,6 +91,20 @@ func _ready() -> void:
 	add_child(_whistle)
 
 
+## The blocking strip, same arithmetic as barrel.gd _set_blocking: the feet
+## box is Tuning.body_feet_height tall (T22), so the strip is placed to block
+## exactly while a character's feet are within +-depth. Also called by main.gd
+## when the panel changes the feet height.
+func refit_block() -> void:
+	var depth: float = Tuning.BARREL_BLOCK_DEPTH
+	var h_box: float = clampf(Tuning.body_feet_height, 4.0, 54.0)
+	var top: float = -depth
+	var bottom: float = maxf(depth - h_box, top + 2.0)
+	var r := _block_shape.shape as RectangleShape2D
+	r.size = Vector2(Tuning.CAULDRON_BLOCK_WIDTH, bottom - top)
+	_block_shape.position = Vector2(0.0, (top + bottom) * 0.5)
+
+
 ## Whole again at `feet`. Cauldrons are reused, never freed.
 func place(feet: Vector2) -> void:
 	hp = Tuning.CAULDRON_HP
@@ -105,6 +121,7 @@ func place(feet: Vector2) -> void:
 	_sprite.position = _whole_pos
 	collision_layer = Tuning.LAYER_TARGET
 	_block_shape.set_deferred("disabled", false)
+	_shadow.show()
 	show()
 	global_position = feet
 	z_index = Tuning.depth_z(feet.y - 27.0)
@@ -186,6 +203,7 @@ func _explode() -> void:
 	# The wreck: burnt black, no longer a target, no longer in the way.
 	_sprite.modulate = Color(0.25, 0.22, 0.2)
 	_show_debris()
+	_shadow.hide()
 	set_deferred("collision_layer", 0)
 	_block_shape.set_deferred("disabled", true)
 	Sfx.play(&"explosion", global_position)

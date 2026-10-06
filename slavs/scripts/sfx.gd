@@ -45,8 +45,17 @@ const VOICE_GAP: float = 1.2
 ## stops sounding like the same person).
 const SFX_PITCH: float = 0.08
 const VOICE_PITCH: float = 0.03
+## T32 (Pavel 2026-10-06): sounds must not sound mechanical. Besides the random
+## pitch above, each play gets a slightly random volume: +-this many dB, a
+## little, not much. Live on the debug panel (effects); voices keep a smaller
+## constant spread.
+const SFX_VOLUME_JITTER_DB: float = 1.5
+const VOICE_VOLUME_JITTER_DB: float = 1.0
 
 var enabled: bool = true
+## Live copies of the spreads (panel sliders): pitch is +-fraction, volume +-dB.
+var sfx_pitch: float = SFX_PITCH
+var sfx_volume_jitter_db: float = SFX_VOLUME_JITTER_DB
 var sfx_volume_db: float = 0.0
 var voice_volume_db: float = 0.0
 
@@ -105,9 +114,12 @@ func play(event: StringName, at: Vector2, force: bool = false) -> bool:
 	else:
 		p = _sfx[_next_sfx]
 		_next_sfx = (_next_sfx + 1) % _sfx.size()
-	var spread: float = VOICE_PITCH if is_voice else SFX_PITCH
+	var spread: float = VOICE_PITCH if is_voice else sfx_pitch
+	var jitter_db: float = VOICE_VOLUME_JITTER_DB if is_voice else sfx_volume_jitter_db
 	p.stream = list[randi() % list.size()]
 	p.pitch_scale = randf_range(1.0 - spread, 1.0 + spread)
+	# Per-play volume offset on the player itself; the bus slider stays on top.
+	p.volume_db = randf_range(-jitter_db, jitter_db)
 	p.global_position = at
 	p.set_meta(&"event", event)
 	p.play()

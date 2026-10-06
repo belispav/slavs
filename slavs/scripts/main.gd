@@ -315,6 +315,8 @@ var _bullet_next: int = 0
 var axe
 var barrels: Array = []
 var cauldrons: Array = []
+## T22: feet height the props' blocking strips were last fitted to.
+var _feet_h_applied: float = -1.0
 var fx   # fx.gd - blood, splinters, smoke
 var _vibrate_cd: float = 0.0
 var _enemy_bark_cd: float = 4.0
@@ -393,6 +395,7 @@ func _process(delta: float) -> void:
 	_apply_bg_filter()
 	_apply_fg_parallax_speed()
 	_apply_bg_parallax_speed()
+	_refit_prop_blocks()
 	_separate_enemies()
 
 
@@ -416,7 +419,20 @@ func _apply_bg_parallax_speed() -> void:
 		item["layer"].scroll_scale.x = item["base"] * Tuning.bg_parallax_speed
 
 
-## Push overlapping enemies apart.
+## T22: the barrels' and cauldrons' blocking strips are computed from the feet
+## height of a character, so they follow the panel slider.
+func _refit_prop_blocks() -> void:
+	if is_equal_approx(Tuning.body_feet_height, _feet_h_applied):
+		return
+	_feet_h_applied = Tuning.body_feet_height
+	for b in barrels:
+		b.refit_block()
+	for c in cauldrons:
+		c.refit_block()
+
+
+## Push overlapping enemies apart (soft push; only while Tuning.solid_bodies
+## is off - T22 replaced it with solid feet).
 ##
 ## Rushers all head for the same point - the player - so they arrive as a single
 ## pile of bodies drawn on top of each other. Reported by Pavel 2026-08-13:
@@ -431,6 +447,10 @@ func _apply_bg_parallax_speed() -> void:
 ## approach logic and turns into orbiting, while a nudge just stops two bodies
 ## occupying one spot and leaves the AI alone.
 func _separate_enemies() -> void:
+	# T22: with solid bodies the physics engine keeps enemies apart (feet are
+	# solid), so the soft nudge below is the old behaviour only.
+	if Tuning.solid_bodies:
+		return
 	var min_gap: float = Tuning.enemy_separation
 	if min_gap <= 0.0:
 		return
@@ -525,6 +545,7 @@ func _swap_ground() -> void:
 	_bg_sprite.region_rect = Rect2(0.0, 0.0, span, texture.get_height())
 	_bg_sprite.position = Vector2(LEVEL_LEFT - texture.get_width(), background_top())
 	_bg_sprite.z_index = _ground_z_index()
+	Tuning.shadow_z = _ground_z_index() + 3
 	_apply_camera_limits()
 
 
@@ -629,6 +650,7 @@ func _build_background() -> void:
 	sprite.region_rect = Rect2(0.0, 0.0, span, texture.get_height())
 	sprite.position = Vector2(LEVEL_LEFT - texture.get_width(), background_top())
 	sprite.z_index = _ground_z_index()
+	Tuning.shadow_z = _ground_z_index() + 3
 	add_child(sprite)
 	_bg_sprite = sprite
 

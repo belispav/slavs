@@ -96,6 +96,14 @@ var _drawn_height: float = 0.0
 ## (debug panel) without reloading the frames. See _apply_sprite_scale().
 var _art_height: float = 0.0
 var _art_foot_margin: float = 0.0
+## T22: the solid part of the body (feet only) and what was last fitted.
+var _body_shape: CollisionShape2D
+var _fit_h: float = -1.0
+var _fit_w: float = -1.0
+var _mask_applied: int = -1
+## T31: ground shadow.
+var _shadow: Node2D
+const ShadowScript := preload("res://scripts/shadow.gd")
 var _art_head_margin: float = 0.0
 var _applied_scale: float = 0.0
 
@@ -106,14 +114,24 @@ func _ready() -> void:
 	collision_layer = Tuning.LAYER_PLAYER
 	# LAYER_PROP: barrels block the hero (not the enemies - they have no
 	# way round an obstacle yet, and would just get stuck on it).
-	collision_mask = Tuning.LAYER_WORLD | Tuning.LAYER_PROP
+	_apply_mask()
 	floor_snap_length = 8.0
+	# T22: free (top-down) movement has no floor. In the default "grounded"
+	# mode a character standing against another body from above counts as
+	# standing on a floor and inherits that body's velocity (a moving
+	# CharacterBody2D reports one) - it would be dragged along by whoever it
+	# bumps into from the back. Floating mode treats every contact as a wall.
+	if Touch.config.free_movement:
+		motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 
-	var shape := CollisionShape2D.new()
-	var rect := RectangleShape2D.new()
-	rect.size = SIZE
-	shape.shape = rect
-	add_child(shape)
+	_body_shape = CollisionShape2D.new()
+	_body_shape.shape = RectangleShape2D.new()
+	add_child(_body_shape)
+	_fit_body()
+
+	_shadow = ShadowScript.new()
+	add_child(_shadow)
+	_shadow.setup(Vector2(0.0, SIZE.y * 0.5 - 2.0), SIZE.x * 1.6)
 
 	_cam = Camera2D.new()
 	_cam.position_smoothing_enabled = true
@@ -242,6 +260,36 @@ func _apply_sprite_scale(s: float) -> void:
 	_muzzle_height = drawn * Tuning.MUZZLE_HEIGHT_FRACTION - SIZE.y * 0.5
 	_drawn_height = drawn
 	_fit_hurtbox(drawn)
+	if _shadow != null:
+		_shadow.set_width(drawn * Tuning.SHADOW_WIDTH_PER_HEIGHT)
+
+
+## T22: the body that blocks and gets blocked is only the FEET - a flat box
+## hanging from the bottom of the old 30x54 box (feet at +SIZE.y/2). Fitted on
+## change only (panel sliders are live). In the old platform mode the whole box
+## stays.
+func _fit_body() -> void:
+	var w: float = SIZE.x
+	var h: float = SIZE.y
+	if Touch.config.free_movement:
+		w = Tuning.body_feet_width
+		h = clampf(Tuning.body_feet_height, 4.0, SIZE.y)
+	_fit_h = Tuning.body_feet_height
+	_fit_w = Tuning.body_feet_width
+	var rect := _body_shape.shape as RectangleShape2D
+	rect.size = Vector2(w, h)
+	_body_shape.position = Vector2(0.0, SIZE.y * 0.5 - h * 0.5)
+
+
+## What the hero bumps into: the world and props always, enemies when bodies are
+## solid - but not while a brute holds him (the brute places him itself).
+func _apply_mask() -> void:
+	var m: int = Tuning.LAYER_WORLD | Tuning.LAYER_PROP
+	if Tuning.solid_bodies and not is_held():
+		m |= Tuning.LAYER_ENEMY
+	if m != _mask_applied:
+		_mask_applied = m
+		collision_mask = m
 
 
 ## Match the hurt area to the character that is actually drawn.
@@ -447,6 +495,10 @@ func _physics_process(delta: float) -> void:
 		_move_platform(delta)
 
 	_iframes = maxf(_iframes - delta, 0.0)
+	_apply_mask()
+	if not is_equal_approx(_fit_h, Tuning.body_feet_height) \
+			or not is_equal_approx(_fit_w, Tuning.body_feet_width):
+		_fit_body()
 	move_and_slide()
 	# Depth is Y, same rule as the enemies - the player is not special, and an
 	# enemy standing nearer the camera should cover him.

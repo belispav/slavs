@@ -46,6 +46,14 @@ var _weave_rate: float = 1.0
 var _keep_distance: float = Tuning.THROWER_KEEP_DISTANCE
 var _hurtbox: Area2D
 var _hurt_shape: CollisionShape2D
+## T22: the solid part of the body (feet only) and what was last fitted.
+var _body_shape: CollisionShape2D
+var _fit_h: float = -1.0
+var _fit_w: float = -1.0
+var _mask_applied: int = -1
+## T31: ground shadow.
+var _shadow: Node2D
+const ShadowScript := preload("res://scripts/shadow.gd")
 ## Drawn character, when one has been rendered. Null means the coloured box,
 ## which is still a perfectly good enemy and is what every unfinished type uses.
 ## Points at whichever of the two below matches the current kind - built once
@@ -132,14 +140,21 @@ func _ready() -> void:
 	add_to_group("enemy")
 	collision_layer = Tuning.LAYER_ENEMY
 	# T25 (2026-10-06): barrels stop enemies exactly like the hero.
-	collision_mask = Tuning.LAYER_WORLD | Tuning.LAYER_PROP
+	# T22: and, with solid bodies, the hero and the other enemies.
+	_apply_mask()
 	floor_snap_length = 8.0
+	# See player.gd _ready: free movement has no floor, so no platform drag.
+	if Touch.config.free_movement:
+		motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 
-	var cs := CollisionShape2D.new()
-	var rect := RectangleShape2D.new()
-	rect.size = SIZE
-	cs.shape = rect
-	add_child(cs)
+	_body_shape = CollisionShape2D.new()
+	_body_shape.shape = RectangleShape2D.new()
+	add_child(_body_shape)
+	_fit_body()
+
+	_shadow = ShadowScript.new()
+	add_child(_shadow)
+	_shadow.setup(Vector2(0.0, SIZE.y * 0.5 - 2.0), SIZE.x * 1.6)
 
 	# Bullets look for LAYER_TARGET, so the enemy carries a hurtbox on it.
 	_hurtbox = Area2D.new()
@@ -343,6 +358,8 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 			_clip_shift = _rusher_shift
 			_drawn_height = _rusher_drawn_height
 	_fit_hurtbox(_drawn_height)
+	_shadow.set_width((_drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0)
+		* Tuning.SHADOW_WIDTH_PER_HEIGHT)
 	if _thrower_sprite != null:
 		_thrower_sprite.visible = kind == Kind.THROWER
 	if _rusher_sprite != null:
@@ -377,6 +394,37 @@ func despawn() -> void:
 ## true the moment a rusher's attack became a timed swing instead of a shove.
 func is_melee_kind() -> bool:
 	return kind == Kind.RUSHER
+
+
+## T22: the solid part of an enemy is only its FEET - a flat box hanging from
+## the bottom of the old box (feet at +SIZE.y/2), see Tuning.BODY_FEET_*.
+## Fitted on change only (the panel sliders are live).
+func _fit_body() -> void:
+	var w: float = SIZE.x
+	var h: float = SIZE.y
+	if Touch.config.free_movement:
+		w = Tuning.body_feet_width
+		h = clampf(Tuning.body_feet_height, 4.0, SIZE.y)
+	_fit_h = Tuning.body_feet_height
+	_fit_w = Tuning.body_feet_width
+	var rect := _body_shape.shape as RectangleShape2D
+	rect.size = Vector2(w, h)
+	_body_shape.position = Vector2(0.0, SIZE.y * 0.5 - h * 0.5)
+
+
+## What an enemy bumps into: the world and props always; the hero and the other
+## enemies when bodies are solid (the enemy's own body is on the enemy layer
+## and never collides with itself). An enemy holding the hero does not collide
+## with him - it places him itself.
+func _apply_mask() -> void:
+	var m: int = Tuning.LAYER_WORLD | Tuning.LAYER_PROP
+	if Tuning.solid_bodies:
+		m |= Tuning.LAYER_ENEMY
+		if not _grabbing:
+			m |= Tuning.LAYER_PLAYER
+	if m != _mask_applied:
+		_mask_applied = m
+		collision_mask = m
 
 
 ## Nothing of an enemy may be below the playing field (T30, Pavel 2026-10-06):
@@ -474,6 +522,10 @@ func _physics_process(delta: float) -> void:
 	if _is_attacking():
 		velocity = Vector2.ZERO
 
+	_apply_mask()
+	if not is_equal_approx(_fit_h, Tuning.body_feet_height) \
+			or not is_equal_approx(_fit_w, Tuning.body_feet_width):
+		_fit_body()
 	move_and_slide()
 	_keep_out_of_the_left()
 	clamp_to_field()
