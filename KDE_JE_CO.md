@@ -28,12 +28,12 @@ T12 HOTOVÉ 2026-10-06 (test na telefóne OK; objekty na okraji majú limit vý�
 T13 ZRUŠENÉ 2026-10-06: mechanika je dohodnutá (hra na určitom mieste zamkne vodorovný scroll). Samotné zamykanie sa naprogramuje spolu s bossmi a klietkami, nie ako samostatná úloha.
 T14 ZMAZANÉ 2026-10-06: počet ani obsah scén nie je určený; vypálená dedina bola len skúška grafiky, nepadlo rozhodnutie, že je druhou scénou.
 T15 UZAVRETÉ 2026-10-06: boj na blízko. Prekrývanie bežcov je prijateľné (Pavel: "je to srandovné, hlavne keď ich je veľa"). Konkrétne zlepšenia sú T22-T24.
-T16 Bežec bliká po švihu pri pohybe v Y. Pavel: pravdepodobne to vyrieši T24 (zámok pri útoku); stále bliká (2026-10-06). [Open 5]
+T16 OPRAVENÉ V KÓDE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: bežec bliká po švihu pri pohybe v Y. Príčina: na hranici dosahu sa prepínal stoj/chôdza každú snímku (bez hysterézy, cieľ sa kýval). Oprava: bežec, ktorý sa zastavil, ostane stáť, kým hráč nie je 1,2x dosah ďalej; kývanie cieľa zamrznuté počas státia; chôdza sa zapne až nad 40 px/s a vypne pod 12 px/s. [Open 5]
 T17 AKTÍVNE, DÔLEŽITÉ (Pavel 2026-10-06): farebná paleta nie je zjednotená (PixelLab je primárny zdroj grafiky). MUSÍ sa vyriešiť PRED generovaním finálnej hernej grafiky; kým robíme prototypy, nemusí byť rozhodnuté. [Open 6]
 T18 ZAVRETÉ 2026-10-06: gunman idle netreba (stojí, ako keď si ho nevšimol); brute úchop nesedí, ale nič z toho sa teraz nerieši, nevieme, či tieto postavy budú vo finálnej verzii.
 T22 Nepriatelia majú mať pevné telo: nedá sa cez nich prejsť a ani oni cez seba (ako sud). Dôsledok: pri mnohých (cca 32+) sa vzájomne zablokujú a nenakopia sa na jednu kopu; treba dať pozor na zaseknutie. (Pavel 2026-10-06)
 T23 NÁPAD (neskôr, dizajn): nepriatelia hľadajú inú trasu a obídu hrdinu. Dôsledok: obkľúčia ho a nebude vedieť ujsť. Rozhodnúť neskôr, či to chceme. (Pavel 2026-10-06)
-T24 Nepriateľ sa v momente začiatku švihu uzamkne na mieste (rovnako ako hrdina pri hode); útok je v stoji a pohyb ho "kĺže". Neskôr lepší nepriatelia dostanú animáciu útoku za pohybu. Pozn.: kód už nuluje rýchlosť počas útoku od 2026-08-13, preto najprv zistiť, prečo to stále bliká/kĺže. (Pavel 2026-10-06)
+T24 OPRAVENÉ V KÓDE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: nepriateľ sa pri švihu (aj strelec pri výstrele) uzamkne na mieste. Príčina kĺzania: funkcia, čo rozstrkáva prekrývajúcich sa nepriateľov (`_separate_enemies` v main.gd), posúvala aj švihajúcich; teraz je uzamknutý nepriateľ pevný a odtlačí sa ten druhý. Neskôr lepší nepriatelia dostanú animáciu útoku za pohybu. (Pavel 2026-10-06)
 
 ### Neskôr
 T19 ZMAZANÉ 2026-10-06: fázy F2-F5 sú plán výroby, nie úloha; keď sa odrobia všetky úlohy, ďalší krok sa berie z `PLAN_hry.md`.

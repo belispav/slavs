@@ -90,6 +90,15 @@ var _attack_cd: float = 0.0
 ## point of the animation even if the clip is measured differently later.
 var _attack_len: float = 0.0
 var _attack_hit_done: bool = false
+## T16: true from the moment the rusher reaches melee range until the player
+## gets clearly out of it (RUSHER_MELEE_LEAVE_FACTOR). Hysteresis, so standing
+## and walking do not alternate at the range boundary.
+var _stopped: bool = false
+## T16: the weave offset is frozen while the rusher stands, or the goal point
+## oscillated +-46 px and pushed it in and out of range.
+var _weave_value: float = 0.0
+## T16: walk-clip state with two speed thresholds (see _rusher_clip).
+var _walk_clip: bool = false
 
 ## BRUTE (2026-10-04): slow, armoured in front, grabs and holds the hero.
 var _brute_sprite: AnimatedSprite2D
@@ -294,6 +303,9 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	# Pooled nodes are reused mid-swing, so the swing's own state resets too.
 	_attack_len = 0.0
 	_attack_hit_done = false
+	_stopped = false
+	_weave_value = 0.0
+	_walk_clip = false
 
 	# Each kind shows only its own body. A rusher wearing the gunman's sprite
 	# would be a lie the player would learn to read wrongly.
@@ -517,6 +529,13 @@ func _is_attacking() -> bool:
 	return _fire_timer > 0.0 or _attack_timer > 0.0
 
 
+## T24: an enemy in the middle of its attack is locked in place. Read by
+## main.gd's _separate_enemies, which must not nudge it - that nudge was the
+## sliding (the body's own velocity was already zeroed during the swing).
+func is_locked() -> bool:
+	return _is_attacking()
+
+
 ## The timer itself is counted down in _physics_process, NOT here. It used to
 ## be decremented in this function, which is only reached from _drive_sprite -
 ## and _drive_sprite returns immediately when there is no sprite. An enemy still
@@ -539,9 +558,16 @@ func _rusher_clip() -> StringName:
 		return &"idle_unaware"
 	if _attack_timer > 0.0:
 		return &"attack"
-	if velocity.length() > Tuning.ENEMY_WALK_SPEED_MIN:
-		return &"walk"
-	return &"idle_ready"
+	# Two thresholds (T16): start walking above RUSHER_WALK_START_SPEED, stop
+	# below ENEMY_WALK_SPEED_MIN. A single threshold flipped the clip every
+	# frame while the speed hovered around it.
+	var speed: float = velocity.length()
+	if _walk_clip:
+		if speed < Tuning.ENEMY_WALK_SPEED_MIN:
+			_walk_clip = false
+	elif speed > Tuning.RUSHER_WALK_START_SPEED:
+		_walk_clip = true
+	return &"walk" if _walk_clip else &"idle_ready"
 
 
 ## Enemies do not walk left past the player, and the ones the player leaves
@@ -582,12 +608,17 @@ func _think_rusher(free: bool, delta: float) -> void:
 		return
 
 	var in_range: bool
+	var enter_range: float = Tuning.rusher_melee_range
+	# Once stopped, the player has to get clearly out of reach before the
+	# rusher walks again (T16).
+	var hold_range: float = enter_range * Tuning.RUSHER_MELEE_LEAVE_FACTOR
 	if not free:
 		# On a floor there is only one axis to close. The gap is measured from
 		# the enemy back to the player, and enemies are always to the right, so
 		# it is positive while there is ground to cover.
 		var gap: float = global_position.x - target.global_position.x
-		in_range = gap <= Tuning.rusher_melee_range
+		in_range = gap <= (hold_range if _stopped else enter_range)
+		_stopped = in_range
 		if not in_range:
 			velocity.x = -speed
 		else:
@@ -599,10 +630,13 @@ func _think_rusher(free: bool, delta: float) -> void:
 		# vertical line and stop there, still far above or below - lined up
 		# rather than converging, and never actually reaching what they came
 		# to hit. Moving along the whole vector curves them in.
+		if not _stopped:
+			_weave_value = _weave()
 		var to_target: Vector2 = target.global_position \
-			+ Vector2(0.0, _depth_offset + _weave()) - global_position
+			+ Vector2(0.0, _depth_offset + _weave_value) - global_position
 		var distance: float = to_target.length()
-		in_range = distance <= Tuning.rusher_melee_range
+		in_range = distance <= (hold_range if _stopped else enter_range)
+		_stopped = in_range
 
 		if not in_range:
 			var wish: Vector2 = to_target / distance * speed

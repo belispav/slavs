@@ -458,8 +458,19 @@ func _separate_enemies() -> void:
 				d = 0.001
 			var push: Vector2 = away / d * (min_gap - d) * 0.5
 			push.y *= 0.5
-			a.global_position += push
-			b.global_position -= push
+			# T24: an enemy mid-attack is pinned. The other one takes the whole
+			# push; two pinned ones simply overlap (pillar 1 allows it).
+			var a_locked: bool = a.is_locked()
+			var b_locked: bool = b.is_locked()
+			if a_locked and b_locked:
+				continue
+			elif a_locked:
+				b.global_position -= push * 2.0
+			elif b_locked:
+				a.global_position += push * 2.0
+			else:
+				a.global_position += push
+				b.global_position -= push
 
 
 ## Follow the debug panel's background switches. Only touches the sprite when a

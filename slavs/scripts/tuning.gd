@@ -389,6 +389,17 @@ const ENEMY_CONTACT_DAMAGE: int = 1
 const RUSHER_MELEE_RANGE: float = 100.0
 var rusher_melee_range: float = RUSHER_MELEE_RANGE
 
+## T16 (2026-10-06): a rusher that has stopped to fight stays stopped until the
+## player is this many times RUSHER_MELEE_RANGE away. Without the gap, a player
+## drifting on Y around exactly the range made the rusher stop/walk/stop every
+## frame, and the clip flickered walk <-> idle_ready. Also the reach of a
+## standing rusher's swing (range 100 -> up to 120 with 1.2).
+const RUSHER_MELEE_LEAVE_FACTOR: float = 1.2
+## A rusher's walk clip starts only above this speed and ends below
+## ENEMY_WALK_SPEED_MIN (12): two thresholds, so the clip does not flip on
+## every small speed change. T16.
+const RUSHER_WALK_START_SPEED: float = 40.0
+
 ## How far into the swing the club actually connects, as a fraction of the
 ## attack animation. The range is re-checked at that instant, so this is the
 ## dodge window: everything before it can be stepped out of.
