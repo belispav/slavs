@@ -119,7 +119,8 @@ func _ready() -> void:
 	# having to hand out its pool array.
 	add_to_group("enemy")
 	collision_layer = Tuning.LAYER_ENEMY
-	collision_mask = Tuning.LAYER_WORLD
+	# T25 (2026-10-06): barrels stop enemies exactly like the hero.
+	collision_mask = Tuning.LAYER_WORLD | Tuning.LAYER_PROP
 	floor_snap_length = 8.0
 
 	var cs := CollisionShape2D.new()
@@ -634,8 +635,19 @@ func _think_rusher(free: bool, delta: float) -> void:
 			_weave_value = _weave()
 		var to_target: Vector2 = target.global_position \
 			+ Vector2(0.0, _depth_offset + _weave_value) - global_position
+		# T26 (2026-10-06): REACH is measured to the hero himself, not to the
+		# offset goal point. It used to use the goal point, so each rusher's
+		# strike zone was shifted up or down by its own depth offset + weave
+		# (up to +-80 px) - the zone was not centred on the hero (Pavel).
+		# The offset now only shapes the approach path.
 		var distance: float = to_target.length()
-		in_range = distance <= (hold_range if _stopped else enter_range)
+		if distance < 12.0:
+			# Arrived at its own goal point but not yet in reach (small range
+			# setting): aim at the hero instead of standing there.
+			to_target = target.global_position - global_position
+			distance = maxf(to_target.length(), 0.001)
+		var reach: float = (target.global_position - global_position).length()
+		in_range = reach <= (hold_range if _stopped else enter_range)
 		_stopped = in_range
 
 		if not in_range:
