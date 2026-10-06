@@ -185,14 +185,17 @@ const PLAYER_AXE_THROW_ART_DIR: String = "res://art/hero_pl_axe_throw"
 const AXE_THROW_FPS: float = 14.0
 const AXE_RELEASE_FRAME: int = 5
 ## Share of normal walking speed while the throw clip plays (the clip is a standing
-## pose; full speed looked like sliding). 0 = rooted. 0.25 is a first guess, to be
-## found on the phone with the panel slider. Added 2026-10-05.
-const THROW_MOVE_FACTOR: float = 0.25
+## pose; full speed looked like sliding). 0 = rooted: PICKED by Pavel on device
+## 2026-10-05 (a feature - you choose the moment to throw). Later weapons (spells)
+## will need an attack animation tied to movement; the axe is fine as is.
+const THROW_MOVE_FACTOR: float = 0.0
 var throw_move_factor: float = THROW_MOVE_FACTOR
 ## Speed of the throw's wind-up (the standing part before the axe leaves the hand),
 ## 1.0 = as drawn. Faster = a shorter moment where the hero must stand (a feature:
 ## he has to pick the moment of the throw). The follow-through stays 1x.
-const THROW_WINDUP_SPEED: float = 1.0
+## 3.0 picked by Pavel on device 2026-10-05; idea: start the game lower (1.0) and
+## let the hero level it up.
+const THROW_WINDUP_SPEED: float = 3.0
 var throw_windup_speed: float = THROW_WINDUP_SPEED
 
 # --- Hit / death effects (2026-10-03, fx.gd) ---
