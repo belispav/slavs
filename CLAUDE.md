@@ -189,7 +189,7 @@ shared state.** Rules for switching:
 5. [T16] **Rusher flicker after a swing** when the player moved on Y - still happens; Pavel expects T24 to fix it. Original note: walk clip toggling on near-zero X velocity - look at `_drive_sprite`.
 6. [T17] **IMPORTANT: unify the colour palette** across background, enemies, props. PixelLab is the primary source but the palette is not unified. MUST be solved BEFORE generating final game graphics; for prototypes it can stay open (Pavel 2026-10-06).
 7. [T07] **Second device with different DPI** (control criterion 5) - all control tuning is verified only at 450 dpi.
-8. [T18] **Gunman:** no idle clip and no ready idle yet. **Brute:** grab animation does not match the hold point (Pavel: ignore for now).
+8. [T18 closed 2026-10-06] Gunman needs no idle clip (he just stands); brute grab animation mismatch is parked. Not solved now: unknown whether these characters survive to the final version.
 9. [T05] **Items "not yet on device":** HP raise, hit effects round 2, sound system, explosive cauldron, brute, round after first device test - check on the next deploy.
 10. [T08] **Google Play:** policy/IARC review is Pavel's parallel track; Developer account deferred; closed testing (12 testers / 14 days) is F4. Licence/credit questions for generated assets still open.
 11. [T19] Phases: F2 vertical slice, F3 content, F4 polish + closed testing, F5 launch - all open.

@@ -30,7 +30,7 @@ T14 ZMAZANÉ 2026-10-06: počet ani obsah scén nie je určený; vypálená dedi
 T15 UZAVRETÉ 2026-10-06: boj na blízko. Prekrývanie bežcov je prijateľné (Pavel: "je to srandovné, hlavne keď ich je veľa"). Konkrétne zlepšenia sú T22-T24.
 T16 Bežec bliká po švihu pri pohybe v Y. Pavel: pravdepodobne to vyrieši T24 (zámok pri útoku); stále bliká (2026-10-06). [Open 5]
 T17 AKTÍVNE, DÔLEŽITÉ (Pavel 2026-10-06): farebná paleta nie je zjednotená (PixelLab je primárny zdroj grafiky). MUSÍ sa vyriešiť PRED generovaním finálnej hernej grafiky; kým robíme prototypy, nemusí byť rozhodnuté. [Open 6]
-T18 Gunman: chýba idle a ready idle. Brute: úchop nesedí (zatiaľ ignorovať). [Open 8]
+T18 ZAVRETÉ 2026-10-06: gunman idle netreba (stojí, ako keď si ho nevšimol); brute úchop nesedí, ale nič z toho sa teraz nerieši, nevieme, či tieto postavy budú vo finálnej verzii.
 T22 Nepriatelia majú mať pevné telo: nedá sa cez nich prejsť a ani oni cez seba (ako sud). Dôsledok: pri mnohých (cca 32+) sa vzájomne zablokujú a nenakopia sa na jednu kopu; treba dať pozor na zaseknutie. (Pavel 2026-10-06)
 T23 NÁPAD (neskôr, dizajn): nepriatelia hľadajú inú trasu a obídu hrdinu. Dôsledok: obkľúčia ho a nebude vedieť ujsť. Rozhodnúť neskôr, či to chceme. (Pavel 2026-10-06)
 T24 Nepriateľ sa v momente začiatku švihu uzamkne na mieste (rovnako ako hrdina pri hode); útok je v stoji a pohyb ho "kĺže". Neskôr lepší nepriatelia dostanú animáciu útoku za pohybu. Pozn.: kód už nuluje rýchlosť počas útoku od 2026-08-13, preto najprv zistiť, prečo to stále bliká/kĺže. (Pavel 2026-10-06)
