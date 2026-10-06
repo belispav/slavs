@@ -20,7 +20,7 @@ T08 ODLOŽENÉ (Pavel 2026-10-06): kontrola Google Play pravidiel/IARC až keď 
 T09 AKTÍVNE (Pavel 2026-10-06): základy grafiky sú hotové, teraz sa riešia herné mechanizmy: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4]
 T10 ODLOŽENÉ (Pavel 2026-10-06, zatiaľ nevieme): monetizácia (premium 5,99 EUR vs. F2P). [core_loop §4]
 T11 HOTOVÉ 2026-10-05: zmeny poslané na GitHub pri čistení histórie (T20).
-T20 HOTOVÉ 2026-10-05: história GitHubu vyčistená od starých 3D súborov (`tools/github_cistenie.py`, jednorazový). Pavel: priečinok `slavs_cisty_...` v D:\2026 zmazať hneď, `slavs_zaloha_...` po týždni.
+T20 HOTOVÉ 2026-10-05, OVERENÉ 2026-10-06: história GitHubu vyčistená od starých 3D súborov (`tools/github_cistenie.py`, jednorazový). Kontrola: v histórii nie je `render/`, `art/fits`, `tools/blender`, `.blend`/`.fbx`; 130 commitov, 417 MiB (z toho `ref/` 371 MB); `origin/master` na GitHube sedí s lokálnou históriou; `slavs_cisty_...` je zmazaný, `slavs_zaloha_...` ostáva do T21. Zvyšok histórie ~26 MB (staré sprity v zmazanej zložke `volya/`, Meshy obrázky v `ref/`) sa nechal.
 T21 Po 2026-10-12: zmazať zálohu `slavs_zaloha_...` v D:\2026 (Pavel, v Prieskumníku). Priečinok `slavs_cisty_...` sa maže hneď. [T20]
 
 ### Čaká na Claude (po OK od Pavla)
