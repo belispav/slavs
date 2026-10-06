@@ -40,6 +40,7 @@ IMG_TOP = 350            # first ground row of the straight picture (even)
 S = 2                    # art pixel -> picture pixel
 MIN_D, MAX_D = 1, 22     # how far the edge sits below IMG_TOP, art px
 SEED = 12
+SOLID_EXTRA = 3         # plain-brown art rows below the darkened rows (no cracks)
 
 # darkening, multiplier per art-pixel row counted from the outermost one
 LIPS = {1: [0.55, 0.8],
@@ -86,20 +87,34 @@ def build(lip, density, seed=SEED):
     out = img.copy()
     mult = LIPS[lip]
     for c in range(na):
-        x0, x1 = c * S, c * S + S
-        e = edge[c]
-        out[IMG_TOP:e, x0:x1, 3] = 0             # cut the dirt away above the edge
-        # steep sides: rows next to a neighbouring column that starts lower are outline too
-        side_end = max(edge[(c - 1) % na], edge[(c + 1) % na])
-        for k, m in enumerate(mult):             # rows from the top of the column
-            r0, r1 = e + k * S, e + (k + 1) * S
-            out[r0:r1, x0:x1, :3] = (out[r0:r1, x0:x1, :3] * m).astype(np.uint8)
-        if side_end > e + S:
-            r0, r1 = e + S * 1, min(side_end, e + S * 6)
-            if r1 > r0:
-                out[r0:r1, x0:x1, :3] = np.minimum(
-                    out[r0:r1, x0:x1, :3],
-                    (img[r0:r1, x0:x1, :3] * mult[0]).astype(np.uint8))
+        out[IMG_TOP:edge[c], c * S:c * S + S, 3] = 0     # cut the dirt away above the edge
+
+    # Edge band: every dirt art-pixel within BAND steps (4-neighbourhood) of a transparent
+    # one becomes a SOLID colour (no cracks): the mean dirt colour, darkened by `mult`
+    # for the outermost rows, then plain mean colour for SOLID_EXTRA more rows.
+    solid = img[IMG_TOP:IMG_TOP + 200, :, :3][img[IMG_TOP:IMG_TOP + 200, :, 3] == 255].mean(axis=0)
+    rows = (2 * MAX_D + 40) // S                           # art rows examined below IMG_TOP
+    opaque = out[IMG_TOP:IMG_TOP + rows * S:S, ::S, 3] == 255      # art grid, rows x na
+    free = np.zeros_like(opaque)                           # above the first row is transparent
+    dist = np.zeros(opaque.shape, dtype=int)               # 1 = touches transparent
+    cur = ~opaque
+    cur_up = np.vstack([np.ones((1, na), bool), ~opaque[:-1]])
+    near = cur_up | np.roll(~opaque, 1, axis=1) | np.roll(~opaque, -1, axis=1)
+    reach = opaque & near
+    dist[reach] = 1
+    for k in range(2, len(mult) + SOLID_EXTRA + 1):
+        edge_k = np.zeros_like(opaque)
+        edge_k[1:] |= dist[:-1] == k - 1
+        edge_k |= np.roll(dist == k - 1, 1, axis=1) | np.roll(dist == k - 1, -1, axis=1)
+        edge_k[:-1] |= dist[1:] == k - 1
+        dist[opaque & (dist == 0) & edge_k] = k
+    for r in range(rows):
+        for c in range(na):
+            k = dist[r, c]
+            if k:
+                f = mult[k - 1] if k <= len(mult) else 1.0
+                col = np.clip(solid * f, 0, 255).astype(np.uint8)
+                out[IMG_TOP + r * S:IMG_TOP + (r + 1) * S, c * S:(c + 1) * S, :3] = col
 
     # tufts and stones standing on the edge
     sprites = load_sprites()
