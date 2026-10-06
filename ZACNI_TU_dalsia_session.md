@@ -9,8 +9,7 @@ CLAUDE.md was shortened on 2026-10-05 (done, no longer a task).
 
 ## What comes next (Pavel's call; he brings device-test feedback himself)
 IDs [T..] = Pavel's ToDo list, see `KDE_JE_CO.md`.
-1. [T01] Feedback from the phone test of the ground work (ground picker, SCENA BEZ SCROLLU depth, walk-through objects) and of the background versions.
-2. [T02] Hero slides while the axe-throw clip plays (he can move during the standing throw pose) - decide: root him during the throw, or a throw-while-moving clip.
-3. [T03] Decide scenes vs long strip; if scenes, design the scene-change system (camera lock during a fight, "GO ->", per-screen scene image, shared parallax band).
-4. [T14] Scene B (burned village) in PixelLab pixen (1 generation per try).
-5. [T04] **TODO - story rework (Pavel, 2026-10-05).** Pavel works on a new story offline, no rush. Do not start it; wait until he brings his draft. Draupnir material in `_archiv/draupnir_koncept/` is not agreed.
+1. [T12] PRIORITY: the top edge of the walkable ground is cut off straight; make a natural transition (art and/or walk limit).
+2. [T09] Core mechanics (what ends a run, cage economy, upgrades, unlocks, weapon switching) - marked active, but Pavel decides WHEN to start. Do not start it unprompted.
+3. [T07] Pavel tests on another phone in the coming days (controls + screen at another aspect ratio); wait for his feedback.
+4. [T04] **TODO - story rework (Pavel, 2026-10-05).** Pavel works on a new story offline, no rush. Do not start it; wait until he brings his draft. Draupnir material in `_archiv/draupnir_koncept/` is not agreed.

@@ -24,9 +24,9 @@ T20 HOTOVÉ 2026-10-05: história GitHubu vyčistená od starých 3D súborov (`
 T21 Po 2026-10-12: zmazať zálohu `slavs_zaloha_...` v D:\2026 (Pavel, v Prieskumníku). Priečinok `slavs_cisty_...` sa maže hneď. [T20]
 
 ### Čaká na Claude (po OK od Pavla)
-T12 Horný okraj chodnej zeme je odrezaný rovno; treba prirodzený prechod. [Open 3a]
-T13 Prepínanie chôdza <-> zamknutá obrazovka (zoom-in), bossovia a klietky, sudy v zamknutej obrazovke. [Open 2]
-T14 Scéna B (vypálená dedina) v PixelLab pixen, 1 generácia na pokus; bez opakujúcich sa vzorov. [ZACNI 4]
+T12 PRIORITA (Pavel 2026-10-06, riešiť čím skôr): horný okraj chodnej zeme je odrezaný rovno; treba prirodzený prechod. [Open 3a]
+T13 ZRUŠENÉ 2026-10-06: mechanika je dohodnutá (hra na určitom mieste zamkne vodorovný scroll). Samotné zamykanie sa naprogramuje spolu s bossmi a klietkami, nie ako samostatná úloha.
+T14 ZMAZANÉ 2026-10-06: počet ani obsah scén nie je určený; vypálená dedina bola len skúška grafiky, nepadlo rozhodnutie, že je druhou scénou.
 T15 Boj na blízko v 2.5D nevyriešený (dizajnové rozhodnutie, Opus). [Open 4]
 T16 Bežec bliká po švihu pri pohybe v Y. [Open 5]
 T17 Zjednotiť farebnú paletu; v pamäti zapísané ako uzavreté, overiť s Pavlom. [Open 6]
