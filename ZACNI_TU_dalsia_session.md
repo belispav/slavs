@@ -9,7 +9,7 @@ CLAUDE.md was shortened on 2026-10-05 (done, no longer a task).
 
 ## What comes next (Pavel's call; he brings device-test feedback himself)
 IDs [T..] = Pavel's ToDo list, see `KDE_JE_CO.md`.
-1. [T12] PRIORITY: the top edge of the walkable ground is cut off straight; make a natural transition (art and/or walk limit).
+1. [T12] DONE 2026-10-06 (irregular dark edge with low objects, hero walks along it; see CLAUDE.md 3a). Nothing left to do unless Pavel's phone test finds a problem.
 2. [T09] Core mechanics (what ends a run, cage economy, upgrades, unlocks, weapon switching) - marked active, but Pavel decides WHEN to start. Do not start it unprompted.
 3. [T07] Pavel tests on another phone in the coming days (controls + screen at another aspect ratio); wait for his feedback.
 4. [T04] **TODO - story rework (Pavel, 2026-10-05).** Pavel works on a new story offline, no rush. Do not start it; wait until he brings his draft. Draupnir material in `_archiv/draupnir_koncept/` is not agreed.
