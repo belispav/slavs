@@ -18,7 +18,7 @@ T06 Schváliť hlášky v `HLASKY.md` (angl.). [HLASKY.md]
 T07 AKTÍVNE (Pavel urobí v najbližších dňoch): krátky test (cca 10 min) na inom telefóne: ovládanie a či sedí obrazovka pri inom pomere strán (zamknutá scéna, horný pás). Plné ladenie DPI až neskôr. [Open 7]
 T08 ODLOŽENÉ (Pavel 2026-10-06): kontrola Google Play pravidiel/IARC až keď bude hotová kostra hry (príbeh, hlášky...). Nemá zmysel kontrolovať hru, ktorá je z 10 % hotová. [Open 10]
 T09 AKTÍVNE (Pavel 2026-10-06): základy grafiky sú hotové, teraz sa riešia herné mechanizmy: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4]
-T10 Odložené: monetizácia (premium 5,99 EUR vs. F2P). [core_loop §4]
+T10 ODLOŽENÉ (Pavel 2026-10-06, zatiaľ nevieme): monetizácia (premium 5,99 EUR vs. F2P). [core_loop §4]
 T11 HOTOVÉ 2026-10-05: zmeny poslané na GitHub pri čistení histórie (T20).
 T20 HOTOVÉ 2026-10-05: história GitHubu vyčistená od starých 3D súborov (`tools/github_cistenie.py`, jednorazový). Pavel: priečinok `slavs_cisty_...` v D:\2026 zmazať hneď, `slavs_zaloha_...` po týždni.
 T21 Po 2026-10-12: zmazať zálohu `slavs_zaloha_...` v D:\2026 (Pavel, v Prieskumníku). Priečinok `slavs_cisty_...` sa maže hneď. [T20]
@@ -36,7 +36,7 @@ T23 NÁPAD (neskôr, dizajn): nepriatelia hľadajú inú trasu a obídu hrdinu. 
 T24 Nepriateľ sa v momente začiatku švihu uzamkne na mieste (rovnako ako hrdina pri hode); útok je v stoji a pohyb ho "kĺže". Neskôr lepší nepriatelia dostanú animáciu útoku za pohybu. Pozn.: kód už nuluje rýchlosť počas útoku od 2026-08-13, preto najprv zistiť, prečo to stále bliká/kĺže. (Pavel 2026-10-06)
 
 ### Neskôr
-T19 F2 vertikálny rez, F3 obsah, F4 doladenie + uzavreté testovanie, F5 vydanie. [Open 11, PLAN_hry]
+T19 ZMAZANÉ 2026-10-06: fázy F2-F5 sú plán výroby, nie úloha; keď sa odrobia všetky úlohy, ďalší krok sa berie z `PLAN_hry.md`.
 
 ## Odsúhlasený príbeh a popis hry (kde to je)
 

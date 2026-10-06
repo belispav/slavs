@@ -192,7 +192,7 @@ shared state.** Rules for switching:
 8. [T18 closed 2026-10-06] Gunman needs no idle clip (he just stands); brute grab animation mismatch is parked. Not solved now: unknown whether these characters survive to the final version.
 9. [T05] **Items "not yet on device":** HP raise, hit effects round 2, sound system, explosive cauldron, brute, round after first device test - check on the next deploy.
 10. [T08] **Google Play:** policy/IARC review is Pavel's parallel track; Developer account deferred; closed testing (12 testers / 14 days) is F4. Licence/credit questions for generated assets still open.
-11. [T19] Phases: F2 vertical slice, F3 content, F4 polish + closed testing, F5 launch - all open.
+11. [T19 deleted 2026-10-06] Phases F2-F5 are the production plan in `PLAN_hry.md`, not tasks; when all tasks are done, take the next step from the plan.
 
 12. [T04] **TODO: STORY REWORK (Pavel 2026-10-05).** Pavel will rework the story and is working on it offline; no deadline. Do NOT start it and do not write story material on your own until he brings his draft. Today only the core exists (escaped Slavic slave, 15th century, fights slavers; no name, no cutscenes - text cards only). The Draupnir concept from the second AI (`_archiv/draupnir_koncept/`: Vladan, Zorica, 24 levels x 3 runs) is NOT agreed; it is only a possible source of ideas, and merging it with `DIZAJN_core_loop.md` is a design decision (Opus). When the new story arrives: reconcile with `PLAN_hry.md` s.1/s.3 and the sensitive-topic rules (s.2), then update `PLAN_hry.md`, this file and `KDE_JE_CO.md`/`.html`. Open Brain task exists (category Biznis, P3).
 
