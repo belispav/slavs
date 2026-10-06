@@ -9,9 +9,9 @@ Claude: pri zmene stavu aktualizuj zdroje aj túto snímku aj `KDE_JE_CO.html`.
 ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo, hotová ostane v zozname označená ako HOTOVÉ.
 
 ### Čaká na Pavla
-T01 Test na telefóne: zem (výber, scéna bez scrollu, objekty na prechod) a verzie pozadia. [CLAUDE Open 1-2, ZACNI 1]
-T02 Rozhodnutie: hod sekerou, hrdina sa šmýka. Zastaviť pri hode, alebo nový klip "hod za pohybu" (1-2 generácie). [Open 3, ZACNI 2]
-T03 Rozhodnutie: scény alebo dlhý pás; ak scény, návrh prepínania. [ZACNI 3, Open 2]
+T01 HOTOVÉ 2026-10-06: test na telefóne. Pozadie A (pokojná hlina) + objekty na zemi (skúšal 100, môže byť aj viac, ladenie neskôr); ostatné pozadia zrušené. Grafika zeme považovaná za vyriešenú.
+T02 HOTOVÉ 2026-10-06: hod sekerou. Počas hodu sa hrdina nehýbe (0 = vlastnosť, treba vybrať moment hodu), zamach 3x rýchlejší; zapečené v `tuning.gd`. Nápad: v hre začať s nižším číslom (napr. 1) a levelovať. Nový klip netreba; pri iných zbraniach (kúzla) bude animácia spojená s útokom.
+T03 HOTOVÉ 2026-10-06: chôdza aj boss scény majú ROVNAKÚ vertikálnu logiku (jemný zvislý scroll, hracia plocha = výška obrazovky, horný pás navyše len aby bolo vidieť celé telo). Pri bossoch/klietkach sa zamkne LEN horizontálny scroll (nedá sa odísť vľavo ani vpravo). Prepínanie (zoom-in) ostáva v T13.
 T04 Offline: prerobiť príbeh; Claude nezačne, kým Pavel neprinesie návrh. [Open 12, Open Brain Biznis P3]
 T05 Pri nasadení skontrolovať: viac HP, efekty zásahov kolo 2, zvuky, kotol, brute, nepriatelia za obrazovkou ho dobehnú. [Open 3b, 9]
 T06 Schváliť hlášky v `HLASKY.md` (angl.). [HLASKY.md]
