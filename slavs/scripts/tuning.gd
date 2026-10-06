@@ -439,15 +439,16 @@ var rusher_attack_hit_at: float = RUSHER_ATTACK_HIT_AT
 ## STRIKE ZONE (T29, 2026-10-06; circle since the phone test the same day).
 ## At the hit moment (RUSHER_ATTACK_HIT_AT) the club lands at a point
 ## STRIKE_FORWARD px in front of the rusher's origin and STRIKE_HEIGHT px above
-## its feet (the mace head in the PixelLab swing is ~50 px above the feet). The
+## its feet (the mace head in the PixelLab swing is ~50 px above the feet).
+## Values 40 / 50 / 40 picked by Pavel on the phone 2026-10-06. The
 ## zone is a CIRCLE of STRIKE_RADIUS around that point, in screen space. The
 ## hero is hit if his hurt rectangle (PLAYER_HURT_WIDTH wide, hung from his
 ## feet, see Player.hurt_rect) touches the circle. The rusher stops to swing as
 ## soon as the hero touches the circle (and stays stopped while he is within
 ## RUSHER_MELEE_LEAVE_FACTOR x the radius). All three live on the panel.
 const RUSHER_STRIKE_FORWARD: float = 40.0
-const RUSHER_STRIKE_RADIUS: float = 35.0
-const RUSHER_STRIKE_HEIGHT: float = 52.0
+const RUSHER_STRIKE_RADIUS: float = 40.0
+const RUSHER_STRIKE_HEIGHT: float = 50.0
 var rusher_strike_forward: float = RUSHER_STRIKE_FORWARD
 var rusher_strike_radius: float = RUSHER_STRIKE_RADIUS
 var rusher_strike_height: float = RUSHER_STRIKE_HEIGHT
