@@ -48,27 +48,47 @@ API kľúč PixelLabu (`tools\.pixellab_token`) sa NENAHRÁ – je vylúčený.
 
 ## Krok 5 – nastaviť prostredie (raz, ~5 min)
 
-Na claude.ai/code otvor prostredie **Default** na úpravu (výber prostredia
-pri poli na písanie → ikona úprav).
+Podľa dokumentácie: code.claude.com/docs/en/cloud-environments
 
-1. **Network access:** zvoľ **Custom**, do **Allowed domains** napíš:
+**A. Otvoriť nastavenie**
+1. Otvor **claude.ai/code**.
+2. V riadku **nad poľom na písanie správy** je tlačidlo s ikonou **obláčika**
+   a nápisom **Default**. Klikni naň – otvorí sa menu.
+3. V menu klikni na **Cloud** (ak sa zoznam ešte nerozbalil).
+4. Prejdi myšou nad riadok **Default** – vpravo sa objaví **ozubené koliesko**.
+   Klikni naň. Otvorí sa okno **Edit environment**.
+
+**B. Sieť**
+5. **Network access:** zmeň z **Trusted** na **Custom**.
+6. Do poľa **Allowed domains** napíš:
    ```
    *.pixellab.ai
    ```
-   a zaškrtni **Also include default list of common package managers**.
-2. **API credentials** → pridaj:
-   - **Name:** `PixelLab`
-   - **Allowed websites:** `api.pixellab.ai`
-   - **Custom headers:** Name `Authorization`, Prefix `Bearer`,
-     Value = obsah súboru `tools\.pixellab_token` (otvor ho v Poznámkovom
-     bloku a skopíruj).
-   Kľúč tak Claude používa, ale nikdy ho nevidí.
-3. **Setup script:** vlož
-   ```
-   bash tools/cloud_setup.sh
-   ```
-   (nainštaluje Godot, aby Claude vedel hru skontrolovať bez telefónu).
-4. Ulož.
+7. Zaškrtni **Also include default list of common package managers**.
+
+**C. Setup script** – do poľa **Setup script** vlož celé toto:
+```
+if ! command -v godot >/dev/null 2>&1; then
+  cd /tmp && curl -sL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip && unzip -q -o godot.zip && install -m 755 Godot_v4.7.1-stable_linux.x86_64 /usr/local/bin/godot || true
+fi
+exit 0
+```
+(nainštaluje Godot, aby Claude vedel hru skontrolovať bez telefónu)
+
+8. Klikni **Save changes**.
+
+**D. Kľúč k PixelLabu** – znova otvor to isté okno (kroky 2–4):
+9. Nájdi časť **API credentials** → klikni **Add credential**.
+10. **Credential type:** nechaj **Bearer**.
+11. **Name:** `PixelLab`
+12. **Allowed websites:** `api.pixellab.ai`
+13. **Custom headers:** Name nechaj `Authorization`, Prefix nechaj `Bearer`,
+    do **Value** vlož kľúč – obsah súboru `tools\.pixellab_token`
+    (otvor ho v Poznámkovom bloku, Ctrl+A, Ctrl+C).
+14. Klikni **Connect**. Kľúč sa uloží hneď (už ho nikto neuvidí, ani Claude).
+
+Ak časť **API credentials** v okne nie je, napíš Claudovi – kľúč sa dá
+odovzdať aj inak.
 
 ## Krok 6 – prvá cloud session
 

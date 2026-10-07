@@ -1,4 +1,4 @@
-# Start of the next session (updated 2026-10-05)
+# Start of the next session (updated 2026-10-07)
 
 Project Slavs. Read `CLAUDE.md` (short now; full history in `_archiv/CLAUDE_historia.md`, read only on demand).
 Communicate in Slovak; code and commits in English. Use the `token-saver` skill.
@@ -6,6 +6,9 @@ Starting a session: `git pull` first. Ending: commit and push to `master`.
 Local Claude Desktop and cloud both work - never in both at once.
 
 CLAUDE.md was shortened on 2026-10-05 (done, no longer a task).
+
+## WORK PACKAGES (Pavel 2026-10-07) - read `BALIKY_poradie.md` FIRST
+Pavel now works in packages of ToDo items, each in a clean Sonnet session. `BALIKY_poradie.md` says which package is NEXT (now: **Package 1 - Úder má váhu**: A1, A2, A3, A4, A5, A6, A8, E1, P1; confirm A14 as done), what already exists in code, and how to close a package. Work only on that package unless Pavel says otherwise. Research ideas with codes A1...Z8: `NAPADY_vylepsenia.md`.
 
 ## What comes next (Pavel's call; he brings device-test feedback himself)
 IDs [T..] = Pavel's ToDo list, see `KDE_JE_CO.md`.

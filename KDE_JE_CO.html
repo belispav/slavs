@@ -116,22 +116,64 @@ code,.mono{font-family:var(--font-mono);font-size:.86em;overflow-wrap:anywhere}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--accent)}
 .legend i.old{background:var(--bar-old)}
 
-/* todos */
+/* todos: filterable cards (stav, oblast, prinos, narocnost), grouped, selectable */
+:root{--i3:#b4361c;--i2:#b07a12;--i1:#6f8466;--c-napad:#8a5a00;--c-napad-bg:#f7ecd2;--c-later:#5c6460;--c-later-bg:#e6e9e6;--hi:#fff5e8;--star:#d18b00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--i3:#ef7a5a;--i2:#e0b04f;--i1:#9fb38f;--c-napad:#e2bb6a;--c-napad-bg:#3d3319;--c-later:#a3aeaa;--c-later-bg:#27302d;--hi:#2a2419;--star:#f0b43c}}
+:root[data-theme="dark"]{--i3:#ef7a5a;--i2:#e0b04f;--i1:#9fb38f;--c-napad:#e2bb6a;--c-napad-bg:#3d3319;--c-later:#a3aeaa;--c-later-bg:#27302d;--hi:#2a2419;--star:#f0b43c}
+.tile[data-g="later"] .n{color:var(--c-later)}
+.tile[data-g="napad"] .n{color:var(--c-napad)}
+.tile[data-g="vyb"] .n{color:var(--star)}
+.tbar{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.trow2{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tlbl{font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);min-width:6.5rem}
+.tcount{margin-left:auto;font-size:.85rem;color:var(--muted)}
+.tmsg{font-size:.85rem;color:var(--accent)}
 .todos{display:flex;flex-direction:column;gap:14px}
-.tgroup{background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.tgroup h3{margin:0;padding:10px 16px;font-family:var(--font-display);font-size:1.15rem;font-weight:600;letter-spacing:.02em;display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}
-.tgroup h3 span{font-family:var(--font-mono);font-size:.78rem;font-weight:500;color:var(--muted)}
-.tgroup.g-teba h3{color:var(--c-teba);background:var(--c-teba-bg)}
-.tgroup.g-claude h3{color:var(--c-claude);background:var(--c-claude-bg)}
-.tgroup.g-later h3{color:var(--c-archiv);background:var(--c-archiv-bg)}
-.trow{display:grid;grid-template-columns:8.2rem minmax(0,1fr);gap:4px 16px;padding:11px 16px;border-top:1px solid var(--line)}
-.tgroup h3+.trow{border-top:0}
-.trow .k{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding-top:2px}
-.trow .k b{display:block;font-size:.95rem;letter-spacing:.02em;color:var(--ink)}
-.trow .t b{font-weight:600}
-.trow .src{display:block;color:var(--muted);font-size:.8rem;margin-top:3px;font-family:var(--font-mono)}
-@media(max-width:560px){.trow{grid-template-columns:minmax(0,1fr)}}
+.tgrp{background:transparent}
+.tgrp>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:8px 2px;border-bottom:2px solid var(--line)}
+.tgrp>summary::-webkit-details-marker{display:none}
+.tgrp>summary h3{margin:0;font-family:var(--font-display);font-size:1.3rem;font-weight:700}
+.tgrp>summary h3::before{content:"▾ ";color:var(--muted);font-size:.9rem}
+.tgrp:not([open])>summary h3::before{content:"▸ "}
+.tgrp>summary span{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.tgd{color:var(--muted);font-size:.86rem;margin:6px 0 10px}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;margin-top:10px}
+.tcard{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--i1);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tcard.i3{border-left-color:var(--i3)}.tcard.i2{border-left-color:var(--i2)}
+.tcard.hi{background:var(--hi)}
+.tcard.sel{box-shadow:inset 0 0 0 2px var(--star)}
+.th{display:flex;align-items:center;gap:8px}
+.tid{font-family:var(--font-mono);font-size:.95rem;font-weight:600}
+.star{margin-left:auto;appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:4px;font-size:1rem;line-height:1;padding:3px 7px;cursor:pointer}
+.star[aria-pressed="true"]{color:var(--star);border-color:var(--star)}
+.tt{font-size:.92rem;overflow-wrap:anywhere}
+.tt b{font-weight:600}
+.tm{display:flex;flex-wrap:wrap;gap:5px;font-size:.75rem}
+.tag{background:var(--bg);border:1px solid var(--line);border-radius:3px;padding:1px 6px;color:var(--muted)}
+.tag.i3{color:var(--i3);font-weight:600}.tag.i2{color:var(--i2);font-weight:600}.tag.i1{color:var(--i1);font-weight:600}
+.tsrc{font-size:.76rem;color:var(--muted);font-family:var(--font-mono);overflow-wrap:anywhere}
+.tsrc a{color:var(--accent)}
+.b-later{color:var(--c-later);background:var(--c-later-bg)}
+.b-napad{color:var(--c-napad);background:var(--c-napad-bg)}
+.tbtn{appearance:none;font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer}
+.tbtn:hover{border-color:var(--muted)}
+@media(max-width:560px){.tgrid{grid-template-columns:minmax(0,1fr)}.tlbl{min-width:100%}}
 
+
+.bhead{margin:4px 0 0;font-family:var(--font-display);font-size:1.15rem;font-weight:600}
+.baliky{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.bcard{appearance:none;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-width:0}
+.bcard[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--accent)}
+.bcard.st-next{border-color:var(--accent);background:var(--accent-soft)}
+.bcard.st-done{opacity:.6}
+.bh{display:flex;align-items:baseline;gap:8px}
+.bn{font-family:var(--font-display);font-size:1.6rem;font-weight:700;line-height:1;color:var(--accent)}
+.bt{font-weight:600;font-size:.95rem}
+.bs{margin-left:auto;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;color:var(--muted)}
+.st-next .bs{color:var(--accent);font-weight:600}
+.bd{font-size:.83rem;color:var(--muted)}
+.bc{font-family:var(--font-mono);font-size:.74rem;overflow-wrap:anywhere}
+.tag.bal{color:var(--accent);border-color:var(--accent)}
 /* two column bottom */
 .duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 @media(max-width:760px){.duo{grid-template-columns:minmax(0,1fr)}}
@@ -143,14 +185,26 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Slavs fight back · stav k 6. 10. 2026</span>
+    <span class="eyebrow">Slavs fight back · stav k 7. 10. 2026</span>
     <h1>Mapa projektu: kde je čo</h1>
-    <p class="lede">Každý súbor v hlavnom priečinku s údajom, pre koho je. Kliknutím na dlaždicu odfiltruješ len svoje súbory. Rovnaký obsah v textovej podobe pre Claude je v <code>KDE_JE_CO.md</code>.</p>
+    <p class="lede">Hore sú všetky otvorené úlohy a nápady (filtre podľa stavu, oblasti, prínosu a náročnosti), nižšie súbory v hlavnom priečinku s údajom, pre koho sú. Rovnaký obsah v textovej podobe pre Claude je v <code>KDE_JE_CO.md</code>.</p>
   </header>
 
   <section aria-labelledby="todo-h">
     <h2 id="todo-h">ToDo's</h2>
     <p class="lede" id="todo-sum"></p>
+    <h3 class="bhead">Balíky – poradie práce (každý v novej session; klik na balík ukáže jeho úlohy)</h3>
+    <div class="baliky" id="tbaliky"></div>
+    <div class="tiles" id="ttiles" role="group" aria-label="Filter podľa stavu"></div>
+    <div class="tbar">
+      <div class="trow2"><span class="tlbl">Balík</span><span class="chips" id="tbal"></span></div>
+      <div class="trow2"><span class="tlbl">Oblasť</span><span class="chips" id="tcat"></span></div>
+      <div class="trow2"><span class="tlbl">Prínos</span><span class="chips" id="timp"></span></div>
+      <div class="trow2"><span class="tlbl">Náročnosť</span><span class="chips" id="teff"></span></div>
+      <div class="trow2"><span class="tlbl">Zoskupiť podľa</span><span class="chips" id="tgrp"></span></div>
+      <div class="trow2"><input class="search" id="tq" type="search" placeholder="Hľadať v úlohách (kód, slovo)" aria-label="Hľadať v úlohách"><span class="tcount" id="tcount"></span></div>
+      <div class="trow2"><span class="tlbl">Tvoj výber ☆</span><button class="tbtn" id="tcopy" type="button">Skopírovať kódy vybraných</button><button class="tbtn" id="tclear" type="button">Zrušiť výber</button><span class="tmsg" id="tmsg"></span></div>
+    </div>
     <div id="todos" class="todos"></div>
   </section>
 
@@ -219,11 +273,13 @@ var GROUPS = {
 var ITEMS = [
   {n:"CLAUDE.md", g:"claude", w:"Pamäť projektu. Claude ju číta na začiatku každej session.", s:"Otváraj ju len, keď chceš vidieť, čo Claude o projekte vie."},
   {n:"ZACNI_TU_dalsia_session.md", g:"claude", w:"Štartovací prompt ďalšej session a zoznam, čo príde na rad.", s:"Aktuálny, aktualizovaný 5. 10."},
+  {n:"BALIKY_poradie.md", g:"claude", w:"Balíky práce: poradie, stav, čo už v kóde je a ako balík uzavrieť. Každá nová session z neho vie, čo je na rade.", s:"Pre teba je to isté v ToDo hore (sekcia Balíky)."},
   {n:"KDE_JE_CO.md / KDE_JE_CO.html", g:"oboch", w:"Táto mapa. Markdown je pre Claude, dashboard pre teba.", s:"Claude ju aktualizuje pri každom presune súborov."},
   {n:"PRIKAZY.md", g:"teba", w:"Ťahák príkazov: nasadenie na telefón, PixelLab, riešenie problémov.", s:"Otvor, keď potrebuješ niečo napísať do PowerShellu."},
   {n:"SETUP_F0.md", g:"teba", w:"Inštalácia (Godot, JDK, Android SDK) a testovací protokol na telefóne.", s:"Pri novom počítači alebo novom telefóne."},
   {n:"POSTUP_cloud_github.md", g:"teba", w:"Ako pracovať v cloude a cez GitHub namiesto na svojom PC.", s:"Pri prepínaní medzi lokálom a cloudom."},
   {n:"HLASKY.md", g:"teba", w:"Návrh hlášok postáv (v angličtine) na schválenie. Škrtni, prepíš, dopíš.", s:"Čaká na tvoje schválenie, kým sa nahrajú zvuky."},
+  {n:"NAPADY_vylepsenia.md", g:"oboch", w:"Výskum z internetu (7. 10.): 148 nápadov na vylepšenie hry s popisom a zdrojmi. Otvorené nápady sú v ToDo hore (rovnaké kódy A1…V4).", s:"Detail a zdroje; dashboard nápadov je teraz tu v ToDo."},
   {n:"PLAN_hry.md", g:"oboch", w:"Plán hry, business case, fázy F0 až F5, riziká. Kapitola 2 o citlivej téme je nemenná.", s:"Éra v texte je zastaraná, platí 15. storočie."},
   {n:"DIZAJN_core_loop.md", g:"oboch", w:"Štruktúra hry: opakované behy, klietky so zajatcami, bossovia.", s:"Nahrádza kapitoly 3.2 a 3.5 plánu."},
   {n:"SPEC_ovladanie_implementacia.md", g:"oboch", w:"Ovládanie. Jediný zdroj pravdy pre to, ako sa hra ovláda.", s:"Ovládanie je produkt, všetko ostatné je druhé."},
@@ -250,44 +306,1917 @@ var SIZES = [
   {n:"docs/", mb:1, f:1, d:"Výskum", old:false}
 ];
 var TODOS = [
-  {id:"T04", g:"teba", k:"Offline", t:"<b>Prerobiť príbeh.</b> Pracuješ na ňom offline, bez termínu. Claude ho nezačne, kým neprinesieš návrh. Úloha je aj v Open Brain (Biznis, P3).", s:"CLAUDE.md Otvorené 12, Open Brain"},
-  {id:"T06", g:"teba", k:"Schváliť", t:"<b>Hlášky postáv</b> (angl.): návrh je v HLASKY.md. Škrtni, prepíš, dopíš; čo ostane, to sa nahrá. Hlasové priečinky sú zatiaľ prázdne.", s:"HLASKY.md, CLAUDE.md Sound"},
-  {id:"T07", g:"teba", k:"Teraz", t:"<b>Krátky test na inom telefóne (asi 10 minút), v najbližších dňoch.</b> Ovládanie je overené len na 450 dpi; pozri aj či sedí obrazovka pri inom pomere strán (zamknutá scéna, horný pás). Plné ladenie DPI až neskôr.", s:"CLAUDE.md Otvorené 7"},
-  {id:"T08", g:"teba", k:"Odložené", t:"<b>Google Play</b>: kontrola pravidiel a hodnotenia IARC až keď bude hotová kostra hry (príbeh, hlášky). Hra je zatiaľ z 10 % hotová, kontrola teraz nemá zmysel.", s:"CLAUDE.md Otvorené 10"},
-  {id:"T09", g:"teba", k:"Teraz", t:"<b>Jadro hry, herné mechanizmy</b> (grafika je v základoch hotová): čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. Riešime po jednej otázke.", s:"DIZAJN_core_loop §3–4"},
-  {id:"T10", g:"teba", k:"Odložené", t:"<b>Monetizácia</b>: plán je platená hra za 5,99 € bez nákupov, ale zvažovalo sa aj F2P. Rozhodnutie je odložené, lebo nemení kód. Platí: kombinácia platenej hry a nákupov je najhoršia.", s:"DIZAJN_core_loop §4"},
-  {id:"T21", g:"teba", k:"Po 12. 10.", t:"<b>Zmazať zálohu <code>slavs_zaloha_…</code></b> v D:\\2026 (v Prieskumníku). Je to poistka po čistení GitHubu, po týždni bez problémov už netreba. Priečinok <code>slavs_cisty_…</code> sa maže hneď.", s:"T20, tools/github_cistenie.py"},
-  {id:"T44", g:"teba", k:"Vyplniť", t:"<b>Skrývanie posuvníkov</b>. Otvor <b>PANEL_prvky.xlsx</b> (S-čísla, stĺpec Zobraziť A/N), prepíš A/N a daj mi vedieť, zapíšem to do hry. Skryté ostávajú v kóde. Teraz skrytých 44 z 75 (môj návrh).", s:"Pavel 7. 10."},
-  {id:"T17", g:"claude", k:"Dôležité", t:"<b>Zjednotiť farebnú paletu</b> pozadia, nepriateľov a predmetov. Musí byť vyriešené PRED generovaním finálnej hernej grafiky; pri prototypoch nemusí.", s:"CLAUDE.md Otvorené 6, pamäť"},
-  {id:"T23", g:"later", k:"Nápad", t:"<b>Nepriatelia obchádzajú hrdinu</b> a hľadajú inú trasu. Dôsledok: obkľúčia ho a nebude vedieť ujsť. Rozhodnúť neskôr, či to chceme.", s:"Pavel 6. 10."},
-  {id:"T34", g:"later", k:"Vyskúšať", t:"<b>Vlna pri údere zbrane (švih, sek, pich) a pri zásahu</b>. NA ZVÁŽENIE/VYSKÚŠANIE: úder zbrane má mať okolo seba „vlnu“ znázorňujúcu švih alebo sek (oblúk švihu, pich v tvare U alebo V), nakreslenú akoby zo vzduchu. To isté skúsiť pri zásahu nepriateľa, aby bol vidieť „úder“, hoci tam už je krv.", s:"Pavel 6. 10. (len zapísané)"},
-  {id:"T35", g:"later", k:"Nápad", t:"<b>Poletujúce veci vo vzduchu (lístie, dážď, sneh, hmla)</b>. Vo vzduchu má občas niečo poletovať podľa prostredia: lístie, dážď, sneh, hmla. Rôzna veľkosť (ten istý tvar raz v pôvodných pixeloch, inokedy 2x alebo 3x väčší).", s:"Pavel 6. 10. (len zapísané)"},
-  {id:"T36", g:"later", k:"Zvážiť", t:"<b>Ako miznú nepriatelia po smrti (dym?)</b>. NA ZVÁŽENIE: ako miznú nepriatelia po smrti. Zatiaľ úvaha o strate v dyme, možno príde iný nápad.", s:"Pavel 6. 10. (len zapísané)"},
-  {id:"T37", g:"later", k:"Vyskúšať", t:"<b>Zvírený prach, sneh alebo dym za postavami pri chôdzi</b>. NA VYSKÚŠANIE: za postavami pri chôdzi občas efekt zvíreného prachu, snehu alebo dymu; v podstate tá istá animácia, farba podľa podkladu, po ktorom chodia.", s:"Pavel 6. 10. (len zapísané)"},
-  {id:"T38", g:"later", k:"Nápad", t:"<b>Let vo vzduchu napodobniť tieňom (oblúk + lineárny tieň)</b>. Útočníci vo vzduchu a hádzané veci s oblúkovou dráhou sa napodobnia tieňom: predmet opustí ruku a opisuje oblúk, tieň ide lineárne po zemi a nakoniec sa stretnú, čo vytvorí dojem letu.", s:"Pavel 6. 10. (len zapísané)"},
-  {id:"T39", g:"later", k:"Nápad", t:"<b>Vietor: vlajky, trsy trávy, hmla, dym</b>. Niektoré veci majú znázorniť vietor: vlajky, trsy trávy, hmla, dym.", s:"Pavel 6. 10. (len zapísané)"},
-  {id:"T40", g:"later", k:"Nápad", t:"<b>Shadery: osvetlenie (fakľa, oheň, výbuch), hmla</b>. Používať shadery, napr. na osvetlenú oblasť (fakľa, oheň, chvíľu po výbuchu kotla), asi aj na hmlu. Pridá hre hĺbku a rozmanitosť.", s:"Pavel 6. 10. (len zapísané)"},
-  {id:"T41", g:"later", k:"Nápad", t:"<b>Omráčenie a pád hrdinu (animácie)</b>. Niektoré útoky a výbuchy majú vedieť hrdinu odhodiť alebo omráčiť: na mieste (točí sa hlava) alebo pád na zem (dlhšie). Riešiť pri ladení finálnych postáv, teraz nie.", s:"Pavel 7. 10. (len zapísané)"},
-  {id:"T42", g:"later", k:"Nápad", t:"<b>Katalóg efektov nepriateľov a našich</b>. Spisovať efekty, ktoré môžu mať nepriatelia na nás a my na nich (odhodenie, omráčenie, pád, spomalenie...). Pri každom nepriateľovi si z katalógu vyberieme.", s:"Pavel 7. 10. (len zapísané)"},
-  {id:"T43", g:"later", k:"Nápad", t:"<b>Sekera ako bumerang = vylepšenie sekery</b>. Zraňovanie aj cestou späť môže byť neskôr vylepšenie; cesta späť aj tak nesmie odhadzovať. V kóde je vypínač AXE_RETURN_HURTS.", s:"Pavel 7. 10. (len zapísané)"},
-  {id:"T47", g:"later", k:"Finálne ladenie", t:"<b>Páčka ľavého palca</b> (otočka a spomalenie). Teraz dobré. Doladiť pri záverečnom teste hry, najmä pri zamknutých súbojoch s bossmi: pri behu doprava je hrdina v strede a palec ďaleko od neho. Nástroje: posuvníky „posun palca pre plnú rýchlosť“, pomer hore-dole, zastavenie počas hodu.", s:"Pavel 7. 10. (len zapísané)"},
-];
-var TG = {teba:"Čaká na teba", claude:"Čaká na Claude", later:"Neskôr"};
-function renderTodos(){
-  var box=document.getElementById("todos"); box.textContent="";
-  ["teba","claude","later"].forEach(function(g){
-    var items=TODOS.filter(function(x){return x.g===g});
-    var grp=el("div","tgroup g-"+g), h=el("h3",null,TG[g]); h.appendChild(el("span",null,String(items.length)));
-    grp.appendChild(h);
-    items.forEach(function(x){
-      var r=el("div","trow"), kk=el("div","k"); kk.appendChild(el("b",null,x.id)); kk.appendChild(document.createTextNode(x.k)); r.appendChild(kk);
-      var d=el("div","t"); d.innerHTML=x.t; d.appendChild(el("span","src",x.s)); r.appendChild(d); grp.appendChild(r);
-    });
-    box.appendChild(grp);
-  });
-  var n=TODOS.filter(function(x){return x.g==="teba"}).length, c=TODOS.filter(function(x){return x.g==="claude"}).length;
-  document.getElementById("todo-sum").textContent=n+" vecí čaká na teba, "+c+" na Claude. Zdroje: CLAUDE.md (Otvorené), ZACNI_TU_dalsia_session.md, DIZAJN_core_loop.md, pamäť a Open Brain. Čísla (T04, T22...) sú stále: keď ich napíšeš Claudovi, vie, ktorú vec myslíš. Hotové úlohy tu nie sú, ukladajú sa do _archiv/TODO_hotove.md.";
+{
+"id": "T04",
+"g": "teba",
+"cat": "Q",
+"imp": 3,
+"eff": "V",
+"k": "Offline",
+"t": "<b>Prerobiť príbeh.</b> Pracuješ na ňom offline, bez termínu. Claude ho nezačne, kým neprinesieš návrh. Úloha je aj v Open Brain (Biznis, P3).",
+"s": "CLAUDE.md Otvorené 12, Open Brain"
+},
+{
+"id": "T06",
+"g": "teba",
+"cat": "D",
+"imp": 2,
+"eff": "N",
+"k": "Schváliť",
+"t": "<b>Hlášky postáv</b> (angl.): návrh je v HLASKY.md. Škrtni, prepíš, dopíš; čo ostane, to sa nahrá. Hlasové priečinky sú zatiaľ prázdne.",
+"s": "HLASKY.md, CLAUDE.md Sound"
+},
+{
+"id": "T07",
+"g": "teba",
+"cat": "O",
+"imp": 3,
+"eff": "N",
+"k": "Teraz",
+"t": "<b>Krátky test na inom telefóne (asi 10 minút), v najbližších dňoch.</b> Ovládanie je overené len na 450 dpi; pozri aj či sedí obrazovka pri inom pomere strán (zamknutá scéna, horný pás). Plné ladenie DPI až neskôr.",
+"s": "CLAUDE.md Otvorené 7"
+},
+{
+"id": "T08",
+"g": "teba",
+"cat": "U",
+"imp": 3,
+"eff": "S",
+"k": "Odložené",
+"t": "<b>Google Play</b>: kontrola pravidiel a hodnotenia IARC až keď bude hotová kostra hry (príbeh, hlášky). Hra je zatiaľ z 10 % hotová, kontrola teraz nemá zmysel.",
+"s": "CLAUDE.md Otvorené 10"
+},
+{
+"id": "T09",
+"g": "teba",
+"cat": "J",
+"imp": 3,
+"eff": "V",
+"k": "Teraz",
+"t": "<b>Jadro hry, herné mechanizmy</b> (grafika je v základoch hotová): čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. Riešime po jednej otázke.",
+"s": "DIZAJN_core_loop §3–4",
+"b": 4
+},
+{
+"id": "T10",
+"g": "teba",
+"cat": "Z",
+"imp": 3,
+"eff": "S",
+"k": "Odložené",
+"t": "<b>Monetizácia</b>: plán je platená hra za 5,99 € bez nákupov, ale zvažovalo sa aj F2P. Rozhodnutie je odložené, lebo nemení kód. Platí: kombinácia platenej hry a nákupov je najhoršia.",
+"s": "DIZAJN_core_loop §4"
+},
+{
+"id": "T21",
+"g": "teba",
+"cat": "U",
+"imp": 1,
+"eff": "N",
+"k": "Po 12. 10.",
+"t": "<b>Zmazať zálohu <code>slavs_zaloha_…</code></b> v D:\\2026 (v Prieskumníku). Je to poistka po čistení GitHubu, po týždni bez problémov už netreba. Priečinok <code>slavs_cisty_…</code> sa maže hneď.",
+"s": "T20, tools/github_cistenie.py"
+},
+{
+"id": "T44",
+"g": "teba",
+"cat": "U",
+"imp": 1,
+"eff": "N",
+"k": "Vyplniť",
+"t": "<b>Skrývanie posuvníkov</b>. Otvor <b>PANEL_prvky.xlsx</b> (S-čísla, stĺpec Zobraziť A/N), prepíš A/N a daj mi vedieť, zapíšem to do hry. Skryté ostávajú v kóde. Teraz skrytých 44 z 75 (môj návrh).",
+"s": "Pavel 7. 10."
+},
+{
+"id": "T17",
+"g": "claude",
+"cat": "C",
+"imp": 3,
+"eff": "S",
+"k": "Dôležité",
+"t": "<b>Zjednotiť farebnú paletu</b> pozadia, nepriateľov a predmetov. Musí byť vyriešené PRED generovaním finálnej hernej grafiky; pri prototypoch nemusí.",
+"s": "CLAUDE.md Otvorené 6, pamäť"
+},
+{
+"id": "T23",
+"g": "later",
+"cat": "F",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Nepriatelia obchádzajú hrdinu</b> a hľadajú inú trasu. Dôsledok: obkľúčia ho a nebude vedieť ujsť. Rozhodnúť neskôr, či to chceme.",
+"s": "Pavel 6. 10."
+},
+{
+"id": "T34",
+"g": "later",
+"cat": "A",
+"imp": 2,
+"eff": "S",
+"k": "Vyskúšať",
+"t": "<b>Vlna pri údere zbrane (švih, sek, pich) a pri zásahu</b>. NA ZVÁŽENIE/VYSKÚŠANIE: úder zbrane má mať okolo seba „vlnu“ znázorňujúcu švih alebo sek (oblúk švihu, pich v tvare U alebo V), nakreslenú akoby zo vzduchu. To isté skúsiť pri zásahu nepriateľa, aby bol vidieť „úder“, hoci tam už je krv.",
+"s": "Pavel 6. 10. (len zapísané)"
+},
+{
+"id": "T35",
+"g": "later",
+"cat": "C",
+"imp": 1,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Poletujúce veci vo vzduchu (lístie, dážď, sneh, hmla)</b>. Vo vzduchu má občas niečo poletovať podľa prostredia: lístie, dážď, sneh, hmla. Rôzna veľkosť (ten istý tvar raz v pôvodných pixeloch, inokedy 2x alebo 3x väčší).",
+"s": "Pavel 6. 10. (len zapísané)"
+},
+{
+"id": "T36",
+"g": "later",
+"cat": "A",
+"imp": 2,
+"eff": "S",
+"k": "Zvážiť",
+"t": "<b>Ako miznú nepriatelia po smrti (dym?)</b>. NA ZVÁŽENIE: ako miznú nepriatelia po smrti. Zatiaľ úvaha o strate v dyme, možno príde iný nápad.",
+"s": "Pavel 6. 10. (len zapísané)",
+"b": 2
+},
+{
+"id": "T37",
+"g": "later",
+"cat": "B",
+"imp": 1,
+"eff": "S",
+"k": "Vyskúšať",
+"t": "<b>Zvírený prach, sneh alebo dym za postavami pri chôdzi</b>. NA VYSKÚŠANIE: za postavami pri chôdzi občas efekt zvíreného prachu, snehu alebo dymu; v podstate tá istá animácia, farba podľa podkladu, po ktorom chodia.",
+"s": "Pavel 6. 10. (len zapísané)",
+"b": 5
+},
+{
+"id": "T38",
+"g": "later",
+"cat": "C",
+"imp": 1,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Let vo vzduchu napodobniť tieňom (oblúk + lineárny tieň)</b>. Útočníci vo vzduchu a hádzané veci s oblúkovou dráhou sa napodobnia tieňom: predmet opustí ruku a opisuje oblúk, tieň ide lineárne po zemi a nakoniec sa stretnú, čo vytvorí dojem letu.",
+"s": "Pavel 6. 10. (len zapísané)"
+},
+{
+"id": "T39",
+"g": "later",
+"cat": "C",
+"imp": 1,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Vietor: vlajky, trsy trávy, hmla, dym</b>. Niektoré veci majú znázorniť vietor: vlajky, trsy trávy, hmla, dym.",
+"s": "Pavel 6. 10. (len zapísané)"
+},
+{
+"id": "T40",
+"g": "later",
+"cat": "C",
+"imp": 2,
+"eff": "V",
+"k": "Nápad",
+"t": "<b>Shadery: osvetlenie (fakľa, oheň, výbuch), hmla</b>. Používať shadery, napr. na osvetlenú oblasť (fakľa, oheň, chvíľu po výbuchu kotla), asi aj na hmlu. Pridá hre hĺbku a rozmanitosť.",
+"s": "Pavel 6. 10. (len zapísané)"
+},
+{
+"id": "T41",
+"g": "later",
+"cat": "B",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Omráčenie a pád hrdinu (animácie)</b>. Niektoré útoky a výbuchy majú vedieť hrdinu odhodiť alebo omráčiť: na mieste (točí sa hlava) alebo pád na zem (dlhšie). Riešiť pri ladení finálnych postáv, teraz nie.",
+"s": "Pavel 7. 10. (len zapísané)"
+},
+{
+"id": "T42",
+"g": "later",
+"cat": "F",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Katalóg efektov nepriateľov a našich</b>. Spisovať efekty, ktoré môžu mať nepriatelia na nás a my na nich (odhodenie, omráčenie, pád, spomalenie...). Pri každom nepriateľovi si z katalógu vyberieme.",
+"s": "Pavel 7. 10. (len zapísané)",
+"b": 3
+},
+{
+"id": "T43",
+"g": "later",
+"cat": "I",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Sekera ako bumerang = vylepšenie sekery</b>. Zraňovanie aj cestou späť môže byť neskôr vylepšenie; cesta späť aj tak nesmie odhadzovať. V kóde je vypínač AXE_RETURN_HURTS.",
+"s": "Pavel 7. 10. (len zapísané)"
+},
+{
+"id": "T47",
+"g": "later",
+"cat": "O",
+"imp": 2,
+"eff": "N",
+"k": "Finálne ladenie",
+"t": "<b>Páčka ľavého palca</b> (otočka a spomalenie). Teraz dobré. Doladiť pri záverečnom teste hry, najmä pri zamknutých súbojoch s bossmi: pri behu doprava je hrdina v strede a palec ďaleko od neho. Nástroje: posuvníky „posun palca pre plnú rýchlosť“, pomer hore-dole, zastavenie počas hodu.",
+"s": "Pavel 7. 10. (len zapísané)"
+},
+{
+"id": "A1",
+"g": "napad",
+"cat": "A",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Zastavenie času pri zásahu (hit-stop)</b>. Pri zásahu sa hra na zlomok sekundy (asi 30–80 ms, Vlambeer používa 10–20 ms na každý zásah) zmrazí: útočník aj zasiahnutý. Pri slabom zásahu kratšie, pri bossovi a kritickom zásahu dlhšie. Najlacnejší spôsob, ako dať úderu váhu.",
+"s": "Výskum 7. 10. · Jan Willem Nijman (Vlambeer, Nuclear Throne) – čo sa deje pri jednom výstrele",
+"u": "https://infovore.org/?p=5275",
+"b": 1
+},
+{
+"id": "A2",
+"g": "napad",
+"cat": "A",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Biely záblesk zasiahnutého nepriateľa</b>. Zasiahnutý nepriateľ je 1–2 snímky celý biely. Hráč okamžite vidí, že trafil, aj v dave 30 postáv.",
+"s": "Výskum 7. 10. · Jan Willem Nijman (Vlambeer, Nuclear Throne) – čo sa deje pri jednom výstrele",
+"u": "https://infovore.org/?p=5275",
+"b": 1
+},
+{
+"id": "A3",
+"g": "napad",
+"cat": "A",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Otras obrazovky podľa sily</b>. Malý pri sekere, väčší pri výbuchu kotla, najväčší pri bossovi; rýchlo doznie. Musí sa dať vypnúť v nastaveniach.",
+"s": "Výskum 7. 10. · Mega Cat Studios – Juice Guide (shooter / run'n'gun)",
+"u": "https://megacatstudios.com/blogs/game-development/mega-cat-developer-juice-guide-v1-0-08-23-17",
+"b": 1
+},
+{
+"id": "A4",
+"g": "napad",
+"cat": "A",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Mierny posun kamery v smere hodu</b>. Kamera sa pri hode posunie o 2–4 px v smere útoku a vráti sa. Hod pôsobí silnejšie, hráč to vedome nevníma.",
+"s": "Výskum 7. 10. · Jan Willem Nijman (Vlambeer, Nuclear Throne) – čo sa deje pri jednom výstrele",
+"u": "https://infovore.org/?p=5275",
+"b": 1
+},
+{
+"id": "A5",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Čísla poškodenia nad nepriateľmi</b>. Vyskakujúce čísla pri zásahu; kritické väčšie a inou farbou. Archero aj Vampire Survivors ich majú ako odmenu pri každom zásahu. Vypínateľné.",
+"s": "Výskum 7. 10. · Deconstructor of Fun – prečo Archero zarobilo",
+"u": "https://www.deconstructoroffun.com/blog/2019/8/9/why-archero-banked-25m-but-leaves-25m-hanging-hlx9n",
+"b": 1
+},
+{
+"id": "A6",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Kritický zásah</b>. Náhodne 5–10 % zásahov urobí dvojnásobok, s iným zvukom a väčším číslom. Malá náhodná odmena v každom hode.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)",
+"b": 1
+},
+{
+"id": "A7",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Iskry a kúsky v mieste zásahu</b>. 2–3 snímky efektu presne tam, kde sekera trafila; iný pre telo, drevo a kov (štít, prilba).",
+"s": "Výskum 7. 10. · Mega Cat Studios – Juice Guide (shooter / run'n'gun)",
+"u": "https://megacatstudios.com/blogs/game-development/mega-cat-developer-juice-guide-v1-0-08-23-17"
+},
+{
+"id": "A8",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Zvuk zásahu podľa materiálu</b>. Zvuk zásahu = materiál (mäso, drevo, kov) zmiešaný s výkrikom postavy. Takto to robí Nuclear Throne.",
+"s": "Výskum 7. 10. · Jan Willem Nijman (Vlambeer, Nuclear Throne) – čo sa deje pri jednom výstrele",
+"u": "https://infovore.org/?p=5275",
+"b": 1
+},
+{
+"id": "A9",
+"g": "napad",
+"cat": "A",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Smrť nepriateľa s pointou</b>. Telo odletí v smere zásahu, pretočí sa, dopadne a poskočí. Každá smrť je malá odmena. (Súvisí s vaším T36 – ako miznú.)",
+"s": "Výskum 7. 10. · Mega Cat Studios – Juice Guide (shooter / run'n'gun)",
+"u": "https://megacatstudios.com/blogs/game-development/mega-cat-developer-juice-guide-v1-0-08-23-17",
+"b": 2
+},
+{
+"id": "A10",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Spomalenie pri poslednom zabití</b>. Posledný nepriateľ vlny alebo boss: pol sekundy spomalený čas a mierny zoom. Klasický moment na klip.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)",
+"b": 2
+},
+{
+"id": "A11",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Rozbitné prostredie</b>. Sudy, debny, ploty a stany sa rozletia na kúsky a zostanú trosky. Broforce bolo chválené práve za ničiteľné prostredie.",
+"s": "Výskum 7. 10. · Wikipedia – Broforce (záchrana zajatcov = nová postava)",
+"u": "https://en.wikipedia.org/wiki/Broforce",
+"b": 2
+},
+{
+"id": "A12",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Stopy boja zostávajú na zemi</b>. Štylizované škvrny, trosky, zapichnuté šípy. Miesto po boji vyzerá ako po boji (Vlambeer to preferuje pred čistou stenou). Pozor na PEGI: štylizovane, nie realisticky.",
+"s": "Výskum 7. 10. · Jan Willem Nijman (Vlambeer, Nuclear Throne) – čo sa deje pri jednom výstrele",
+"u": "https://infovore.org/?p=5275",
+"b": 2
+},
+{
+"id": "A13",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Náprah a podržaná snímka úderu</b>. 1 snímka náprahu pred hodom (60–80 ms) a snímka zásahu podržaná dlhšie (120–200 ms). Rozdiel medzi amatérskou a profesionálnou animáciou. Riešiť pri PixelLab animáciách.",
+"s": "Výskum 7. 10. · Princípy animácie v pixel arte (časovanie, anticipácia, smear)",
+"u": "https://www.sprite-ai.art/guides/animation-principles"
+},
+{
+"id": "A14",
+"g": "napad",
+"cat": "A",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Krátka nesmrteľnosť hrdinu po zásahu</b>. Po zásahu hrdina 0,5–1 s bliká a nedá sa zraniť. Hráč vidí, že dostal, a má chvíľu na útek; v dave 30 nepriateľov inak umrie za sekundu.",
+"s": "Výskum 7. 10. · Mega Cat Studios – Juice Guide (shooter / run'n'gun)",
+"u": "https://megacatstudios.com/blogs/game-development/mega-cat-developer-juice-guide-v1-0-08-23-17",
+"b": 1
+},
+{
+"id": "A15",
+"g": "napad",
+"cat": "A",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Odmeny sa „vcucnú“ k hrdinovi</b>. Mena / duše zajatcov letia magnetom k hrdinovi, každá s krátkym zvukom. Zber je jeden z najsilnejších príjemných pocitov vo Vampire Survivors.",
+"s": "Výskum 7. 10. · The Secret Sauce of Vampire Survivors",
+"u": "https://jboger.substack.com/p/the-secret-sauce-of-vampire-survivors",
+"b": 4
+},
+{
+"id": "A16",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Rastúci tón pri sérii</b>. Každý ďalší zásah alebo zber v rýchlej sérii má o kúsok vyšší tón. Mozog to vníma ako stupňovanie (Peggle, Balatro).",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)",
+"b": 4
+},
+{
+"id": "A17",
+"g": "napad",
+"cat": "A",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Červený okraj obrazovky pri nízkom zdraví</b>. Pri posledných srdiečkach sa okraj obrazovky zafarbí a ozve sa tlkot srdca. Napätie bez jediného slova.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)",
+"b": 5
+},
+{
+"id": "B1",
+"g": "napad",
+"cat": "B",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Úskok (dash) s krátkou nesmrteľnosťou</b>. Rýchly úskok na pár desiatok px, počas neho hrdina nedostane zásah. Dá hráčovi aktívny nástroj na únik z obkľúčenia (riziko z vášho T23). Dead Cells má úskok aj na mobile (potiahnutím).",
+"s": "Výskum 7. 10. · TouchArcade – Dead Cells mobilné ovládanie (Auto-Hit, nastaviteľné tlačidlá)",
+"u": "https://toucharcade.com/2019/05/07/dead-cells-mobile-blog-post/",
+"b": 5
+},
+{
+"id": "B2",
+"g": "napad",
+"cat": "B",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Stlačenie a natiahnutie (squash & stretch)</b>. Pri dopade, odhodení a štarte sa postava na 1 snímku o 1–2 px stlačí/natiahne. Pôsobí živo a pružne.",
+"s": "Výskum 7. 10. · Princípy animácie v pixel arte (časovanie, anticipácia, smear)",
+"u": "https://www.sprite-ai.art/guides/animation-principles",
+"b": 5
+},
+{
+"id": "B3",
+"g": "napad",
+"cat": "B",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Oneskorený pohyb vlasov, plášťa, reťaze</b>. Vlasy alebo zvyšok reťaze na zápästí sa hýbu o snímku neskôr ako telo. Reťaz je zároveň vizuálny symbol príbehu.",
+"s": "Výskum 7. 10. · Princípy animácie v pixel arte (časovanie, anticipácia, smear)",
+"u": "https://www.sprite-ai.art/guides/animation-principles"
+},
+{
+"id": "B4",
+"g": "napad",
+"cat": "B",
+"imp": 1,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Idle animácia s osobnosťou</b>. Keď hráč 5 s nič nerobí, hrdina si pretiahne ramená, pohodí sekerou. Drobnosť, ktorú hráči zachytia na videách.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "B5",
+"g": "napad",
+"cat": "B",
+"imp": 2,
+"eff": "V",
+"k": "Nápad",
+"t": "<b>Hrdina vizuálne rastie s vylepšeniami</b>. Po vylepšeniach pribúda výstroj (kožušina, prilba, lepšia sekera) a reťaz ubúda. Progres vidno na postave, nie len v číslach.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "C1",
+"g": "napad",
+"cat": "C",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Čitateľnosť v dave</b>. Hrdina a nepriatelia sa musia odlíšiť od pozadia aj pri 30 postavách: tmavý obrys, sýtejšie farby postáv, tlmenejšie pozadie. Bez toho je dav len šum.",
+"s": "Výskum 7. 10. · Bugnet – čitateľný dizajn nepriateľov",
+"u": "https://bugnet.io/blog/how-to-design-a-readable-enemy-design"
+},
+{
+"id": "C2",
+"g": "napad",
+"cat": "C",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Denná doba a počasie medzi behmi</b>. Ten istý level ráno, za súmraku, v daždi, v snehu. Lacná rozmanitosť pre hru, kde sa úsek opakuje desiatky ráz.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "C3",
+"g": "napad",
+"cat": "C",
+"imp": 1,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Prostredie reaguje na hrdinu</b>. Vtáky vyletia, keď prebehne, pes zašteká, sliepky utekajú pred bojom. Metal Slug je známy takýmito drobnosťami.",
+"s": "Výskum 7. 10. · TV Tropes – Metal Slug (zajatci, komickí vojaci, premeny, vozidlá)",
+"u": "https://tvtropes.org/pmwiki/pmwiki.php/Videogame/MetalSlug"
+},
+{
+"id": "C4",
+"g": "napad",
+"cat": "C",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Záblesk farieb pri level-upe a odomknutí</b>. Svetelný lúč, konfety pixelov, krátky jas. Jasne oddelí „niečo dôležité sa stalo“ od bežného boja.",
+"s": "Výskum 7. 10. · Mega Cat Studios – Juice Guide (shooter / run'n'gun)",
+"u": "https://megacatstudios.com/blogs/game-development/mega-cat-developer-juice-guide-v1-0-08-23-17"
+},
+{
+"id": "C5",
+"g": "napad",
+"cat": "C",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Animované prechody a menu</b>. Prechody medzi obrazovkami (posun, stmievanie), tlačidlá reagujú pohybom a zvukom. Hra pôsobí hotovo.",
+"s": "Výskum 7. 10. · Mega Cat Studios – Juice Guide (shooter / run'n'gun)",
+"u": "https://megacatstudios.com/blogs/game-development/mega-cat-developer-juice-guide-v1-0-08-23-17"
+},
+{
+"id": "C6",
+"g": "napad",
+"cat": "C",
+"imp": 1,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Parallax pozadie (ak ešte nie je)</b>. Viac vrstiev pozadia, ktoré sa hýbu rôznou rýchlosťou, dáva hĺbku aj pixel artu. Overiť, čo už je v DIZAJN_pozadie.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "D1",
+"g": "napad",
+"cat": "D",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Podpisový zvuk zberu</b>. Jeden výrazný, príjemný zvuk zberu meny/zajatca, ktorý si hráč spojí s hrou (ako zvuk mince v Mariovi). Hrá sa najčastejšie zo všetkých.",
+"s": "Výskum 7. 10. · The Secret Sauce of Vampire Survivors",
+"u": "https://jboger.substack.com/p/the-secret-sauce-of-vampire-survivors",
+"b": 4
+},
+{
+"id": "D2",
+"g": "napad",
+"cat": "D",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Hudba podľa intenzity</b>. Vrstvy hudby: pokoj → boj → klietka v ohrození → boss. Pridáva/uberá sa nástroj podľa situácie.",
+"s": "Výskum 7. 10. · Bugnet – adaptívna hudba pre začiatočníkov",
+"u": "https://bugnet.io/blog/adaptive-music-a-beginners-guide"
+},
+{
+"id": "D3",
+"g": "napad",
+"cat": "D",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Slovanský zvukový podpis</b>. Fujara, gajdy, gusle, viachlasný ženský spev zmiešané s tvrdými bicími. Jedinečná identita a silný hák na videá.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "D4",
+"g": "napad",
+"cat": "D",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Zvukové varovanie pred útokom</b>. Každý typ nepriateľa má pred útokom vlastný krátky zvuk. Hráč sa dá „počuť“ aj keď nevidí.",
+"s": "Výskum 7. 10. · Wayline – návrh bossov (varovanie, fázy, slabiny)",
+"u": "https://www.wayline.io/blog/crafting-legendary-boss-battles",
+"b": 3
+},
+{
+"id": "D5",
+"g": "napad",
+"cat": "D",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Zajatci ďakujú v slovanských jazykoch</b>. Oslobodení zajatci zakričia „Ďakujem! Dziękuję! Děkuji! Дякую!“. Pre SK/CZ/PL/UA publikum vtipný a zdieľateľný detail.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "D6",
+"g": "napad",
+"cat": "D",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Stíšenie hudby pri dôležitej udalosti</b>. Pri zjavení bossa, otvorení truhly alebo záchrane klietky sa hudba na chvíľu stíši, aby vynikol dôležitý zvuk.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "E1",
+"g": "napad",
+"cat": "E",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Vibrácie pri dôležitých momentoch</b>. Krátka vibrácia pri zásahu sekerou, silnejšia pri výbuchu, iný vzor pri zásahu hrdinu. Nie pri každom kroku. Vypínač a sila v nastaveniach.",
+"s": "Výskum 7. 10. · Wayline – vibrácie: menej je viac",
+"u": "https://www.wayline.io/blog/haptic-feedback-less-is-more",
+"b": 1
+},
+{
+"id": "F1",
+"g": "napad",
+"cat": "F",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Odlišné siluety podľa role</b>. Rýchly nepriateľ je štíhly, ťažký široký, strelec má zbraň čitateľnú v obryse. Hráč rozozná typ za zlomok sekundy.",
+"s": "Výskum 7. 10. · Bugnet – čitateľný dizajn nepriateľov",
+"u": "https://bugnet.io/blog/how-to-design-a-readable-enemy-design"
+},
+{
+"id": "F2",
+"g": "napad",
+"cat": "F",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Varovanie pred každým útokom</b>. Náprah + blik + zvuk pred útokom nepriateľa. Hra je férová, smrť je chyba hráča, nie náhoda.",
+"s": "Výskum 7. 10. · Bugnet – čitateľný dizajn nepriateľov",
+"u": "https://bugnet.io/blog/how-to-design-a-readable-enemy-design",
+"b": 3
+},
+{
+"id": "F3",
+"g": "napad",
+"cat": "F",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Elitní nepriatelia s istou odmenou</b>. Väčší, so žiarou, viac zdravia a vždy pustí predmet. V Metal Slugu vojak v žltom (seržant) vždy niečo pustí.",
+"s": "Výskum 7. 10. · TV Tropes – Metal Slug (zajatci, komickí vojaci, premeny, vozidlá)",
+"u": "https://tvtropes.org/pmwiki/pmwiki.php/Videogame/MetalSlug"
+},
+{
+"id": "F4",
+"g": "napad",
+"cat": "F",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Zlatý nepriateľ (vzácny utečenec)</b>. Raz za čas sa objaví vzácny nepriateľ s truhlou, ktorý uteká. Ak ho dobehneš, veľká odmena. Náhodná odmena, ktorú si hráč zapamätá.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "F5",
+"g": "napad",
+"cat": "F",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Komické správanie nepriateľov</b>. Rozprávajú sa, jedia pri ohni, utekajú s krikom, keď ich zostane málo, panika po smrti veliteľa. Humor Metal Slugu.",
+"s": "Výskum 7. 10. · TV Tropes – Metal Slug (zajatci, komickí vojaci, premeny, vozidlá)",
+"u": "https://tvtropes.org/pmwiki/pmwiki.php/Videogame/MetalSlug"
+},
+{
+"id": "F6",
+"g": "napad",
+"cat": "F",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Nepriateľ unesie zajatca</b>. Nepriateľ schmatne zajatca z klietky a uteká s ním doprava. Hráč sa musí rozhodnúť: dobehnúť ho, alebo brániť klietku.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "F7",
+"g": "napad",
+"cat": "F",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Zmes typov vo vlne</b>. Rýchli + ťažkí + strelci + štítonosiči + podporný (lieči/posilňuje ostatných). Kombinácie sú zaujímavejšie než ďalší nový typ.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "F8",
+"g": "napad",
+"cat": "F",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Štítonosič zraniteľný zozadu</b>. Spredu blokuje sekeru, hráč ho musí obísť (2.5D pohyb to umožňuje). Núti hýbať sa.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "F9",
+"g": "napad",
+"cat": "F",
+"imp": 1,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Nepriatelia s živlom</b>. Ohnivý, ľadový nepriateľ – učí hráča živly skôr, než stretne bossa so slabinou na živel.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "F10",
+"g": "napad",
+"cat": "F",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Nepriatelia, ktorí sa vzdajú</b>. Keď je hrdina veľmi silný, slabší nepriatelia padnú na kolená alebo utečú. Posilní pocit nezastaviteľnej sily.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "G1",
+"g": "napad",
+"cat": "G",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Fázy bossa</b>. Pri 66 % a 33 % zdravia boss zmení útoky alebo bojisko, prechod je jasne oznámený. Nie len viac zdravia a poškodenia.",
+"s": "Výskum 7. 10. · Wayline – návrh bossov (varovanie, fázy, slabiny)",
+"u": "https://www.wayline.io/blog/crafting-legendary-boss-battles"
+},
+{
+"id": "G2",
+"g": "napad",
+"cat": "G",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Trojité varovanie útokov bossa</b>. Každý útok: vizuálny signál (červený blik) + zvuk + veľký náprah. Signály rovnaké celý boj.",
+"s": "Výskum 7. 10. · Wayline – návrh bossov (varovanie, fázy, slabiny)",
+"u": "https://www.wayline.io/blog/crafting-legendary-boss-battles"
+},
+{
+"id": "G3",
+"g": "napad",
+"cat": "G",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Objaviteľná slabina</b>. Napr. boss sa po sérii útokov prehreje a je zraniteľný; nápoveda je vo svete (para, iskry). Sedí na váš plán slabšieho/silnejšieho bossa.",
+"s": "Výskum 7. 10. · Wayline – návrh bossov (varovanie, fázy, slabiny)",
+"u": "https://www.wayline.io/blog/crafting-legendary-boss-battles"
+},
+{
+"id": "G4",
+"g": "napad",
+"cat": "G",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Úvodná karta bossa</b>. 2–3 s: meno, prezývka, póza, nápis. Stojí málo a je to najzdieľanejší moment v akčných hrách.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "G5",
+"g": "napad",
+"cat": "G",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Veľký pás zdravia bossa</b>. Hore cez celú šírku, rozdelený na fázy. Hráč vidí, koľko mu chýba (aj „takmer“ moment pri smrti).",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "G6",
+"g": "napad",
+"cat": "G",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Boss reaguje na hráča</b>. Posmešky, keď hráča zrazí, zlosť pri nízkom zdraví. Osobnosť bez cutscén.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "H1",
+"g": "napad",
+"cat": "H",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Viditeľné ohrozenie zajatcov</b>. Nad klietkou počet živých zajatcov; keď niekoho udrú, krátky výkrik a blik. Hráč cíti naliehavosť, ktorá je jadrom vášho dizajnu.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)",
+"b": 4
+},
+{
+"id": "H2",
+"g": "napad",
+"cat": "H",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Oslobodení sa pridajú k boju</b>. Zachránení vybehnú a 10–20 s bojujú po boku hrdinu (hádžu kamene, mlátia palicami). Rastúci dav za hrdinom je presne obraz z virálnych reklám s rastúcou armádou (Last War, Count Masters) a napĺňa vetu z plánu „beriem so sebou každého“.",
+"s": "Výskum 7. 10. · AppGrowing – Last War, reklamy s rastúcou armádou",
+"u": "https://appgrowing.net/blog/en/how-last-war-uses-proxy-minigames-to-package-strategy-gameplay/"
+},
+{
+"id": "H3",
+"g": "napad",
+"cat": "H",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Hodnotenie záchrany</b>. Všetci zachránení = „PERFEKTNÉ“ + bonus; 1–3 hviezdičky za klietku. Okamžitá spätná väzba a dôvod opakovať.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)",
+"b": 4
+},
+{
+"id": "H4",
+"g": "napad",
+"cat": "H",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Vzácni zajatci s darom</b>. Kováč (vylepší zbraň v behu), bylinkárka (vylieči), lukostrelec (zostane do konca behu). V Metal Slugu zajatci dávajú predmety; v Broforce záchrana = nová postava.",
+"s": "Výskum 7. 10. · TV Tropes – Metal Slug (zajatci, komickí vojaci, premeny, vozidlá)",
+"u": "https://tvtropes.org/pmwiki/pmwiki.php/Videogame/MetalSlug"
+},
+{
+"id": "H5",
+"g": "napad",
+"cat": "H",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Rôzne typy klietok</b>. Drevená klietka, voz s klietkou, ktorý odchádza (časový tlak), jama, loď. Rozmanitosť bez nového systému.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "H6",
+"g": "napad",
+"cat": "H",
+"imp": 3,
+"eff": "V",
+"k": "Nápad",
+"t": "<b>Tábor, ktorý rastie s oslobodenými</b>. Medzi behmi tábor/dedina, kde pribúdajú domy a ľudia podľa počtu zachránených. Výsledok snahy vidno. V Hades je domov medzi behmi srdcom hry.",
+"s": "Výskum 7. 10. · Hades – smrť ako posun príbehu",
+"u": "https://criticalvideogamestudies.com/hades-death-and-the-players-experience/"
+},
+{
+"id": "H7",
+"g": "napad",
+"cat": "H",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Celoživotné počítadlo oslobodených</b>. Veľké číslo na hlavnej obrazovke („Oslobodených: 12 480“). Zdieľateľné a hrdé číslo. (Je už v pláne – potvrdzujem prioritu.)",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "H8",
+"g": "napad",
+"cat": "H",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Časomiera záchrany</b>. Viditeľný čas záchrany a osobný rekord pre každú klietku. Súťaž sám so sebou.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "I1",
+"g": "napad",
+"cat": "I",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Výber 1 z 3 vylepšení počas behu</b>. Po naplnení skúseností si hráč vyberie 1 z 3 náhodných vylepšení. Hlavný motor Vampire Survivors a Archera: každý beh je iný. Treba zladiť s vaším pravidlom „max 3 zbrane pred štartom“.",
+"s": "Výskum 7. 10. · Deconstructor of Fun – prečo Archero zarobilo",
+"u": "https://www.deconstructoroffun.com/blog/2019/8/9/why-archero-banked-25m-but-leaves-25m-hanging-hlx9n"
+},
+{
+"id": "I2",
+"g": "napad",
+"cat": "I",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Kombinácie (evolúcie)</b>. Dve konkrétne veci spolu = nová silnejšia (sekera + oheň = horiaca sekera). Hráči ich objavujú, píšu o nich a zdieľajú ich.",
+"s": "Výskum 7. 10. · The Secret Sauce of Vampire Survivors",
+"u": "https://jboger.substack.com/p/the-secret-sauce-of-vampire-survivors"
+},
+{
+"id": "I3",
+"g": "napad",
+"cat": "I",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Reťazové reakcie živlov</b>. Horiaci nepriateľ uteká a podpaľuje ostatných, blesk preskakuje medzi nepriateľmi. Najvďačnejší záber na video v hordovej hre.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "I4",
+"g": "napad",
+"cat": "I",
+"imp": 3,
+"eff": "V",
+"k": "Nápad",
+"t": "<b>Dočasné zviera alebo vozidlo</b>. Jazda na zubrovi/medveďovi alebo na vojnovom voze 15 s. V Metal Slugu sú vozidlá ikonou série. Klip na TikTok sám od seba.",
+"s": "Výskum 7. 10. · TV Tropes – Metal Slug (zajatci, komickí vojaci, premeny, vozidlá)",
+"u": "https://tvtropes.org/pmwiki/pmwiki.php/Videogame/MetalSlug"
+},
+{
+"id": "I5",
+"g": "napad",
+"cat": "I",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Vtipné premeny hrdinu</b>. Metal Slug má premenu na tučného alebo mumiu. U vás napr. medvedia sila 10 s alebo „medovina“ (kľukatý pohyb, silnejšie údery).",
+"s": "Výskum 7. 10. · TV Tropes – Metal Slug (zajatci, komickí vojaci, premeny, vozidlá)",
+"u": "https://tvtropes.org/pmwiki/pmwiki.php/Videogame/MetalSlug"
+},
+{
+"id": "I6",
+"g": "napad",
+"cat": "I",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Zbraň viditeľne rastie s úrovňou</b>. Sekera na vyššej úrovni je väčšia, horí, nechá stopu. Vylepšenie vidno, nie len v čísle.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "I7",
+"g": "napad",
+"cat": "I",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Schopnosť nabíjaná zabíjaním</b>. Silná schopnosť (váš Hnev) sa nabíja zabíjaním, hráč ju spustí sám v pravej chvíli. Odmeňuje agresívnu hru.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "I8",
+"g": "napad",
+"cat": "I",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Prehodiť / vyradiť ponuku</b>. Pri výbere vylepšení možnosť raz prehodiť ponuku alebo vyradiť vylepšenie navždy z behu. Hráč má kontrolu nad náhodou.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "J1",
+"g": "napad",
+"cat": "J",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Krátky beh s jasným koncom</b>. 3–8 minút. Medián dĺžky mobilnej session je 5–6 min, najlepších 25 % hier 8–9 min. Súvisí s vaším otvoreným T09 (čo ukončí beh).",
+"s": "Výskum 7. 10. · GameAnalytics benchmarky (cez GameDev Reports)",
+"u": "https://gamedevreports.substack.com/p/gameanalytics-mobile-gaming-benchmarks"
+},
+{
+"id": "J2",
+"g": "napad",
+"cat": "J",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Nič nie je stratený beh</b>. Aj pri smrti si hráč odnesie aspoň niečo (menu, pokrok k odomknutiu). Vampire Survivors: aj krátky beh dá trvalý pokrok, preto hráč hneď skúša znova.",
+"s": "Výskum 7. 10. · The Conversation – Vampire Survivors a psychológia hazardu",
+"u": "https://theconversation.com/vampire-survivors-how-developers-used-gambling-psychology-to-create-a-bafta-winning-game-203613"
+},
+{
+"id": "J3",
+"g": "napad",
+"cat": "J",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>„Takmer“ obrazovka</b>. Na konci behu: „Ešte 37 zajatcov do ohnivej sekery“, pás pokroku takmer plný. Pocit „skoro“ je najsilnejší dôvod na ďalší beh.",
+"s": "Výskum 7. 10. · The Conversation – Vampire Survivors a psychológia hazardu",
+"u": "https://theconversation.com/vampire-survivors-how-developers-used-gambling-psychology-to-create-a-bafta-winning-game-203613"
+},
+{
+"id": "J4",
+"g": "napad",
+"cat": "J",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Séria zabití s násobičom</b>. Rýchle zabíjanie zvyšuje násobič skóre a meny (x2, x3…); keď prestaneš, padá. Devil May Cry tým odmeňuje štýlové a agresívne hranie.",
+"s": "Výskum 7. 10. · Giant Bomb – Style Meter (násobič za štýlové hranie)",
+"u": "https://giantbomb.com/wiki/Concepts/Style_Meter",
+"b": 4
+},
+{
+"id": "J5",
+"g": "napad",
+"cat": "J",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Výsledková obrazovka s počítaním</b>. Známka S/A/B/C a rozpis (zabití, zachránení, najdlhšia séria, čas), čísla bežia nahor so zvukmi. Balatro je postavené na čísle, ktoré rastie.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "J6",
+"g": "napad",
+"cat": "J",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Tlačidlo „Ešte raz“</b>. Z výsledkov jedným ťuknutím rovno do nového behu, bez načítavania a menu.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "J7",
+"g": "napad",
+"cat": "J",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Náhodné udalosti počas behu</b>. Obchodník, oltár (obetuj srdce za silu), zranený zajatec. Archero strieda zručnosť a šťastie (anjel/diabol pred bossom).",
+"s": "Výskum 7. 10. · Deconstructor of Fun – prečo Archero zarobilo",
+"u": "https://www.deconstructoroffun.com/blog/2019/8/9/why-archero-banked-25m-but-leaves-25m-hanging-hlx9n"
+},
+{
+"id": "J8",
+"g": "napad",
+"cat": "J",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Ťažšia cesta = viditeľne lepšia odmena</b>. Pri vetvení (už rozhodnuté) ukázať pred výberom, čo na ťažšej ceste čaká. Riziko a odmena musia byť zreteľné.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "J9",
+"g": "napad",
+"cat": "J",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Oživenie raz za beh</b>. Hráč so silným buildom nechce prísť o beh. Jedno oživenie (zadarmo, za predmet, alebo v F2P za reklamu). V Archere je to najsilnejší bod predaja.",
+"s": "Výskum 7. 10. · Deconstructor of Fun – prečo Archero zarobilo",
+"u": "https://www.deconstructoroffun.com/blog/2019/8/9/why-archero-banked-25m-but-leaves-25m-hanging-hlx9n"
+},
+{
+"id": "J10",
+"g": "napad",
+"cat": "J",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Tajomstvá v leveli</b>. Skrytý zajatec za stenou, truhla v kope sena, zničiteľný objekt s odmenou. Metal Slug skrýva predmety aj zajatcov v pozadí.",
+"s": "Výskum 7. 10. · TV Tropes – Metal Slug (zajatci, komickí vojaci, premeny, vozidlá)",
+"u": "https://tvtropes.org/pmwiki/pmwiki.php/Videogame/MetalSlug"
+},
+{
+"id": "K1",
+"g": "napad",
+"cat": "K",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Strom vylepšení so silnými skokmi</b>. Prvé vylepšenia musia byť citeľne silné; neskôr skôr nové možnosti než +5 %. Ale nikdy tak silné, aby beh vyhral sám.",
+"s": "Výskum 7. 10. · Bugnet – návrh meta-progresie v roguelite",
+"u": "https://bugnet.io/blog/how-to-design-a-roguelite-meta-progression"
+},
+{
+"id": "K2",
+"g": "napad",
+"cat": "K",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Achievementy cez Google Play Games</b>. Google ich od 2025 ukazuje priamo v obchode a vie ich odmeňovať Play Points. Odporúča aspoň 15, najlepšie 40+; najlepšie fungujú hry, kde hráč získa 5 achievementov za prvé 2 hodiny.",
+"s": "Výskum 7. 10. · Android Developers Blog – Play Games Services, achievementy, Play Points (2025)",
+"u": "https://android-developers.googleblog.com/2025/06/get-ready-for-next-generation-gameplay-play-games-services.html"
+},
+{
+"id": "K3",
+"g": "napad",
+"cat": "K",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Úlohy, ktoré odomykajú obsah</b>. „Zabi 50 nepriateľov ohňom“ → odomkne novú zbraň. Vampire Survivors tak vedie hráčov vyskúšať všetko a vytvára pocit hojnosti.",
+"s": "Výskum 7. 10. · The Secret Sauce of Vampire Survivors",
+"u": "https://jboger.substack.com/p/the-secret-sauce-of-vampire-survivors"
+},
+{
+"id": "K4",
+"g": "napad",
+"cat": "K",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Kódex / bestiár</b>. Zbierka nepriateľov, zbraní a historických faktov, odomyká sa hraním. (Kódex je v pláne; spojiť ho so zbieraním = motivácia.)",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "K5",
+"g": "napad",
+"cat": "K",
+"imp": 2,
+"eff": "V",
+"k": "Nápad",
+"t": "<b>Ďalšie postavy z oslobodených</b>. V Broforce záchrana zajatcov odomyká nové postavy s inou zbraňou. Lacná verzia: rovnaká kostra, iná zbraň a vzhľad.",
+"s": "Výskum 7. 10. · Wikipedia – Broforce (záchrana zajatcov = nová postava)",
+"u": "https://en.wikipedia.org/wiki/Broforce"
+},
+{
+"id": "K6",
+"g": "napad",
+"cat": "K",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Vyššie obtiažnosti po dohraní</b>. „Žatva II, III…“: silnejší nepriatelia, lepšie odmeny. Survivor.io má tzv. Trials, Hades tzv. Heat. Obsah sa spotrebuje znova.",
+"s": "Výskum 7. 10. · Naavik – Survivor.io v stopách Archera",
+"u": "https://naavik.co/deep-dives/survivorio-archeros-footsteps/"
+},
+{
+"id": "K7",
+"g": "napad",
+"cat": "K",
+"imp": 1,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Kozmetika odomykaná hraním</b>. Vzhľad sekery, farba plášťa, efekt hodu. Cieľ pre hráčov, ktorým už nechýba sila.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "L1",
+"g": "napad",
+"cat": "L",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Truhla s napínavým otváraním</b>. Pomalé otvorenie, svetlo, rastúci zvuk, náhodne 1–5 predmetov. Vampire Survivors požičal techniky z výherných automatov; prvé truhly sú nastavené štedro. Bez platenia skutočnými peniazmi = bez rizika regulácie lootboxov.",
+"s": "Výskum 7. 10. · The Secret Sauce of Vampire Survivors",
+"u": "https://jboger.substack.com/p/the-secret-sauce-of-vampire-survivors"
+},
+{
+"id": "L2",
+"g": "napad",
+"cat": "L",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Odmena každých 20–30 sekúnd</b>. Vo Vampire Survivors príde nejaké vylepšenie asi každých 23 s. Pravidlo pre balans vašich levelov.",
+"s": "Výskum 7. 10. · The Secret Sauce of Vampire Survivors",
+"u": "https://jboger.substack.com/p/the-secret-sauce-of-vampire-survivors"
+},
+{
+"id": "L3",
+"g": "napad",
+"cat": "L",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Vrstvy odmien</b>. V behu (vylepšenia), po behu (mena), dlhodobo (odomknutia, achievementy). Vždy je niečo blízko.",
+"s": "Výskum 7. 10. · The Conversation – Vampire Survivors a psychológia hazardu",
+"u": "https://theconversation.com/vampire-survivors-how-developers-used-gambling-psychology-to-create-a-bafta-winning-game-203613"
+},
+{
+"id": "L4",
+"g": "napad",
+"cat": "L",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Prvý beh nastavený na úspech</b>. Prvá klietka ľahká, prvá truhla štedrá, silný moment v prvej minúte. VS má prvé truhly napevno lepšie.",
+"s": "Výskum 7. 10. · The Secret Sauce of Vampire Survivors",
+"u": "https://jboger.substack.com/p/the-secret-sauce-of-vampire-survivors"
+},
+{
+"id": "L5",
+"g": "napad",
+"cat": "L",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Farby vzácnosti</b>. Biela / modrá / fialová / zlatá + svetelný lúč nad vzácnym predmetom. Hráč z diaľky vidí, že padlo niečo dobré.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "L6",
+"g": "napad",
+"cat": "L",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Čísla, ktoré bežia nahor</b>. Skóre, mena a zabití sa nepripočítajú naraz, ale „nabehnú“ so zvukom. Malý, ale silný pocit.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "M1",
+"g": "napad",
+"cat": "M",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Denná výzva s rovnakým behom pre všetkých</b>. Každý deň iné nastavenie, pre všetkých rovnaké. Neskôr rebríček. (Je v pláne – potvrdené.)",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "M2",
+"g": "napad",
+"cat": "M",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Týždenné pravidlá navyše</b>. „Tento týždeň všetci nepriatelia horia“, „dvojnásobná rýchlosť“. Nový pocit bez nového obsahu.",
+"s": "Výskum 7. 10. · Deconstructor of Fun – prečo Archero zarobilo",
+"u": "https://www.deconstructoroffun.com/blog/2019/8/9/why-archero-banked-25m-but-leaves-25m-hanging-hlx9n"
+},
+{
+"id": "M3",
+"g": "napad",
+"cat": "M",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Etická séria dní</b>. Odmena za návrat, ale bez trestu za vynechaný deň (zamrazenie série, „47 z 50 dní“). Bez platenia za obnovu série.",
+"s": "Výskum 7. 10. · UX Magazine – psychológia sérií (etické série)",
+"u": "https://uxmag.com/articles/the-psychology-of-hot-streak-game-design"
+},
+{
+"id": "M4",
+"g": "napad",
+"cat": "M",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Upozornenia striedmo</b>. Najviac 1 za deň a len s dôvodom (nová denná výzva). Inak hráč hru vypne alebo zmaže.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "M5",
+"g": "napad",
+"cat": "M",
+"imp": 1,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Osobný rekord a „duch“ v Jame</b>. V aréne Jama ukázať osobný rekord a priesvitného „ducha“ najlepšieho behu.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "M6",
+"g": "napad",
+"cat": "M",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Merať, či hráči ostávajú</b>. Od uzavretého testu sledovať: koľko % sa vráti na druhý deň (top 25 % hier ~27 %) a 7. deň (medián ~3,5–4 %, top 25 % 7–8 %). Bez čísel sa nedá zlepšovať.",
+"s": "Výskum 7. 10. · GameAnalytics benchmarky (cez GameDev Reports)",
+"u": "https://gamedevreports.substack.com/p/gameanalytics-mobile-gaming-benchmarks"
+},
+{
+"id": "N1",
+"g": "napad",
+"cat": "N",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Akcia do 10 sekúnd</b>. Žiadne menu pri prvom spustení: hrdina pretrhne reťaze a hneď bojuje. Tutoriál je samotná prvá minúta.",
+"s": "Výskum 7. 10. · Supersonic – optimalizácia prvých minút (FTUE)",
+"u": "https://supersonic.com/learn/blog/optimizing-ftue/"
+},
+{
+"id": "N2",
+"g": "napad",
+"cat": "N",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Jedna mechanika naraz</b>. Supersonic: rýchle striedanie mechaník spôsobilo 60 % odchod už v tutoriáli. Najprv pohyb, potom hod, potom klietka.",
+"s": "Výskum 7. 10. · Supersonic – optimalizácia prvých minút (FTUE)",
+"u": "https://supersonic.com/learn/blog/optimizing-ftue/"
+},
+{
+"id": "N3",
+"g": "napad",
+"cat": "N",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Jasný cieľ v prvej minúte</b>. Žiadna minúta voľného hrania bez cieľa – to podľa Supersonicu spôsobovalo zmätok a odchod.",
+"s": "Výskum 7. 10. · Supersonic – optimalizácia prvých minút (FTUE)",
+"u": "https://supersonic.com/learn/blog/optimizing-ftue/"
+},
+{
+"id": "N4",
+"g": "napad",
+"cat": "N",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Prvá klietka: všetci prežijú</b>. Hráč pochopí odmenu (zachránení = mena) na úspechu, nie na neúspechu.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "N5",
+"g": "napad",
+"cat": "N",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Ochutnávka plnej sily</b>. Prvých 30 s s plne vylepšeným hrdinom (ohnivá sekera, zviera), potom stratí všetko. Hráč vie, za čím ide.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "N6",
+"g": "napad",
+"cat": "N",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Nápoveda vždy v pauze</b>. Ovládanie a ciele kedykoľvek v menu pauzy.",
+"s": "Výskum 7. 10. · GameAnalytics – prístupnosť v hrách",
+"u": "https://www.gameanalytics.com/blog/access-all-areas-how-to-make-your-game-more-accessible"
+},
+{
+"id": "O1",
+"g": "napad",
+"cat": "O",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Nastaviteľné ovládanie</b>. Posunúť a zväčšiť ovládacie zóny/tlačidlá. Dead Cells to umožňuje pre každé tlačidlo.",
+"s": "Výskum 7. 10. · TouchArcade – Dead Cells mobilné ovládanie (Auto-Hit, nastaviteľné tlačidlá)",
+"u": "https://toucharcade.com/2019/05/07/dead-cells-mobile-blog-post/"
+},
+{
+"id": "O2",
+"g": "napad",
+"cat": "O",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Voliteľný ľahší režim útoku</b>. Dead Cells má na mobile Auto-Hit (automatický útok na blízko), Archero automatické mierenie. Vaše ovládanie má auto-strelbu pri mierení; zvážiť režim aj bez mierenia pre príležitostných hráčov.",
+"s": "Výskum 7. 10. · TouchArcade – Dead Cells mobilné ovládanie (Auto-Hit, nastaviteľné tlačidlá)",
+"u": "https://toucharcade.com/2019/05/07/dead-cells-mobile-blog-post/"
+},
+{
+"id": "O3",
+"g": "napad",
+"cat": "O",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Podpora ovládača</b>. Hráči Metal Slug štýlu radi hrajú s ovládačom; pre Steam je to nutnosť.",
+"s": "Výskum 7. 10. · TouchArcade – Dead Cells mobilné ovládanie (Auto-Hit, nastaviteľné tlačidlá)",
+"u": "https://toucharcade.com/2019/05/07/dead-cells-mobile-blog-post/"
+},
+{
+"id": "O4",
+"g": "napad",
+"cat": "O",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Čistá obrazovka</b>. Minimum prvkov, nič pod palcami, dôležité pri okrajoch. Čistý obraz robí lepšie videá (Schedule I).",
+"s": "Výskum 7. 10. · Influencer Marketing Hub – ako sa Schedule I stala virálnou",
+"u": "https://influencermarketinghub.com/how-schedule-i-became-a-viral-content-machine/"
+},
+{
+"id": "O5",
+"g": "napad",
+"cat": "O",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Okamžitá pauza pri prerušení</b>. Hovor, notifikácia, prepnutie aplikácie = hra sa zastaví a počká. Strata behu kvôli hovoru = zlá recenzia.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "O6",
+"g": "napad",
+"cat": "O",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Šípky na nepriateľov mimo obrazovky</b>. Na okraji obrazovky ukazovateľ, odkiaľ ide nepriateľ alebo kde je unášaný zajatec.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "P1",
+"g": "napad",
+"cat": "P",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Vypínače efektov</b>. Otrasy, záblesky, vibrácie, čísla poškodenia – každé zvlášť. Záblesky môžu vyvolať migrénu alebo záchvat.",
+"s": "Výskum 7. 10. · GameAnalytics – prístupnosť v hrách",
+"u": "https://www.gameanalytics.com/blog/access-all-areas-how-to-make-your-game-more-accessible",
+"b": 1
+},
+{
+"id": "P2",
+"g": "napad",
+"cat": "P",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Nespoliehať sa len na farbu</b>. Typ nepriateľa či vzácnosť ukázať aj tvarom/ikonou; otestovať simulátorom farbosleposti.",
+"s": "Výskum 7. 10. · GameAnalytics – prístupnosť v hrách",
+"u": "https://www.gameanalytics.com/blog/access-all-areas-how-to-make-your-game-more-accessible"
+},
+{
+"id": "P3",
+"g": "napad",
+"cat": "P",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Ľahší režim</b>. Pomalšia hra, viac sŕdc. Rozširuje publikum a zlepšuje recenzie (recenzie sú pre indie hru hlavný motor).",
+"s": "Výskum 7. 10. · GameAnalytics – prístupnosť v hrách",
+"u": "https://www.gameanalytics.com/blog/access-all-areas-how-to-make-your-game-more-accessible"
+},
+{
+"id": "P4",
+"g": "napad",
+"cat": "P",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Titulky hlášok</b>. Hlášky hrdinu a nepriateľov aj ako text (mnoho ľudí hrá bez zvuku).",
+"s": "Výskum 7. 10. · GameAnalytics – prístupnosť v hrách",
+"u": "https://www.gameanalytics.com/blog/access-all-areas-how-to-make-your-game-more-accessible"
+},
+{
+"id": "Q1",
+"g": "napad",
+"cat": "Q",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Príbeh po kúskoch po každom behu</b>. Po každom behu krátka hláška alebo scéna v tábore. V Hades sa príbeh posúva práve smrťou, preto smrť neštve. Vstup pre vašu prerábku príbehu (T04).",
+"s": "Výskum 7. 10. · Hades – smrť ako posun príbehu",
+"u": "https://criticalvideogamestudies.com/hades-death-and-the-players-experience/"
+},
+{
+"id": "Q2",
+"g": "napad",
+"cat": "Q",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Postavy v tábore s osobnosťou</b>. Kováč, bylinkárka, starec-rozprávač reagujú na úspechy hráča. Lacné (text + portrét), veľa srdca.",
+"s": "Výskum 7. 10. · Hades – smrť ako posun príbehu",
+"u": "https://criticalvideogamestudies.com/hades-death-and-the-players-experience/"
+},
+{
+"id": "Q3",
+"g": "napad",
+"cat": "Q",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Slovanská mytológia ako fantasy vrstva</b>. Perúnove blesky, Veles, Baba Jaga ako obchodníčka, domovoj ako pomocník. Jedinečná identita a nulové riziko voči pravidlám (mytológia, nie etnikum).",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "Q4",
+"g": "napad",
+"cat": "Q",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Ľudoví hrdinovia ako odomykateľné skiny</b>. Napr. valaška a klobúk v štýle Jánošíka. Lokálny hák pre SK/CZ/PL publikum a médiá.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "Q5",
+"g": "napad",
+"cat": "Q",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Vtipné opisy predmetov</b>. Krátke, vtipné texty pri zbraniach a vylepšeniach. Humor sa šíri.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "R1",
+"g": "napad",
+"cat": "R",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Test klipu pri každom nápade</b>. Pri každej novej veci sa opýtať: vznikne z toho 15-sekundové video? Princíp hier stavaných pre streamerov.",
+"s": "Výskum 7. 10. · Streamer-bait design – princípy",
+"u": "https://playbooks.com/skills/omer-metin/skills-for-antigravity/streamer-bait-design"
+},
+{
+"id": "R2",
+"g": "napad",
+"cat": "R",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Masa nepriateľov na jednom zábere</b>. Desiatky nepriateľov, ktoré padnú naraz (reťazová reakcia, výbuch). Hordové hry sa šíria práve týmto obrazom.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "R3",
+"g": "napad",
+"cat": "R",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Jeden screenshot vysvetlí hru</b>. Ako Vampire Survivors: jeden obrázok ukáže, o čo ide (hrdina, dav, klietka, čísla).",
+"s": "Výskum 7. 10. · The Secret Sauce of Vampire Survivors",
+"u": "https://jboger.substack.com/p/the-secret-sauce-of-vampire-survivors"
+},
+{
+"id": "R4",
+"g": "napad",
+"cat": "R",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Zdieľateľná karta výsledku</b>. Po behu obrázok s číslami, buildom a logom, zdieľanie jedným ťuknutím.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "R5",
+"g": "napad",
+"cat": "R",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Vtipné zlyhania</b>. Nepriateľ sa pošmykne na vlastnom sude, reťazová reakcia zabije aj hrdinu. Vtipné, napraviteľné zlyhania sa zdieľajú (Schedule I, streamer-bait).",
+"s": "Výskum 7. 10. · Influencer Marketing Hub – ako sa Schedule I stala virálnou",
+"u": "https://influencermarketinghub.com/how-schedule-i-became-a-viral-content-machine/"
+},
+{
+"id": "R6",
+"g": "napad",
+"cat": "R",
+"imp": 1,
+"eff": "V",
+"k": "Nápad",
+"t": "<b>Záznam posledných sekúnd</b>. Tlačidlo, ktoré uloží posledných 10–15 s ako video/GIF. Technicky náročnejšie; lacnejšia náhrada je karta výsledku.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "S1",
+"g": "napad",
+"cat": "S",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Krátke videá 2–3× týždenne</b>. 15–30 s, hák v prvej polsekunde, video v slučke, séria „Deň X“, pred/po. Asi 1–2 h týždenne. Väčšina organických TikTokov má pod 1 000 videní – rozhoduje vytrvalosť.",
+"s": "Výskum 7. 10. · presskit.gg – TikTok marketing pre indie hry",
+"u": "https://presskit.gg/field-guides/tiktok-indie-game-marketing"
+},
+{
+"id": "S2",
+"g": "napad",
+"cat": "S",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Príbeh tvorcu ako hák</b>. „Sólo tvorca, nula skúseností, hru robí s AI“ je sám osebe zaujímavý príbeh pre Reddit (r/gamedev, r/IndieDev). Schedule I odštartoval úprimný post na Reddite.",
+"s": "Výskum 7. 10. · Influencer Marketing Hub – ako sa Schedule I stala virálnou",
+"u": "https://influencermarketinghub.com/how-schedule-i-became-a-viral-content-machine/"
+},
+{
+"id": "S3",
+"g": "napad",
+"cat": "S",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Malí tvorcovia namiesto veľkých</b>. Survivor.io: videá od malých tvorcov, ktoré vyzerali ako bežný obsah, nie reklama; ukazovali snahu a tipy, nie falošnú hru.",
+"s": "Výskum 7. 10. · CreatorDB – Survivor.io a TikTok marketing",
+"u": "https://www.creatordb.app/blog/case-study/lessons-from-survivor-io-tiktok-marketing/"
+},
+{
+"id": "S4",
+"g": "napad",
+"cat": "S",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Platené zosilnenie len víťazných videí</b>. Spark Ads za 50–100 $ len pre video, ktoré už má ~50 000 organických videní. Inak sa platená reklama indie hre nevráti.",
+"s": "Výskum 7. 10. · presskit.gg – TikTok marketing pre indie hry",
+"u": "https://presskit.gg/field-guides/tiktok-indie-game-marketing"
+},
+{
+"id": "S5",
+"g": "napad",
+"cat": "S",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Steam stránka a demo včas</b>. Pixel-art hry vo vrchu Steam Next Fest boli najmä stratégie a hry typu Vampire Survivors. Do top 25 treba ~70 000 wishlistov pred festivalom; po dohraní dema výzva na wishlist.",
+"s": "Výskum 7. 10. · How To Market A Game – Steam Next Fest feb 2025",
+"u": "https://howtomarketagame.com/2025/03/04/steam-next-fest-feb-2025/"
+},
+{
+"id": "S6",
+"g": "napad",
+"cat": "S",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Spolupráca s inou indie hrou</b>. Dve podobné hry ohlásili spoločný balík počas Next Festu – príklad lacnej spolupráce.",
+"s": "Výskum 7. 10. · How To Market A Game – Steam Next Fest feb 2025",
+"u": "https://howtomarketagame.com/2025/03/04/steam-next-fest-feb-2025/"
+},
+{
+"id": "Z1",
+"g": "napad",
+"cat": "Z",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Možnosť 1: Premium 5,99 € (súčasný plán)</b>. + Žiadne reklamy ani tlak, férové, jednoduché na výrobu. − Premium hry sú len 4 % mobilných stiahnutí (2025); medián premium hry na mobile zarobil ~30 000 $ (dáta 2022); dobre sa predávajú hlavne hry úspešné najprv na PC (Slay the Spire 13,7 M$, Dead Cells 6,5 M$ na mobile). Počet premium vydaní v 2025 vzrástol o 77 %.",
+"s": "Výskum 7. 10. · Pocket Tactics – premium mobilné hry rastú (2025)",
+"u": "https://www.pockettactics.com/premium-mobile-games-increase"
+},
+{
+"id": "Z2",
+"g": "napad",
+"cat": "Z",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Doplnok k možnosti 1: Google Play Game Trials</b>. Od marca 2026 môžu vybrané platené hry mať tlačidlo „Try“ – hráč skúsi hru zadarmo (príklad Dredge: 60 minút), potom kúpi alebo odinštaluje. Znižuje bariéru kúpy naslepo.",
+"s": "Výskum 7. 10. · Storyboard18 – Google Play Game Trials (marec 2026)",
+"u": "https://www.storyboard18.com/gaming-news/google-play-rolls-out-game-trials-to-let-users-test-paid-games-before-purchase-91960.htm"
+},
+{
+"id": "Z3",
+"g": "napad",
+"cat": "Z",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Možnosť 2: Zadarmo + jednorazové odomknutie</b>. Prvé levely zadarmo, zvyšok jedným nákupom. + Nízka bariéra, žiadne reklamy. − Konverzia na nákup je nízka (overené číslo som nenašiel); obchod hru vníma ako F2P.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "Z4",
+"g": "napad",
+"cat": "Z",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Možnosť 3: Zadarmo s voliteľnými reklamami</b>. Model Vampire Survivors na mobile: reklama len keď hráč chce (druhý život, viac zlata na konci). 1 mil. stiahnutí za prvý týždeň, 3 mil. za ~6 týždňov bez marketingu. + Najlepšie šírenie. − Nízky príjem na hráča.",
+"s": "Výskum 7. 10. · MobileGamer – Vampire Survivors mobile 3 mil. stiahnutí",
+"u": "https://mobilegamer.biz/vampire-survivors-mobile-hits-3m-downloads/"
+},
+{
+"id": "Z5",
+"g": "napad",
+"cat": "Z",
+"imp": 2,
+"eff": "V",
+"k": "Nápad",
+"t": "<b>Možnosť 4: F2P s nákupmi (model Archero / Survivor.io)</b>. Výbava, truhly, battle pass, ponuky po kapitole. Survivor.io: 15 M$ za prvý mesiac, 75 M$ za dva mesiace. − Za tým je veľký tím, marketing a stály nový obsah; pre sólo tvorcu ťažké, horšie recenzie, regulácia lootboxov.",
+"s": "Výskum 7. 10. · Naavik – Survivor.io v stopách Archera",
+"u": "https://naavik.co/deep-dives/survivorio-archeros-footsteps/"
+},
+{
+"id": "Z6",
+"g": "napad",
+"cat": "Z",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Možnosť 5: Hybrid</b>. Zadarmo s voliteľnými reklamami + jednorazový nákup „bez reklám + bonus“ + platené DLC éry. Kompromis medzi šírením a príjmom.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "Z7",
+"g": "napad",
+"cat": "Z",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Možnosť 6: Predplatné služby</b>. Google Play Pass / Apple Arcade – príjem podľa hrania. Funguje ako doplnok k premium modelu.",
+"s": "Výskum 7. 10. · Jules Baculard – sú premium hry na mobile mŕtve? (dáta 2022)",
+"u": "https://julesbaculard.substack.com/p/are-premium-games-on-mobile-dead"
+},
+{
+"id": "Z8",
+"g": "napad",
+"cat": "Z",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Možnosť 7: Steam ako hlavný premium trh</b>. Premium model funguje na PC rádovo lepšie; Godot export je lacný. Úspech na PC potom ťahá mobil.",
+"s": "Výskum 7. 10. · Pocket Tactics – premium mobilné hry rastú (2025)",
+"u": "https://www.pockettactics.com/premium-mobile-games-increase"
+},
+{
+"id": "U1",
+"g": "napad",
+"cat": "U",
+"imp": 3,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Stabilita pod prahmi Google</b>. Pády pod 1,09 % a zamrznutia (ANR) pod 0,47 % (priemer za 28 dní). Inak Google zníži viditeľnosť hry a ukáže varovanie v obchode.",
+"s": "Výskum 7. 10. · Android vitals – prahy zlého správania",
+"u": "https://developer.android.com/games/optimize/vitals"
+},
+{
+"id": "U2",
+"g": "napad",
+"cat": "U",
+"imp": 3,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>60 fps na lacnom telefóne pri 30+ nepriateľoch</b>. Už je to váš cieľ – výskum potvrdzuje: plynulosť je základ pocitu z hry.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "U3",
+"g": "napad",
+"cat": "U",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Hra funguje offline</b>. Vampire Survivors mobile je celý offline. Hranie v metre/lietadle = viac sessions.",
+"s": "Výskum 7. 10. · MobileGamer – Vampire Survivors mobile 3 mil. stiahnutí",
+"u": "https://mobilegamer.biz/vampire-survivors-mobile-hits-3m-downloads/"
+},
+{
+"id": "U4",
+"g": "napad",
+"cat": "U",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Postup cez Play Games Services</b>. Prihlásenie a prenos postupu medzi zariadeniami. Pozor: od mája 2026 sa dá publikovať len s verziou v2.",
+"s": "Výskum 7. 10. · Android Developers Blog – Play Games Services, achievementy, Play Points (2025)",
+"u": "https://android-developers.googleblog.com/2025/06/get-ready-for-next-generation-gameplay-play-games-services.html"
+},
+{
+"id": "U5",
+"g": "napad",
+"cat": "U",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Analytika správania</b>. Kde hráči končia, ktorá klietka je priťažká, koľko trvá beh. Firebase/GameAnalytics majú bezplatnú úroveň.",
+"s": "Výskum 7. 10. · GameAnalytics benchmarky (cez GameDev Reports)",
+"u": "https://gamedevreports.substack.com/p/gameanalytics-mobile-gaming-benchmarks"
+},
+{
+"id": "U6",
+"g": "napad",
+"cat": "U",
+"imp": 2,
+"eff": "S",
+"k": "Nápad",
+"t": "<b>Rýchly štart a malá aplikácia</b>. Pár sekúnd od ikony k akcii, malá inštalácia. Každá sekunda čakania stráca hráčov.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "U7",
+"g": "napad",
+"cat": "U",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Šetrenie batérie</b>. V menu a na pauze nižšia snímková frekvencia.",
+"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)"
+},
+{
+"id": "V1",
+"g": "napad",
+"cat": "V",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Ikona čitateľná v malom</b>. Jednoduchý, výrazný motív. Ikona je prvá vec na otestovanie (A/B test v Play Console je zadarmo, bez nového buildu).",
+"s": "Výskum 7. 10. · Sonar – čo testovať na Play Store stránke",
+"u": "https://trysonar.app/blog/play-store-listing-experiments-what-to-test.md"
+},
+{
+"id": "V2",
+"g": "napad",
+"cat": "V",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Prvé screenshoty s akciou a krátkym textom</b>. 3–5 slov na screenshote, akcia, nie menu. Prvé 2–3 obrázky vidí najviac ľudí.",
+"s": "Výskum 7. 10. · Sonar – čo testovať na Play Store stránke",
+"u": "https://trysonar.app/blog/play-store-listing-experiments-what-to-test.md"
+},
+{
+"id": "V3",
+"g": "napad",
+"cat": "V",
+"imp": 2,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Video začína najväčšou akciou</b>. Prvé sekundy = najväčší chaos na obrazovke, nie logo.",
+"s": "Výskum 7. 10. · presskit.gg – TikTok marketing pre indie hry",
+"u": "https://presskit.gg/field-guides/tiktok-indie-game-marketing"
+},
+{
+"id": "V4",
+"g": "napad",
+"cat": "V",
+"imp": 1,
+"eff": "N",
+"k": "Nápad",
+"t": "<b>Testovať aspoň týždeň</b>. A/B test na Play Store minimálne týždeň (pracovné dni aj víkend); pri malej návštevnosti 3–4 týždne.",
+"s": "Výskum 7. 10. · Sonar – čo testovať na Play Store stránke",
+"u": "https://trysonar.app/blog/play-store-listing-experiments-what-to-test.md"
 }
+];
+var BALIKY = [{"n": 1, "name": "Úder má váhu", "st": "next", "d": "Všetko, čo sa stane v okamihu, keď sekera trafí: zastavenie času, biely záblesk, otras, čísla, kritický zásah, zvuk, vibrácia. Len kód, lacné. A14 už v hre je – potvrď a zavrie sa.", "codes": ["A1", "A2", "A3", "A4", "A5", "A6", "A8", "E1", "P1", "A14"]}, {"n": 2, "name": "Smrť nepriateľa a stopy boja", "st": "wait", "d": "Telo odletí, dopadne a zmizne; spomalenie pri poslednom zabití; dlhšie stopy boja; viac rozbitných vecí.", "codes": ["A9", "T36", "A10", "A12", "A11"]}, {"n": 3, "name": "Féroví a čitateľní nepriatelia", "st": "wait", "d": "Teraz len lacná časť: varovanie pred útokom nepriateľa (blik + zvuk) a začiatok katalógu efektov. Siluety a čitateľnosť v dave až s finálnou grafikou.", "codes": ["F2", "D4", "T42"]}, {"n": 4, "name": "Prvá odmena: zber a séria (+ T09)", "st": "wait", "d": "Odmeny letia k hrdinovi, podpisový zvuk, séria s násobičom, ohrozenie a hodnotenie záchrany zajatcov. Začína sa otázkami z T09.", "codes": ["A15", "D1", "A16", "J4", "H1", "H3", "T09"]}, {"n": 5, "name": "Hrdina v pohybe", "st": "wait", "d": "Úskok, prach spod nôh, pružnosť postavy, červený okraj pri nízkom zdraví. Úskok mení ovládanie – najprv návrh gesta.", "codes": ["B1", "T37", "B2", "A17"]}];
+var TCATS = [{"c": "A", "n": "Pocit z úderu", "d": "Malé efekty, vďaka ktorým má každý úder váhu. Najlacnejšie a najviditeľnejšie zlepšenia."}, {"c": "B", "n": "Hrdina a pohyb", "d": "Ako sa hrdina hýbe a ako vyzerá, keď rastie."}, {"c": "C", "n": "Vizuál a atmosféra", "d": "Pixel art, svetlo, prostredie, čitateľnosť v dave."}, {"c": "D", "n": "Zvuk a hudba", "d": "Polovica pocitu z hry je zvuk."}, {"c": "E", "n": "Vibrácie", "d": "Haptika – silný nástroj na mobile, ak sa nepreženie."}, {"c": "F", "n": "Nepriatelia", "d": "Rozmanitosť, čitateľnosť a humor nepriateľov."}, {"c": "G", "n": "Bossovia", "d": "Najlepšie momenty na klipy a najväčšie odmeny."}, {"c": "H", "n": "Klietky a zajatci", "d": "Nápady priamo pre váš hlavný mechanizmus."}, {"c": "I", "n": "Zbrane a schopnosti", "d": "Variabilita behov a pocit, že hráč skladá vlastnú silu."}, {"c": "J", "n": "Beh a level", "d": "Štruktúra jedného behu, napätie, koniec behu."}, {"c": "K", "n": "Meta-progresia", "d": "Dôvod hrať ďalší beh a ďalší deň."}, {"c": "L", "n": "Odmeny (dopamín)", "d": "Rytmus odmien, ktorý drží hráča pri hre."}, {"c": "M", "n": "Udržanie hráča", "d": "Návrat o deň, o týždeň, o mesiac."}, {"c": "N", "n": "Prvé minúty", "d": "Rozhodujú, či hráč hru nezmaže."}, {"c": "O", "n": "Ovládanie a HUD", "d": "Mobilné ovládanie a čistá obrazovka."}, {"c": "P", "n": "Prístupnosť", "d": "Rozširujú publikum a zlepšujú recenzie."}, {"c": "Q", "n": "Príbeh a svet", "d": "Identita hry, ktorú si ľudia zapamätajú."}, {"c": "R", "n": "Virálnosť", "d": "Čo v hre robí z hráčov propagátorov."}, {"c": "S", "n": "Marketing", "d": "Ako hru dostať k ľuďom (premium hra sa sama nepredá)."}, {"c": "Z", "n": "Monetizácia", "d": "Všetky modely s plusmi a mínusmi. Rozhodnutie je tvoje."}, {"c": "U", "n": "Technika a kvalita", "d": "Bez tohto Google hru stiahne z očí."}, {"c": "V", "n": "Stránka v Google Play", "d": "Premena návštevy obchodu na stiahnutie."}];
+var TG = {teba:"Čaká na teba", claude:"Čaká na Claude", later:"Neskôr", napad:"Nápady z výskumu"};
+var TGD = {teba:"Tvoje rozhodnutia, testy a schválenia", claude:"Claude urobí po tvojom OK", later:"Zapísané, riešiť neskôr", napad:"Výskum 7. 10., vyber, čo chceš riešiť"};
+var IMPL = {3:"★★★ zásadné", 2:"★★ veľký rozdiel", 1:"★ drobnosť"};
+var EFFL = {N:"nízka", S:"stredná", V:"vysoká"};
+var GORDER = ["teba","claude","later","napad"], EORDER = {N:0,S:1,V:2};
+var ts = {g:"all", b:"all", cat:"all", imp:"all", eff:"all", by:"cat", q:""};
+var SELKEY = "slavs_todo_vyber", sel = {};
+try { sel = JSON.parse(localStorage.getItem(SELKEY) || "{}") || {}; } catch(e) { sel = {}; }
+function saveSel(){ try { localStorage.setItem(SELKEY, JSON.stringify(sel)); } catch(e) {} }
+var catN = {}; TCATS.forEach(function(c){ catN[c.c] = c; });
+function tchips(id, opts, key){
+  var box=document.getElementById(id); box.textContent="";
+  opts.forEach(function(p){ var b=el("button","chip",p[1]); b.type="button"; b.setAttribute("aria-pressed",String(ts[key]===p[0]));
+    b.onclick=function(){ ts[key]=p[0]; renderTodos(); }; box.appendChild(b); });
+}
+function tmatch(x){
+  if(ts.g==="vyb"){ if(!sel[x.id]) return false; } else if(ts.g!=="all" && x.g!==ts.g) return false;
+  if(ts.b!=="all" && String(x.b||"")!==ts.b) return false;
+  if(ts.cat!=="all" && x.cat!==ts.cat) return false;
+  if(ts.imp!=="all" && String(x.imp)!==ts.imp) return false;
+  if(ts.eff!=="all" && x.eff!==ts.eff) return false;
+  var q=ts.q.trim().toLowerCase();
+  if(q && (x.id+" "+x.t+" "+x.s).toLowerCase().indexOf(q)<0) return false;
+  return true;
+}
+function tsort(a,b){ return (GORDER.indexOf(a.g)-GORDER.indexOf(b.g)) || (b.imp-a.imp) || (EORDER[a.eff]-EORDER[b.eff]); }
+function tcard(x){
+  var c=el("div","tcard i"+x.imp+(x.imp===3&&x.eff==="N"?" hi":"")+(sel[x.id]?" sel":""));
+  var h=el("div","th"); h.appendChild(el("span","tid",x.id));
+  h.appendChild(el("span","badge b-"+x.g, x.g==="napad" ? "Nápad" : TG[x.g]+" · "+x.k));
+  var st=el("button","star",sel[x.id]?"★":"☆"); st.type="button"; st.title="Vybrať / zrušiť výber"; st.setAttribute("aria-pressed",String(!!sel[x.id]));
+  st.onclick=function(){ if(sel[x.id]) delete sel[x.id]; else sel[x.id]=1; saveSel(); renderTodos(); };
+  if(x.b) h.appendChild(el("span","tag bal","Balík "+x.b));
+  h.appendChild(st); c.appendChild(h);
+  var t=el("div","tt"); t.innerHTML=x.t; c.appendChild(t);
+  var m=el("div","tm"); m.appendChild(el("span","tag i"+x.imp,IMPL[x.imp])); m.appendChild(el("span","tag","náročnosť: "+EFFL[x.eff]));
+  m.appendChild(el("span","tag",x.cat+" "+catN[x.cat].n)); c.appendChild(m);
+  var s=el("div","tsrc");
+  if(x.u){ var a=el("a",null,x.s); a.href=x.u; a.target="_blank"; a.rel="noopener"; s.appendChild(a); } else s.textContent=x.s;
+  c.appendChild(s); return c;
+}
+function renderBaliky(){
+  var box=document.getElementById("tbaliky"); if(!box) return; box.textContent="";
+  BALIKY.forEach(function(b){
+    var c=el("button","bcard st-"+b.st); c.type="button"; c.setAttribute("aria-pressed",String(ts.b===String(b.n)));
+    c.onclick=function(){ ts.b=(ts.b===String(b.n)?"all":String(b.n)); renderTodos(); };
+    var h=el("div","bh"); h.appendChild(el("span","bn",String(b.n))); h.appendChild(el("span","bt",b.name));
+    h.appendChild(el("span","bs",b.st==="next"?"NA RADE":b.st==="done"?"HOTOVÉ":"čaká")); c.appendChild(h);
+    c.appendChild(el("div","bd",b.d)); c.appendChild(el("div","bc",b.codes.join(" · "))); box.appendChild(c);
+  });
+}
+function renderTodos(){
+  var tiles=document.getElementById("ttiles"); tiles.textContent="";
+  GORDER.concat(["vyb"]).forEach(function(k){
+    var n = k==="vyb" ? TODOS.filter(function(x){return sel[x.id]}).length : TODOS.filter(function(x){return x.g===k}).length;
+    var b=el("button","tile"); b.type="button"; b.dataset.g=k; b.setAttribute("aria-pressed",String(ts.g===k));
+    b.appendChild(el("span","n",String(n))); b.appendChild(el("span","l",k==="vyb"?"Tvoj výber ☆":TG[k])); b.appendChild(el("span","d",k==="vyb"?"Označené hviezdičkou":TGD[k]));
+    b.onclick=function(){ ts.g=(ts.g===k?"all":k); renderTodos(); }; tiles.appendChild(b);
+  });
+  tchips("tbal",[["all","Všetko"]].concat(BALIKY.map(function(b){return [String(b.n),b.n+". "+b.name+(b.st==="next"?" ← na rade":b.st==="done"?" ✓":"")]})),"b");
+  renderBaliky();
+  tchips("tcat",[["all","Všetko"]].concat(TCATS.map(function(c){return [c.c,c.c+" "+c.n]})),"cat");
+  tchips("timp",[["all","Všetko"],["3",IMPL[3]],["2",IMPL[2]],["1",IMPL[1]]],"imp");
+  tchips("teff",[["all","Všetko"],["N","nízka"],["S","stredná"],["V","vysoká"]],"eff");
+  tchips("tgrp",[["cat","Oblasti"],["g","Stavu"],["imp","Prínosu"],["eff","Náročnosti"]],"by");
+  var list=TODOS.filter(tmatch).sort(tsort);
+  var groups=[];
+  if(ts.by==="cat") groups=TCATS.map(function(c){return {k:c.c,h:c.c+". "+c.n,d:c.d}});
+  else if(ts.by==="g") groups=GORDER.map(function(k){return {k:k,h:TG[k],d:TGD[k]}});
+  else if(ts.by==="imp") groups=[3,2,1].map(function(k){return {k:k,h:IMPL[k],d:""}});
+  else groups=["N","S","V"].map(function(k){return {k:k,h:"Náročnosť: "+EFFL[k],d:""}});
+  var box=document.getElementById("todos"); box.textContent="";
+  groups.forEach(function(g){
+    var its=list.filter(function(x){ return ts.by==="cat"?x.cat===g.k : ts.by==="g"?x.g===g.k : ts.by==="imp"?x.imp===g.k : x.eff===g.k; });
+    if(!its.length) return;
+    var d=el("details","tgrp"); d.open=true; var sm=el("summary"); sm.appendChild(el("h3",null,g.h)); sm.appendChild(el("span",null,String(its.length))); d.appendChild(sm);
+    if(g.d) d.appendChild(el("p","tgd",g.d));
+    var grid=el("div","tgrid"); its.forEach(function(x){ grid.appendChild(tcard(x)); }); d.appendChild(grid); box.appendChild(d);
+  });
+  if(!list.length) box.appendChild(el("div","empty","Nič nezodpovedá filtru."));
+  document.getElementById("tcount").textContent=list.length+" z "+TODOS.length;
+  var c=function(k){return TODOS.filter(function(x){return x.g===k}).length};
+  document.getElementById("todo-sum").textContent=c("teba")+" čaká na teba, "+c("claude")+" na Claude, "+c("later")+" neskôr a "+c("napad")+" nápadov z výskumu (7. 10.). Triediš podľa oblasti, prínosu a náročnosti; zvýraznené pozadie = zásadné a lacné. Hviezdičkou si označ, čo chceš riešiť, a tlačidlom skopíruj kódy pre Claude. Kódy (T04, A1…) sú stále. Detail a zdroje nápadov: NAPADY_vylepsenia.md. Hotové úlohy tu nie sú, sú v _archiv/TODO_hotove.md.";
+}
+document.getElementById("tq").addEventListener("input",function(e){ ts.q=e.target.value; renderTodos(); });
+document.getElementById("tclear").onclick=function(){ sel={}; saveSel(); renderTodos(); };
+document.getElementById("tcopy").onclick=function(){
+  var ids=TODOS.filter(function(x){return sel[x.id]}).map(function(x){return x.id});
+  var msg=document.getElementById("tmsg");
+  if(!ids.length){ msg.textContent="Nič nie je vybrané."; return; }
+  var txt="Vybrané úlohy: "+ids.join(", ");
+  function fallback(){ var ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); msg.textContent="Skopírované ("+ids.length+"). Vlož to Claudovi."; }catch(e){ msg.textContent=txt; } document.body.removeChild(ta); }
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ msg.textContent="Skopírované ("+ids.length+"). Vlož to Claudovi."; }, fallback); } else fallback();
+};
 var state = {g:"all", q:""};
 function el(t,c,h){var e=document.createElement(t); if(c) e.className=c; if(h!=null) e.textContent=h; return e;}
 function count(g){return ITEMS.filter(function(i){return g==="all"||i.g===g}).length;}
