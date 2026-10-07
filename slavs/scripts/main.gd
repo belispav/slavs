@@ -317,6 +317,7 @@ var barrels: Array = []
 var cauldrons: Array = []
 ## T22: feet height the props' blocking strips were last fitted to.
 var _feet_h_applied: float = -1.0
+var _feet_w_applied: float = -1.0
 var fx   # fx.gd - blood, splinters, smoke
 var _vibrate_cd: float = 0.0
 var _enemy_bark_cd: float = 4.0
@@ -428,13 +429,21 @@ func _apply_bg_parallax_speed() -> void:
 ## T22: the barrels' and cauldrons' blocking strips are computed from the feet
 ## height of a character, so they follow the panel slider.
 func _refit_prop_blocks() -> void:
-	if is_equal_approx(Tuning.body_feet_height, _feet_h_applied):
+	if is_equal_approx(Tuning.body_feet_height, _feet_h_applied) \
+			and is_equal_approx(Tuning.body_feet_width, _feet_w_applied):
 		return
 	_feet_h_applied = Tuning.body_feet_height
+	_feet_w_applied = Tuning.body_feet_width
 	for b in barrels:
 		b.refit_block()
 	for c in cauldrons:
 		c.refit_block()
+	# Frozen enemies do not run their own physics, so they could not refit their
+	# own feet box: the hero's box changed and theirs did not (asymmetric
+	# collision, Pavel 2026-10-07). Everybody is refitted from here.
+	player.refit_body()
+	for e in enemies:
+		e.refit_body()
 
 
 ## Push overlapping enemies apart (soft push; only while Tuning.solid_bodies
@@ -1292,7 +1301,8 @@ func _on_cauldron_exploded(feet: Vector2) -> void:
 	if Tuning.cauldron_hurts_player:
 		var pf: Vector2 = player.global_position + Vector2(0.0, player.SIZE.y * 0.5)
 		if _in_blast(pf, feet, r):
-			player.take_damage(1, feet, false, Tuning.PLAYER_KNOCKBACK)
+			player.take_damage(1, feet, false, Vector2.ZERO,
+				Tuning.push_vector(pf - feet, Tuning.cauldron_push))
 
 
 func _in_blast(at: Vector2, centre: Vector2, r: float) -> bool:

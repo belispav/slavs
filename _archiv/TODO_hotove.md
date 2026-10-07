@@ -25,3 +25,4 @@ T30 HOTOVÉ 2026-10-06 (test OK): nepriatelia sa zastavia na spodnom okraji ako 
 T27 ZAVRETÉ 2026-10-07: poskočenie hrdinu po zásahu patrilo len bežcovi, funguje (test na telefóne). Nahradené T33 (odhodenie obojsmerne).
 T31 HOTOVÉ 2026-10-07: tiene pod hrdinom, nepriateľmi, sudmi a kotlami (`shadow.gd`), otestované na telefóne; zapečené: sila 0,3, veľkosť 1.
 T32 HOTOVÉ 2026-10-07: náhodnosť zvukov, otestované na telefóne; zapečené: efekty ±2,5 dB hlasitosť a ±25 % výška tónu, hlasy ±1 dB a ±3 %.
+Rýchlosť hore-dole 2026-10-07: pomer `free_move_y_ratio` bol zámerne 0,6 (pomalší pohyb v Y), preto sa hrdina hore-dole zdal pomalší a šikmo rýchlejší. Predvolené teraz 1,0 (rovnako rýchlo), posuvník ostáva.

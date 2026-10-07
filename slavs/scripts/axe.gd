@@ -3,11 +3,13 @@ extends Area2D
 ## The hero's thrown axe (2026-10-03). One per hero, never freed - it is
 ## either in the hand (hidden) or in the air.
 ##
-## Flies out along the aim for Tuning.axe_range, then comes back to the hand
-## like a boomerang. It hits everything it passes through - once on the way
-## out and once more on the way back - so a line of enemies is cut through
-## twice. That is the point of the weapon in a mass shooter: no aiming at one
-## target, no trading blows with a rusher. The next throw waits for the catch.
+## Flies out along the aim for Tuning.axe_range, then comes back to the hand.
+## It hits everything it passes through on the way OUT (and pushes it); on the
+## way back (Pavel 2026-10-07) it is half transparent, harmless and faster -
+## unless Tuning.AXE_RETURN_HURTS (a future boomerang upgrade), and even then it
+## never pushes. That is the point of the weapon in a mass shooter: no aiming
+## at one target, no trading blows with a rusher. The next throw waits for the
+## catch.
 ##
 ## Hits go through the same layer and the same hit() method as the player's
 ## bullets, so anything a bullet can hit, the axe can hit too (enemies, the
@@ -28,6 +30,10 @@ var _back_time: float = 0.0
 var _hit_this_leg: Array = []
 var _sprite: Sprite2D
 var _circle: CircleShape2D
+## Ground shadow (T31): the axe flies at hand height, so its shadow hangs this
+## far below it, measured at the throw (hero's feet minus the throw point).
+var _shadow: Node2D
+const ShadowScript := preload("res://scripts/shadow.gd")
 
 
 func _ready() -> void:
@@ -45,6 +51,9 @@ func _ready() -> void:
 		_sprite.texture = tex
 		_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		add_child(_sprite)
+	_shadow = ShadowScript.new()
+	add_child(_shadow)
+	_shadow.setup(Vector2.ZERO, 36.0)
 	_set_held()
 
 
@@ -54,6 +63,10 @@ func is_held() -> bool:
 
 func throw(from: Vector2, direction: Vector2) -> void:
 	global_position = from
+	var drop: float = 40.0
+	if thrower != null:
+		drop = clampf(thrower.global_position.y + thrower.SIZE.y * 0.5 - from.y, 0.0, 240.0)
+	_shadow.position = Vector2(0.0, drop)
 	_dir = direction.normalized() if direction != Vector2.ZERO else Vector2.RIGHT
 	_travelled = 0.0
 	_back_time = 0.0
@@ -105,10 +118,12 @@ func _physics_process(delta: float) -> void:
 			return
 		global_position += to_hand.normalized() * step_back
 
-	_hit_overlaps()
+	if state == State.OUT or Tuning.AXE_RETURN_HURTS:
+		_hit_overlaps()
 
 	if _sprite != null:
 		var s: float = Tuning.player_sprite_scale
+		_sprite.modulate.a = Tuning.AXE_RETURN_ALPHA if state == State.BACK else 1.0
 		_sprite.scale = Vector2.ONE * s
 		_sprite.rotation += Tuning.AXE_SPIN * delta * (1.0 if _dir.x >= 0.0 else -1.0)
 	z_index = Tuning.depth_z(global_position.y) + 1
@@ -141,10 +156,8 @@ func _hit_overlaps() -> void:
 			if state == State.BACK:
 				travel = (_catch_point() - global_position).normalized()
 			var landed: bool = false
-			# T33: the way back pushes too, by a panel factor (0 = it does not).
-			var push_dist: float = Tuning.axe_push
-			if state == State.BACK:
-				push_dist *= Tuning.axe_return_push_factor
+			# T33: only the way out pushes (a returning axe never does).
+			var push_dist: float = Tuning.axe_push if state == State.OUT else 0.0
 			for i in Tuning.AXE_DAMAGE:
 				landed = victim.call("hit_from", travel, push_dist)
 				if not landed:

@@ -22,6 +22,7 @@ var draw_layer: Control
 var panel: PanelContainer
 var scroll: ScrollContainer
 var rows: VBoxContainer
+const PanelHidden := preload("res://scripts/panel_hidden.gd")
 var value_labels: Dictionary = {}
 var _font: Font
 var _title: Label
@@ -460,6 +461,9 @@ func _build_panel() -> void:
 	_add_slider("kedy v animacii uderu zasah plati (0 = hned, 1 = na konci)",
 		0.05, 0.95, 0.05, Tuning.rusher_attack_hit_at,
 		func(v: float) -> void: Tuning.rusher_attack_hit_at = v)
+	_add_slider("aky vysoky kus tela nepriatela sa da trafit (0-1)", 0.3, 1.0,
+		0.02, Tuning.enemy_hurt_height_fraction,
+		func(v: float) -> void: Tuning.enemy_hurt_height_fraction = v)
 	# T22: solid bodies. On = hero and enemies cannot pass through each other
 	# (only the feet are solid); off = the old soft push below.
 	var solid_btn := CheckButton.new()
@@ -487,12 +491,16 @@ func _build_panel() -> void:
 		func(v: float) -> void: Tuning.thrower_push = v)
 	_add_slider("sekera odhodi nepriatela (px)", 0.0, 300.0, 5.0, Tuning.axe_push,
 		func(v: float) -> void: Tuning.axe_push = v)
-	_add_slider("sekera na ceste SPAT: kolko odhodenia (0 = vobec, 1 = rovnako)",
-		0.0, 1.0, 0.05, Tuning.axe_return_push_factor,
-		func(v: float) -> void: Tuning.axe_return_push_factor = v)
+	_add_slider("vybuch kotla odhodi hrdinu (px)", 0.0, 400.0, 5.0,
+		Tuning.cauldron_push,
+		func(v: float) -> void: Tuning.cauldron_push = v)
 	_add_slider("odhodenie: ako dlho trva (s)", 0.08, 0.6, 0.02,
 		Tuning.knockback_time,
 		func(v: float) -> void: Tuning.knockback_time = v)
+	_add_note("SRDIECKA A TIENE")
+	_add_slider("srdiecka nad postavami: 0 vypnute, 1 hrdina + ranene, 2 vsetci",
+		0.0, 2.0, 1.0, float(Tuning.hearts_mode),
+		func(v: float) -> void: Tuning.hearts_mode = int(v))
 	# T31: shadows under characters and props.
 	_add_slider("tien pod postavami: sila (0 = vypnuty)", 0.0, 1.0, 0.05,
 		Tuning.shadow_alpha,
@@ -500,9 +508,6 @@ func _build_panel() -> void:
 	_add_slider("tien pod postavami: velkost (x)", 0.4, 2.0, 0.05,
 		Tuning.shadow_scale,
 		func(v: float) -> void: Tuning.shadow_scale = v)
-	_add_slider("aky vysoky kus tela nepriatela sa da trafit (0-1)", 0.3, 1.0,
-		0.02, Tuning.enemy_hurt_height_fraction,
-		func(v: float) -> void: Tuning.enemy_hurt_height_fraction = v)
 
 	_add_note("ZONA PRE LAVY PALEC")
 	_add_slider("sirka", 0.2, 0.8, 0.01, c.move_zone_width,
@@ -565,8 +570,44 @@ func _build_panel() -> void:
 		Debug.game_reset_requested = true
 	)
 
+	_apply_hidden()
 	_layout_panel()
 	get_viewport().size_changed.connect(_layout_panel)
+
+
+## Pavel 2026-10-07: too many sliders. Controls listed in panel_hidden.gd are
+## built as before (so their code and defaults stay) but not shown. The list is
+## made from his Excel sheet by tools/panel_catalog.py; a section heading with
+## nothing visible under it is hidden too. Key = "type|name" (type: slider,
+## switch, button; name = the label / button text).
+func _apply_hidden() -> void:
+	var label_of: Dictionary = {}
+	for key in value_labels.keys():
+		label_of[value_labels[key]] = key
+	var note: Label = null
+	var note_has_visible: bool = false
+	for row in rows.get_children():
+		if row is Label:
+			if note != null:
+				note.visible = note_has_visible
+			note = row
+			note_has_visible = false
+			continue
+		var key: String = ""
+		if row is CheckButton:
+			key = "switch|" + row.text
+		elif row is Button:
+			key = "button|" + row.text
+		elif row is VBoxContainer:
+			for c in row.get_children():
+				if c is Label:
+					key = "slider|" + str(label_of.get(c, c.text))
+		if PanelHidden.HIDDEN.has(key):
+			row.visible = false
+		else:
+			note_has_visible = true
+	if note != null:
+		note.visible = note_has_visible
 
 
 ## Explicitne ukotvenie vpravo hore, s odsadenim podla bezpecnej zony displeja

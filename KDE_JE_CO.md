@@ -6,7 +6,7 @@ Claude: túto mapu aktualizuj pri každom presune alebo pridaní súboru v koren
 ## ToDo's (otvorené úlohy; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, DIZAJN_core_loop.md §3-4)
 
 Claude: pri zmene stavu aktualizuj zdroje aj tento zoznam aj `KDE_JE_CO.html`.
-ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T40).
+ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T45).
 Tu a v dashboarde sú LEN otvorené úlohy. Keď je úloha hotová, zrušená alebo zavretá: presuň jej riadok do `_archiv/TODO_hotove.md` (tam ho Claude nečíta, len na požiadanie) a zmaž ho odtiaľto aj z `KDE_JE_CO.html`. Hotové veci sa v dashboarde nezobrazujú.
 
 ### Čaká na Pavla
@@ -20,8 +20,8 @@ T21 Po 2026-10-12: zmazať zálohu `slavs_zaloha_...` v D:\2026 (Pavel, v Priesk
 
 ### Čaká na Claude (po OK od Pavla alebo na Pavlov test)
 T17 AKTÍVNE, DÔLEŽITÉ (Pavel 2026-10-06): farebná paleta nie je zjednotená (PixelLab je primárny zdroj grafiky). MUSÍ sa vyriešiť PRED generovaním finálnej hernej grafiky; kým robíme prototypy, nemusí byť rozhodnuté. [Open 6]
-T22 HOTOVÉ V KÓDE 2026-10-06, ČAKÁ NA TEST NA TELEFÓNE: pevné telá. Hrdina aj nepriatelia sa neprechádzajú (hrdina ↔ nepriateľ aj nepriateľ ↔ nepriateľ), pevné sú len nohy (box 30 × 22 px zavesený na nohách, panel: hĺbka a šírka nôh), horné telá sa môžu prekrývať. Mäkké rozstrkávanie (`_separate_enemies`) sa pri zapnutých pevných telách preskakuje (panel: vypínač PEVNE TELA, vypnutý = staré správanie). Postavy majú `MOTION_MODE_FLOATING` (bez podlahy). Sudy a kotly počítajú pás blokovania z výšky nôh. Sledovať: zasekávanie pri 30+ nepriateľoch; brutov úchop funguje (počas úchopu sa hrdina a brut neblokujú). (Pavel 2026-10-06)
-T33 HOTOVÉ V KÓDE 2026-10-07, ČAKÁ NA TEST NA TELEFÓNE (zapni z NESMRTELNOSTI, inak hrdina odhodenie nedostane): odhodenie obojsmerne, v smere útoku, o dĺžku v px podľa zbrane (panel ODHODENIE PO ZASAHU). Bežec odhodí hrdinu o 90 px, guľka strelca o 35 px, brut nič (len chytá). Sekera odhodí bežca aj strelca o 70 px (brut je príliš veľký, neodhodí sa); cesta sekery SPÄŤ odhadzuje tiež (posuvník 0 = nie, 1 = rovnako; Pavel si nie je istý, ako to bude vyzerať). Odhodený nepriateľ je na chvíľu omráčený (nechodí, švih alebo výstrel sa zruší). Sudy a kotly sa neodhadzujú (otvorený nápad: neskôr zvážiť). (Pavel 2026-10-07)
+T22 HOTOVÉ V KÓDE 2026-10-06, doladené 2026-10-07, ČAKÁ NA TEST NA TELEFÓNE: pevné telá. Hrdina aj nepriatelia sa neprechádzajú, pevné sú len nohy (idealne hodnoty od Pavla: šírka 60, hĺbka 30; zapečené), horné telá sa môžu prekrývať. Oprava asymetrie (Pavel: zospodu držalo, zvrchu nie): zamrznutí nepriatelia si po zmene posuvníka nepreskladali box nôh; teraz `main._refit_prop_blocks` preskladá všetky telá (hrdina, nepriatelia, sudy, kotly). Posuvník „ako ďaleko sa nepriatelia odtláčajú“ je STARÉ mäkké rozstrkávanie, funguje len keď je PEVNE TELA vypnuté (preto bez efektu) a je skrytý.
+T33 HOTOVÉ V KÓDE 2026-10-07, ČAKÁ NA TEST NA TELEFÓNE (zapni z NESMRTELNOSTI, inak hrdina odhodenie nedostane): odhodenie obojsmerne, v smere útoku, o dĺžku v px podľa zbrane (panel ODHODENIE PO ZASAHU), trvá 0,4 s (Pavel: dobrá hodnota; počas odhodenia sa dá chodiť). Bežec odhodí hrdinu o 90 px, guľka strelca o 35 px, výbuch kotla o 140 px, brut nič. Sekera odhodí bežca aj strelca o 70 px, brut sa neodhodí. Sekera zasahuje a odhadzuje LEN CESTOU K NEPRIATEĽOM; späť nezraňuje ani neodhadzuje, je z polovice priehľadná a letí 1,5x rýchlejšie. Zásah prerušuje útok nepriateľa (Pavlovi sa páči). Sudy a kotly sa neodhadzujú (otvorený nápad). Zároveň: sekera má tieň; rýchlosť hore-dole = rovnaká ako do strán (pomer 1,0, posuvník ostáva); srdiečka nad postavami (T45). (Pavel 2026-10-07)
 
 ### Neskôr, nápady a na zváženie
 T23 NÁPAD (neskôr, dizajn): nepriatelia hľadajú inú trasu a obídu hrdinu. Dôsledok: obkľúčia ho a nebude vedieť ujsť. Rozhodnúť neskôr, či to chceme. (Pavel 2026-10-06)
@@ -32,6 +32,11 @@ T37 NA VYSKÚŠANIE: za postavami pri chôdzi občas efekt zvíreného prachu, s
 T38 Útočníci vo vzduchu a hádzané veci s oblúkovou dráhou sa napodobnia tieňom: predmet opustí ruku a opisuje oblúk, tieň ide lineárne po zemi a nakoniec sa stretnú, čo vytvorí dojem letu. (Pavel 2026-10-06)
 T39 Niektoré veci majú znázorniť vietor: vlajky, trsy trávy, hmla, dym. (Pavel 2026-10-06)
 T40 Používať shadery, napr. na osvetlenú oblasť (fakľa, oheň, chvíľu po výbuchu kotla), asi aj na hmlu. Pridá hre hĺbku a rozmanitosť. (Pavel 2026-10-06)
+T41 NA NESKÔR (Pavel 2026-10-07, riešiť pri ladení finálnych postáv, teraz nie, „vyhodené kredity“): niektoré útoky a výbuchy majú vedieť hrdinu odhodiť alebo omráčiť s animáciou. Dve varianty: omráčenie na mieste (točí sa hlava) alebo pád na zem (dlhšie).
+T42 KATALÓG EFEKTOV (Pavel 2026-10-07): postupne spisovať efekty, ktoré môžu mať nepriatelia na nás a my na nich (odhodenie, omráčenie na mieste, pád na zem, spomalenie, zmrazenie atď.). Pri každom nepriateľovi si potom vyberieme z katalógu. Začiatok katalógu: odhodenie (hotové, T33), omráčenie na mieste a pád na zem (T41).
+T43 NÁPAD, VYLEPŠENIE SEKERY (Pavel 2026-10-07): sekera zraňujúca aj cestou späť (bumerang) môže byť neskôr vylepšenie. Aj vtedy cesta späť NESMIE odhadzovať. V kóde je vypínač `Tuning.AXE_RETURN_HURTS` (false).
+T44 HOTOVÉ V KÓDE 2026-10-07, ČAKÁ NA TEST: skrývanie posuvníkov. Zoznam všetkých prvkov panela je v `PANEL_prvky.xlsx` (stĺpec Zobraziť A/N, S-čísla). Skryté ostávajú v kóde, len sa nezobrazia. Postup: Pavel prepíše A/N, Claude spustí `python3 tools/panel_catalog.py import` (zapíše `slavs/scripts/panel_hidden.gd`). Predvolene skrytých 46 z 73 (odladené a zriedka potrebné), viditeľných 27.
+T45 HOTOVÉ V KÓDE 2026-10-07, ČAKÁ NA TEST: srdiečka nad hrdinom a nepriateľmi (červené, po zásahu ostane len čierny okraj; `hearts.gd`). Panel: režim 0 vypnuté / 1 hrdina + ranení / 2 všetci. Pavel: „možno to bude vadiť, uvidíme“.
 
 ## Odsúhlasený príbeh a popis hry (kde to je)
 

@@ -43,7 +43,7 @@ move_zone_bottom = 0.16
 ; the default and nothing new should be built on it.
 free_movement = true
 ; Measured on device 2026-08-04.
-free_move_y_ratio = 0.6
+free_move_y_ratio = 1.0
 ; Copying the thumb was tried on device and put back: the thumb reaches the edge
 ; of its reach long before the level ends, so it has to be lifted and replaced
 ; constantly - which is the one thing the whole control scheme exists to avoid.

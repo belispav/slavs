@@ -59,6 +59,10 @@ var _mask_applied: int = -1
 ## T31: ground shadow.
 var _shadow: Node2D
 const ShadowScript := preload("res://scripts/shadow.gd")
+## Hit points as hearts over the head (hearts.gd).
+var _hearts: Node2D
+const HeartsScript := preload("res://scripts/hearts.gd")
+var _max_hp: int = 1
 ## Drawn character, when one has been rendered. Null means the coloured box,
 ## which is still a perfectly good enemy and is what every unfinished type uses.
 ## Points at whichever of the two below matches the current kind - built once
@@ -162,6 +166,8 @@ func _ready() -> void:
 	_shadow = ShadowScript.new()
 	add_child(_shadow)
 	_shadow.setup(Vector2(0.0, SIZE.y * 0.5 - 2.0), SIZE.x * 1.6)
+	_hearts = HeartsScript.new()
+	add_child(_hearts)
 
 	# Bullets look for LAYER_TARGET, so the enemy carries a hurtbox on it.
 	_hurtbox = Area2D.new()
@@ -367,6 +373,10 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	_fit_hurtbox(_drawn_height)
 	_shadow.set_width((_drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0)
 		* Tuning.SHADOW_WIDTH_PER_HEIGHT)
+	_max_hp = hp
+	_hearts.place(Vector2(0.0, SIZE.y * 0.5
+		- (_drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0) - 6.0))
+	_hearts.set_state(hp, _max_hp)
 	if _thrower_sprite != null:
 		_thrower_sprite.visible = kind == Kind.THROWER
 	if _rusher_sprite != null:
@@ -401,6 +411,12 @@ func despawn() -> void:
 ## true the moment a rusher's attack became a timed swing instead of a shove.
 func is_melee_kind() -> bool:
 	return kind == Kind.RUSHER
+
+
+## Called by main.gd when the panel changes the feet box - frozen enemies do not
+## run _physics_process, so they cannot refit themselves.
+func refit_body() -> void:
+	_fit_body()
 
 
 ## T22: the solid part of an enemy is only its FEET - a flat box hanging from
@@ -480,6 +496,7 @@ func damage(amount: int) -> void:
 		return
 	hp -= amount
 	_flash = 1.0
+	_hearts.set_state(hp, _max_hp)
 	hurt.emit(global_position + Vector2(0.0, SIZE.y * 0.5), _drawn_height, hp <= 0)
 	if hp <= 0:
 		Sfx.play(&"enemy_death", global_position)

@@ -166,7 +166,13 @@ const AXE_SPEED: float = 650.0
 var axe_speed: float = AXE_SPEED
 ## The way back is this much faster than the way out, so the wait for the
 ## catch stays short even with a slow, readable throw.
-const AXE_RETURN_FACTOR: float = 1.2
+## The way BACK is faster than the way out (x the out speed). 2026-10-07: 1.5.
+const AXE_RETURN_FACTOR: float = 1.5
+## Pavel 2026-10-07: the axe hurts only on the way OUT; on the way back it is
+## half transparent, harmless and 50 % faster. Set true for a future "boomerang"
+## upgrade (a returning axe that also cuts); it still never pushes.
+const AXE_RETURN_HURTS: bool = false
+const AXE_RETURN_ALPHA: float = 0.5
 const AXE_SPIN: float = 22.0             # radians / s
 const AXE_HIT_RADIUS: float = 30.0       # generous on purpose (pillar 1)
 const AXE_CATCH_RADIUS: float = 28.0
@@ -368,11 +374,9 @@ const PLAYER_IFRAMES: float = 0.9     # invulnerable window after taking a hit
 ## Longer window after dying, so getting up in the middle of a crowd is not
 ## immediately fatal again.
 const PLAYER_REVIVE_IFRAMES: float = 2.0
-const PLAYER_KNOCKBACK: Vector2 = Vector2(240.0, -320.0)
 ## What a hit FROM EACH ENEMY KIND does to the hero (Pavel 2026-10-06: the hop
 ## belongs to the rusher only; every enemy gets its own hit effect in config,
-## later maybe slow or poison). Vector2.ZERO = no knockback. The cauldron blast
-## still uses PLAYER_KNOCKBACK above.
+## later maybe slow or poison). Vector2.ZERO = no knockback.
 ## T33 (Pavel 2026-10-07) PUSH ("odhodenie"), both ways. A hit moves the victim a
 ## set distance (px) along the direction of the attack, over KNOCKBACK_TIME
 ## seconds (speed falls linearly to zero), stopped by solid bodies and the field
@@ -382,7 +386,7 @@ const PLAYER_KNOCKBACK: Vector2 = Vector2(240.0, -320.0)
 ## short. Brute: none, it only grabs. Enemies hit by the hero's axe: all pushed
 ## the same, except the brute (too big). Barrels and cauldrons are not pushed
 ## (open idea). The axe's way BACK counts as a hit too (factor 0 = no push).
-const KNOCKBACK_TIME: float = 0.22
+const KNOCKBACK_TIME: float = 0.4
 var knockback_time: float = KNOCKBACK_TIME
 ## Depth (screen Y) part of a push is scaled by this, the ground is foreshortened.
 const KNOCKBACK_Y_FACTOR: float = 0.6
@@ -392,8 +396,10 @@ const THROWER_PUSH_DIST: float = 35.0
 var thrower_push: float = THROWER_PUSH_DIST
 const AXE_PUSH_DIST: float = 70.0
 var axe_push: float = AXE_PUSH_DIST
-const AXE_RETURN_PUSH_FACTOR: float = 1.0
-var axe_return_push_factor: float = AXE_RETURN_PUSH_FACTOR
+## A cauldron blast pushes the hero away from the centre (2026-10-07; the old
+## velocity hop PLAYER_KNOCKBACK was only ~15 px and is gone).
+const CAULDRON_PUSH_DIST: float = 140.0
+var cauldron_push: float = CAULDRON_PUSH_DIST
 ## The hero's plain bullets (the panel can switch the axe off) push a little.
 const BULLET_PUSH_DIST: float = 20.0
 
@@ -505,9 +511,11 @@ var solid_bodies: bool = SOLID_BODIES
 ## the 52-54 px body box; 54 = the whole old box), width across the feet.
 ## Also drives how far barrels and cauldrons block in depth (their strips are
 ## computed from this height, see barrel.gd _set_blocking).
-const BODY_FEET_HEIGHT: float = 22.0
+const BODY_FEET_HEIGHT: float = 30.0
 var body_feet_height: float = BODY_FEET_HEIGHT
-const BODY_FEET_WIDTH: float = 30.0
+const BODY_FEET_WIDTH: float = 60.0
+## The width the barrel/cauldron blocking strips were measured with (BARREL_BLOCK_WIDTH).
+const BODY_FEET_REF_WIDTH: float = 30.0
 var body_feet_width: float = BODY_FEET_WIDTH
 
 ## T31 SHADOWS (Pavel 2026-10-06): flat ellipse on the ground under characters,
@@ -522,6 +530,10 @@ const SHADOW_WIDTH_PER_HEIGHT: float = 0.55
 ## Absolute z of every shadow: above the ground, its decorations and the blood
 ## stains, under every character. main.gd sets it from the ground's z.
 var shadow_z: int = -100
+
+## Hit points as hearts over the characters (hearts.gd): 0 = off,
+## 1 = the hero and wounded enemies only, 2 = everybody.
+var hearts_mode: int = 2
 
 ## How fast the foreground parallax strip (env_05_fg.png, main.gd's BG_LAYERS)
 ## scrolls relative to the ground it sits in front of. 1.0 would move with the

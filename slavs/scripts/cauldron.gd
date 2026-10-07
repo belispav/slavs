@@ -103,7 +103,9 @@ func refit_block() -> void:
 	var top: float = -depth
 	var bottom: float = maxf(depth - h_box, top + 2.0)
 	var r := _block_shape.shape as RectangleShape2D
-	r.size = Vector2(Tuning.CAULDRON_BLOCK_WIDTH, bottom - top)
+	var w_fit: float = maxf(Tuning.CAULDRON_BLOCK_WIDTH
+		- (Tuning.body_feet_width - Tuning.BODY_FEET_REF_WIDTH), 20.0)
+	r.size = Vector2(w_fit, bottom - top)
 	_block_shape.position = Vector2(0.0, (top + bottom) * 0.5)
 
 

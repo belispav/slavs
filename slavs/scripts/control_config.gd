@@ -148,7 +148,7 @@ class_name ControlConfig
 ## Vertical travel in free movement, as a fraction of the horizontal speed.
 ## Below 1.0 the field feels wider than it is tall, which is how the genre
 ## usually plays - the depth axis is for dodging, not for crossing ground.
-@export_range(0.2, 1.0, 0.05) var free_move_y_ratio: float = 0.62
+@export_range(0.2, 1.0, 0.05) var free_move_y_ratio: float = 1.0
 
 ## How the left thumb drives free movement.
 ##

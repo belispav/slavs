@@ -104,6 +104,9 @@ var _mask_applied: int = -1
 ## T31: ground shadow.
 var _shadow: Node2D
 const ShadowScript := preload("res://scripts/shadow.gd")
+## Hit points as hearts over the head (hearts.gd).
+var _hearts: Node2D
+const HeartsScript := preload("res://scripts/hearts.gd")
 ## T33: running push after a hit. Speed (px/s) falls linearly to zero over
 ## _push_total seconds, so the distance is exactly the requested one. It is added
 ## on top of the controlled movement and does not touch `velocity`, so the
@@ -139,6 +142,9 @@ func _ready() -> void:
 	_shadow = ShadowScript.new()
 	add_child(_shadow)
 	_shadow.setup(Vector2(0.0, SIZE.y * 0.5 - 2.0), SIZE.x * 1.6)
+	_hearts = HeartsScript.new()
+	_hearts.is_hero = true
+	add_child(_hearts)
 
 	_cam = Camera2D.new()
 	_cam.position_smoothing_enabled = true
@@ -269,6 +275,8 @@ func _apply_sprite_scale(s: float) -> void:
 	_fit_hurtbox(drawn)
 	if _shadow != null:
 		_shadow.set_width(drawn * Tuning.SHADOW_WIDTH_PER_HEIGHT)
+	if _hearts != null:
+		_hearts.place(Vector2(0.0, SIZE.y * 0.5 - drawn - 6.0))
 
 
 ## T22: the body that blocks and gets blocked is only the FEET - a flat box
@@ -286,6 +294,12 @@ func _fit_body() -> void:
 	var rect := _body_shape.shape as RectangleShape2D
 	rect.size = Vector2(w, h)
 	_body_shape.position = Vector2(0.0, SIZE.y * 0.5 - h * 0.5)
+
+
+## Called by main.gd when the panel changes the feet box (also while enemies are
+## frozen, see main.gd _refit_prop_blocks).
+func refit_body() -> void:
+	_fit_body()
 
 
 ## What the hero bumps into: the world and props always, enemies when bodies are
@@ -522,6 +536,7 @@ func _physics_process(delta: float) -> void:
 		_move_platform(delta)
 
 	_iframes = maxf(_iframes - delta, 0.0)
+	_hearts.set_state(hp, Tuning.PLAYER_MAX_HP)
 	_apply_mask()
 	if not is_equal_approx(_fit_h, Tuning.body_feet_height) \
 			or not is_equal_approx(_fit_w, Tuning.body_feet_width):

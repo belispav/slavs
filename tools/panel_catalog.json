@@ -1,0 +1,482 @@
+[
+	{
+		"name": "TEST",
+		"section": "TEST",
+		"type": "section",
+		"value": ""
+	},
+	{
+		"name": "NESMRTELNOST",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "DOTYKY NA OBRAZOVKE",
+		"section": "TEST",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "scena: vyska horneho pasu",
+		"section": "TEST",
+		"type": "slider",
+		"value": "190.0"
+	},
+	{
+		"name": "CELA OBRAZOVKA HLINA (bez scrollu)",
+		"section": "TEST",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "OBJEKTY NA ZEMI (prechodne)",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "objekty: kolko na obrazovku",
+		"section": "TEST",
+		"type": "slider",
+		"value": "40.0"
+	},
+	{
+		"name": "HLADKE POZADIE",
+		"section": "TEST",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "rychlost pozadia",
+		"section": "TEST",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "odstup od okraja",
+		"section": "TEST",
+		"type": "slider",
+		"value": "20.0"
+	},
+	{
+		"name": "odstup od SPODNEHO okraja",
+		"section": "TEST",
+		"type": "slider",
+		"value": "10.0"
+	},
+	{
+		"name": "sud: odstup postavy",
+		"section": "TEST",
+		"type": "slider",
+		"value": "118.0"
+	},
+	{
+		"name": "EFEKTY (krv, triesky, dym)",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "ako dlho lezi krv na zemi (s)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "3.0"
+	},
+	{
+		"name": "kotol: odpocet do vybuchu (s)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "5.0"
+	},
+	{
+		"name": "kotol: dosah vybuchu",
+		"section": "TEST",
+		"type": "slider",
+		"value": "220.0"
+	},
+	{
+		"name": "VYBUCH ZRANI AJ HRDINU",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "ZVUKY",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "hlasitost efektov (dB)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "0.0"
+	},
+	{
+		"name": "hlasitost hlasov (dB)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "0.0"
+	},
+	{
+		"name": "nahodnost efektov: hlasitost +- (dB)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "2.5"
+	},
+	{
+		"name": "nahodnost efektov: vyska tonu +- (%)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "25.0"
+	},
+	{
+		"name": "ako casto hovoria nepriatelia (s)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "6.0"
+	},
+	{
+		"name": "VIBRACIE",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "sila vibracii",
+		"section": "TEST",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "dlzka vibracie pri zasahu (ms)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "180.0"
+	},
+	{
+		"name": "HUDBA",
+		"section": "TEST",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "hlasitost hudby (dB)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "0.0"
+	},
+	{
+		"name": "ZMRAZIT SVET (hybe sa len hrdina)",
+		"section": "TEST",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "VYPNUT BEZCOV",
+		"section": "TEST",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "VYPNUT STRELCOV",
+		"section": "TEST",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "VYPNUT TUCNAKOV",
+		"section": "TEST",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "kolko bezcov naraz (test)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "3.0"
+	},
+	{
+		"name": "kolko strelcov naraz (test)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "3.0"
+	},
+	{
+		"name": "kolko tucnakov naraz (test)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "POHYB",
+		"section": "POHYB",
+		"type": "section",
+		"value": ""
+	},
+	{
+		"name": "posun palca pre plnu rychlost vlavo",
+		"section": "POHYB",
+		"type": "slider",
+		"value": "5.0"
+	},
+	{
+		"name": "posun palca pre plnu rychlost vpravo",
+		"section": "POHYB",
+		"type": "slider",
+		"value": "15.0"
+	},
+	{
+		"name": "o kolko pomalsi je pohyb hore-dole",
+		"section": "POHYB",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "MIERENIE",
+		"section": "MIERENIE",
+		"type": "section",
+		"value": ""
+	},
+	{
+		"name": "ako blizko k postave prestane mierit",
+		"section": "MIERENIE",
+		"type": "slider",
+		"value": "9.0"
+	},
+	{
+		"name": "rychlost postavy",
+		"section": "MIERENIE",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "pohyb pocas hodu (0 = stoji)",
+		"section": "MIERENIE",
+		"type": "slider",
+		"value": "0.0"
+	},
+	{
+		"name": "rychlost zamachu pri hode (1 = povodna)",
+		"section": "MIERENIE",
+		"type": "slider",
+		"value": "3.0"
+	},
+	{
+		"name": "HRDINA 2x (vypnute = 1x)",
+		"section": "MIERENIE",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "SEKERA (vypnute = gulky)",
+		"section": "MIERENIE",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "dosah sekery",
+		"section": "MIERENIE",
+		"type": "slider",
+		"value": "350.0"
+	},
+	{
+		"name": "rychlost sekery",
+		"section": "MIERENIE",
+		"type": "slider",
+		"value": "650.0"
+	},
+	{
+		"name": "NOVE SUDY (postavi ich pred hrdinu)",
+		"section": "MIERENIE",
+		"type": "button",
+		"value": ""
+	},
+	{
+		"name": "aky vysoky kus tela hraca sa da trafit (0-1)",
+		"section": "MIERENIE",
+		"type": "slider",
+		"value": "0.72"
+	},
+	{
+		"name": "NEPRIATELIA",
+		"section": "NEPRIATELIA",
+		"type": "section",
+		"value": ""
+	},
+	{
+		"name": "rychlost bezcov",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "rychlost strelcov",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "na aku vzdialenost si bezec vsimne hraca (px)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "640.0"
+	},
+	{
+		"name": "UKAZ ZONU UDERU BEZCA",
+		"section": "NEPRIATELIA",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "zona uderu: ako daleko pred bezcom dopadne zbran (px)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "40.0"
+	},
+	{
+		"name": "zona uderu: vyska dopadu nad nohami bezca (px)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "50.0"
+	},
+	{
+		"name": "zona uderu: polomer kruhu okolo miesta dopadu (px)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "40.0"
+	},
+	{
+		"name": "kedy v animacii uderu zasah plati (0 = hned, 1 = na konci)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "0.7"
+	},
+	{
+		"name": "aky vysoky kus tela nepriatela sa da trafit (0-1)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "0.72"
+	},
+	{
+		"name": "PEVNE TELA (nikto cez nikoho neprejde)",
+		"section": "NEPRIATELIA",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "pevne telo: hlbka nohy (px; 54 = cele telo)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "30.0"
+	},
+	{
+		"name": "pevne telo: sirka nohy (px)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "60.0"
+	},
+	{
+		"name": "ako daleko od seba sa nepriatelia odtlacaju (px; len bez pevnych tiel)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "46.0"
+	},
+	{
+		"name": "ODHODENIE PO ZASAHU",
+		"section": "ODHODENIE PO ZASAHU",
+		"type": "section",
+		"value": ""
+	},
+	{
+		"name": "bezec odhodi hrdinu (px)",
+		"section": "ODHODENIE PO ZASAHU",
+		"type": "slider",
+		"value": "90.0"
+	},
+	{
+		"name": "strela strelca odhodi hrdinu (px)",
+		"section": "ODHODENIE PO ZASAHU",
+		"type": "slider",
+		"value": "35.0"
+	},
+	{
+		"name": "sekera odhodi nepriatela (px)",
+		"section": "ODHODENIE PO ZASAHU",
+		"type": "slider",
+		"value": "70.0"
+	},
+	{
+		"name": "vybuch kotla odhodi hrdinu (px)",
+		"section": "ODHODENIE PO ZASAHU",
+		"type": "slider",
+		"value": "140.0"
+	},
+	{
+		"name": "odhodenie: ako dlho trva (s)",
+		"section": "ODHODENIE PO ZASAHU",
+		"type": "slider",
+		"value": "0.4"
+	},
+	{
+		"name": "SRDIECKA A TIENE",
+		"section": "SRDIECKA A TIENE",
+		"type": "section",
+		"value": ""
+	},
+	{
+		"name": "srdiecka nad postavami: 0 vypnute, 1 hrdina + ranene, 2 vsetci",
+		"section": "SRDIECKA A TIENE",
+		"type": "slider",
+		"value": "2.0"
+	},
+	{
+		"name": "tien pod postavami: sila (0 = vypnuty)",
+		"section": "SRDIECKA A TIENE",
+		"type": "slider",
+		"value": "0.3"
+	},
+	{
+		"name": "tien pod postavami: velkost (x)",
+		"section": "SRDIECKA A TIENE",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "ZONA PRE LAVY PALEC",
+		"section": "ZONA PRE LAVY PALEC",
+		"type": "section",
+		"value": ""
+	},
+	{
+		"name": "sirka",
+		"section": "ZONA PRE LAVY PALEC",
+		"type": "slider",
+		"value": "0.5"
+	},
+	{
+		"name": "kolko zospodu patri miereniu",
+		"section": "ZONA PRE LAVY PALEC",
+		"type": "slider",
+		"value": "0.16"
+	},
+	{
+		"name": "MIERIT OD POSTAVY",
+		"section": "ZONA PRE LAVY PALEC",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "VOLNY POHYB (bez skoku)",
+		"section": "ZONA PRE LAVY PALEC",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "POHYB KOPIRUJE PALEC",
+		"section": "ZONA PRE LAVY PALEC",
+		"type": "switch",
+		"value": "VYP"
+	}
+]
