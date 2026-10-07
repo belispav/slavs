@@ -165,7 +165,7 @@
 		"name": "zastavenie pri zasahu (ms)",
 		"section": "TEST",
 		"type": "slider",
-		"value": "40.0"
+		"value": "30.0"
 	},
 	{
 		"name": "BIELY ZABLESK",
@@ -213,7 +213,13 @@
 		"name": "dlzka vibracie pri mojom zasahu (ms)",
 		"section": "TEST",
 		"type": "slider",
-		"value": "30.0"
+		"value": "60.0"
+	},
+	{
+		"name": "TEST VIBRACIE (rovnaka ako pri mojom zasahu)",
+		"section": "TEST",
+		"type": "button",
+		"value": ""
 	},
 	{
 		"name": "HUDBA",

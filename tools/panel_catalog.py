@@ -61,6 +61,7 @@ INFO = {
     "sila kopnutia kamery": ("Nasobok sily kopnutia (1.0 = zakladna).", "A"),
     "VIBRACIA PRI MOJOM ZASAHU": ("Kratke zavibrovanie telefonu, ked tvoja zbran zasiahne nepriatela.", "A"),
     "dlzka vibracie pri mojom zasahu (ms)": ("Dlzka vibracie pri tvojom zasahu.", "A"),
+    "TEST VIBRACIE (rovnaka ako pri mojom zasahu)": ("Tlacidlo: jedna vibracia presne taka, ako pri tvojom zasahu (na zistenie, ci telefon vibruje).", "A"),
     "HUDBA": ("Zapne/vypne hudbu.", "A"),
     "hlasitost hudby (dB)": ("Hlasitost hudby.", "N"),
     "ZMRAZIT SVET (hybe sa len hrdina)": ("Zastavi nepriatelov, kotly a ich strely; hybe sa len hrdina.", "A"),

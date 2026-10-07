@@ -304,10 +304,17 @@ func _build_panel() -> void:
 		func(v: float) -> void: Tuning.kick_strength = v)
 	_add_toggle("VIBRACIA PRI MOJOM ZASAHU", Tuning.vibrate_axe_on,
 		func(on: bool) -> void: Tuning.vibrate_axe_on = on)
-	_add_slider_d("dlzka vibracie pri mojom zasahu (ms)", 10.0, 150.0, 5.0,
+	_add_slider_d("dlzka vibracie pri mojom zasahu (ms)", 20.0, 250.0, 10.0,
 		Tuning.vibrate_axe_ms,
-		"Telefon kratko zavibruje, ked tvoja sekera zasiahne nepriatela. Posuvnik = ako dlho (pri zabiti 1,5x dlhsie). Funguje len ak je zapnuty aj hlavny vypinac VIBRACIE vyssie.",
+		"Telefon zavibruje, ked tvoja sekera zasiahne nepriatela. Posuvnik = ako dlho (pri zabiti 1,5x dlhsie). Vibracie pod asi 50 ms telefon skoro nevykresli, skus 80 a viac. Funguje len ak je zapnuty aj hlavny vypinac VIBRACIE (ten je v paneli skryty a je zapnuty).",
 		func(v: float) -> void: Tuning.vibrate_axe_ms = v)
+	var vib_test := Button.new()
+	vib_test.text = "TEST VIBRACIE (rovnaka ako pri mojom zasahu)"
+	vib_test.custom_minimum_size = Vector2(0, 52)
+	rows.add_child(vib_test)
+	vib_test.pressed.connect(func() -> void:
+		Input.vibrate_handheld(int(Tuning.vibrate_axe_ms),
+			clampf(Tuning.vibrate_strength * Tuning.VIBRATE_AXE_AMP, 0.0, 1.0)))
 
 	var music_toggle := CheckButton.new()
 	music_toggle.text = "HUDBA"

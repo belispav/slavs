@@ -256,7 +256,8 @@ var vibrate_strength: float = 1.0
 ## by the hero's weapon (kills last HITSTOP_KILL_FACTOR times longer). A new
 ## stop is not allowed sooner than HITSTOP_MIN_GAP after the last one began
 ## (kills ignore the gap), so a crowd never makes the game stutter.
-const HITSTOP_MS: float = 40.0
+## Pavel's phone test 2026-10-07: 30 ms.
+const HITSTOP_MS: float = 30.0
 const HITSTOP_KILL_FACTOR: float = 1.8
 const HITSTOP_SCALE: float = 0.02
 const HITSTOP_MIN_GAP: float = 0.18
@@ -269,20 +270,25 @@ var fx_white_on: bool = true
 var hit_white_ms: float = HIT_WHITE_MS
 ## A3 screen shake on the hero's weapon hits (world units; the cauldron blast
 ## uses 14). Panel value is a multiplier.
-const SHAKE_HIT: float = 2.5
-const SHAKE_KILL: float = 5.0
+## Baked 2026-10-07: Pavel's phone test picked x1.5 (was 2.5 / 5.0).
+const SHAKE_HIT: float = 3.75
+const SHAKE_KILL: float = 7.5
 var fx_shake_on: bool = true
 var shake_strength: float = 1.0
 ## A4 small camera kick along the weapon's travel (world units, decays with
 ## CAM_KICK_DECAY per second). Panel value is a multiplier.
-const KICK_HIT: float = 5.0
-const KICK_KILL: float = 9.0
+## Baked 2026-10-07: Pavel's phone test picked x1.5 (was 5.0 / 9.0).
+const KICK_HIT: float = 7.5
+const KICK_KILL: float = 13.5
 const CAM_KICK_DECAY: float = 14.0
 var fx_kick_on: bool = true
 var kick_strength: float = 1.0
 ## E1 short phone buzz when the hero's weapon hits (kills x1.5 longer).
-const VIBRATE_AXE_HIT_MS: float = 30.0
-const VIBRATE_AXE_AMP: float = 0.6
+## 2026-10-07: Pavel felt no difference at 30 ms with amplitude 0.6 (short
+## pulses never reach the motor's strength, see VIBRATE_PLAYER_HIT_MS), so the
+## default is longer and the amplitude full.
+const VIBRATE_AXE_HIT_MS: float = 60.0
+const VIBRATE_AXE_AMP: float = 1.0
 var vibrate_axe_on: bool = true
 var vibrate_axe_ms: float = VIBRATE_AXE_HIT_MS
 
