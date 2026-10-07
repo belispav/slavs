@@ -174,7 +174,7 @@ const AXE_RETURN_FACTOR: float = 1.5
 const AXE_RETURN_HURTS: bool = false
 const AXE_RETURN_ALPHA: float = 0.5
 const AXE_SPIN: float = 22.0             # radians / s
-const AXE_HIT_RADIUS: float = 30.0       # generous on purpose (pillar 1)
+const AXE_HIT_RADIUS: float = 20.0       # Pavel 2026-10-07 tested 20 (was 30)
 var axe_hit_radius: float = AXE_HIT_RADIUS   # live from the panel
 const AXE_CATCH_RADIUS: float = 28.0
 ## Safety net: if the hero keeps running away from his own axe, it is
@@ -686,8 +686,8 @@ var player_speed_scale: float = 1.0
 
 ## Throwers are the rare ones that force you to move. Slow, dodgeable shots:
 ## fast projectiles turned the game into a reflex test and killed the mowing.
-## 4 since 2026-10-03 (was 2), same reason as RUSHER_HP.
-const THROWER_HP: int = 4
+## 1 since 2026-10-07 (Pavel; was 4, 2026-10-03: 2).
+const THROWER_HP: int = 1
 ## BRUTE (2026-10-04, Pavel): slow, fat, armoured in FRONT only. The axe
 ## bounces off the plate (enemy.gd hit_from) and only hurts from behind -
 ## circle him so the returning axe takes his back. The cauldron's blast
@@ -698,8 +698,9 @@ const BRUTE_WALK_ART_DIR: String = "res://art/brute_pl_walk"
 const BRUTE_GRAB_ART_DIR: String = "res://art/brute_pl_grab"
 const BRUTE_SPRITE_SCALE: float = 2.0
 const BRUTE_ANIM_FPS: float = 8.0
-## 10 = exactly one cauldron blast (CAULDRON_DAMAGE): luring him in kills him.
-const BRUTE_HP: int = 10
+## 1 since 2026-10-07 (Pavel; was 10 = one cauldron blast). The plate still
+## deflects frontal hits, so one hit from behind kills him.
+const BRUTE_HP: int = 1
 const BRUTE_SPEED: float = 50.0
 ## How close (X) and how far off the hero's row (Y) he can grab.
 const BRUTE_GRAB_RANGE: float = 80.0

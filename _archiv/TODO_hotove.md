@@ -26,3 +26,8 @@ T27 ZAVRETÉ 2026-10-07: poskočenie hrdinu po zásahu patrilo len bežcovi, fun
 T31 HOTOVÉ 2026-10-07: tiene pod hrdinom, nepriateľmi, sudmi a kotlami (`shadow.gd`), otestované na telefóne; zapečené: sila 0,3, veľkosť 1.
 T32 HOTOVÉ 2026-10-07: náhodnosť zvukov, otestované na telefóne; zapečené: efekty ±2,5 dB hlasitosť a ±25 % výška tónu, hlasy ±1 dB a ±3 %.
 Rýchlosť hore-dole 2026-10-07: pomer `free_move_y_ratio` bol zámerne 0,6 (pomalší pohyb v Y), preto sa hrdina hore-dole zdal pomalší a šikmo rýchlejší. Predvolené teraz 1,0 (rovnako rýchlo), posuvník ostáva.
+T22 HOTOVÉ 2026-10-07 (Pavel: zmeny OK): pevné telá hrdinu a nepriateľov; šírka 60, hĺbka 30, oprava asymetrie (zamrznutí nepriatelia si nepreskladali box nôh).
+T33 HOTOVÉ 2026-10-07 (Pavel: OK): odhodenie po zásahu 0,4 s; bežec 90, strela 35, sekera 70, výbuch kotla 140 px; sekera zraňuje a odhadzuje len cestou k nepriateľom, späť z polovice priehľadná a 1,5x rýchlejšia; zásah preruší útok nepriateľa.
+T45 HOTOVÉ 2026-10-07 (Pavel: OK): srdiečka nad postavami (`hearts.gd`, panel 0/1/2, predvolené 2).
+T46 HOTOVÉ 2026-10-07 (Pavel: OK): panel UKAZ ZONY ZASAHU (kruh sekery, obdĺžniky zásahu); polomer sekery zapečený na 20; páčka ľavého palca s posúvajúcim sa stredom (pohyb je oveľa lepší).
+ŽIVOTY 2026-10-07 (Pavel): bežec 2 (bez zmeny), strelec 1 (bolo 4), tučniak/brut 1 (bolo 10). Hrdina 5.
