@@ -213,13 +213,37 @@
 		"name": "dlzka vibracie pri mojom zasahu (ms)",
 		"section": "TEST",
 		"type": "slider",
-		"value": "60.0"
+		"value": "200.0"
 	},
 	{
 		"name": "TEST VIBRACIE (rovnaka ako pri mojom zasahu)",
 		"section": "TEST",
 		"type": "button",
 		"value": ""
+	},
+	{
+		"name": "CISLA POSKODENIA",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "velkost cisel poskodenia",
+		"section": "TEST",
+		"type": "slider",
+		"value": "26.0"
+	},
+	{
+		"name": "KRITICKY ZASAH",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "sanca na kriticky zasah (%)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "15.0"
 	},
 	{
 		"name": "HUDBA",

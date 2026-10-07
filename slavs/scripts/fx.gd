@@ -41,6 +41,15 @@ var _landed: PackedByteArray = PackedByteArray()
 
 var _ground: Node2D
 
+## A5/A6 floating damage numbers (parallel arrays like the particles).
+const NUMBER_LIFE: float = 0.7
+const NUMBER_RISE: float = 50.0
+const MAX_NUMBERS: int = 40
+var _tx_pos: PackedVector2Array = PackedVector2Array()
+var _tx_age: PackedFloat32Array = PackedFloat32Array()
+var _tx_crit: PackedByteArray = PackedByteArray()
+var _tx_text: PackedStringArray = PackedStringArray()
+
 const BLOOD_COLOURS: Array[Color] = [
 	Color(0.80, 0.06, 0.06), Color(0.95, 0.16, 0.12), Color(0.60, 0.03, 0.05)]
 const WOOD_COLOURS: Array[Color] = [
@@ -171,6 +180,21 @@ func _spawn(t: int, ground: Vector2, vel: Vector2, h: float, vh: float,
 	_landed.append(0)
 
 
+## A number that floats up from `at` (just above the victim's head) and fades.
+## A critical hit is bigger and yellow.
+func damage_number(at: Vector2, amount: int, crit: bool) -> void:
+	if _tx_text.size() >= MAX_NUMBERS:
+		_remove_number(0)
+	_tx_pos.append(at + Vector2(randf_range(-10.0, 10.0), 0.0))
+	_tx_age.append(0.0)
+	_tx_crit.append(1 if crit else 0)
+	_tx_text.append(("KRIT %d!" % amount) if crit else str(amount))
+
+
+func _remove_number(i: int) -> void:
+	_tx_pos.remove_at(i); _tx_age.remove_at(i); _tx_crit.remove_at(i); _tx_text.remove_at(i)
+
+
 func _remove(i: int) -> void:
 	_pos.remove_at(i); _vel.remove_at(i); _h.remove_at(i); _vh.remove_at(i)
 	_age.remove_at(i); _life.remove_at(i); _size.remove_at(i); _type.remove_at(i)
@@ -181,12 +205,25 @@ func _remove(i: int) -> void:
 func clear() -> void:
 	while _pos.size() > 0:
 		_remove(_pos.size() - 1)
+	while _tx_text.size() > 0:
+		_remove_number(_tx_text.size() - 1)
 	queue_redraw()
 	_ground.queue_redraw()
 
 
 func _process(delta: float) -> void:
+	# Numbers redraw while any exist, plus once more when the last one is gone.
+	var had_numbers: bool = not _tx_text.is_empty()
+	var n: int = _tx_text.size() - 1
+	while n >= 0:
+		_tx_age[n] += delta
+		_tx_pos[n] += Vector2(0.0, -NUMBER_RISE * delta)
+		if _tx_age[n] >= NUMBER_LIFE:
+			_remove_number(n)
+		n -= 1
 	if _pos.is_empty():
+		if had_numbers:
+			queue_redraw()
 		return
 	var i: int = _pos.size() - 1
 	while i >= 0:
@@ -221,6 +258,21 @@ func _draw() -> void:
 		if _type[i] == Type.SMOKE:
 			a = 0.9 * (1.0 - _age[i] / _life[i])
 		_draw_px(self, i, a)
+	_draw_numbers()
+
+
+func _draw_numbers() -> void:
+	var font: Font = ThemeDB.fallback_font
+	for i in _tx_text.size():
+		var crit: bool = _tx_crit[i] == 1
+		var fade: float = clampf((1.0 - _tx_age[i] / NUMBER_LIFE) * 2.5, 0.0, 1.0)
+		var size: int = int(Tuning.damage_number_size * (1.4 if crit else 1.0))
+		var p: Vector2 = Vector2(floorf(_tx_pos[i].x * 0.5) * 2.0 - 60.0,
+			floorf(_tx_pos[i].y * 0.5) * 2.0)
+		var col: Color = Color(1.0, 0.85, 0.15, fade) if crit else Color(1.0, 1.0, 1.0, fade)
+		draw_string_outline(font, p, _tx_text[i], HORIZONTAL_ALIGNMENT_CENTER, 120.0,
+			size, 6, Color(0.0, 0.0, 0.0, fade))
+		draw_string(font, p, _tx_text[i], HORIZONTAL_ALIGNMENT_CENTER, 120.0, size, col)
 
 
 ## Ground layer: stains, fading over the last third of their life.

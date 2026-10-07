@@ -284,13 +284,25 @@ const CAM_KICK_DECAY: float = 14.0
 var fx_kick_on: bool = true
 var kick_strength: float = 1.0
 ## E1 short phone buzz when the hero's weapon hits (kills x1.5 longer).
-## 2026-10-07: Pavel felt no difference at 30 ms with amplitude 0.6 (short
-## pulses never reach the motor's strength, see VIBRATE_PLAYER_HIT_MS), so the
-## default is longer and the amplitude full.
-const VIBRATE_AXE_HIT_MS: float = 60.0
+## Pavel's phone test 2026-10-07: under 100 ms nothing is felt, ~100 ms a weak
+## tick, 200 ms feels like a hit, 300 ms better still; so 200 for now (kills
+## x1.5 = 300). Later: scale by WHO hits and how many lives it takes (T49).
+const VIBRATE_AXE_HIT_MS: float = 200.0
 const VIBRATE_AXE_AMP: float = 1.0
 var vibrate_axe_on: bool = true
 var vibrate_axe_ms: float = VIBRATE_AXE_HIT_MS
+## A5 floating damage numbers above the victim (font size in world units).
+const DAMAGE_NUMBER_SIZE: float = 26.0
+var fx_numbers_on: bool = true
+var damage_number_size: float = DAMAGE_NUMBER_SIZE
+## A6 critical hit: CRIT_CHANCE percent of the hero's weapon hits do
+## CRIT_DAMAGE instead of 1 (a 2 HP rusher falls in one blow) and every hit-feel
+## effect above is CRIT_FX_FACTOR times stronger. The number turns yellow.
+const CRIT_CHANCE: float = 15.0
+const CRIT_DAMAGE: int = 2
+const CRIT_FX_FACTOR: float = 1.5
+var fx_crit_on: bool = true
+var crit_chance: float = CRIT_CHANCE
 
 # --- Explosive cauldron (2026-10-04, cauldron.gd) ---
 const CAULDRON_ART_DIR: String = "res://art/cauldron_pl"

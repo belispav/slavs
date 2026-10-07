@@ -15,9 +15,10 @@ signal armor_deflected(at: Vector2)
 ## Drives the blood effect (fx.gd).
 signal hurt(feet: Vector2, height: float, fatal: bool)
 ## Only for hits by the hero's weapon (axe, bullets), not for a cauldron blast.
-## `dir` is the weapon's travel (zero when unknown). Drives the hit feel in
-## main.gd (hit-stop, shake, camera kick, buzz).
-signal weapon_hit(feet: Vector2, dir: Vector2, fatal: bool)
+## `at` is just above the victim's head, `dir` the weapon's travel (zero when
+## unknown), `amount` the damage dealt, `crit` a critical hit. Drives the hit
+## feel and the damage number in main.gd.
+signal weapon_hit(at: Vector2, dir: Vector2, fatal: bool, amount: int, crit: bool)
 signal throw_requested(from: Vector2, dir: Vector2)
 ## A rusher's swing landing. Not the same moment as touching the player - see
 ## RUSHER_MELEE_RANGE and _update_attack_timer.
@@ -43,6 +44,7 @@ var _flash: float = 0.0
 ## True only while damage() runs for a hit by the hero's weapon.
 var _by_weapon: bool = false
 var _weapon_dir: Vector2 = Vector2.ZERO
+var _hit_crit: bool = false
 ## Seconds of full-white sprite left after a weapon hit (A2).
 var _white_t: float = 0.0
 var _throw_cd: float = 0.0
@@ -479,8 +481,9 @@ func clamp_to_field() -> void:
 func hit() -> void:
 	_by_weapon = true
 	_weapon_dir = Vector2.ZERO
-	damage(1)
+	damage(_roll_weapon_damage())
 	_by_weapon = false
+	_hit_crit = false
 
 
 ## A hit that knows which way the weapon was travelling. Returns false when
@@ -493,14 +496,22 @@ func hit_from(travel: Vector2, push_dist: float = -1.0) -> bool:
 		return false
 	_by_weapon = true
 	_weapon_dir = travel
-	damage(1)
+	damage(_roll_weapon_damage())
 	_by_weapon = false
+	_hit_crit = false
 	# T33: the hero's weapon pushes the victim along its travel (not the brute,
 	# not a kill). push_dist < 0 = the axe's distance.
 	if active:
 		apply_push(Tuning.push_vector(travel,
 			Tuning.axe_push if push_dist < 0.0 else push_dist))
 	return true
+
+
+## A6: damage of one hit by the hero's weapon - 1, or CRIT_DAMAGE on a critical
+## hit (Tuning.crit_chance percent, when the switch is on).
+func _roll_weapon_damage() -> int:
+	_hit_crit = Tuning.fx_crit_on and randf() * 100.0 < Tuning.crit_chance
+	return Tuning.CRIT_DAMAGE if _hit_crit else 1
 
 
 ## A2: the sprite turns plain white for Tuning.hit_white_ms. One shared
@@ -546,7 +557,8 @@ func damage(amount: int) -> void:
 	var feet: Vector2 = global_position + Vector2(0.0, SIZE.y * 0.5)
 	hurt.emit(feet, _drawn_height, hp <= 0)
 	if _by_weapon:
-		weapon_hit.emit(feet, _weapon_dir, hp <= 0)
+		var head: Vector2 = feet - Vector2(0.0, maxf(_drawn_height, SIZE.y) + 6.0)
+		weapon_hit.emit(head, _weapon_dir, hp <= 0, amount, _hit_crit)
 		if hp > 0:
 			_start_white()
 	if hp <= 0:

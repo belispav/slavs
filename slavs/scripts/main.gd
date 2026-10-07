@@ -1288,18 +1288,22 @@ func _on_body_hurt(feet: Vector2, height: float, fatal: bool) -> void:
 
 ## Package 1 "Uder ma vahu": the hero's weapon landed on an enemy. Each effect
 ## has its own panel switch (Tuning.fx_* / vibrate_axe_on).
-func _on_weapon_hit(feet: Vector2, dir: Vector2, fatal: bool) -> void:
+func _on_weapon_hit(at: Vector2, dir: Vector2, fatal: bool, amount: int, crit: bool) -> void:
 	if dir == Vector2.ZERO:
-		dir = Vector2(_away_from_player(feet), 0.0)
+		dir = Vector2(_away_from_player(at), 0.0)
 	dir = dir.normalized()
+	if Tuning.fx_numbers_on:
+		fx.damage_number(at, amount, crit)
+	# A6: a critical hit makes every effect CRIT_FX_FACTOR times stronger.
+	var f: float = Tuning.CRIT_FX_FACTOR if crit else 1.0
 	if Tuning.fx_hitstop_on:
-		_hit_stop(Tuning.hitstop_ms * (Tuning.HITSTOP_KILL_FACTOR if fatal else 1.0) / 1000.0, fatal)
+		_hit_stop(Tuning.hitstop_ms * f * (Tuning.HITSTOP_KILL_FACTOR if fatal else 1.0) / 1000.0, fatal)
 	if Tuning.fx_shake_on:
-		player.shake((Tuning.SHAKE_KILL if fatal else Tuning.SHAKE_HIT) * Tuning.shake_strength)
+		player.shake((Tuning.SHAKE_KILL if fatal else Tuning.SHAKE_HIT) * Tuning.shake_strength * f)
 	if Tuning.fx_kick_on:
-		player.kick(dir * (Tuning.KICK_KILL if fatal else Tuning.KICK_HIT) * Tuning.kick_strength)
+		player.kick(dir * (Tuning.KICK_KILL if fatal else Tuning.KICK_HIT) * Tuning.kick_strength * f)
 	if Tuning.vibrate_axe_on:
-		_vibrate(int(Tuning.vibrate_axe_ms * (1.5 if fatal else 1.0)), Tuning.VIBRATE_AXE_AMP)
+		_vibrate(int(Tuning.vibrate_axe_ms * f * (1.5 if fatal else 1.0)), Tuning.VIBRATE_AXE_AMP)
 
 
 ## A1: slow the whole game to a crawl for `sec` real seconds. The end is

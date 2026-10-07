@@ -304,9 +304,9 @@ func _build_panel() -> void:
 		func(v: float) -> void: Tuning.kick_strength = v)
 	_add_toggle("VIBRACIA PRI MOJOM ZASAHU", Tuning.vibrate_axe_on,
 		func(on: bool) -> void: Tuning.vibrate_axe_on = on)
-	_add_slider_d("dlzka vibracie pri mojom zasahu (ms)", 20.0, 250.0, 10.0,
+	_add_slider_d("dlzka vibracie pri mojom zasahu (ms)", 20.0, 400.0, 10.0,
 		Tuning.vibrate_axe_ms,
-		"Telefon zavibruje, ked tvoja sekera zasiahne nepriatela. Posuvnik = ako dlho (pri zabiti 1,5x dlhsie). Vibracie pod asi 50 ms telefon skoro nevykresli, skus 80 a viac. Funguje len ak je zapnuty aj hlavny vypinac VIBRACIE (ten je v paneli skryty a je zapnuty).",
+		"Telefon zavibruje, ked tvoja sekera zasiahne nepriatela. Posuvnik = ako dlho (pri zabiti 1,5x dlhsie). Odladene: pod 100 ms nic, 200 ms je citit ako zasah, 300 ms je silnejsi. Funguje len ak je zapnuty aj hlavny vypinac VIBRACIE (ten je v paneli skryty a je zapnuty).",
 		func(v: float) -> void: Tuning.vibrate_axe_ms = v)
 	var vib_test := Button.new()
 	vib_test.text = "TEST VIBRACIE (rovnaka ako pri mojom zasahu)"
@@ -315,6 +315,17 @@ func _build_panel() -> void:
 	vib_test.pressed.connect(func() -> void:
 		Input.vibrate_handheld(int(Tuning.vibrate_axe_ms),
 			clampf(Tuning.vibrate_strength * Tuning.VIBRATE_AXE_AMP, 0.0, 1.0)))
+
+	_add_toggle("CISLA POSKODENIA", Tuning.fx_numbers_on,
+		func(on: bool) -> void: Tuning.fx_numbers_on = on)
+	_add_slider_d("velkost cisel poskodenia", 14.0, 48.0, 2.0, Tuning.damage_number_size,
+		"Nad zasiahnutym nepriatelom vyleti cislo, kolko zivotov mu zasah vzal, a vybledne. Posuvnik = velkost pisma (viac = vacsie).",
+		func(v: float) -> void: Tuning.damage_number_size = v)
+	_add_toggle("KRITICKY ZASAH", Tuning.fx_crit_on,
+		func(on: bool) -> void: Tuning.fx_crit_on = on)
+	_add_slider_d("sanca na kriticky zasah (%)", 0.0, 100.0, 5.0, Tuning.crit_chance,
+		"Cast zasahov je kritickych: zoberu 2 zivoty namiesto 1 (bezec padne na jeden uder), cislo je zlte a velke ('KRIT') a vsetky efekty zasahu (zastavenie, trasenie, kopnutie, vibracia) su o polovicu silnejsie. Posuvnik = kolko percent zasahov. 100 = vzdy (na test), 0 = nikdy.",
+		func(v: float) -> void: Tuning.crit_chance = v)
 
 	var music_toggle := CheckButton.new()
 	music_toggle.text = "HUDBA"
