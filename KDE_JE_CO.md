@@ -32,8 +32,8 @@ T44 ČAKÁ NA PAVLA: skrývanie posuvníkov. Otvor `PANEL_prvky.xlsx` (stĺpec Z
 
 ### Čaká na Claude (po OK od Pavla alebo na Pavlov test)
 T17 AKTÍVNE, DÔLEŽITÉ (Pavel 2026-10-06): farebná paleta nie je zjednotená (PixelLab je primárny zdroj grafiky). MUSÍ sa vyriešiť PRED generovaním finálnej hernej grafiky; kým robíme prototypy, nemusí byť rozhodnuté. [Open 6] {C ★★★ stredná}
-
 T48 CHYBA (Pavel 2026-10-07, len zapísané, zatiaľ sa nerieši): nepriatelia sa zasekávajú, keď je sud blízko okraja obrazovky, najčastejšie pri spodnom okraji (sudy sa tam objavujú často). Možná súvislosť: obchádzanie prekážok T28 a spodná hranica pola T30. Pri riešení najprv nájsť príčinu, potom opraviť. {F ★★ stredná}
+
 ### Neskôr, nápady a na zváženie
 T23 NÁPAD (neskôr, dizajn): nepriatelia hľadajú inú trasu a obídu hrdinu. Dôsledok: obkľúčia ho a nebude vedieť ujsť. Rozhodnúť neskôr, či to chceme. (Pavel 2026-10-06) {F ★★ stredná}
 T34 NA ZVÁŽENIE/VYSKÚŠANIE: úder zbrane má mať okolo seba „vlnu“ znázorňujúcu švih alebo sek (oblúk švihu, pich v tvare U alebo V), nakreslenú akoby zo vzduchu. To isté skúsiť pri zásahu nepriateľa, aby bol vidieť „úder“, hoci tam už je krv. (Pavel 2026-10-06) {A ★★ stredná}
