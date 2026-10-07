@@ -249,6 +249,43 @@ var vibrate_enabled: bool = true
 ## phones that cannot vary it ignore it and buzz at their fixed strength).
 var vibrate_strength: float = 1.0
 
+# --- Hit feel, work package 1 "Uder ma vahu" (2026-10-07) ---
+## Every effect has a panel switch (fx_*) and a live strength; Pavel finds the
+## value on the phone, then it is baked into the constants below.
+## A1 hit-stop: the game runs at HITSTOP_SCALE speed for hitstop_ms on a hit
+## by the hero's weapon (kills last HITSTOP_KILL_FACTOR times longer). A new
+## stop is not allowed sooner than HITSTOP_MIN_GAP after the last one began
+## (kills ignore the gap), so a crowd never makes the game stutter.
+const HITSTOP_MS: float = 40.0
+const HITSTOP_KILL_FACTOR: float = 1.8
+const HITSTOP_SCALE: float = 0.02
+const HITSTOP_MIN_GAP: float = 0.18
+var fx_hitstop_on: bool = true
+var hitstop_ms: float = HITSTOP_MS
+## A2 full white flash of the victim (game-time seconds, so it also holds
+## through the hit-stop).
+const HIT_WHITE_MS: float = 40.0
+var fx_white_on: bool = true
+var hit_white_ms: float = HIT_WHITE_MS
+## A3 screen shake on the hero's weapon hits (world units; the cauldron blast
+## uses 14). Panel value is a multiplier.
+const SHAKE_HIT: float = 2.5
+const SHAKE_KILL: float = 5.0
+var fx_shake_on: bool = true
+var shake_strength: float = 1.0
+## A4 small camera kick along the weapon's travel (world units, decays with
+## CAM_KICK_DECAY per second). Panel value is a multiplier.
+const KICK_HIT: float = 5.0
+const KICK_KILL: float = 9.0
+const CAM_KICK_DECAY: float = 14.0
+var fx_kick_on: bool = true
+var kick_strength: float = 1.0
+## E1 short phone buzz when the hero's weapon hits (kills x1.5 longer).
+const VIBRATE_AXE_HIT_MS: float = 30.0
+const VIBRATE_AXE_AMP: float = 0.6
+var vibrate_axe_on: bool = true
+var vibrate_axe_ms: float = VIBRATE_AXE_HIT_MS
+
 # --- Explosive cauldron (2026-10-04, cauldron.gd) ---
 const CAULDRON_ART_DIR: String = "res://art/cauldron_pl"
 const CAULDRON_SPRITE_SCALE: float = 2.0

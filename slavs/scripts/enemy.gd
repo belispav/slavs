@@ -14,6 +14,10 @@ signal armor_deflected(at: Vector2)
 ## Every hit, fatal or not: feet position, drawn height, whether it died.
 ## Drives the blood effect (fx.gd).
 signal hurt(feet: Vector2, height: float, fatal: bool)
+## Only for hits by the hero's weapon (axe, bullets), not for a cauldron blast.
+## `dir` is the weapon's travel (zero when unknown). Drives the hit feel in
+## main.gd (hit-stop, shake, camera kick, buzz).
+signal weapon_hit(feet: Vector2, dir: Vector2, fatal: bool)
 signal throw_requested(from: Vector2, dir: Vector2)
 ## A rusher's swing landing. Not the same moment as touching the player - see
 ## RUSHER_MELEE_RANGE and _update_attack_timer.
@@ -36,6 +40,11 @@ var active: bool = false
 var target: Node2D
 
 var _flash: float = 0.0
+## True only while damage() runs for a hit by the hero's weapon.
+var _by_weapon: bool = false
+var _weapon_dir: Vector2 = Vector2.ZERO
+## Seconds of full-white sprite left after a weapon hit (A2).
+var _white_t: float = 0.0
 var _throw_cd: float = 0.0
 ## Each enemy aims for its own depth slightly off the player's, so a crowd
 ## surrounds rather than forming a single line.
@@ -327,6 +336,8 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	_release_grab()
 	velocity = Vector2.ZERO
 	_flash = 0.0
+	_white_t = 0.0
+	_set_white(false)
 	_throw_cd = randf() * Tuning.THROWER_INTERVAL
 	_depth_offset = randf_range(-Tuning.ENEMY_DEPTH_SPREAD,
 		Tuning.ENEMY_DEPTH_SPREAD)
@@ -466,7 +477,10 @@ func clamp_to_field() -> void:
 
 ## Called by the player's bullets (via the hurtbox).
 func hit() -> void:
+	_by_weapon = true
+	_weapon_dir = Vector2.ZERO
 	damage(1)
+	_by_weapon = false
 
 
 ## A hit that knows which way the weapon was travelling. Returns false when
@@ -477,13 +491,45 @@ func hit_from(travel: Vector2, push_dist: float = -1.0) -> bool:
 		Sfx.play(&"armor_clang", global_position)
 		armor_deflected.emit(global_position + Vector2(_face * 24.0, -60.0))
 		return false
+	_by_weapon = true
+	_weapon_dir = travel
 	damage(1)
+	_by_weapon = false
 	# T33: the hero's weapon pushes the victim along its travel (not the brute,
 	# not a kill). push_dist < 0 = the axe's distance.
 	if active:
 		apply_push(Tuning.push_vector(travel,
 			Tuning.axe_push if push_dist < 0.0 else push_dist))
 	return true
+
+
+## A2: the sprite turns plain white for Tuning.hit_white_ms. One shared
+## material, put on the sprites only while an enemy flashes (so the other
+## enemies keep batching together).
+static var _white_material: ShaderMaterial
+
+
+static func _get_white_material() -> ShaderMaterial:
+	if _white_material == null:
+		var sh := Shader.new()
+		sh.code = "shader_type canvas_item;\nvoid fragment() {\n\tCOLOR = vec4(1.0, 1.0, 1.0, texture(TEXTURE, UV).a);\n}\n"
+		_white_material = ShaderMaterial.new()
+		_white_material.shader = sh
+	return _white_material
+
+
+func _start_white() -> void:
+	if not Tuning.fx_white_on or Tuning.hit_white_ms <= 0.0:
+		return
+	_white_t = Tuning.hit_white_ms / 1000.0
+	_set_white(true)
+
+
+func _set_white(on: bool) -> void:
+	var mat: ShaderMaterial = _get_white_material() if on else null
+	for s in [_thrower_sprite, _rusher_sprite, _brute_sprite]:
+		if s != null:
+			s.material = mat
 
 
 ## A cauldron's blast - armour does not stop it (Pavel 2026-10-04).
@@ -497,7 +543,12 @@ func damage(amount: int) -> void:
 	hp -= amount
 	_flash = 1.0
 	_hearts.set_state(hp, _max_hp)
-	hurt.emit(global_position + Vector2(0.0, SIZE.y * 0.5), _drawn_height, hp <= 0)
+	var feet: Vector2 = global_position + Vector2(0.0, SIZE.y * 0.5)
+	hurt.emit(feet, _drawn_height, hp <= 0)
+	if _by_weapon:
+		weapon_hit.emit(feet, _weapon_dir, hp <= 0)
+		if hp > 0:
+			_start_white()
 	if hp <= 0:
 		Sfx.play(&"enemy_death", global_position)
 		if randf() < Tuning.ENEMY_DEATH_VOICE_CHANCE:
@@ -568,6 +619,10 @@ func _physics_process(delta: float) -> void:
 	# Redraw ONLY while the hit flash is fading. Moving a Node2D does not need
 	# a redraw, and 34 pointless redraws per frame cost real frame time on a
 	# phone — which shows up as the controls feeling sticky.
+	if _white_t > 0.0:
+		_white_t -= delta
+		if _white_t <= 0.0:
+			_set_white(false)
 	if _flash > 0.0:
 		_flash = maxf(_flash - delta * 6.0, 0.0)
 		queue_redraw()

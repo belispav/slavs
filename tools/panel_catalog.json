@@ -156,6 +156,66 @@
 		"value": "180.0"
 	},
 	{
+		"name": "ZASTAVENIE PRI ZASAHU",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "zastavenie pri zasahu (ms)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "40.0"
+	},
+	{
+		"name": "BIELY ZABLESK",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "dlzka bieleho zablesku (ms)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "40.0"
+	},
+	{
+		"name": "TRASENIE OBRAZU PRI ZASAHU",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "sila trasenia pri zasahu",
+		"section": "TEST",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "KOPNUTIE KAMERY",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "sila kopnutia kamery",
+		"section": "TEST",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "VIBRACIA PRI MOJOM ZASAHU",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "dlzka vibracie pri mojom zasahu (ms)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "30.0"
+	},
+	{
 		"name": "HUDBA",
 		"section": "TEST",
 		"type": "switch",

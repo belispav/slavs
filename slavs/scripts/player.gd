@@ -33,12 +33,19 @@ var _kb_jump_was_down: bool = false
 var _cam: Camera2D
 var _cam_base_offset: Vector2 = Vector2.ZERO
 var _shake: float = 0.0
+var _kick: Vector2 = Vector2.ZERO
 
 
 ## Shake the camera - a cauldron going off. `strength` in world units,
 ## decays over ~0.4 s.
 func shake(strength: float) -> void:
 	_shake = maxf(_shake, strength)
+
+
+## A4: push the camera along `v` (world units); it eases back by itself.
+func kick(v: Vector2) -> void:
+	if v.length_squared() > _kick.length_squared():
+		_kick = v
 var _sprite: AnimatedSprite2D          # null when no frames have been rendered yet
 
 ## Bounds of the walkable field in free movement, set by the level. Limits
@@ -523,12 +530,17 @@ func _consume_jump_buffer(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	if _cam != null:
+		var off: Vector2 = _cam_base_offset
 		if _shake > 0.0:
 			_shake = maxf(_shake - delta * 40.0, 0.0)
-			_cam.offset = _cam_base_offset + Vector2(
-				randf_range(-_shake, _shake), randf_range(-_shake, _shake))
-		elif _cam.offset != _cam_base_offset:
-			_cam.offset = _cam_base_offset
+			off += Vector2(randf_range(-_shake, _shake), randf_range(-_shake, _shake))
+		if _kick.length_squared() > 0.04:
+			_kick *= exp(-delta * Tuning.CAM_KICK_DECAY)
+			off += _kick
+		else:
+			_kick = Vector2.ZERO
+		if _cam.offset != off:
+			_cam.offset = off
 	if is_held():
 		velocity = Vector2.ZERO
 	elif Touch.config.free_movement:

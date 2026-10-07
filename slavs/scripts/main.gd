@@ -320,6 +320,9 @@ var _feet_h_applied: float = -1.0
 var _feet_w_applied: float = -1.0
 var fx   # fx.gd - blood, splinters, smoke
 var _vibrate_cd: float = 0.0
+## Hit-stop bookkeeping, real-time milliseconds (Time.get_ticks_msec).
+var _hitstop_end_ms: int = 0
+var _hitstop_next_ms: int = 0
 var _enemy_bark_cd: float = 4.0
 var _hero_bark_cd: float = 8.0
 ## Barrels are stood on the field a few frames in, once the player has been
@@ -387,6 +390,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_vibrate_cd = maxf(_vibrate_cd - delta, 0.0)
+	_hitstop_tick()
 	_barks(delta)
 	if player.global_position.y > Tuning.RESPAWN_Y:
 		_restart()
@@ -1261,6 +1265,7 @@ func _build_fx() -> void:
 	fx.setup(_ground_z_index())
 	for e in enemies:
 		e.hurt.connect(_on_body_hurt)
+		e.weapon_hit.connect(_on_weapon_hit)
 		e.armor_deflected.connect(_on_armor_deflected)
 	for b in barrels:
 		b.damaged.connect(_on_barrel_damaged)
@@ -1279,6 +1284,50 @@ func _away_from_player(at: Vector2) -> float:
 
 func _on_body_hurt(feet: Vector2, height: float, fatal: bool) -> void:
 	fx.body_hit(feet, height, _away_from_player(feet), fatal)
+
+
+## Package 1 "Uder ma vahu": the hero's weapon landed on an enemy. Each effect
+## has its own panel switch (Tuning.fx_* / vibrate_axe_on).
+func _on_weapon_hit(feet: Vector2, dir: Vector2, fatal: bool) -> void:
+	if dir == Vector2.ZERO:
+		dir = Vector2(_away_from_player(feet), 0.0)
+	dir = dir.normalized()
+	if Tuning.fx_hitstop_on:
+		_hit_stop(Tuning.hitstop_ms * (Tuning.HITSTOP_KILL_FACTOR if fatal else 1.0) / 1000.0, fatal)
+	if Tuning.fx_shake_on:
+		player.shake((Tuning.SHAKE_KILL if fatal else Tuning.SHAKE_HIT) * Tuning.shake_strength)
+	if Tuning.fx_kick_on:
+		player.kick(dir * (Tuning.KICK_KILL if fatal else Tuning.KICK_HIT) * Tuning.kick_strength)
+	if Tuning.vibrate_axe_on:
+		_vibrate(int(Tuning.vibrate_axe_ms * (1.5 if fatal else 1.0)), Tuning.VIBRATE_AXE_AMP)
+
+
+## A1: slow the whole game to a crawl for `sec` real seconds. The end is
+## checked in _process against the real clock (Time.get_ticks_msec ignores
+## Engine.time_scale), so nothing can leave the game stuck slow. Non-kill hits
+## are dropped if the last stop began less than HITSTOP_MIN_GAP ago.
+func _hit_stop(sec: float, force: bool) -> void:
+	var now: int = Time.get_ticks_msec()
+	if sec <= 0.0 or (now < _hitstop_next_ms and not force):
+		return
+	_hitstop_next_ms = now + int(Tuning.HITSTOP_MIN_GAP * 1000.0)
+	_hitstop_end_ms = maxi(_hitstop_end_ms, now + int(sec * 1000.0))
+	Engine.time_scale = Tuning.HITSTOP_SCALE
+
+
+func _hitstop_tick() -> void:
+	if _hitstop_end_ms > 0 and (Time.get_ticks_msec() >= _hitstop_end_ms \
+			or not Tuning.fx_hitstop_on):
+		_hitstop_clear()
+
+
+func _hitstop_clear() -> void:
+	_hitstop_end_ms = 0
+	Engine.time_scale = 1.0
+
+
+func _exit_tree() -> void:
+	Engine.time_scale = 1.0
 
 
 ## A cauldron went off at `feet`. Every enemy, barrel and other cauldron
@@ -1317,15 +1366,16 @@ func _on_barrel_damaged(feet: Vector2, broke: bool) -> void:
 
 func _on_player_hurt(feet: Vector2, height: float, away: float) -> void:
 	fx.body_hit(feet, height, away, false, Tuning.FX_BLOOD_PLAYER)
-	_vibrate(int(Tuning.vibrate_player_hit_ms))
+	_vibrate(int(Tuning.vibrate_player_hit_ms), 1.0, true)
 
 
 ## One short buzz, at most one per VIBRATE_MIN_GAP. Does nothing on desktop.
-func _vibrate(ms: int) -> void:
-	if not Tuning.vibrate_enabled or _vibrate_cd > 0.0:
+## `amp` scales the panel strength; `force` (the hero being hit) ignores the gap.
+func _vibrate(ms: int, amp: float = 1.0, force: bool = false) -> void:
+	if not Tuning.vibrate_enabled or (_vibrate_cd > 0.0 and not force):
 		return
 	_vibrate_cd = Tuning.VIBRATE_MIN_GAP
-	Input.vibrate_handheld(ms, Tuning.vibrate_strength)
+	Input.vibrate_handheld(ms, clampf(Tuning.vibrate_strength * amp, 0.0, 1.0))
 
 
 func _on_enemy_died(_at: Vector2) -> void:
@@ -1379,6 +1429,7 @@ func _on_player_died() -> void:
 ## Falling out of the world is the one case where staying put is not possible.
 func _restart() -> void:
 	deaths += 1
+	_hitstop_clear()
 	_clear_field()
 	_spawn_cd = 1.2
 	player.respawn()
@@ -1387,6 +1438,7 @@ func _restart() -> void:
 ## Panel RESET: a fresh run - field cleared, props rebuilt, hero back at the
 ## start with full health, counters zeroed.
 func _reset_game() -> void:
+	_hitstop_clear()
 	_clear_field()
 	kills = 0
 	deaths = 0

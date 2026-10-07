@@ -279,6 +279,30 @@ func _build_panel() -> void:
 		Tuning.vibrate_player_hit_ms,
 		func(v: float) -> void: Tuning.vibrate_player_hit_ms = v)
 
+	# Hit feel, package 1 "Uder ma vahu" (2026-10-07): every effect of the
+	# hero's weapon hits has a switch and a strength.
+	_add_toggle("ZASTAVENIE PRI ZASAHU", Tuning.fx_hitstop_on,
+		func(on: bool) -> void: Tuning.fx_hitstop_on = on)
+	_add_slider("zastavenie pri zasahu (ms)", 0.0, 120.0, 5.0, Tuning.hitstop_ms,
+		func(v: float) -> void: Tuning.hitstop_ms = v)
+	_add_toggle("BIELY ZABLESK", Tuning.fx_white_on,
+		func(on: bool) -> void: Tuning.fx_white_on = on)
+	_add_slider("dlzka bieleho zablesku (ms)", 10.0, 150.0, 5.0, Tuning.hit_white_ms,
+		func(v: float) -> void: Tuning.hit_white_ms = v)
+	_add_toggle("TRASENIE OBRAZU PRI ZASAHU", Tuning.fx_shake_on,
+		func(on: bool) -> void: Tuning.fx_shake_on = on)
+	_add_slider("sila trasenia pri zasahu", 0.0, 3.0, 0.1, Tuning.shake_strength,
+		func(v: float) -> void: Tuning.shake_strength = v)
+	_add_toggle("KOPNUTIE KAMERY", Tuning.fx_kick_on,
+		func(on: bool) -> void: Tuning.fx_kick_on = on)
+	_add_slider("sila kopnutia kamery", 0.0, 3.0, 0.1, Tuning.kick_strength,
+		func(v: float) -> void: Tuning.kick_strength = v)
+	_add_toggle("VIBRACIA PRI MOJOM ZASAHU", Tuning.vibrate_axe_on,
+		func(on: bool) -> void: Tuning.vibrate_axe_on = on)
+	_add_slider("dlzka vibracie pri mojom zasahu (ms)", 10.0, 150.0, 5.0,
+		Tuning.vibrate_axe_ms,
+		func(v: float) -> void: Tuning.vibrate_axe_ms = v)
+
 	var music_toggle := CheckButton.new()
 	music_toggle.text = "HUDBA"
 	music_toggle.custom_minimum_size = Vector2(0, 56)
@@ -657,6 +681,15 @@ func _add_note(text: String) -> void:
 	label.add_theme_color_override("font_color", Color(0.62, 0.78, 1.0))
 	label.custom_minimum_size = Vector2(0, 34)
 	rows.add_child(label)
+
+
+func _add_toggle(text: String, start: bool, setter: Callable) -> void:
+	var t := CheckButton.new()
+	t.text = text
+	t.custom_minimum_size = Vector2(0, 56)
+	t.button_pressed = start
+	rows.add_child(t)
+	t.toggled.connect(func(on: bool) -> void: setter.call(on))
 
 
 func _add_slider(label_text: String, lo: float, hi: float, step: float,
