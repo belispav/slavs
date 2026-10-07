@@ -280,27 +280,33 @@ func _build_panel() -> void:
 		func(v: float) -> void: Tuning.vibrate_player_hit_ms = v)
 
 	# Hit feel, package 1 "Uder ma vahu" (2026-10-07): every effect of the
-	# hero's weapon hits has a switch and a strength.
+	# hero's weapon hits has a switch and a strength. The grey text under each
+	# slider says what the switch above it and the slider do.
 	_add_toggle("ZASTAVENIE PRI ZASAHU", Tuning.fx_hitstop_on,
 		func(on: bool) -> void: Tuning.fx_hitstop_on = on)
-	_add_slider("zastavenie pri zasahu (ms)", 0.0, 120.0, 5.0, Tuning.hitstop_ms,
+	_add_slider_d("zastavenie pri zasahu (ms)", 0.0, 120.0, 5.0, Tuning.hitstop_ms,
+		"Hra sa pri zasahu sekery na chvilu zastavi, uder 'dosadne'. Posuvnik = ako dlho (viac = dlhsie). Pri zabiti 1,8x dlhsie. 0 = bez zastavenia.",
 		func(v: float) -> void: Tuning.hitstop_ms = v)
 	_add_toggle("BIELY ZABLESK", Tuning.fx_white_on,
 		func(on: bool) -> void: Tuning.fx_white_on = on)
-	_add_slider("dlzka bieleho zablesku (ms)", 10.0, 150.0, 5.0, Tuning.hit_white_ms,
+	_add_slider_d("dlzka bieleho zablesku (ms)", 10.0, 150.0, 5.0, Tuning.hit_white_ms,
+		"Zasiahnuty nepriatel na chvilu cely zbeli (len ak ho zasah nezabije). Posuvnik = ako dlho je biely (viac = dlhsie).",
 		func(v: float) -> void: Tuning.hit_white_ms = v)
 	_add_toggle("TRASENIE OBRAZU PRI ZASAHU", Tuning.fx_shake_on,
 		func(on: bool) -> void: Tuning.fx_shake_on = on)
-	_add_slider("sila trasenia pri zasahu", 0.0, 3.0, 0.1, Tuning.shake_strength,
+	_add_slider_d("sila trasenia pri zasahu", 0.0, 3.0, 0.1, Tuning.shake_strength,
+		"Obraz sa zatrasie, ked sekera zasiahne alebo zabije. Posuvnik = nasobok sily (1 = zakladna, 0 = ziadne, 3 = trojnasobne).",
 		func(v: float) -> void: Tuning.shake_strength = v)
 	_add_toggle("KOPNUTIE KAMERY", Tuning.fx_kick_on,
 		func(on: bool) -> void: Tuning.fx_kick_on = on)
-	_add_slider("sila kopnutia kamery", 0.0, 3.0, 0.1, Tuning.kick_strength,
+	_add_slider_d("sila kopnutia kamery", 0.0, 3.0, 0.1, Tuning.kick_strength,
+		"Kamera sa pri zasahu na okamih posunie v smere letu sekery a vrati sa. Posuvnik = nasobok posunu (1 = zakladny, 0 = ziadny).",
 		func(v: float) -> void: Tuning.kick_strength = v)
 	_add_toggle("VIBRACIA PRI MOJOM ZASAHU", Tuning.vibrate_axe_on,
 		func(on: bool) -> void: Tuning.vibrate_axe_on = on)
-	_add_slider("dlzka vibracie pri mojom zasahu (ms)", 10.0, 150.0, 5.0,
+	_add_slider_d("dlzka vibracie pri mojom zasahu (ms)", 10.0, 150.0, 5.0,
 		Tuning.vibrate_axe_ms,
+		"Telefon kratko zavibruje, ked tvoja sekera zasiahne nepriatela. Posuvnik = ako dlho (pri zabiti 1,5x dlhsie). Funguje len ak je zapnuty aj hlavny vypinac VIBRACIE vyssie.",
 		func(v: float) -> void: Tuning.vibrate_axe_ms = v)
 
 	var music_toggle := CheckButton.new()
@@ -634,7 +640,7 @@ func _apply_hidden() -> void:
 			key = "button|" + row.text
 		elif row is VBoxContainer:
 			for c in row.get_children():
-				if c is Label:
+				if c is Label and label_of.has(c):
 					key = "slider|" + str(label_of.get(c, c.text))
 		if PanelHidden.HIDDEN.has(key):
 			row.visible = false
@@ -693,7 +699,7 @@ func _add_toggle(text: String, start: bool, setter: Callable) -> void:
 
 
 func _add_slider(label_text: String, lo: float, hi: float, step: float,
-		start: float, setter: Callable) -> void:
+		start: float, setter: Callable) -> VBoxContainer:
 	var row := VBoxContainer.new()
 	rows.add_child(row)
 
@@ -713,6 +719,22 @@ func _add_slider(label_text: String, lo: float, hi: float, step: float,
 		setter.call(v)
 		lbl.text = "%s: %s" % [label_text, _fmt(v)]
 	)
+	return row
+
+
+## A slider with a short grey explanation under it (what it controls and
+## which way is "more"). The description is a Label inside the slider's row;
+## _apply_hidden and the catalog dump only look at the label that is in
+## value_labels, so it does not confuse them.
+func _add_slider_d(label_text: String, lo: float, hi: float, step: float,
+		start: float, desc: String, setter: Callable) -> void:
+	var row: VBoxContainer = _add_slider(label_text, lo, hi, step, start, setter)
+	var d := Label.new()
+	d.text = desc
+	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	d.add_theme_font_size_override("font_size", 14)
+	d.modulate = Color(0.75, 0.75, 0.75)
+	row.add_child(d)
 
 
 ## Vypise vsetky aktualne hodnoty do logu, aby sa nemuseli opisovat z displeja.

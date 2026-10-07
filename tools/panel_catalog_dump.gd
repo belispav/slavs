@@ -45,7 +45,7 @@ func _process(_delta: float) -> bool:
 			var lbl: Label = null
 			var sl: HSlider = null
 			for c in row.get_children():
-				if c is Label:
+				if c is Label and labels_by_node.has(c):
 					lbl = c
 				elif c is HSlider:
 					sl = c

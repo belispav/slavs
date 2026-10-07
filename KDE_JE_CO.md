@@ -16,7 +16,7 @@ Pavel rieši každý balík v novej session (Sonnet). Na rade je balík so stavo
 ## ToDo's (otvorené úlohy; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, DIZAJN_core_loop.md §3-4)
 
 Claude: pri zmene stavu aktualizuj zdroje aj tento zoznam aj `KDE_JE_CO.html`.
-ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T47).
+ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T48).
 Každá úloha má v zátvorke {oblasť prínos námaha}: oblasť = písmeno A–Z (zoznam nižšie), prínos ★★★ zásadné / ★★ veľký rozdiel / ★ drobnosť, námaha nízka/stredná/vysoká. V dashboarde (`TODOS` v `KDE_JE_CO.html`) sú to polia `cat`, `imp` (3/2/1), `eff` (N/S/V); skupina `g`: teba / claude / later / napad. Nápady z výskumu 2026-10-07 majú STÁLE kódy A1…Z8 (písmeno oblasti + poradie, detail a zdroje v `NAPADY_vylepsenia.md`); keď Pavel nápad vyberie, kód ostáva, len sa zmení skupina. Nová úloha mimo výskumu dostane ďalšie T-číslo.
 Tu a v dashboarde sú LEN otvorené úlohy. Keď je úloha hotová, zrušená alebo zavretá: presuň jej riadok do `_archiv/TODO_hotove.md` (tam ho Claude nečíta, len na požiadanie) a zmaž ho odtiaľto aj z `KDE_JE_CO.html`. Hotové veci sa v dashboarde nezobrazujú.
 
@@ -33,6 +33,7 @@ T44 ČAKÁ NA PAVLA: skrývanie posuvníkov. Otvor `PANEL_prvky.xlsx` (stĺpec Z
 ### Čaká na Claude (po OK od Pavla alebo na Pavlov test)
 T17 AKTÍVNE, DÔLEŽITÉ (Pavel 2026-10-06): farebná paleta nie je zjednotená (PixelLab je primárny zdroj grafiky). MUSÍ sa vyriešiť PRED generovaním finálnej hernej grafiky; kým robíme prototypy, nemusí byť rozhodnuté. [Open 6] {C ★★★ stredná}
 
+T48 CHYBA (Pavel 2026-10-07, len zapísané, zatiaľ sa nerieši): nepriatelia sa zasekávajú, keď je sud blízko okraja obrazovky, najčastejšie pri spodnom okraji (sudy sa tam objavujú často). Možná súvislosť: obchádzanie prekážok T28 a spodná hranica pola T30. Pri riešení najprv nájsť príčinu, potom opraviť. {F ★★ stredná}
 ### Neskôr, nápady a na zváženie
 T23 NÁPAD (neskôr, dizajn): nepriatelia hľadajú inú trasu a obídu hrdinu. Dôsledok: obkľúčia ho a nebude vedieť ujsť. Rozhodnúť neskôr, či to chceme. (Pavel 2026-10-06) {F ★★ stredná}
 T34 NA ZVÁŽENIE/VYSKÚŠANIE: úder zbrane má mať okolo seba „vlnu“ znázorňujúcu švih alebo sek (oblúk švihu, pich v tvare U alebo V), nakreslenú akoby zo vzduchu. To isté skúsiť pri zásahu nepriateľa, aby bol vidieť „úder“, hoci tam už je krv. (Pavel 2026-10-06) {A ★★ stredná}
