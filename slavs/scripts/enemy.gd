@@ -571,8 +571,8 @@ func _physics_process(delta: float) -> void:
 	if _flash > 0.0:
 		_flash = maxf(_flash - delta * 6.0, 0.0)
 		queue_redraw()
-	elif Debug.show_strike_zone and kind == Kind.RUSHER:
-		queue_redraw()   # strike zone overlay, debug only
+	elif (Debug.show_strike_zone and kind == Kind.RUSHER) or Debug.show_hit_zones:
+		queue_redraw()   # zone overlays, debug only
 	# Cheap enough to redo every frame, and it is what makes the hurtbox
 	# slider in the debug panel actually live instead of only taking effect
 	# after the next redeploy - same reasoning as player.gd's own call.
@@ -1115,6 +1115,11 @@ func _track_depth(speed: float) -> void:
 func _draw() -> void:
 	# A drawn character replaces the box entirely. Leaving the box behind the
 	# sprite showed as a coloured slab around the legs.
+	if Debug.show_hit_zones and _hurt_shape != null:
+		var hr := _hurt_shape.shape as RectangleShape2D
+		var hrect := Rect2(_hurt_shape.position - hr.size * 0.5, hr.size)
+		draw_rect(hrect, Color(1.0, 0.9, 0.1, 0.22))
+		draw_rect(hrect, Color(1.0, 0.9, 0.1, 0.95), false, 2.0)
 	if Debug.show_strike_zone and kind == Kind.RUSHER and _attack_timer > 0.0:
 		var zc := to_local(_strike_centre())
 		draw_circle(zc, Tuning.rusher_strike_radius,

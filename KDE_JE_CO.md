@@ -6,7 +6,7 @@ Claude: túto mapu aktualizuj pri každom presune alebo pridaní súboru v koren
 ## ToDo's (otvorené úlohy; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, DIZAJN_core_loop.md §3-4)
 
 Claude: pri zmene stavu aktualizuj zdroje aj tento zoznam aj `KDE_JE_CO.html`.
-ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T45).
+ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T46).
 Tu a v dashboarde sú LEN otvorené úlohy. Keď je úloha hotová, zrušená alebo zavretá: presuň jej riadok do `_archiv/TODO_hotove.md` (tam ho Claude nečíta, len na požiadanie) a zmaž ho odtiaľto aj z `KDE_JE_CO.html`. Hotové veci sa v dashboarde nezobrazujú.
 
 ### Čaká na Pavla
@@ -37,6 +37,7 @@ T42 KATALÓG EFEKTOV (Pavel 2026-10-07): postupne spisovať efekty, ktoré môž
 T43 NÁPAD, VYLEPŠENIE SEKERY (Pavel 2026-10-07): sekera zraňujúca aj cestou späť (bumerang) môže byť neskôr vylepšenie. Aj vtedy cesta späť NESMIE odhadzovať. V kóde je vypínač `Tuning.AXE_RETURN_HURTS` (false).
 T44 HOTOVÉ V KÓDE 2026-10-07, ČAKÁ NA TEST: skrývanie posuvníkov. Zoznam všetkých prvkov panela je v `PANEL_prvky.xlsx` (stĺpec Zobraziť A/N, S-čísla). Skryté ostávajú v kóde, len sa nezobrazia. Postup: Pavel prepíše A/N, Claude spustí `python3 tools/panel_catalog.py import` (zapíše `slavs/scripts/panel_hidden.gd`). Predvolene skrytých 46 z 73 (odladené a zriedka potrebné), viditeľných 27.
 T45 HOTOVÉ V KÓDE 2026-10-07, ČAKÁ NA TEST: srdiečka nad hrdinom a nepriateľmi (červené, po zásahu ostane len čierny okraj; `hearts.gd`). Panel: režim 0 vypnuté / 1 hrdina + ranení / 2 všetci. Pavel: „možno to bude vadiť, uvidíme“.
+T46 HOTOVÉ V KÓDE 2026-10-07, ČAKÁ NA TEST: (a) panel „UKAZ ZONY ZASAHU“ nakreslí kruh sekery (červený = zraňuje, sivý = cesta späť), žlté obdĺžniky zásahu nepriateľov a modrý obdĺžnik hrdinu; posuvník „sekera: polomer zasahu“ (30 px). Sekera zasiahne každého, koho obdĺžnik sa dotkne kruhu, bez ohľadu na hĺbku (výška obdĺžnika = 0,72 × výška postavy), preto trafí aj vzdialených bežcov. (b) Páčka ľavého palca: stred sa posúva za palcom, keď ho predbehne za vzdialenosť plnej rýchlosti (`free_move_anchor_slides`, predvolené zapnuté); príčina občasného spomalenia pri otočke = palec ďaleko za hranicou plnej rýchlosti sa musel vrátiť cez celý prejdený úsek. Ak spomalenie pretrvá, ďalší podozrivý: kolízie pevných nôh s nepriateľmi/sudmi (test: VYPNUT BEZCOV/STRELCOV/TUCNAKOV) a zastavenie počas hodu sekery (`throw_move_factor` 0).
 
 ## Odsúhlasený príbeh a popis hry (kde to je)
 

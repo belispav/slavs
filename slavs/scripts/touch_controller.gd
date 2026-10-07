@@ -268,6 +268,22 @@ func _update_left_free() -> void:
 		left_state = LeftState.GROUNDED_INPUT
 		return
 
+	if config.free_move_anchor_slides:
+		# The centre trails the thumb at full-speed distance (per axis, same
+		# distances the speed curve saturates at), so overshooting costs nothing.
+		var lim_r: float = config.run_saturation_right_mm * px_per_mm
+		var lim_l: float = config.run_saturation_left_mm * px_per_mm
+		var ox: float = left_pos.x - left_anchor.x
+		if ox > lim_r:
+			left_anchor.x = left_pos.x - lim_r
+		elif ox < -lim_l:
+			left_anchor.x = left_pos.x + lim_l
+		var oy: float = left_pos.y - left_anchor.y
+		if oy > lim_r:
+			left_anchor.y = left_pos.y - lim_r
+		elif oy < -lim_r:
+			left_anchor.y = left_pos.y + lim_r
+
 	var dx_mm: float = left_dx_mm()
 	var dy_mm: float = (left_pos.y - left_anchor.y) / px_per_mm
 

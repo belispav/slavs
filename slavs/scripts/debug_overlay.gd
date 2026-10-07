@@ -442,6 +442,16 @@ func _build_panel() -> void:
 	# out of; at this point the range is re-checked and the hit either lands or
 	# misses. Live because the right answer is wherever the club is furthest
 	# forward, which is a thing to watch, not to compute.
+	var hz_btn := CheckButton.new()
+	hz_btn.text = "UKAZ ZONY ZASAHU (sekera, nepriatelia, hrdina)"
+	hz_btn.custom_minimum_size = Vector2(0, 56)
+	hz_btn.button_pressed = Debug.show_hit_zones
+	rows.add_child(hz_btn)
+	hz_btn.toggled.connect(func(on: bool) -> void:
+		Debug.show_hit_zones = on)
+	_add_slider("sekera: polomer zasahu (px)", 10.0, 80.0, 1.0,
+		Tuning.axe_hit_radius,
+		func(v: float) -> void: Tuning.axe_hit_radius = v)
 	var zone_btn := CheckButton.new()
 	zone_btn.text = "UKAZ ZONU UDERU BEZCA"
 	zone_btn.custom_minimum_size = Vector2(0, 56)

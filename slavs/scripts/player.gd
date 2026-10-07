@@ -81,6 +81,7 @@ var _rest_frame: int = 0
 ## what tells the player the next throw is not ready yet.
 var axe_in_hand: bool = true
 var _throwing: bool = false
+var _zone_drawn: bool = false
 var _throw_time: float = 0.0
 var _throw_released: bool = false
 var _has_axe_clips: bool = false
@@ -537,6 +538,9 @@ func _physics_process(delta: float) -> void:
 
 	_iframes = maxf(_iframes - delta, 0.0)
 	_hearts.set_state(hp, Tuning.PLAYER_MAX_HP)
+	if Debug.show_hit_zones != _zone_drawn:
+		_zone_drawn = Debug.show_hit_zones
+		queue_redraw()
 	_apply_mask()
 	if not is_equal_approx(_fit_h, Tuning.body_feet_height) \
 			or not is_equal_approx(_fit_w, Tuning.body_feet_width):
@@ -813,6 +817,12 @@ func _update_sprite() -> void:
 
 
 func _draw() -> void:
+	if Debug.show_hit_zones and _hurt_shape != null:
+		var hr := _hurt_shape.shape as RectangleShape2D
+		if hr != null:
+			var hrect := Rect2(_hurt_shape.position - hr.size * 0.5, hr.size)
+			draw_rect(hrect, Color(0.2, 0.6, 1.0, 0.22))
+			draw_rect(hrect, Color(0.2, 0.6, 1.0, 0.95), false, 2.0)
 	if _sprite == null:
 		# Fallback for a project with no rendered art yet.
 		var body := Color(0.78, 0.80, 0.85)

@@ -34,6 +34,10 @@ var disable_rusher: bool = false
 ## Draw each rusher's strike zone while it swings (T29). Debug only.
 var show_strike_zone: bool = false
 
+## Draw the hit zones: the axe's circle and the enemies' and hero's hurt
+## rectangles (what the axe / bullets / clubs are tested against). Debug only.
+var show_hit_zones: bool = false
+
 ## Same for throwers.
 var disable_thrower: bool = false
 

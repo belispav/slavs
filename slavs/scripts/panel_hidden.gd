@@ -24,8 +24,6 @@ const HIDDEN: Array[String] = [
 	"slider|sila vibracii",
 	"slider|dlzka vibracie pri zasahu (ms)",
 	"slider|hlasitost hudby (dB)",
-	"slider|posun palca pre plnu rychlost vlavo",
-	"slider|posun palca pre plnu rychlost vpravo",
 	"slider|ako blizko k postave prestane mierit",
 	"slider|pohyb pocas hodu (0 = stoji)",
 	"slider|rychlost zamachu pri hode (1 = povodna)",

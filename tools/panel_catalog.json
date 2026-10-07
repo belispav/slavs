@@ -324,6 +324,18 @@
 		"value": "640.0"
 	},
 	{
+		"name": "UKAZ ZONY ZASAHU (sekera, nepriatelia, hrdina)",
+		"section": "NEPRIATELIA",
+		"type": "switch",
+		"value": "VYP"
+	},
+	{
+		"name": "sekera: polomer zasahu (px)",
+		"section": "NEPRIATELIA",
+		"type": "slider",
+		"value": "30.0"
+	},
+	{
 		"name": "UKAZ ZONU UDERU BEZCA",
 		"section": "NEPRIATELIA",
 		"type": "switch",

@@ -175,6 +175,7 @@ const AXE_RETURN_HURTS: bool = false
 const AXE_RETURN_ALPHA: float = 0.5
 const AXE_SPIN: float = 22.0             # radians / s
 const AXE_HIT_RADIUS: float = 30.0       # generous on purpose (pillar 1)
+var axe_hit_radius: float = AXE_HIT_RADIUS   # live from the panel
 const AXE_CATCH_RADIUS: float = 28.0
 ## Safety net: if the hero keeps running away from his own axe, it is
 ## caught anyway after this long instead of chasing him forever.

@@ -160,6 +160,13 @@ class_name ControlConfig
 ##         run out of level, so crossing ground means several strokes.
 @export var free_move_follow: bool = false
 
+## Stick mode only. true = the stick's centre follows the thumb once the thumb
+## is pushed past the full-speed distance, so reversing needs only the
+## full-speed travel back, not the whole overshoot (Pavel 2026-10-07: the hero
+## slowed after a quick reversal because the thumb had to cross the centre
+## it had left far behind). false = the centre stays where the thumb landed.
+@export var free_move_anchor_slides: bool = true
+
 ## In follow mode, how far the character travels for a given thumb travel.
 ## 1.0 is exactly the thumb's movement, which is far too slow to cross a level;
 ## higher numbers trade precision for reach.

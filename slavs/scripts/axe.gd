@@ -34,6 +34,18 @@ var _circle: CircleShape2D
 ## far below it, measured at the throw (hero's feet minus the throw point).
 var _shadow: Node2D
 const ShadowScript := preload("res://scripts/shadow.gd")
+var _zone_drawn: bool = false
+
+
+## Debug (panel UKAZ ZONY ZASAHU): the circle the axe tests against enemies'
+## hurt rectangles. Red = it hurts now (way out), grey = harmless (way back).
+func _draw() -> void:
+	if not Debug.show_hit_zones:
+		return
+	var live: bool = state == State.OUT or Tuning.AXE_RETURN_HURTS
+	var col := Color(1.0, 0.15, 0.1) if live else Color(0.6, 0.6, 0.6)
+	draw_circle(Vector2.ZERO, _circle.radius, Color(col, 0.25))
+	draw_arc(Vector2.ZERO, _circle.radius, 0.0, TAU, 40, Color(col, 0.95), 2.0)
 
 
 func _ready() -> void:
@@ -41,7 +53,7 @@ func _ready() -> void:
 	collision_mask = Tuning.LAYER_TARGET
 	var cs := CollisionShape2D.new()
 	_circle = CircleShape2D.new()
-	_circle.radius = Tuning.AXE_HIT_RADIUS
+	_circle.radius = Tuning.axe_hit_radius
 	cs.shape = _circle
 	add_child(cs)
 
@@ -118,8 +130,13 @@ func _physics_process(delta: float) -> void:
 			return
 		global_position += to_hand.normalized() * step_back
 
+	if not is_equal_approx(_circle.radius, Tuning.axe_hit_radius):
+		_circle.radius = Tuning.axe_hit_radius
 	if state == State.OUT or Tuning.AXE_RETURN_HURTS:
 		_hit_overlaps()
+	if Debug.show_hit_zones or _zone_drawn:
+		_zone_drawn = Debug.show_hit_zones
+		queue_redraw()
 
 	if _sprite != null:
 		var s: float = Tuning.player_sprite_scale
