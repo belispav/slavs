@@ -4,14 +4,20 @@ extends Node2D
 ## body disappears).
 ##
 ## A killed enemy goes back to the pool at once (enemy.gd despawn), so what the
-## player sees falling is NOT the enemy: it is a separate picture of the frame
-## the enemy died in. It flies along the blow, spins onto its back, lands,
-## bounces once, lies for a while, then vanishes (puff of smoke, or a fade).
+## player sees falling is NOT the enemy: it is a separate picture.
+##   - With a death clip (the rusher: PixelLab "falling-back-death"): the clip
+##     plays at corpse_anim_fps while the body hops a little along the blow and
+##     slides, then the last frame (lying) stays.
+##   - Without a clip (gunman, brute): the frame the enemy died in is thrown
+##     along the blow, spins onto its back, bounces once and lies.
+## Then it vanishes (puff of smoke, or a fade).
 ## Corpses are pooled (MAX_CORPSES); a full field recycles the oldest.
 ##
 ## Same ground/height trick as fx.gd: g = spot on the ground (feet), h = height
-## of the body centre above it. Game-time delta, so hit-stop and slow-motion
-## slow the flight too.
+## above it (of the body centre without a clip, of the feet with one).
+## Game-time delta, so hit-stop and slow-motion slow the flight too.
+
+const ENEMY_SCRIPT: GDScript = preload("res://scripts/enemy.gd")
 
 const MAX_CORPSES: int = 24
 const GRAVITY: float = 900.0
@@ -20,13 +26,11 @@ const FLY_SPEED: float = 230.0
 const FLY_UP: float = 210.0
 const SPIN_MIN: float = 2.6
 const SPIN_MAX: float = 3.6
-## Share of the downward speed that survives the one bounce.
+## Share of the downward speed that survives the one bounce (no-clip bodies).
 const BOUNCE: float = 0.32
 const LAND_EASE: float = 14.0
 const FADE_TIME: float = 0.6
 const SMOKE_FADE_TIME: float = 0.12
-
-const ENEMY_SCRIPT: GDScript = preload("res://scripts/enemy.gd")
 
 var fx   # fx.gd - landing blood, smoke puff
 
@@ -41,9 +45,9 @@ func setup(fx_node) -> void:
 ## `tex` the frame the enemy died in, `flip` its flip_h, `art_scale` the
 ## sprite scale, `off` the sprite position relative to the FEET, `body_h` the
 ## drawn height, `dir` the way the blow travelled (zero = unknown, `side` is
-## then +1/-1 away from the hero).
+## then +1/-1 away from the hero), `frames` the enemy's death clip (may be empty).
 func spawn(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2,
-		feet: Vector2, body_h: float, dir: Vector2, side: float) -> void:
+		feet: Vector2, body_h: float, dir: Vector2, side: float, frames: Array) -> void:
 	if not Tuning.fx_corpse_on or tex == null:
 		return
 	if _live.size() >= MAX_CORPSES:
@@ -52,6 +56,7 @@ func spawn(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2,
 	if sx == 0.0:
 		sx = 1.0
 	var power: float = Tuning.corpse_power
+	var anim: bool = frames.size() > 1
 	var pivot: Node2D
 	var spr: Sprite2D
 	if _spare.is_empty():
@@ -65,25 +70,33 @@ func spawn(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2,
 		spr = pivot.get_child(0)
 	pivot.show()
 	pivot.modulate = Color.WHITE
-	spr.texture = tex
-	spr.flip_h = flip
-	spr.scale = art_scale
-	# Rotation pivot = middle of the body, so it spins like a body, not like a pole.
-	spr.position = off + Vector2(0.0, body_h * 0.5)
 	spr.material = null
+	spr.scale = art_scale
+	if anim:
+		# Pivot at the feet. The clip is exported falling toward +x, so it only
+		# has to be mirrored when the blow came the other way.
+		spr.texture = frames[0]
+		spr.flip_h = sx < 0.0
+		spr.position = Vector2(0.0, off.y)
+	else:
+		spr.texture = tex
+		spr.flip_h = flip
+		# Rotation pivot = middle of the body, so it spins like a body.
+		spr.position = off + Vector2(0.0, body_h * 0.5)
 	var c := {
 		"pivot": pivot, "spr": spr,
 		"g": feet,
 		"vel": Vector2(sx * FLY_SPEED * power * randf_range(0.8, 1.2),
 			dir.y * FLY_SPEED * 0.4 * power),
-		"h": body_h * 0.5,
+		"h": 0.0 if anim else body_h * 0.5,
 		"vh": FLY_UP * power * randf_range(0.8, 1.2),
-		"rest_h": body_h * 0.2,
+		"rest_h": 0.0 if anim else body_h * 0.2,
 		"ang": 0.0,
-		"w": -sx * randf_range(SPIN_MIN, SPIN_MAX) * clampf(power, 0.4, 1.5),
-		"rest_ang": -sx * (PI * 0.5 + randf_range(-0.12, 0.12)),
+		"w": 0.0 if anim else -sx * randf_range(SPIN_MIN, SPIN_MAX) * clampf(power, 0.4, 1.5),
+		"rest_ang": 0.0 if anim else -sx * (PI * 0.5 + randf_range(-0.12, 0.12)),
 		"phase": 0,        # 0 flying, 1 after the bounce, 2 lying, 3 vanishing
 		"t": 0.0,
+		"anim": anim, "frames": frames, "ta": 0.0, "fi": 0,
 		"white": Tuning.hit_white_ms / 1000.0 if Tuning.fx_white_on else 0.0,
 	}
 	if c["white"] > 0.0:
@@ -118,11 +131,21 @@ func _process(delta: float) -> void:
 
 
 func _step(c: Dictionary, delta: float) -> void:
+	var spr: Sprite2D = c["spr"]
 	if c["white"] > 0.0:
 		c["white"] -= delta
 		if c["white"] <= 0.0:
-			var s: Sprite2D = c["spr"]
-			s.material = null
+			spr.material = null
+	# The death clip runs on its own clock; it holds its last frame (lying).
+	var anim_done: bool = true
+	if c["anim"]:
+		var frames: Array = c["frames"]
+		c["ta"] += delta
+		var fi: int = mini(int(c["ta"] * Tuning.corpse_anim_fps), frames.size() - 1)
+		if fi != c["fi"]:
+			c["fi"] = fi
+			spr.texture = frames[fi]
+		anim_done = fi >= frames.size() - 1
 	var phase: int = c["phase"]
 	if phase <= 1:
 		c["g"] += c["vel"] * delta
@@ -140,7 +163,8 @@ func _step(c: Dictionary, delta: float) -> void:
 			_landed(c)
 	elif phase == 2:
 		c["ang"] = lerp_angle(c["ang"], c["rest_ang"], 1.0 - exp(-LAND_EASE * delta))
-		c["t"] += delta
+		if anim_done:
+			c["t"] += delta
 		if c["t"] >= Tuning.corpse_linger:
 			c["phase"] = 3
 			c["t"] = 0.0
@@ -156,7 +180,7 @@ func _step(c: Dictionary, delta: float) -> void:
 
 
 func _landed(c: Dictionary) -> void:
-	if c["phase"] == 0 and absf(c["vh"]) > 60.0:
+	if c["phase"] == 0 and not c["anim"] and absf(c["vh"]) > 60.0:
 		# One bounce: a little hop forward, then it lies down.
 		c["vh"] = -c["vh"] * BOUNCE
 		c["vel"] *= 0.5

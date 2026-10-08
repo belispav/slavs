@@ -56,6 +56,8 @@ def main() -> None:
     ap.add_argument("--erase", action="append", default=[],
                     help="frame:x0,y0,x1,y1 in SOURCE pixels, inclusive")
     ap.add_argument("--note", default="")
+    ap.add_argument("--shift", action="append", default=[],
+                    help="frame:dx,dy extra offset of ONE frame (e.g. lets a lying body touch the ground)")
     ap.add_argument("--mirror", action="store_true",
                     help="flip horizontally AFTER placing on the canvas: "
                          "enemies are generated facing east, enemy.gd wants west")
@@ -66,6 +68,11 @@ def main() -> None:
     for e in a.erase:
         k, box = e.split(":")
         erase.setdefault(int(k), []).append(tuple(int(v) for v in box.split(",")))
+
+    shifts = {}
+    for s in a.shift:
+        k, d = s.split(":")
+        shifts[int(k)] = tuple(int(v) for v in d.split(","))
 
     os.makedirs(a.out, exist_ok=True)
     res = "res://" + a.out.replace("\\", "/").split("slavs/", 1)[1]
@@ -80,7 +87,8 @@ def main() -> None:
         canvas = Image.new("RGBA", (a.canvas, a.canvas), (0, 0, 0, 0))
         # paste, not alpha_composite: a v3 clip's own canvas can be bigger
         # than the shared one, so its offset may be negative.
-        canvas.paste(im, tuple(a.offset), im)
+        sdx, sdy = shifts.get(i, (0, 0))
+        canvas.paste(im, (a.offset[0] + sdx, a.offset[1] + sdy), im)
         if a.mirror:
             canvas = canvas.transpose(Image.FLIP_LEFT_RIGHT)
         name = f"{a.name}_{i:04d}.png"

@@ -316,6 +316,9 @@ func _build_panel() -> void:
 	_add_slider_d("sila odletu tela", 0.0, 3.0, 0.1, Tuning.corpse_power,
 		"Zabity nepriatel odleti v smere uderu, pretoci sa, dopadne a raz poskoci. Posuvnik = nasobok sily (1 = zakladna, 0 = len sa zosunie, 3 = vyletí daleko).",
 		func(v: float) -> void: Tuning.corpse_power = v)
+	_add_slider_d("rychlost animacie padu (fps)", 4.0, 30.0, 1.0, Tuning.corpse_anim_fps,
+		"Ako rychlo sa prehra animacia padu bezca (7 snimok). 12 = asi pol sekundy, 6 = pomalsie, 24 = bleskovo. Ostatni nepriatelia zatial padaju bez animacie.",
+		func(v: float) -> void: Tuning.corpse_anim_fps = v)
 	_add_slider_d("ako dlho telo lezi (s)", 0.0, 10.0, 0.5, Tuning.corpse_linger,
 		"Kolko sekund telo lezi na zemi, kym zmizne. Telies naraz je najviac 24, najstarsie sa vymeni.",
 		func(v: float) -> void: Tuning.corpse_linger = v)
@@ -329,6 +332,15 @@ func _build_panel() -> void:
 	_add_slider_d("rychlost pocas spomalenia", 0.1, 0.8, 0.05, Tuning.slowmo_scale,
 		"Aky rychly je cas pocas spomalenia (1 = normalne, 0.3 = tretina rychlosti, 0.1 = takmer stoji).",
 		func(v: float) -> void: Tuning.slowmo_scale = v)
+	_add_slider_d("spomalenie: max. odstup zabiti (s)", 1.0, 20.0, 0.5, Tuning.slowmo_gap,
+		"Spomalenie sa spusti len po serii rychlych zabiti. Posuvnik = najvacsia pauza medzi dvoma zabitiami, aby sa seria nerozpadla (viac = lahsie spustit).",
+		func(v: float) -> void: Tuning.slowmo_gap = v)
+	_add_slider_d("spomalenie: kolko zabiti v serii", 1.0, 6.0, 1.0, float(Tuning.slowmo_min_streak),
+		"Kolko zabiti za sebou treba, aby sa spustilo spomalenie na poslednom nepriatelovi (1 = po kazdom osamelom zabiti).",
+		func(v: float) -> void: Tuning.slowmo_min_streak = int(v))
+	_add_slider_d("spomalenie: dosah 'posledny' (px)", 200.0, 2200.0, 100.0, Tuning.slowmo_range,
+		"Posledny nepriatel = v tomto okruhu okolo hraca nie je ziadny dalsi zivy. Viac = prisnejsie (musi byt prazdna aj vzdialena cast), menej = lahsie spustit pri velkom pocte nepriatelov.",
+		func(v: float) -> void: Tuning.slowmo_range = v)
 	var vib_test := Button.new()
 	vib_test.text = "TEST VIBRACIE (rovnaka ako pri mojom zasahu)"
 	vib_test.custom_minimum_size = Vector2(0, 52)

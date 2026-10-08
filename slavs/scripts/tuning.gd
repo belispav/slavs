@@ -89,6 +89,8 @@ const RUSHER_IDLE_ART_DIR: String = "res://art/rusher_pl_idle"
 const RUSHER_IDLE_READY_ART_DIR: String = "res://art/rusher_pl_ready"
 const RUSHER_WALK_ART_DIR: String = "res://art/rusher_pl_walk"
 const RUSHER_ATTACK_ART_DIR: String = "res://art/rusher_pl_attack"
+## A9: PixelLab "falling-back-death" (7 frames, exported falling toward +x), 2026-10-08.
+const RUSHER_DEATH_ART_DIR: String = "res://art/rusher_pl_death"
 ## The PixelLab clips have 4-12 frames, not the 19-39 the renderer made, so
 ## they play slower than ENEMY_ANIM_FPS or every cycle looks sped up.
 const RUSHER_ANIM_FPS: float = 10.0
@@ -288,9 +290,14 @@ var kick_strength: float = 1.0
 ## Package 2 "Smrt nepriatela a stopy boja" (2026-10-08). Every effect has a switch.
 ## A9 the body of a killed enemy flies along the blow, spins, lands, bounces once.
 ## corpse_power scales speed + spin (1 = base); corpse_linger = seconds it lies.
-const CORPSE_LINGER: float = 2.0
+## Baked after Pavel's phone test 2026-10-08: power 0.4, lies 0.5 s.
+const CORPSE_POWER: float = 0.4
+const CORPSE_LINGER: float = 0.5
 var fx_corpse_on: bool = true
-var corpse_power: float = 1.0
+var corpse_power: float = CORPSE_POWER
+## Speed of the death clip (frames per second): 12 = the 7 frames in ~0.6 s.
+const CORPSE_ANIM_FPS: float = 12.0
+var corpse_anim_fps: float = CORPSE_ANIM_FPS
 var corpse_linger: float = CORPSE_LINGER
 ## T36 how a body vanishes: true = puff of smoke, false = plain fade.
 var fx_corpse_smoke_on: bool = true
@@ -301,9 +308,13 @@ const SLOWMO_SCALE: float = 0.3
 const SLOWMO_MS: float = 600.0
 const SLOWMO_RANGE: float = 900.0
 const SLOWMO_MIN_STREAK: int = 3
-const SLOWMO_STREAK_GAP: float = 3.0
+## Gap raised 3 -> 8 s for testing (Pavel could hardly trigger it); panel sliders for all three.
+const SLOWMO_STREAK_GAP: float = 8.0
 const SLOWMO_COOLDOWN: float = 5.0
 var fx_slowmo_on: bool = true
+var slowmo_range: float = SLOWMO_RANGE
+var slowmo_min_streak: int = SLOWMO_MIN_STREAK
+var slowmo_gap: float = SLOWMO_STREAK_GAP
 var slowmo_scale: float = SLOWMO_SCALE
 var slowmo_ms: float = SLOWMO_MS
 ## E1 short phone buzz when the hero's weapon hits (kills x1.5 longer).

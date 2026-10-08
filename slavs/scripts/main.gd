@@ -1349,7 +1349,7 @@ func _hitstop_tick() -> void:
 ## the last living enemy near the hero after a streak of quick kills.
 func _try_slowmo() -> void:
 	var now: int = Time.get_ticks_msec()
-	if float(now - _last_kill_ms) / 1000.0 > Tuning.SLOWMO_STREAK_GAP:
+	if float(now - _last_kill_ms) / 1000.0 > Tuning.slowmo_gap:
 		_streak = 0
 	_streak += 1
 	_last_kill_ms = now
@@ -1362,9 +1362,9 @@ func _try_slowmo() -> void:
 			continue
 		if e.hp <= 0:
 			brute = e.kind == e.Kind.BRUTE   # the one dying right now
-		elif absf(e.global_position.x - player.global_position.x) < Tuning.SLOWMO_RANGE:
+		elif absf(e.global_position.x - player.global_position.x) < Tuning.slowmo_range:
 			others = true
-	if not (brute or (not others and _streak >= Tuning.SLOWMO_MIN_STREAK)):
+	if not (brute or (not others and _streak >= Tuning.slowmo_min_streak)):
 		return
 	_slowmo_next_ms = now + int(Tuning.SLOWMO_COOLDOWN * 1000.0)
 	_slowmo_end_ms = maxi(now, _hitstop_end_ms) + int(Tuning.slowmo_ms)
@@ -1428,9 +1428,8 @@ func _vibrate(ms: int, amp: float = 1.0, force: bool = false) -> void:
 	Input.vibrate_handheld(ms, clampf(Tuning.vibrate_strength * amp, 0.0, 1.0))
 
 
-func _on_enemy_corpse(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2,
-		feet: Vector2, body_h: float, dir: Vector2) -> void:
-	corpses.spawn(tex, flip, art_scale, off, feet, body_h, dir, _away_from_player(feet))
+func _on_enemy_corpse(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2, feet: Vector2, body_h: float, dir: Vector2, frames: Array) -> void:
+	corpses.spawn(tex, flip, art_scale, off, feet, body_h, dir, _away_from_player(feet), frames)
 
 
 func _on_enemy_died(_at: Vector2) -> void:

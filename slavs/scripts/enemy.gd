@@ -22,7 +22,7 @@ signal weapon_hit(at: Vector2, dir: Vector2, fatal: bool, amount: int, crit: boo
 ## A9: the picture of the body at the moment of death, for corpses.gd.
 ## `off` = sprite position relative to the feet, `dir` = way of the blow (zero = unknown).
 signal corpse_requested(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2,
-		feet: Vector2, body_h: float, dir: Vector2)
+		feet: Vector2, body_h: float, dir: Vector2, frames: Array)
 signal throw_requested(from: Vector2, dir: Vector2)
 ## A rusher's swing landing. Not the same moment as touching the player - see
 ## RUSHER_MELEE_RANGE and _update_attack_timer.
@@ -107,6 +107,8 @@ var _clip_shift: Dictionary = {}
 var _sprite: AnimatedSprite2D
 var _thrower_sprite: AnimatedSprite2D
 var _rusher_sprite: AnimatedSprite2D
+## A9: the rusher's falling clip, played by corpses.gd on its body.
+var _rusher_death_frames: Array[Texture2D] = []
 var _fire_timer: float = 0.0
 ## Counts down from the start of the fire clip to the muzzle flash; the shot
 ## leaves when it reaches zero. < 0 = no shot pending.
@@ -228,6 +230,7 @@ func _build_sprite() -> void:
 	], _rusher_shift, rusher_height,
 		Tuning.RUSHER_SPRITE_SCALE, Tuning.RUSHER_ANIM_FPS)
 	_rusher_drawn_height = rusher_height[0]
+	_rusher_death_frames = SpriteSequence.load_frames(Tuning.RUSHER_DEATH_ART_DIR)
 	var brute_height := [0.0]
 	_brute_sprite = _build_sprite_from(&"idle", Tuning.BRUTE_IDLE_ART_DIR, [
 		[&"walk", Tuning.BRUTE_WALK_ART_DIR, true],
@@ -586,7 +589,8 @@ func _emit_corpse() -> void:
 	corpse_requested.emit(tex, _sprite.flip_h, _sprite.scale, _sprite.position - feet_off,
 		global_position + feet_off,
 		_drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0,
-		_weapon_dir if _by_weapon else Vector2.ZERO)
+		_weapon_dir if _by_weapon else Vector2.ZERO,
+		_rusher_death_frames if kind == Kind.RUSHER else [])
 
 
 func _physics_process(delta: float) -> void:
