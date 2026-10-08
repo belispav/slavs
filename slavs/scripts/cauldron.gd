@@ -136,7 +136,9 @@ func hit() -> void:
 		return
 	hp -= 1
 	_flash = 1.0
-	Sfx.play(&"barrel_hit", global_position)
+	# A8 (2026-10-07): the pot is metal, so a hit rings (the wooden barrel knock
+	# stays with the barrels).
+	Sfx.play(&"armor_clang", global_position)
 	if hp <= 0:
 		_light()
 
