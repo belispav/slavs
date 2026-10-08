@@ -1,14 +1,14 @@
 # KDE JE ČO — mapa priečinka Slavs fight back
 
-Stav k 2026-10-07. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
+Stav k 2026-10-08. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
 Claude: túto mapu aktualizuj pri každom presune alebo pridaní súboru v koreni.
 
 ## Balíky – poradie práce (master: `BALIKY_poradie.md`)
 
 Pavel rieši každý balík v novej session (Sonnet). Na rade je balík so stavom NA RADE. Pri uzavretí balíka zmeň stav tu, v `BALIKY_poradie.md` aj v poli `BALIKY` v `KDE_JE_CO.html`; úlohy v balíku majú v dashboarde pole `b` (číslo balíka).
 
-1. **Úder má váhu** – NA RADE – A1, A2, A3, A4, A5, A6, A8, E1, P1, A14
-2. **Smrť nepriateľa a stopy boja** – čaká – A9, T36, A10, A12, A11
+1. **Úder má váhu** – HOTOVÉ 2026-10-08 (kódy sú v `_archiv/TODO_hotove.md`)
+2. **Smrť nepriateľa a stopy boja** – NA RADE – A9, T36, A10, A12, A11
 3. **Féroví a čitateľní nepriatelia** – čaká – F2, D4, T42
 4. **Prvá odmena: zber a séria (+ T09)** – čaká – A15, D1, A16, J4, H1, H3, T09
 5. **Hrdina v pohybe** – čaká – B1, T37, B2, A17
@@ -51,24 +51,16 @@ T42 KATALÓG EFEKTOV (Pavel 2026-10-07): postupne spisovať efekty, ktoré môž
 T43 NÁPAD, VYLEPŠENIE SEKERY (Pavel 2026-10-07): sekera zraňujúca aj cestou späť (bumerang) môže byť neskôr vylepšenie. Aj vtedy cesta späť NESMIE odhadzovať. V kóde je vypínač `Tuning.AXE_RETURN_HURTS` (false). {I ★★ nízka}
 T47 NA FINÁLNE LADENIE (Pavel 2026-10-07): ovládanie páčky ľavého palca (rýchlosť rastie od stredu, pri otočke palec prechádza blízko stredu a hrdina spomalí) je teraz dobré (stred páčky sa ťahá za palcom, `free_move_anchor_slides`). Doladiť pri záverečnom teste hry: najviac to bude vadiť pri zamknutých súbojoch s bossmi (freeze fight), lebo pri behu doprava je hrdina v strede obrazovky a palec je ďaleko od neho; blízko sa palec dostane len pri ceste hrdinu k ľavému okraju. Nastroje: posuvníky „posun palca pre plnú rýchlosť“ (vľavo, vpravo + hore/dole), pomer hore-dole, zastavenie počas hodu `throw_move_factor` (0). {O ★★ nízka}
 
-### Nápady z výskumu 2026-10-07 (148; čakajú na Pavlov výber; detail a zdroje v `NAPADY_vylepsenia.md`)
+### Nápady z výskumu 2026-10-07 (138 otvorených z 148; čakajú na Pavlov výber; detail a zdroje v `NAPADY_vylepsenia.md`)
 
 Oblasti: A Pocit z úderu, B Hrdina a pohyb, C Vizuál a atmosféra, D Zvuk a hudba, E Vibrácie, F Nepriatelia, G Bossovia, H Klietky a zajatci, I Zbrane a schopnosti, J Beh a level, K Meta-progresia, L Odmeny (dopamín), M Udržanie hráča, N Prvé minúty, O Ovládanie a HUD, P Prístupnosť, Q Príbeh a svet, R Virálnosť, S Marketing, Z Monetizácia, U Technika a kvalita, V Stránka v Google Play.
 
-A1 Zastavenie času pri zásahu (hit-stop) {A ★★★ nízka}
-A2 Biely záblesk zasiahnutého nepriateľa {A ★★★ nízka}
-A3 Otras obrazovky podľa sily {A ★★★ nízka}
-A4 Mierny posun kamery v smere hodu {A ★ nízka}
-A5 Čísla poškodenia nad nepriateľmi {A ★★ nízka}
-A6 Kritický zásah {A ★★ nízka}
 A7 Iskry a kúsky v mieste zásahu {A ★★ stredná}
-A8 Zvuk zásahu podľa materiálu {A ★★ stredná}
 A9 Smrť nepriateľa s pointou {A ★★★ stredná}
 A10 Spomalenie pri poslednom zabití {A ★★ nízka}
 A11 Rozbitné prostredie {A ★★ stredná}
 A12 Stopy boja zostávajú na zemi {A ★★ stredná}
 A13 Náprah a podržaná snímka úderu {A ★★ nízka}
-A14 Krátka nesmrteľnosť hrdinu po zásahu {A ★★★ nízka}
 A15 Odmeny sa „vcucnú“ k hrdinovi {A ★★★ nízka}
 A16 Rastúci tón pri sérii {A ★★ nízka}
 A17 Červený okraj obrazovky pri nízkom zdraví {A ★★ nízka}
@@ -89,7 +81,6 @@ D3 Slovanský zvukový podpis {D ★★ stredná}
 D4 Zvukové varovanie pred útokom {D ★★ nízka}
 D5 Zajatci ďakujú v slovanských jazykoch {D ★★ nízka}
 D6 Stíšenie hudby pri dôležitej udalosti {D ★ nízka}
-E1 Vibrácie pri dôležitých momentoch {E ★★ nízka}
 F1 Odlišné siluety podľa role {F ★★★ stredná}
 F2 Varovanie pred každým útokom {F ★★★ nízka}
 F3 Elitní nepriatelia s istou odmenou {F ★★★ stredná}
@@ -163,7 +154,6 @@ O3 Podpora ovládača {O ★★ stredná}
 O4 Čistá obrazovka {O ★★ nízka}
 O5 Okamžitá pauza pri prerušení {O ★★★ nízka}
 O6 Šípky na nepriateľov mimo obrazovky {O ★★ nízka}
-P1 Vypínače efektov {P ★★ nízka}
 P2 Nespoliehať sa len na farbu {P ★ nízka}
 P3 Ľahší režim {P ★★ stredná}
 P4 Titulky hlášok {P ★ nízka}

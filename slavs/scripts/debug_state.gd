@@ -42,7 +42,8 @@ var show_hit_zones: bool = false
 var disable_thrower: bool = false
 
 ## Same for the brute (2026-10-04).
-var disable_brute: bool = false
+## Pavel 2026-10-07: default game = no brutes and one gunman at a time.
+var disable_brute: bool = true
 
 ## How many of each kind may be alive at once, for testing - separate from
 ## Tuning.ENEMY_MAX_ALIVE, which stays the real design ceiling (34, per
@@ -54,7 +55,7 @@ var disable_brute: bool = false
 ## Now defaulted to 3 for Pavel's art-judging sessions - see the block above.
 ## The real ceiling for play is Tuning.ENEMY_MAX_ALIVE and it has not moved.
 var max_rusher_alive: int = 3
-var max_thrower_alive: int = 3
+var max_thrower_alive: int = 1
 var max_brute_alive: int = 1
 
 ## Background filter: NEAREST (false) or LINEAR (true).

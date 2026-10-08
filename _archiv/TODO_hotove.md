@@ -31,3 +31,14 @@ T33 HOTOVÉ 2026-10-07 (Pavel: OK): odhodenie po zásahu 0,4 s; bežec 90, strel
 T45 HOTOVÉ 2026-10-07 (Pavel: OK): srdiečka nad postavami (`hearts.gd`, panel 0/1/2, predvolené 2).
 T46 HOTOVÉ 2026-10-07 (Pavel: OK): panel UKAZ ZONY ZASAHU (kruh sekery, obdĺžniky zásahu); polomer sekery zapečený na 20; páčka ľavého palca s posúvajúcim sa stredom (pohyb je oveľa lepší).
 ŽIVOTY 2026-10-07 (Pavel): bežec 2 (bez zmeny), strelec 1 (bolo 4), tučniak/brut 1 (bolo 10). Hrdina 5.
+BALÍK 1 Úder má váhu HOTOVÝ 2026-10-08 (Pavel: otestované na telefóne, sedí)
+A1 HOTOVÉ 2026-10-08 (Pavel: OK): zastavenie pri zásahu sekery 30 ms (pri zabití 1,8x dlhšie, najmenší odstup 0,18 s medzi zastaveniami); vypínač + posuvník v paneli.
+A2 HOTOVÉ 2026-10-08 (Pavel: OK): biely záblesk zasiahnutého nepriateľa 40 ms (len ak zásah nezabije; mŕtvy zmizne hneď, telo rieši balík 2).
+A3 HOTOVÉ 2026-10-08 (Pavel: OK): otras obrazovky pri zásahu sekerou a zabití, zapečené x1,5 (3,75 / 7,5).
+A4 HOTOVÉ 2026-10-08 (Pavel: OK): kopnutie kamery v smere letu sekery, zapečené x1,5 (7,5 / 13,5). Pavel: otras a kopnutie sa zlievajú, rozlíši ich vypnutím jedného.
+A5 HOTOVÉ 2026-10-08 (Pavel: OK): čísla poškodenia nad nepriateľom, veľkosť písma 16; samotné písmo sa Pavlovi nepáči, vyberie sa pri finálnom ladení (T51).
+A6 HOTOVÉ 2026-10-08 (Pavel: OK): kritický zásah 15 % (berie 2 životy, žlté 'KRIT 2!', efekty x1,5); šanca sa bude líšiť podľa zbrane a vylepšení (T50).
+A8 HOTOVÉ 2026-10-08 (Pavel: OK): zvuk zásahu podľa materiálu: telo `enemy_hit`, brnenie `armor_clang`, drevo `barrel_hit`; kotol je teraz kov (`armor_clang`). Zvuky sú zatiaľ náhradné, nové súbory na materiál ešte nie sú.
+E1 HOTOVÉ 2026-10-08 (Pavel: OK): vibrácia pri zásahu sekerou 200 ms (pri zabití 300 ms); pod 100 ms nič necítiť. Jemnejšie podľa útočníka a počtu životov: T49.
+P1 HOTOVÉ 2026-10-08 (Pavel: OK): každý nový efekt balíka 1 má vypínač a posuvník v paneli s popisom; tlačidlo TEST VIBRACIE.
+A14 HOTOVÉ 2026-10-08 (Pavel: OK): potvrdené: po zásahu je hrdina 0,9 s nesmrteľný a červeno bliká (`Tuning.PLAYER_IFRAMES`).

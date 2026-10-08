@@ -9,8 +9,8 @@ plan (`KDE_JE_CO.html`, section "Balíky", and chip filter "Balík" in ToDo's).
 
 | # | Package (Slovak name for Pavel) | Status |
 |---|---|---|
-| 1 | Úder má váhu | **NEXT (na rade)** |
-| 2 | Smrť nepriateľa a stopy boja | waiting |
+| 1 | Úder má váhu | DONE 2026-10-08 |
+| 2 | Smrť nepriateľa a stopy boja | **NEXT (na rade)** |
 | 3 | Féroví a čitateľní nepriatelia | waiting |
 | 4 | Prvá odmena: zber a séria (+ T09) | waiting |
 | 5 | Hrdina v pohybe | waiting |
@@ -40,7 +40,9 @@ here and the next one to NEXT. Pavel may come back with feedback or reorder; his
 8. Never run the local Claude Desktop session and a cloud session at the same time (git conflicts;
    a stuck `.git/index.lock` blocks commits).
 
-## Package 1 - Úder má váhu (hit feel)
+## Package 1 - Úder má váhu (hit feel) - DONE 2026-10-08
+
+Closed after Pavel's phone test. Baked: hit-stop 30 ms, white flash 40 ms, shake and kick x1.5, axe-hit buzz 200 ms, damage number size 16, crit 15 %. Code: `enemy.gd` signal `weapon_hit` (only hero-weapon hits) -> `main.gd _on_weapon_hit`; numbers in `fx.gd`; white flash = shared shader material on the sprites (`enemy.gd _set_white`). Note for package 2: a killed enemy is hidden at once, so the white flash is not seen on kills - the corpse visual belongs there. Open: T48 (enemies stuck at barrels/cauldron near the screen edge, esp. bottom), T49 vibration by attacker, T50 weapon features list, T51 damage number font. Original brief below (kept for reference).
 
 Codes: **A1** hit-stop, **A2** full white hit flash, **A3** screen shake also on axe hits/kills,
 **A4** small camera kick in the throw direction, **A5** damage numbers, **A6** critical hit,

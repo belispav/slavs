@@ -8,7 +8,7 @@ Local Claude Desktop and cloud both work - never in both at once.
 CLAUDE.md was shortened on 2026-10-05 (done, no longer a task).
 
 ## WORK PACKAGES (Pavel 2026-10-07) - read `BALIKY_poradie.md` FIRST
-Pavel now works in packages of ToDo items, each in a clean Sonnet session. `BALIKY_poradie.md` says which package is NEXT (now: **Package 1 - Úder má váhu**: A1, A2, A3, A4, A5, A6, A8, E1, P1; confirm A14 as done), what already exists in code, and how to close a package. Work only on that package unless Pavel says otherwise. Research ideas with codes A1...Z8: `NAPADY_vylepsenia.md`.
+Pavel now works in packages of ToDo items, each in a clean Sonnet session. `BALIKY_poradie.md` says which package is NEXT (now: **Package 2 - Smrť nepriateľa a stopy boja**: A9, T36, A10, A12, A11; Package 1 was closed 2026-10-08), what already exists in code, and how to close a package. Work only on that package unless Pavel says otherwise. Research ideas with codes A1...Z8: `NAPADY_vylepsenia.md`.
 
 ## What comes next (Pavel's call; he brings device-test feedback himself)
 IDs [T..] = Pavel's ToDo list, see `KDE_JE_CO.md`.
@@ -17,3 +17,6 @@ IDs [T..] = Pavel's ToDo list, see `KDE_JE_CO.md`.
 3. [T07] Pavel tests on another phone in the coming days (controls + screen at another aspect ratio); wait for his feedback.
 4. [T04] **TODO - story rework (Pavel, 2026-10-05).** Pavel works on a new story offline, no rush. Do not start it; wait until he brings his draft. Draupnir material in `_archiv/draupnir_koncept/` is not agreed.
 5. [T22, T25, T26, T28-T33, T45, T46] DONE and tested on phone 2026-10-06/07 (details in `_archiv/TODO_hotove.md`). Baked 2026-10-07: solid body 60x30, push 0.4 s, axe hit radius 20, axe damages only OUT, HP rusher 2 / thrower 1 / brute 1. **[T44] waits for Pavel** (`PANEL_prvky.xlsx`, A/N column; then `python3 tools/panel_catalog.py import`). [T34-T43, T47] are ideas / final-tuning notes only, not started (T41/T42 stun + effect catalog: when tuning final characters; T47: left-stick feel for boss freeze fights).
+
+## State after package 1 (2026-10-08)
+Default game now starts with brutes OFF and max 1 gunman (`debug_state.gd`; Pavel's wish, panel can turn them back on). New open items from the package-1 test: **T48** enemies get stuck at a barrel/cauldron near the screen edge (seen: 4 rushers stacked above each other at a cauldron, endlessly dodging each other) - Pavel said "we tune this later", do not start unprompted; T49 vibration by attacker/lives lost; T50 weapon features list (crit chance per weapon); T51 damage number font + size at final tuning.

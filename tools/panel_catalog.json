@@ -279,7 +279,7 @@
 		"name": "VYPNUT TUCNAKOV",
 		"section": "TEST",
 		"type": "switch",
-		"value": "VYP"
+		"value": "ZAP"
 	},
 	{
 		"name": "kolko bezcov naraz (test)",
@@ -291,7 +291,7 @@
 		"name": "kolko strelcov naraz (test)",
 		"section": "TEST",
 		"type": "slider",
-		"value": "3.0"
+		"value": "1.0"
 	},
 	{
 		"name": "kolko tucnakov naraz (test)",
