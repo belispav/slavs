@@ -210,12 +210,14 @@ var throw_windup_speed: float = THROW_WINDUP_SPEED
 ## mechanic; final look may become PixelLab clips later.
 const FX_BLOOD_HIT: int = 8
 const FX_BLOOD_DEATH: int = 30
+## A9/A12 blood splashed where a body lands (half of it on the first touch).
+const FX_BLOOD_CORPSE: int = 10
 const FX_WOOD_HIT: int = 6
 const FX_WOOD_BREAK: int = 30
 ## The hero's own blood when something hits him.
 const FX_BLOOD_PLAYER: int = 14
 ## How long blood/splinters lie on the ground before they are gone (s).
-const FX_STAIN_TIME: float = 3.0
+const FX_STAIN_TIME: float = 12.0
 var fx_stain_time: float = FX_STAIN_TIME
 var fx_enabled: bool = true
 
@@ -283,6 +285,27 @@ const KICK_KILL: float = 13.5
 const CAM_KICK_DECAY: float = 14.0
 var fx_kick_on: bool = true
 var kick_strength: float = 1.0
+## Package 2 "Smrt nepriatela a stopy boja" (2026-10-08). Every effect has a switch.
+## A9 the body of a killed enemy flies along the blow, spins, lands, bounces once.
+## corpse_power scales speed + spin (1 = base); corpse_linger = seconds it lies.
+const CORPSE_LINGER: float = 2.0
+var fx_corpse_on: bool = true
+var corpse_power: float = 1.0
+var corpse_linger: float = CORPSE_LINGER
+## T36 how a body vanishes: true = puff of smoke, false = plain fade.
+var fx_corpse_smoke_on: bool = true
+## A10 short slow-motion on the last kill of a fight (and on every brute).
+## "Last" = no other living enemy within SLOWMO_RANGE of the hero, after a
+## streak of SLOWMO_MIN_STREAK kills each less than SLOWMO_STREAK_GAP s apart.
+const SLOWMO_SCALE: float = 0.3
+const SLOWMO_MS: float = 600.0
+const SLOWMO_RANGE: float = 900.0
+const SLOWMO_MIN_STREAK: int = 3
+const SLOWMO_STREAK_GAP: float = 3.0
+const SLOWMO_COOLDOWN: float = 5.0
+var fx_slowmo_on: bool = true
+var slowmo_scale: float = SLOWMO_SCALE
+var slowmo_ms: float = SLOWMO_MS
 ## E1 short phone buzz when the hero's weapon hits (kills x1.5 longer).
 ## Pavel's phone test 2026-10-07: under 100 ms nothing is felt, ~100 ms a weak
 ## tick, 200 ms feels like a hit, 300 ms better still; so 200 for now (kills

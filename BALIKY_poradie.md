@@ -10,7 +10,7 @@ plan (`KDE_JE_CO.html`, section "Balíky", and chip filter "Balík" in ToDo's).
 | # | Package (Slovak name for Pavel) | Status |
 |---|---|---|
 | 1 | Úder má váhu | DONE 2026-10-08 |
-| 2 | Smrť nepriateľa a stopy boja | **NEXT (na rade)** |
+| 2 | Smrť nepriateľa a stopy boja | **IN PROGRESS - code done 2026-10-08 (A9, T36, A10, A12), awaiting Pavel's phone test; A11 open (needs props art, ask Pavel)** |
 | 3 | Féroví a čitateľní nepriatelia | waiting |
 | 4 | Prvá odmena: zber a séria (+ T09) | waiting |
 | 5 | Hrdina v pohybe | waiting |

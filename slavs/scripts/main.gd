@@ -319,6 +319,12 @@ var cauldrons: Array = []
 var _feet_h_applied: float = -1.0
 var _feet_w_applied: float = -1.0
 var fx   # fx.gd - blood, splinters, smoke
+var corpses   # corpses.gd - bodies of killed enemies (A9, T36)
+## A10 slow-motion bookkeeping (real-time ms) and the kill streak that arms it.
+var _slowmo_end_ms: int = 0
+var _slowmo_next_ms: int = 0
+var _streak: int = 0
+var _last_kill_ms: int = 0
 var _vibrate_cd: float = 0.0
 ## Hit-stop bookkeeping, real-time milliseconds (Time.get_ticks_msec).
 var _hitstop_end_ms: int = 0
@@ -1263,7 +1269,12 @@ func _build_fx() -> void:
 	fx.set_script(load("res://scripts/fx.gd"))
 	add_child(fx)
 	fx.setup(_ground_z_index())
+	corpses = Node2D.new()
+	corpses.set_script(load("res://scripts/corpses.gd"))
+	add_child(corpses)
+	corpses.setup(fx)
 	for e in enemies:
+		e.corpse_requested.connect(_on_enemy_corpse)
 		e.hurt.connect(_on_body_hurt)
 		e.weapon_hit.connect(_on_weapon_hit)
 		e.armor_deflected.connect(_on_armor_deflected)
@@ -1320,12 +1331,47 @@ func _hit_stop(sec: float, force: bool) -> void:
 
 
 func _hitstop_tick() -> void:
-	if _hitstop_end_ms > 0 and (Time.get_ticks_msec() >= _hitstop_end_ms \
-			or not Tuning.fx_hitstop_on):
-		_hitstop_clear()
+	var now: int = Time.get_ticks_msec()
+	if _hitstop_end_ms > 0 and (now >= _hitstop_end_ms or not Tuning.fx_hitstop_on):
+		_hitstop_end_ms = 0
+	if _slowmo_end_ms > 0 and (now >= _slowmo_end_ms or not Tuning.fx_slowmo_on):
+		_slowmo_end_ms = 0
+	var want: float = 1.0
+	if _hitstop_end_ms > 0:
+		want = Tuning.HITSTOP_SCALE
+	elif _slowmo_end_ms > 0:
+		want = Tuning.slowmo_scale
+	if not is_equal_approx(Engine.time_scale, want):
+		Engine.time_scale = want
+
+
+## A10: called on every kill. Slow-motion starts when the kill was a brute, or
+## the last living enemy near the hero after a streak of quick kills.
+func _try_slowmo() -> void:
+	var now: int = Time.get_ticks_msec()
+	if float(now - _last_kill_ms) / 1000.0 > Tuning.SLOWMO_STREAK_GAP:
+		_streak = 0
+	_streak += 1
+	_last_kill_ms = now
+	if not Tuning.fx_slowmo_on or now < _slowmo_next_ms:
+		return
+	var brute: bool = false
+	var others: bool = false
+	for e in enemies:
+		if not e.active:
+			continue
+		if e.hp <= 0:
+			brute = e.kind == e.Kind.BRUTE   # the one dying right now
+		elif absf(e.global_position.x - player.global_position.x) < Tuning.SLOWMO_RANGE:
+			others = true
+	if not (brute or (not others and _streak >= Tuning.SLOWMO_MIN_STREAK)):
+		return
+	_slowmo_next_ms = now + int(Tuning.SLOWMO_COOLDOWN * 1000.0)
+	_slowmo_end_ms = maxi(now, _hitstop_end_ms) + int(Tuning.slowmo_ms)
 
 
 func _hitstop_clear() -> void:
+	_slowmo_end_ms = 0
 	_hitstop_end_ms = 0
 	Engine.time_scale = 1.0
 
@@ -1382,8 +1428,14 @@ func _vibrate(ms: int, amp: float = 1.0, force: bool = false) -> void:
 	Input.vibrate_handheld(ms, clampf(Tuning.vibrate_strength * amp, 0.0, 1.0))
 
 
+func _on_enemy_corpse(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2,
+		feet: Vector2, body_h: float, dir: Vector2) -> void:
+	corpses.spawn(tex, flip, art_scale, off, feet, body_h, dir, _away_from_player(feet))
+
+
 func _on_enemy_died(_at: Vector2) -> void:
 	kills += 1
+	_try_slowmo()
 	if randf() < Tuning.HERO_BARK_ON_KILL:
 		Sfx.play(&"hero_bark", player.global_position)
 
@@ -1454,6 +1506,8 @@ func _clear_field() -> void:
 	if axe != null:
 		axe.recall()
 	_barrel_place_frames = 2
+	if corpses != null:
+		corpses.clear()
 	for e in enemies:
 		if e.active:
 			e.despawn()

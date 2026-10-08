@@ -24,7 +24,7 @@ extends Node2D
 
 enum Type { BLOOD, WOOD, SMOKE }
 
-const MAX_PARTICLES: int = 700
+const MAX_PARTICLES: int = 1200
 const GRAVITY: float = 900.0
 
 # Per particle, parallel arrays (no per-particle objects to allocate).
@@ -153,6 +153,25 @@ func sparks(at: Vector2, away: float) -> void:
 			60.0 + randf_range(-10.0, 10.0), randf_range(-60.0, 160.0),
 			randf_range(0.12, 0.3), 4.0,
 			SPARK_COLOURS[randi() % SPARK_COLOURS.size()])
+
+
+## T36: a body vanishes in a puff of smoke.
+func corpse_puff(feet: Vector2) -> void:
+	if Tuning.fx_enabled:
+		_puff(feet - Vector2(0.0, 10.0), 9, 22.0)
+
+
+## A9/A12: a body hit the ground - blood splashes out and stays as a stain
+## (more when it finally lies down).
+func corpse_landed(g: Vector2, final: bool) -> void:
+	if not Tuning.fx_enabled:
+		return
+	for i in (Tuning.FX_BLOOD_CORPSE if final else Tuning.FX_BLOOD_CORPSE / 2):
+		_spawn(Type.BLOOD, g + Vector2(randf_range(-12.0, 12.0), randf_range(-4.0, 4.0)),
+			Vector2(randf_range(-70.0, 70.0), randf_range(-25.0, 25.0)),
+			randf_range(2.0, 16.0), randf_range(60.0, 170.0),
+			Tuning.fx_stain_time, 4.0 if randf() < 0.6 else 6.0,
+			BLOOD_COLOURS[randi() % BLOOD_COLOURS.size()])
 
 
 func _puff(feet: Vector2, n: int, spread: float) -> void:

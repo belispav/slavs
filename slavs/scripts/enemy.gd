@@ -19,6 +19,10 @@ signal hurt(feet: Vector2, height: float, fatal: bool)
 ## unknown), `amount` the damage dealt, `crit` a critical hit. Drives the hit
 ## feel and the damage number in main.gd.
 signal weapon_hit(at: Vector2, dir: Vector2, fatal: bool, amount: int, crit: bool)
+## A9: the picture of the body at the moment of death, for corpses.gd.
+## `off` = sprite position relative to the feet, `dir` = way of the blow (zero = unknown).
+signal corpse_requested(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2,
+		feet: Vector2, body_h: float, dir: Vector2)
 signal throw_requested(from: Vector2, dir: Vector2)
 ## A rusher's swing landing. Not the same moment as touching the player - see
 ## RUSHER_MELEE_RANGE and _update_attack_timer.
@@ -568,8 +572,21 @@ func damage(amount: int) -> void:
 	else:
 		Sfx.play(&"enemy_hit", global_position)
 	if hp <= 0:
+		_emit_corpse()
 		died.emit(global_position)
 		despawn()
+
+
+## A9: hand the dying frame to corpses.gd before this enemy goes back to the pool.
+func _emit_corpse() -> void:
+	if _sprite == null or _sprite.sprite_frames == null:
+		return
+	var tex: Texture2D = _sprite.sprite_frames.get_frame_texture(_sprite.animation, _sprite.frame)
+	var feet_off := Vector2(0.0, SIZE.y * 0.5)
+	corpse_requested.emit(tex, _sprite.flip_h, _sprite.scale, _sprite.position - feet_off,
+		global_position + feet_off,
+		_drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0,
+		_weapon_dir if _by_weapon else Vector2.ZERO)
 
 
 func _physics_process(delta: float) -> void:

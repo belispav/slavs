@@ -228,7 +228,7 @@ func _build_panel() -> void:
 	fx_toggle.button_pressed = Tuning.fx_enabled
 	rows.add_child(fx_toggle)
 	fx_toggle.toggled.connect(func(on: bool) -> void: Tuning.fx_enabled = on)
-	_add_slider("ako dlho lezi krv na zemi (s)", 0.5, 15.0, 0.5, Tuning.fx_stain_time,
+	_add_slider("ako dlho lezi krv na zemi (s)", 0.5, 60.0, 0.5, Tuning.fx_stain_time,
 		func(v: float) -> void: Tuning.fx_stain_time = v)
 
 	# Explosive cauldron (cauldron.gd). Added 2026-10-04.
@@ -308,6 +308,27 @@ func _build_panel() -> void:
 		Tuning.vibrate_axe_ms,
 		"Telefon zavibruje, ked tvoja sekera zasiahne nepriatela. Posuvnik = ako dlho (pri zabiti 1,5x dlhsie). Odladene: pod 100 ms nic, 200 ms je citit ako zasah, 300 ms je silnejsi. Funguje len ak je zapnuty aj hlavny vypinac VIBRACIE (ten je v paneli skryty a je zapnuty).",
 		func(v: float) -> void: Tuning.vibrate_axe_ms = v)
+
+	# Package 2 "Smrt nepriatela a stopy boja" (2026-10-08): body of a killed enemy,
+	# how it vanishes, slow-motion on the last kill.
+	_add_toggle("TELO PO SMRTI", Tuning.fx_corpse_on,
+		func(on: bool) -> void: Tuning.fx_corpse_on = on)
+	_add_slider_d("sila odletu tela", 0.0, 3.0, 0.1, Tuning.corpse_power,
+		"Zabity nepriatel odleti v smere uderu, pretoci sa, dopadne a raz poskoci. Posuvnik = nasobok sily (1 = zakladna, 0 = len sa zosunie, 3 = vyletí daleko).",
+		func(v: float) -> void: Tuning.corpse_power = v)
+	_add_slider_d("ako dlho telo lezi (s)", 0.0, 10.0, 0.5, Tuning.corpse_linger,
+		"Kolko sekund telo lezi na zemi, kym zmizne. Telies naraz je najviac 24, najstarsie sa vymeni.",
+		func(v: float) -> void: Tuning.corpse_linger = v)
+	_add_toggle("TELO ZMIZNE V DYME", Tuning.fx_corpse_smoke_on,
+		func(on: bool) -> void: Tuning.fx_corpse_smoke_on = on)
+	_add_toggle("SPOMALENIE PRI POSLEDNOM ZABITI", Tuning.fx_slowmo_on,
+		func(on: bool) -> void: Tuning.fx_slowmo_on = on)
+	_add_slider_d("dlzka spomalenia (ms)", 100.0, 1500.0, 50.0, Tuning.slowmo_ms,
+		"Cas sa spomali po zabiti posledneho nepriatela v boji (po serii aspon 3 rychlych zabiti) a po kazdom zabitom brutovi. Posuvnik = ako dlho (v skutocnych ms). Najviac raz za 5 s.",
+		func(v: float) -> void: Tuning.slowmo_ms = v)
+	_add_slider_d("rychlost pocas spomalenia", 0.1, 0.8, 0.05, Tuning.slowmo_scale,
+		"Aky rychly je cas pocas spomalenia (1 = normalne, 0.3 = tretina rychlosti, 0.1 = takmer stoji).",
+		func(v: float) -> void: Tuning.slowmo_scale = v)
 	var vib_test := Button.new()
 	vib_test.text = "TEST VIBRACIE (rovnaka ako pri mojom zasahu)"
 	vib_test.custom_minimum_size = Vector2(0, 52)
