@@ -292,10 +292,13 @@ const VIBRATE_AXE_AMP: float = 1.0
 var vibrate_axe_on: bool = true
 var vibrate_axe_ms: float = VIBRATE_AXE_HIT_MS
 ## A5 floating damage numbers above the victim (font size in world units).
-const DAMAGE_NUMBER_SIZE: float = 26.0
+## Pavel's phone test 2026-10-07: 16. He dislikes the font itself (default
+## engine font) - font and size get re-tuned with the final game (T51).
+const DAMAGE_NUMBER_SIZE: float = 16.0
 var fx_numbers_on: bool = true
 var damage_number_size: float = DAMAGE_NUMBER_SIZE
-## A6 critical hit: CRIT_CHANCE percent of the hero's weapon hits do
+## A6 critical hit (15 % confirmed 2026-10-07; later it comes from the weapon
+## and its upgrades, see T50): CRIT_CHANCE percent of the hero's weapon hits do
 ## CRIT_DAMAGE instead of 1 (a 2 HP rusher falls in one blow) and every hit-feel
 ## effect above is CRIT_FX_FACTOR times stronger. The number turns yellow.
 const CRIT_CHANCE: float = 15.0
