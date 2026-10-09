@@ -214,4 +214,5 @@ ToDo work is done in numbered packages, one clean session per package. `BALIKY_p
 - **Combat design:** no hero melee (mass shooter has no time for dodging single swings). Enemy attack = commitment: velocity zero while attacking. Enemy hurtboxes are sized from the DRAWN height. Depth sort by world Y (`Tuning.depth_z`).
 - **Enemy rules:** two idles per enemy type (unaware vs ready); roles/factions never ethnicity (turban/glowing eyes removed from rusher and gunman, the ethnicity TODO is closed for both - applies to every new enemy). Hero is Slavic escaped slave; setting is 15th century.
 - **Headless check before every push:** Godot 4.7.1, `--headless --import`, then `--quit-after N` with a temporary test appended to a COPY of `main.gd`; `xvfb-run ... --rendering-driver opengl3` for screenshots (method in history, "Hero weapon" entry).
+- **Everything is a prototype for now (Pavel 2026-10-09):** all sounds (placeholders, synthesised pot sounds) and every other game aspect get a full review at final tuning; do not polish or re-raise them before then.
 - Pavel's one-line verdicts on device are the acceptance test; "zatial mi to nevadi" means parked, not forgotten.
