@@ -1,6 +1,6 @@
 # KDE JE ČO — mapa priečinka Slavs fight back
 
-Stav k 2026-10-08. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
+Stav k 2026-10-09. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
 Claude: túto mapu aktualizuj pri každom presune alebo pridaní súboru v koreni.
 
 ## Balíky – poradie práce (master: `BALIKY_poradie.md`)
@@ -8,8 +8,8 @@ Claude: túto mapu aktualizuj pri každom presune alebo pridaní súboru v koren
 Pavel rieši každý balík v novej session (Sonnet). Na rade je balík so stavom NA RADE. Pri uzavretí balíka zmeň stav tu, v `BALIKY_poradie.md` aj v poli `BALIKY` v `KDE_JE_CO.html`; úlohy v balíku majú v dashboarde pole `b` (číslo balíka).
 
 1. **Úder má váhu** – HOTOVÉ 2026-10-08 (kódy sú v `_archiv/TODO_hotove.md`)
-2. **Smrť nepriateľa a stopy boja** – NA RADE – A9, T36, A10, A12, A11
-3. **Féroví a čitateľní nepriatelia** – čaká – F2, D4, T42
+2. **Smrť nepriateľa a stopy boja** – HOTOVÉ 2026-10-09 (kódy sú v `_archiv/TODO_hotove.md`)
+3. **Féroví a čitateľní nepriatelia** – NA RADE – F2, D4, T42
 4. **Prvá odmena: zber a séria (+ T09)** – čaká – A15, D1, A16, J4, H1, H3, T09
 5. **Hrdina v pohybe** – čaká – B1, T37, B2, A17
 
@@ -41,7 +41,6 @@ T49 NÁPAD (Pavel 2026-10-07, na neskôr): vibrácia podľa toho, KTO nás zasia
 T23 NÁPAD (neskôr, dizajn): nepriatelia hľadajú inú trasu a obídu hrdinu. Dôsledok: obkľúčia ho a nebude vedieť ujsť. Rozhodnúť neskôr, či to chceme. (Pavel 2026-10-06) {F ★★ stredná}
 T34 NA ZVÁŽENIE/VYSKÚŠANIE: úder zbrane má mať okolo seba „vlnu“ znázorňujúcu švih alebo sek (oblúk švihu, pich v tvare U alebo V), nakreslenú akoby zo vzduchu. To isté skúsiť pri zásahu nepriateľa, aby bol vidieť „úder“, hoci tam už je krv. (Pavel 2026-10-06) {A ★★ stredná}
 T35 Vo vzduchu má občas niečo poletovať podľa prostredia: lístie, dážď, sneh, hmla. Rôzna veľkosť (ten istý tvar raz v pôvodných pixeloch, inokedy 2x alebo 3x väčší). (Pavel 2026-10-06) {C ★ stredná}
-T36 NA ZVÁŽENIE: ako miznú nepriatelia po smrti. Zatiaľ úvaha o strate v dyme, možno príde iný nápad. (Pavel 2026-10-06) {A ★★ stredná}
 T37 NA VYSKÚŠANIE: za postavami pri chôdzi občas efekt zvíreného prachu, snehu alebo dymu; v podstate tá istá animácia, farba podľa podkladu, po ktorom chodia. (Pavel 2026-10-06) {B ★ stredná}
 T38 Útočníci vo vzduchu a hádzané veci s oblúkovou dráhou sa napodobnia tieňom: predmet opustí ruku a opisuje oblúk, tieň ide lineárne po zemi a nakoniec sa stretnú, čo vytvorí dojem letu. (Pavel 2026-10-06) {C ★ stredná}
 T39 Niektoré veci majú znázorniť vietor: vlajky, trsy trávy, hmla, dym. (Pavel 2026-10-06) {C ★ stredná}
@@ -56,10 +55,6 @@ T47 NA FINÁLNE LADENIE (Pavel 2026-10-07): ovládanie páčky ľavého palca (r
 Oblasti: A Pocit z úderu, B Hrdina a pohyb, C Vizuál a atmosféra, D Zvuk a hudba, E Vibrácie, F Nepriatelia, G Bossovia, H Klietky a zajatci, I Zbrane a schopnosti, J Beh a level, K Meta-progresia, L Odmeny (dopamín), M Udržanie hráča, N Prvé minúty, O Ovládanie a HUD, P Prístupnosť, Q Príbeh a svet, R Virálnosť, S Marketing, Z Monetizácia, U Technika a kvalita, V Stránka v Google Play.
 
 A7 Iskry a kúsky v mieste zásahu {A ★★ stredná}
-A9 Smrť nepriateľa s pointou {A ★★★ stredná}
-A10 Spomalenie pri poslednom zabití {A ★★ nízka}
-A11 Rozbitné prostredie {A ★★ stredná}
-A12 Stopy boja zostávajú na zemi {A ★★ stredná}
 A13 Náprah a podržaná snímka úderu {A ★★ nízka}
 A15 Odmeny sa „vcucnú“ k hrdinovi {A ★★★ nízka}
 A16 Rastúci tón pri sérii {A ★★ nízka}

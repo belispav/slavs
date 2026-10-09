@@ -438,17 +438,6 @@ var TODOS = [
 "s": "Pavel 6. 10. (len zapísané)"
 },
 {
-"id": "T36",
-"g": "later",
-"cat": "A",
-"imp": 2,
-"eff": "S",
-"k": "Zvážiť",
-"t": "<b>Ako miznú nepriatelia po smrti (dym?)</b>. NA ZVÁŽENIE: ako miznú nepriatelia po smrti. Zatiaľ úvaha o strate v dyme, možno príde iný nápad.",
-"s": "Pavel 6. 10. (len zapísané)",
-"b": 2
-},
-{
 "id": "T37",
 "g": "later",
 "cat": "B",
@@ -570,53 +559,6 @@ var TODOS = [
 "t": "<b>Iskry a kúsky v mieste zásahu</b>. 2–3 snímky efektu presne tam, kde sekera trafila; iný pre telo, drevo a kov (štít, prilba).",
 "s": "Výskum 7. 10. · Mega Cat Studios – Juice Guide (shooter / run'n'gun)",
 "u": "https://megacatstudios.com/blogs/game-development/mega-cat-developer-juice-guide-v1-0-08-23-17"
-},
-{
-"id": "A9",
-"g": "napad",
-"cat": "A",
-"imp": 3,
-"eff": "S",
-"k": "Nápad",
-"t": "<b>Smrť nepriateľa s pointou</b>. Telo odletí v smere zásahu, pretočí sa, dopadne a poskočí. Každá smrť je malá odmena. (Súvisí s vaším T36 – ako miznú.)",
-"s": "Výskum 7. 10. · Mega Cat Studios – Juice Guide (shooter / run'n'gun)",
-"u": "https://megacatstudios.com/blogs/game-development/mega-cat-developer-juice-guide-v1-0-08-23-17",
-"b": 2
-},
-{
-"id": "A10",
-"g": "napad",
-"cat": "A",
-"imp": 2,
-"eff": "N",
-"k": "Nápad",
-"t": "<b>Spomalenie pri poslednom zabití</b>. Posledný nepriateľ vlny alebo boss: pol sekundy spomalený čas a mierny zoom. Klasický moment na klip.",
-"s": "Výskum 7. 10. · Všeobecne známa herná prax (bez jedného zdroja)",
-"b": 2
-},
-{
-"id": "A11",
-"g": "napad",
-"cat": "A",
-"imp": 2,
-"eff": "S",
-"k": "Nápad",
-"t": "<b>Rozbitné prostredie</b>. Sudy, debny, ploty a stany sa rozletia na kúsky a zostanú trosky. Broforce bolo chválené práve za ničiteľné prostredie.",
-"s": "Výskum 7. 10. · Wikipedia – Broforce (záchrana zajatcov = nová postava)",
-"u": "https://en.wikipedia.org/wiki/Broforce",
-"b": 2
-},
-{
-"id": "A12",
-"g": "napad",
-"cat": "A",
-"imp": 2,
-"eff": "S",
-"k": "Nápad",
-"t": "<b>Stopy boja zostávajú na zemi</b>. Štylizované škvrny, trosky, zapichnuté šípy. Miesto po boji vyzerá ako po boji (Vlambeer to preferuje pred čistou stenou). Pozor na PEGI: štylizovane, nie realisticky.",
-"s": "Výskum 7. 10. · Jan Willem Nijman (Vlambeer, Nuclear Throne) – čo sa deje pri jednom výstrele",
-"u": "https://infovore.org/?p=5275",
-"b": 2
 },
 {
 "id": "A13",
@@ -2041,7 +1983,7 @@ var TODOS = [
 "u": "https://trysonar.app/blog/play-store-listing-experiments-what-to-test.md"
 }
 ];
-var BALIKY = [{"n": 1, "name": "Úder má váhu", "st": "done", "d": "Hotové 2026-10-08: zastavenie času, biely záblesk, otras, kopnutie kamery, čísla poškodenia, kritický zásah, zvuk podľa materiálu, vibrácia, vypínače v paneli.", "codes": ["A1", "A2", "A3", "A4", "A5", "A6", "A8", "E1", "P1", "A14"]}, {"n": 2, "name": "Smrť nepriateľa a stopy boja", "st": "next", "d": "Telo odletí, dopadne a zmizne; spomalenie pri poslednom zabití; dlhšie stopy boja; viac rozbitných vecí.", "codes": ["A9", "T36", "A10", "A12", "A11"]}, {"n": 3, "name": "Féroví a čitateľní nepriatelia", "st": "wait", "d": "Teraz len lacná časť: varovanie pred útokom nepriateľa (blik + zvuk) a začiatok katalógu efektov. Siluety a čitateľnosť v dave až s finálnou grafikou.", "codes": ["F2", "D4", "T42"]}, {"n": 4, "name": "Prvá odmena: zber a séria (+ T09)", "st": "wait", "d": "Odmeny letia k hrdinovi, podpisový zvuk, séria s násobičom, ohrozenie a hodnotenie záchrany zajatcov. Začína sa otázkami z T09.", "codes": ["A15", "D1", "A16", "J4", "H1", "H3", "T09"]}, {"n": 5, "name": "Hrdina v pohybe", "st": "wait", "d": "Úskok, prach spod nôh, pružnosť postavy, červený okraj pri nízkom zdraví. Úskok mení ovládanie – najprv návrh gesta.", "codes": ["B1", "T37", "B2", "A17"]}];
+var BALIKY = [{"n": 1, "name": "Úder má váhu", "st": "done", "d": "Hotové 2026-10-08: zastavenie času, biely záblesk, otras, kopnutie kamery, čísla poškodenia, kritický zásah, zvuk podľa materiálu, vibrácia, vypínače v paneli.", "codes": ["A1", "A2", "A3", "A4", "A5", "A6", "A8", "E1", "P1", "A14"]}, {"n": 2, "name": "Smrť nepriateľa a stopy boja", "st": "done", "d": "Hotové 2026-10-09: telá padajú podľa animácie (bežec, gunman), brute sa rozpadne, spomalenie pri poslednom zabití, dlhšie stopy krvi, keramické hrnce, náhodnosť všade.", "codes": ["A9", "T36", "A10", "A12", "A11"]}, {"n": 3, "name": "Féroví a čitateľní nepriatelia", "st": "next", "d": "Teraz len lacná časť: varovanie pred útokom nepriateľa (blik + zvuk) a začiatok katalógu efektov. Siluety a čitateľnosť v dave až s finálnou grafikou.", "codes": ["F2", "D4", "T42"]}, {"n": 4, "name": "Prvá odmena: zber a séria (+ T09)", "st": "wait", "d": "Odmeny letia k hrdinovi, podpisový zvuk, séria s násobičom, ohrozenie a hodnotenie záchrany zajatcov. Začína sa otázkami z T09.", "codes": ["A15", "D1", "A16", "J4", "H1", "H3", "T09"]}, {"n": 5, "name": "Hrdina v pohybe", "st": "wait", "d": "Úskok, prach spod nôh, pružnosť postavy, červený okraj pri nízkom zdraví. Úskok mení ovládanie – najprv návrh gesta.", "codes": ["B1", "T37", "B2", "A17"]}];
 var TCATS = [{"c": "A", "n": "Pocit z úderu", "d": "Malé efekty, vďaka ktorým má každý úder váhu. Najlacnejšie a najviditeľnejšie zlepšenia."}, {"c": "B", "n": "Hrdina a pohyb", "d": "Ako sa hrdina hýbe a ako vyzerá, keď rastie."}, {"c": "C", "n": "Vizuál a atmosféra", "d": "Pixel art, svetlo, prostredie, čitateľnosť v dave."}, {"c": "D", "n": "Zvuk a hudba", "d": "Polovica pocitu z hry je zvuk."}, {"c": "E", "n": "Vibrácie", "d": "Haptika – silný nástroj na mobile, ak sa nepreženie."}, {"c": "F", "n": "Nepriatelia", "d": "Rozmanitosť, čitateľnosť a humor nepriateľov."}, {"c": "G", "n": "Bossovia", "d": "Najlepšie momenty na klipy a najväčšie odmeny."}, {"c": "H", "n": "Klietky a zajatci", "d": "Nápady priamo pre váš hlavný mechanizmus."}, {"c": "I", "n": "Zbrane a schopnosti", "d": "Variabilita behov a pocit, že hráč skladá vlastnú silu."}, {"c": "J", "n": "Beh a level", "d": "Štruktúra jedného behu, napätie, koniec behu."}, {"c": "K", "n": "Meta-progresia", "d": "Dôvod hrať ďalší beh a ďalší deň."}, {"c": "L", "n": "Odmeny (dopamín)", "d": "Rytmus odmien, ktorý drží hráča pri hre."}, {"c": "M", "n": "Udržanie hráča", "d": "Návrat o deň, o týždeň, o mesiac."}, {"c": "N", "n": "Prvé minúty", "d": "Rozhodujú, či hráč hru nezmaže."}, {"c": "O", "n": "Ovládanie a HUD", "d": "Mobilné ovládanie a čistá obrazovka."}, {"c": "P", "n": "Prístupnosť", "d": "Rozširujú publikum a zlepšujú recenzie."}, {"c": "Q", "n": "Príbeh a svet", "d": "Identita hry, ktorú si ľudia zapamätajú."}, {"c": "R", "n": "Virálnosť", "d": "Čo v hre robí z hráčov propagátorov."}, {"c": "S", "n": "Marketing", "d": "Ako hru dostať k ľuďom (premium hra sa sama nepredá)."}, {"c": "Z", "n": "Monetizácia", "d": "Všetky modely s plusmi a mínusmi. Rozhodnutie je tvoje."}, {"c": "U", "n": "Technika a kvalita", "d": "Bez tohto Google hru stiahne z očí."}, {"c": "V", "n": "Stránka v Google Play", "d": "Premena návštevy obchodu na stiahnutie."}];
 var TG = {teba:"Čaká na teba", claude:"Čaká na Claude", later:"Neskôr", napad:"Nápady z výskumu"};
 var TGD = {teba:"Tvoje rozhodnutia, testy a schválenia", claude:"Claude urobí po tvojom OK", later:"Zapísané, riešiť neskôr", napad:"Výskum 7. 10., vyber, čo chceš riešiť"};

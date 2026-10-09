@@ -31,3 +31,7 @@ tools/.pixellab_token
 *.blend
 *.blend1
 *.max
+
+# scratch folders (2026-10-09)
+_to_delete/
+Claude outputs/

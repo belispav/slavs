@@ -394,6 +394,9 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 			_sprite = _rusher_sprite
 			_clip_shift = _rusher_shift
 			_drawn_height = _rusher_drawn_height
+	# Every person is a different height (Pavel 2026-10-09): the whole body, hurtbox and
+	# shadow follow one factor, +-RAND_SIZE per enemy. Reach and strike zones stay in px.
+	scale = Vector2.ONE * Tuning.jitter(1.0, Tuning.RAND_SIZE)
 	_fit_hurtbox(_drawn_height)
 	_shadow.set_width((_drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0)
 		* Tuning.SHADOW_WIDTH_PER_HEIGHT)
@@ -589,15 +592,17 @@ func _emit_corpse() -> void:
 	if _sprite == null or _sprite.sprite_frames == null:
 		return
 	var tex: Texture2D = _sprite.sprite_frames.get_frame_texture(_sprite.animation, _sprite.frame)
+	# The node is scaled per enemy, the corpse is not a child of it: carry the factor over.
+	var k: float = scale.x
 	var feet_off := Vector2(0.0, SIZE.y * 0.5)
-	var body_h: float = _drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0
+	var body_h: float = (_drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0) * k
 	if kind == Kind.BRUTE:
-		burst_requested.emit(tex, _sprite.flip_h, _sprite.scale, _sprite.position - feet_off,
-			global_position + feet_off, body_h)
+		burst_requested.emit(tex, _sprite.flip_h, _sprite.scale * k, (_sprite.position - feet_off) * k,
+			global_position + feet_off * k, body_h)
 		return
 	var clip: Array = _rusher_death_frames if kind == Kind.RUSHER else _thrower_death_frames
-	corpse_requested.emit(tex, _sprite.flip_h, _sprite.scale, _sprite.position - feet_off,
-		global_position + feet_off, body_h,
+	corpse_requested.emit(tex, _sprite.flip_h, _sprite.scale * k, (_sprite.position - feet_off) * k,
+		global_position + feet_off * k, body_h,
 		_weapon_dir if _by_weapon else Vector2.ZERO, clip, kind == Kind.THROWER)
 
 

@@ -35,6 +35,7 @@ const MAX_SAME: int = 3
 ## knocks chained into one rattle. Anything not listed uses DEFAULT_GAP.
 const EVENT_GAP: Dictionary = {
 	&"barrel_hit": 0.35,
+	&"pot_hit": 0.35,
 	&"enemy_hit": 0.08,
 }
 const DEFAULT_GAP: float = 0.04

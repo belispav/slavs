@@ -1540,22 +1540,19 @@ func _build_axe_and_barrel() -> void:
 	player.throw_requested.connect(_on_throw_requested)
 
 	var barrel_script: GDScript = load("res://scripts/barrel.gd")
-	for i in Tuning.BARREL_OFFSETS.size() + Tuning.BARREL_WALL_COUNT:
+	# Breakable props, a mix of wooden barrels and ceramic pots (2026-10-09). The
+	# same script serves both; art and hit box come from the kind.
+	for i in Tuning.BARREL_COUNT + Tuning.POT_COUNT:
 		var b := Area2D.new()
 		b.set_script(barrel_script)
+		if i >= Tuning.BARREL_COUNT:
+			b.art_dir = Tuning.POT_ART_DIR
+			b.hit_size = Tuning.POT_HIT_SIZE
+			b.sfx_hit = &"pot_hit"
+			b.sfx_break = &"pot_break"
 		add_child(b)
 		b.hide()
 		barrels.append(b)
-
-	# Ceramic pot previews (2026-10-09): two variants next to the hero, to pick one.
-	for pot_dir in Tuning.POT_PREVIEW_DIRS:
-		var pb := Area2D.new()
-		pb.set_script(barrel_script)
-		pb.art_dir = pot_dir
-		pb.hit_size = Tuning.POT_HIT_SIZE
-		add_child(pb)
-		pb.hide()
-		barrels.append(pb)
 
 	var cauldron_script: GDScript = load("res://scripts/cauldron.gd")
 	for i in Tuning.CAULDRON_OFFSETS.size():
@@ -1588,40 +1585,29 @@ func _place_barrel_once() -> void:
 			cf.y = clampf(cf.y, ctop, cbottom)
 		cauldrons[i].place(cf)
 
-	var n_loose: int = Tuning.BARREL_OFFSETS.size()
-	for i in n_loose:
-		var feet: Vector2 = hero_feet + Tuning.BARREL_OFFSETS[i]
-		var top: float = walk_top_for_x(feet.x) + Tuning.BARREL_EDGE_INSET
-		var bottom: float = walk_bottom_for_x(feet.x) - Tuning.BARREL_EDGE_INSET
-		if bottom > top:
-			feet.y = clampf(feet.y, top, bottom)
-		barrels[i].place(feet)
-
-	# The wall: barrels side by side along the depth (Y), centred on the
-	# hero's row and kept inside the walkable band. Each blocks half the
-	# spacing either side plus a margin, so there is no gap between two
-	# neighbours until one of them is broken.
-	var wx: float = hero_feet.x + Tuning.BARREL_WALL_X
-	var n_wall: int = Tuning.BARREL_WALL_COUNT
-	var step: float = Tuning.BARREL_WALL_SPACING
-	var span: float = step * float(n_wall - 1)
-	var w_top: float = walk_top_for_x(wx) + Tuning.BARREL_EDGE_INSET
-	var w_bottom: float = walk_bottom_for_x(wx) - Tuning.BARREL_EDGE_INSET
-	var first: float = hero_feet.y - span * 0.5
-	if w_bottom - w_top > span:
-		first = clampf(first, w_top, w_bottom - span)
-	var depth: float = maxf(Tuning.BARREL_BLOCK_DEPTH, step * 0.5 + 8.0)
-	for j in n_wall:
-		barrels[n_loose + j].place(Vector2(wx, first + step * float(j)), depth)
-
-	# Pot previews: one above and one below the first loose barrel, close to the hero.
-	for k in Tuning.POT_PREVIEW_DIRS.size():
-		var pfeet: Vector2 = hero_feet + Vector2(240.0, -90.0 + 180.0 * float(k))
-		var ptop: float = walk_top_for_x(pfeet.x) + Tuning.BARREL_EDGE_INSET
-		var pbottom: float = walk_bottom_for_x(pfeet.x) - Tuning.BARREL_EDGE_INSET
-		if pbottom > ptop:
-			pfeet.y = clampf(pfeet.y, ptop, pbottom)
-		barrels[n_loose + n_wall + k].place(pfeet)
+	# Props are scattered at random ahead of the hero (not in a wall): random spot
+	# inside the walkable band, kept PROP_MIN_GAP away from every other prop and
+	# cauldron, size class and a small +-RAND_SIZE variation per prop.
+	var taken: Array[Vector2] = []
+	for c in cauldrons:
+		taken.append(c.global_position)
+	for bar in barrels:
+		var feet := Vector2.ZERO
+		for attempt in 40:
+			feet = Vector2(hero_feet.x + randf_range(Tuning.PROP_X_MIN, Tuning.PROP_X_MAX), hero_feet.y)
+			var top: float = walk_top_for_x(feet.x) + Tuning.BARREL_EDGE_INSET
+			var bottom: float = walk_bottom_for_x(feet.x) - Tuning.BARREL_EDGE_INSET
+			feet.y = randf_range(top, bottom) if bottom > top else (top + bottom) * 0.5
+			var clear := true
+			for o in taken:
+				if absf(o.x - feet.x) < Tuning.PROP_MIN_GAP and absf(o.y - feet.y) < Tuning.PROP_MIN_GAP * 0.5:
+					clear = false
+					break
+			if clear:
+				break
+		taken.append(feet)
+		var size_class: float = Tuning.PROP_SIZE_CLASSES[randi() % Tuning.PROP_SIZE_CLASSES.size()]
+		bar.place(feet, 0.0, Tuning.jitter(size_class, Tuning.RAND_SIZE))
 
 
 func _on_throw_requested(from: Vector2, dir: Vector2) -> void:

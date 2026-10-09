@@ -17,7 +17,11 @@ signal damaged(feet: Vector2, broke: bool)
 ## so breaking just hides the picture (preview of the pot art).
 var art_dir: String = Tuning.BARREL_ART_DIR
 var hit_size: Vector2 = Tuning.BARREL_HIT_SIZE
+var sfx_hit: StringName = &"barrel_hit"
+var sfx_break: StringName = &"barrel_break"
 var _single_frame: bool = false
+## Per-prop size factor (place() sets it): class size x a small random variation.
+var _size: float = 1.0
 
 var hp: int = Tuning.BARREL_HP
 var is_broken: bool = false
@@ -88,13 +92,13 @@ func _ready() -> void:
 ## The node's origin is the barrel's FEET - where it stands on the field -
 ## so depth sorting and placement both read off one number.
 func _fit() -> void:
-	var s: float = Tuning.BARREL_SPRITE_SCALE
+	var s: float = Tuning.BARREL_SPRITE_SCALE * _size
 	_sprite.scale = Vector2.ONE * s
 	# Bottom of the drawing (not of the canvas) on the origin.
 	_sprite.position = Vector2(0.0, -(_art_height * 0.5 - _foot_margin) * s)
 	var rect := _shape.shape as RectangleShape2D
-	rect.size = hit_size
-	_shape.position = Vector2(0.0, -hit_size.y * 0.5)
+	rect.size = hit_size * _size
+	_shape.position = Vector2(0.0, -hit_size.y * _size * 0.5)
 
 
 ## Blocks the hero's FEET within `depth` above or below the barrel's own feet.
@@ -118,7 +122,7 @@ func _set_blocking(depth: float) -> void:
 	# The strip was measured against a 30 px wide body: a wider body stops
 	# earlier, so the strip is narrower by the difference (same stopping gap).
 	var w_fit: float = maxf(_block_width - (Tuning.body_feet_width - Tuning.BODY_FEET_REF_WIDTH), 20.0)
-	r.size = Vector2(w_fit, bottom - top)
+	r.size = Vector2(w_fit * _size, bottom - top)
 	_block_shape.position = Vector2(0.0, (top + bottom) * 0.5)
 
 
@@ -131,7 +135,10 @@ func refit_block() -> void:
 ## Whole again and stood at `feet`. Barrels are reused, never freed.
 ## `block_depth` > 0 overrides how far in depth it blocks (the wall uses it
 ## so neighbouring barrels close every gap).
-func place(feet: Vector2, block_depth: float = 0.0) -> void:
+func place(feet: Vector2, block_depth: float = 0.0, size_factor: float = 1.0) -> void:
+	_size = size_factor
+	_fit()
+	_shadow.set_width(hit_size.x * 1.5 * _size)
 	_set_blocking(block_depth if block_depth > 0.0 else Tuning.BARREL_BLOCK_DEPTH)
 	_block_shape.set_deferred("disabled", false)
 	hp = Tuning.BARREL_HP
@@ -166,7 +173,7 @@ func hit() -> void:
 	_shake = 0.18
 	_flash = 1.0
 	damaged.emit(global_position, hp <= 0)
-	Sfx.play(&"barrel_break" if hp <= 0 else &"barrel_hit", global_position)
+	Sfx.play(sfx_break if hp <= 0 else sfx_hit, global_position)
 	if hp <= 0:
 		is_broken = true
 		set_deferred("collision_layer", 0)

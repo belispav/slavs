@@ -330,6 +330,8 @@ const RAND_LINGER: float = 1.0 / 3.0
 const RAND_SLOWMO_MS: float = 1.0 / 6.0
 const RAND_SLOWMO_SCALE: float = 0.125
 const RAND_WHITE: float = 0.25
+## Body height of every enemy and size of every barrel/pot (Pavel 2026-10-09: +-5 %).
+const RAND_SIZE: float = 0.05
 var random_strength: float = 1.0
 
 
@@ -396,9 +398,10 @@ const CAULDRON_OFFSETS: Array[Vector2] = [
 
 # --- Breakable barrel (2026-10-03) ---
 const BARREL_ART_DIR: String = "res://art/barrel_pl"
-## Ceramic pot previews (2026-10-09): variant 1 (two handles) and 2 (one handle).
-const POT_PREVIEW_DIRS: Array[String] = ["res://art/pot_a_pl", "res://art/pot_b_pl"]
-const POT_HIT_SIZE: Vector2 = Vector2(76.0, 100.0)
+## Ceramic pot (2026-10-09, Pavel picked variant 2, lightened, 21 x 28 art px, 9 frames).
+const POT_ART_DIR: String = "res://art/pot_pl"
+## Hit area of a ceramic pot (art 21 x 28 at 2x = 42 x 56, a bit smaller than the barrel).
+const POT_HIT_SIZE: Vector2 = Vector2(52.0, 68.0)
 ## 6 since 2026-10-03 (was 3): the returning axe hits twice per throw.
 const BARREL_HP: int = 6
 ## Integer like every PixelLab sprite - 2x matches the hero.
@@ -408,26 +411,18 @@ const BARREL_BREAK_FPS: float = 9.0
 ## Hit area in world units, standing on the barrel's feet. The drawn barrel
 ## is about 48 x 64 at 2x; the box is a little bigger, in the player's favour.
 const BARREL_HIT_SIZE: Vector2 = Vector2(60.0, 76.0)
-## Where the barrels stand, relative to the hero's feet at the moment they
-## are (re)placed: at the start, after every death, and on the panel button.
-## Ahead of him on the right (where the thumb does not cover them), spread
-## over the field's depth. Clamped to the walkable band.
-const BARREL_OFFSETS: Array[Vector2] = [
-	Vector2(300.0, 0.0), Vector2(420.0, -150.0),
-	Vector2(950.0, 90.0), Vector2(1150.0, -30.0),
-]
 ## Kept off the very edge of the walkable band so a barrel never stands on
 ## the palisade line or in the river.
 const BARREL_EDGE_INSET: float = 30.0
-## The wall: BARREL_WALL_COUNT barrels side by side along the depth (Y),
-## BARREL_WALL_SPACING apart, centred on the hero's row, BARREL_WALL_X ahead
-## of him - an obstacle to break through rather than step round (Pavel
-## 2026-10-03: one barrel is just stepped round). Rebuilt with the others
-## after every death. It does NOT span the whole field (that is ~970 deep);
-## six barrels edge to edge are ~240.
-const BARREL_WALL_COUNT: int = 0  # wall removed 2026-10-09 (Pavel: scatter at random instead)
-const BARREL_WALL_X: float = 600.0
-const BARREL_WALL_SPACING: float = 40.0
+## Breakable props are scattered at random (2026-10-09): this many barrels and this many
+## ceramic pots, anywhere between PROP_X_MIN and PROP_X_MAX ahead of the hero, at least
+## PROP_MIN_GAP apart. Two size classes, each varied by RAND_SIZE per prop.
+const BARREL_COUNT: int = 3
+const POT_COUNT: int = 3
+const PROP_X_MIN: float = 260.0
+const PROP_X_MAX: float = 1500.0
+const PROP_MIN_GAP: float = 140.0
+const PROP_SIZE_CLASSES: Array[float] = [1.0, 1.3]
 ## How far, in depth (Y), a barrel blocks the hero's FEET either side of its
 ## own feet. The field is 2.5D: blocking has to compare where the two stand,
 ## not whether the drawings overlap. Raised automatically inside the wall so

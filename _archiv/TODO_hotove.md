@@ -42,3 +42,8 @@ A8 HOTOVÉ 2026-10-08 (Pavel: OK): zvuk zásahu podľa materiálu: telo `enemy_h
 E1 HOTOVÉ 2026-10-08 (Pavel: OK): vibrácia pri zásahu sekerou 200 ms (pri zabití 300 ms); pod 100 ms nič necítiť. Jemnejšie podľa útočníka a počtu životov: T49.
 P1 HOTOVÉ 2026-10-08 (Pavel: OK): každý nový efekt balíka 1 má vypínač a posuvník v paneli s popisom; tlačidlo TEST VIBRACIE.
 A14 HOTOVÉ 2026-10-08 (Pavel: OK): potvrdené: po zásahu je hrdina 0,9 s nesmrteľný a červeno bliká (`Tuning.PLAYER_IFRAMES`).
+A9 HOTOVÉ 2026-10-09 (Pavel: OK): smrť s pointou. Bežec padá podľa PixelLab klipu `rusher_pl_death`, gunman sa zosype na kolená a padne dopredu (`gunman_pl_death`), brute sa rozpadne na kúsky (kód, `corpses.gd burst`). Sila odletu 1,0, rýchlosť animácie 8 fps, ležanie 0,5-1 s.
+T36 HOTOVÉ 2026-10-09 (Pavel: OK): telá po ležaní zmiznú v dymovom obláčiku (vypínač TELO ZMIZNE V DYME).
+A10 HOTOVÉ 2026-10-09 (Pavel: OK): spomalenie pri poslednom zabití / brutovi: 600 ms pri rýchlosti 0,4 (náhodne 500-700 ms, 0,35-0,45), séria zabití do 8 s; 4 posuvníky v paneli. Biely záblesk 20 ms (15-25).
+A12 HOTOVÉ 2026-10-09 (Pavel: OK): krv a triesky ostávajú na zemi dlhšie (`FX_STAIN_TIME` 12 s, ladiť pri finálnej hre).
+A11 HOTOVÉ 2026-10-09 (Pavel: OK, prvá časť): okrem sudov sú keramické hrnce (PixelLab, animácia rozbitia), mix 3 sudy + 3 hrnce rozhodené náhodne, dve veľkosti +-5 %, vlastné zvuky (náhradné). Ploty, stany a debny prípadne neskôr s finálnou grafikou.

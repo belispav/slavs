@@ -10,8 +10,8 @@ plan (`KDE_JE_CO.html`, section "Balíky", and chip filter "Balík" in ToDo's).
 | # | Package (Slovak name for Pavel) | Status |
 |---|---|---|
 | 1 | Úder má váhu | DONE 2026-10-08 |
-| 2 | Smrť nepriateľa a stopy boja | **IN PROGRESS - code done 2026-10-08 (A9, T36, A10, A12), awaiting Pavel's phone test; A11 open (needs props art, ask Pavel). Rusher falls with the PixelLab clip `art/rusher_pl_death` (1 generation); gunman and brute still use the thrown-frame fallback - a death clip for them is 1 generation each (template falling-back-death, east only)** |
-| 3 | Féroví a čitateľní nepriatelia | waiting |
+| 2 | Smrť nepriateľa a stopy boja | DONE 2026-10-09 (A9, T36, A10, A12, A11; tested by Pavel). Rusher/gunman fall by PixelLab clips, brute bursts, slow-mo, ceramic pots (first extra breakable prop; fences/tents later), randomness everywhere (rule 3b) |
+| 3 | Féroví a čitateľní nepriatelia | **NEXT** |
 | 4 | Prvá odmena: zber a séria (+ T09) | waiting |
 | 5 | Hrdina v pohybe | waiting |
 
@@ -69,7 +69,9 @@ speed are not frozen by it; alternative is freezing only the hit enemy + hero an
 30+ enemies: many hits per second must not make the game stutter (cap hit-stop frequency).
 Effort: low, code only, no PixelLab credits.
 
-## Package 2 - Smrť nepriateľa a stopy boja
+## Package 2 - Smrť nepriateľa a stopy boja - DONE 2026-10-09
+
+Closed after Pavel's phone test. Code: `corpses.gd` (pooled corpse visuals: PixelLab clips `art/rusher_pl_death`, `art/gunman_pl_death`; brute `burst()` into pieces), `main.gd _try_slowmo` / `_hitstop_tick`, `fx.gd` stains (`FX_STAIN_TIME` 12 s) and smoke puff; props: `barrel.gd` serves barrels AND ceramic pots (`art/pot_pl`, sounds `pot_hit`/`pot_break` are synthesised placeholders, `tools/make_pot_sfx.py`), `main.gd _place_barrel_once` scatters 3 barrels + 3 pots at random (no wall), two size classes x +-5 %. Randomness: `Tuning.jitter`, `RAND_*` (power, anim, linger, slow-mo, white flash, SIZE 5 % for enemies and props), panel slider NAHODNOST. Open: pot art is 1 base + 1 clip only (cheap prototype); more prop kinds (fence, tent, crate) with final art/palette T17; real ceramic sounds. Original brief below.
 
 Codes: **A9** death with a punchline (body flies along the hit, spins, lands, bounces),
 **T36** how the body disappears (smoke?), **A10** short slow-motion on the last kill (e.g. last
