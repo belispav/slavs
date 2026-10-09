@@ -322,6 +322,7 @@ var fx   # fx.gd - blood, splinters, smoke
 var corpses   # corpses.gd - bodies of killed enemies (A9, T36)
 ## A10 slow-motion bookkeeping (real-time ms) and the kill streak that arms it.
 var _slowmo_end_ms: int = 0
+var _slowmo_scale_now: float = 0.4
 var _slowmo_next_ms: int = 0
 var _streak: int = 0
 var _last_kill_ms: int = 0
@@ -1275,6 +1276,7 @@ func _build_fx() -> void:
 	corpses.setup(fx)
 	for e in enemies:
 		e.corpse_requested.connect(_on_enemy_corpse)
+		e.burst_requested.connect(_on_enemy_burst)
 		e.hurt.connect(_on_body_hurt)
 		e.weapon_hit.connect(_on_weapon_hit)
 		e.armor_deflected.connect(_on_armor_deflected)
@@ -1340,7 +1342,7 @@ func _hitstop_tick() -> void:
 	if _hitstop_end_ms > 0:
 		want = Tuning.HITSTOP_SCALE
 	elif _slowmo_end_ms > 0:
-		want = Tuning.slowmo_scale
+		want = _slowmo_scale_now
 	if not is_equal_approx(Engine.time_scale, want):
 		Engine.time_scale = want
 
@@ -1367,7 +1369,8 @@ func _try_slowmo() -> void:
 	if not (brute or (not others and _streak >= Tuning.slowmo_min_streak)):
 		return
 	_slowmo_next_ms = now + int(Tuning.SLOWMO_COOLDOWN * 1000.0)
-	_slowmo_end_ms = maxi(now, _hitstop_end_ms) + int(Tuning.slowmo_ms)
+	_slowmo_scale_now = clampf(Tuning.jitter(Tuning.slowmo_scale, Tuning.RAND_SLOWMO_SCALE), 0.05, 1.0)
+	_slowmo_end_ms = maxi(now, _hitstop_end_ms) + int(Tuning.jitter(Tuning.slowmo_ms, Tuning.RAND_SLOWMO_MS))
 
 
 func _hitstop_clear() -> void:
@@ -1428,8 +1431,12 @@ func _vibrate(ms: int, amp: float = 1.0, force: bool = false) -> void:
 	Input.vibrate_handheld(ms, clampf(Tuning.vibrate_strength * amp, 0.0, 1.0))
 
 
-func _on_enemy_corpse(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2, feet: Vector2, body_h: float, dir: Vector2, frames: Array) -> void:
-	corpses.spawn(tex, flip, art_scale, off, feet, body_h, dir, _away_from_player(feet), frames)
+func _on_enemy_corpse(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2, feet: Vector2, body_h: float, dir: Vector2, frames: Array, forward: bool) -> void:
+	corpses.spawn(tex, flip, art_scale, off, feet, body_h, dir, _away_from_player(feet), frames, forward)
+
+
+func _on_enemy_burst(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2, feet: Vector2, body_h: float) -> void:
+	corpses.burst(tex, flip, art_scale, off, feet, body_h, _away_from_player(feet))
 
 
 func _on_enemy_died(_at: Vector2) -> void:

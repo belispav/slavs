@@ -22,7 +22,9 @@ signal weapon_hit(at: Vector2, dir: Vector2, fatal: bool, amount: int, crit: boo
 ## A9: the picture of the body at the moment of death, for corpses.gd.
 ## `off` = sprite position relative to the feet, `dir` = way of the blow (zero = unknown).
 signal corpse_requested(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2,
-		feet: Vector2, body_h: float, dir: Vector2, frames: Array)
+		feet: Vector2, body_h: float, dir: Vector2, frames: Array, forward: bool)
+## A9: the brute bursts into pieces instead of falling (corpses.gd burst()).
+signal burst_requested(tex: Texture2D, flip: bool, art_scale: Vector2, off: Vector2, feet: Vector2, body_h: float)
 signal throw_requested(from: Vector2, dir: Vector2)
 ## A rusher's swing landing. Not the same moment as touching the player - see
 ## RUSHER_MELEE_RANGE and _update_attack_timer.
@@ -109,6 +111,7 @@ var _thrower_sprite: AnimatedSprite2D
 var _rusher_sprite: AnimatedSprite2D
 ## A9: the rusher's falling clip, played by corpses.gd on its body.
 var _rusher_death_frames: Array[Texture2D] = []
+var _thrower_death_frames: Array[Texture2D] = []
 var _fire_timer: float = 0.0
 ## Counts down from the start of the fire clip to the muzzle flash; the shot
 ## leaves when it reaches zero. < 0 = no shot pending.
@@ -220,6 +223,7 @@ func _build_sprite() -> void:
 	], _thrower_shift, thrower_height,
 		Tuning.THROWER_SPRITE_SCALE, Tuning.THROWER_ANIM_FPS)
 	_thrower_drawn_height = thrower_height[0]
+	_thrower_death_frames = SpriteSequence.load_frames(Tuning.THROWER_DEATH_ART_DIR)
 	var rusher_height := [0.0]
 	_rusher_sprite = _build_sprite_from(&"idle_unaware", Tuning.RUSHER_IDLE_ART_DIR, [
 		[&"idle_ready", Tuning.RUSHER_IDLE_READY_ART_DIR, true],
@@ -539,7 +543,7 @@ static func _get_white_material() -> ShaderMaterial:
 func _start_white() -> void:
 	if not Tuning.fx_white_on or Tuning.hit_white_ms <= 0.0:
 		return
-	_white_t = Tuning.hit_white_ms / 1000.0
+	_white_t = Tuning.jitter(Tuning.hit_white_ms, Tuning.RAND_WHITE) / 1000.0
 	_set_white(true)
 
 
@@ -586,11 +590,15 @@ func _emit_corpse() -> void:
 		return
 	var tex: Texture2D = _sprite.sprite_frames.get_frame_texture(_sprite.animation, _sprite.frame)
 	var feet_off := Vector2(0.0, SIZE.y * 0.5)
+	var body_h: float = _drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0
+	if kind == Kind.BRUTE:
+		burst_requested.emit(tex, _sprite.flip_h, _sprite.scale, _sprite.position - feet_off,
+			global_position + feet_off, body_h)
+		return
+	var clip: Array = _rusher_death_frames if kind == Kind.RUSHER else _thrower_death_frames
 	corpse_requested.emit(tex, _sprite.flip_h, _sprite.scale, _sprite.position - feet_off,
-		global_position + feet_off,
-		_drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0,
-		_weapon_dir if _by_weapon else Vector2.ZERO,
-		_rusher_death_frames if kind == Kind.RUSHER else [])
+		global_position + feet_off, body_h,
+		_weapon_dir if _by_weapon else Vector2.ZERO, clip, kind == Kind.THROWER)
 
 
 func _physics_process(delta: float) -> void:

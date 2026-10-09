@@ -62,6 +62,7 @@ INFO = {
     "spomalenie: max. odstup zabiti (s)": ("Najvacsia pauza medzi zabitiami, aby sa seria nerozpadla.", "A"),
     "spomalenie: kolko zabiti v serii": ("Kolko zabiti za sebou treba pre spomalenie na poslednom.", "A"),
     "spomalenie: dosah 'posledny' (px)": ("V akom okruhu okolo hraca nesmie byt dalsi zivy nepriatel.", "A"),
+    "NAHODNOST (nasobok)": ("Nasobok nahodneho rozptylu pri silach, rychlostiach a dlzkach efektov (1 = dohodnuty, 0 = vypnute).", "A"),
     "dlzka spomalenia (ms)": ("Ako dlho trva spomalenie (skutocne ms).", "A"),
     "rychlost pocas spomalenia": ("Aky rychly je cas pocas spomalenia (1 = normalne).", "A"),
     "BIELY ZABLESK": ("Zasiahnuty nepriatel na chvilu cely zbeli.", "A"),

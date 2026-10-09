@@ -26,6 +26,7 @@ here and the next one to NEXT. Pavel may come back with feedback or reorder; his
    `NAPADY_vylepsenia.md` and in the ToDo of `KDE_JE_CO.md`. Content rules of `PLAN_hry.md` §2 always apply.
 3. Pavel has zero game-dev knowledge: Slovak, plain words, one question at a time, 2-3 sentences
    after each step on what changed. Code/comments/commits in English.
+3b. **Randomness (Pavel 2026-10-09):** every enemy behaviour and effect varies a little per instance by default (`Tuning.jitter`, panel NAHODNOST scales it); see CLAUDE.md working rule 7.
 4. Every new effect gets an **on/off switch and a strength slider in the debug panel** (existing
    pattern: Pavel tunes live on the phone, confirms, then the value is baked into `tuning.gd`).
    Add new panel elements to the panel catalog (`tools/panel_catalog.py`, `PANEL_prvky.xlsx`) the same way as existing ones.

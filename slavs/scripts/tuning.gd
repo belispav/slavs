@@ -91,6 +91,8 @@ const RUSHER_WALK_ART_DIR: String = "res://art/rusher_pl_walk"
 const RUSHER_ATTACK_ART_DIR: String = "res://art/rusher_pl_attack"
 ## A9: PixelLab "falling-back-death" (7 frames, exported falling toward +x), 2026-10-08.
 const RUSHER_DEATH_ART_DIR: String = "res://art/rusher_pl_death"
+## A9: gunman's collapse (PixelLab custom clip, 2026-10-09). The brute has no clip: it bursts.
+const THROWER_DEATH_ART_DIR: String = "res://art/gunman_pl_death"
 ## The PixelLab clips have 4-12 frames, not the 19-39 the renderer made, so
 ## they play slower than ENEMY_ANIM_FPS or every cycle looks sped up.
 const RUSHER_ANIM_FPS: float = 10.0
@@ -214,6 +216,8 @@ const FX_BLOOD_HIT: int = 8
 const FX_BLOOD_DEATH: int = 30
 ## A9/A12 blood splashed where a body lands (half of it on the first touch).
 const FX_BLOOD_CORPSE: int = 10
+## Blood drops when the brute bursts apart.
+const BURST_BLOOD: int = 40
 const FX_WOOD_HIT: int = 6
 const FX_WOOD_BREAK: int = 30
 ## The hero's own blood when something hits him.
@@ -269,7 +273,7 @@ var fx_hitstop_on: bool = true
 var hitstop_ms: float = HITSTOP_MS
 ## A2 full white flash of the victim (game-time seconds, so it also holds
 ## through the hit-stop).
-const HIT_WHITE_MS: float = 40.0
+const HIT_WHITE_MS: float = 20.0
 var fx_white_on: bool = true
 var hit_white_ms: float = HIT_WHITE_MS
 ## A3 screen shake on the hero's weapon hits (world units; the cauldron blast
@@ -290,13 +294,13 @@ var kick_strength: float = 1.0
 ## Package 2 "Smrt nepriatela a stopy boja" (2026-10-08). Every effect has a switch.
 ## A9 the body of a killed enemy flies along the blow, spins, lands, bounces once.
 ## corpse_power scales speed + spin (1 = base); corpse_linger = seconds it lies.
-## Baked after Pavel's phone test 2026-10-08: power 0.4, lies 0.5 s.
-const CORPSE_POWER: float = 0.4
-const CORPSE_LINGER: float = 0.5
+## Pavel's phone test 2026-10-09: power 1.0, lies 0.75 s on average (jittered 0.5-1.0).
+const CORPSE_POWER: float = 1.0
+const CORPSE_LINGER: float = 0.75
 var fx_corpse_on: bool = true
 var corpse_power: float = CORPSE_POWER
-## Speed of the death clip (frames per second): 12 = the 7 frames in ~0.6 s.
-const CORPSE_ANIM_FPS: float = 12.0
+## Speed of the death clip (frames per second), Pavel 2026-10-09: 8 (jittered 7-9).
+const CORPSE_ANIM_FPS: float = 8.0
 var corpse_anim_fps: float = CORPSE_ANIM_FPS
 var corpse_linger: float = CORPSE_LINGER
 ## T36 how a body vanishes: true = puff of smoke, false = plain fade.
@@ -304,7 +308,7 @@ var fx_corpse_smoke_on: bool = true
 ## A10 short slow-motion on the last kill of a fight (and on every brute).
 ## "Last" = no other living enemy within SLOWMO_RANGE of the hero, after a
 ## streak of SLOWMO_MIN_STREAK kills each less than SLOWMO_STREAK_GAP s apart.
-const SLOWMO_SCALE: float = 0.3
+const SLOWMO_SCALE: float = 0.4
 const SLOWMO_MS: float = 600.0
 const SLOWMO_RANGE: float = 900.0
 const SLOWMO_MIN_STREAK: int = 3
@@ -315,6 +319,24 @@ var fx_slowmo_on: bool = true
 var slowmo_range: float = SLOWMO_RANGE
 var slowmo_min_streak: int = SLOWMO_MIN_STREAK
 var slowmo_gap: float = SLOWMO_STREAK_GAP
+## RANDOMNESS (Pavel 2026-10-09): by default every enemy behaviour and effect varies
+## a little per instance. The panel holds the MIDDLE value; jitter(base, frac) gives
+## base +- frac*base. random_strength (panel NAHODNOST) scales all of it, 0 = off.
+## Spreads agreed with Pavel: power 0.9-1.1, anim 7-9 fps, lying 0.5-1.0 s,
+## slow-motion 500-700 ms at speed 0.35-0.45, white flash 15-25 ms.
+const RAND_POWER: float = 0.10
+const RAND_ANIM: float = 0.125
+const RAND_LINGER: float = 1.0 / 3.0
+const RAND_SLOWMO_MS: float = 1.0 / 6.0
+const RAND_SLOWMO_SCALE: float = 0.125
+const RAND_WHITE: float = 0.25
+var random_strength: float = 1.0
+
+
+func jitter(base: float, frac: float) -> float:
+	return base * (1.0 + randf_range(-frac, frac) * random_strength)
+
+
 var slowmo_scale: float = SLOWMO_SCALE
 var slowmo_ms: float = SLOWMO_MS
 ## E1 short phone buzz when the hero's weapon hits (kills x1.5 longer).

@@ -341,6 +341,9 @@ func _build_panel() -> void:
 	_add_slider_d("spomalenie: dosah 'posledny' (px)", 200.0, 2200.0, 100.0, Tuning.slowmo_range,
 		"Posledny nepriatel = v tomto okruhu okolo hraca nie je ziadny dalsi zivy. Viac = prisnejsie (musi byt prazdna aj vzdialena cast), menej = lahsie spustit pri velkom pocte nepriatelov.",
 		func(v: float) -> void: Tuning.slowmo_range = v)
+	_add_slider_d("NAHODNOST (nasobok)", 0.0, 2.0, 0.1, Tuning.random_strength,
+		"Kazdy nepriatel a efekt sa trochu lisi. Posuvniky vyssie drzia STRED, nahodnost sa pridava okolo neho: sila odletu 0,9-1,1x, rychlost animacie 7-9, lezanie 0,5-1 s, spomalenie 500-700 ms pri rychlosti 0,35-0,45, biely zablesk 15-25 ms. Posuvnik nasobi rozptyl (1 = dohodnuty, 0 = ziadna nahodnost, 2 = dvojnasobna).",
+		func(v: float) -> void: Tuning.random_strength = v)
 	var vib_test := Button.new()
 	vib_test.text = "TEST VIBRACIE (rovnaka ako pri mojom zasahu)"
 	vib_test.custom_minimum_size = Vector2(0, 52)

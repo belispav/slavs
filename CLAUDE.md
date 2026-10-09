@@ -159,6 +159,7 @@ shared state.** Rules for switching:
 4. **Weekly refactor.** When asked (or when a file exceeds ~300 lines), clean up before adding features.
 5. **Performance target:** 60 fps on a ~150 € Android phone. Object pooling for enemies/projectiles from the start.
 6. **Tunables in one place.** All gameplay constants (control thresholds, damage, speeds) in exported variables / a single config resource so Pavel can tune without code.
+7. **Randomness by default (Pavel 2026-10-09).** Every enemy behaviour and effect gets a small random variation per instance - always, without being asked (e.g. +-10-25 % of the tuned value, agreed ranges are listed in `tuning.gd` under RANDOMNESS). Use `Tuning.jitter(base, frac)`; the panel sliders hold the MIDDLE value and the panel slider NAHODNOST scales all spreads (0 = off). Applies to the corpse power/animation speed/lying time, slow-motion length and speed and the white flash so far; apply it to every new enemy, attack, sound and effect.
 
 ## Work packages (Pavel 2026-10-07)
 
