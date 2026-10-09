@@ -1547,6 +1547,16 @@ func _build_axe_and_barrel() -> void:
 		b.hide()
 		barrels.append(b)
 
+	# Ceramic pot previews (2026-10-09): two variants next to the hero, to pick one.
+	for pot_dir in Tuning.POT_PREVIEW_DIRS:
+		var pb := Area2D.new()
+		pb.set_script(barrel_script)
+		pb.art_dir = pot_dir
+		pb.hit_size = Tuning.POT_HIT_SIZE
+		add_child(pb)
+		pb.hide()
+		barrels.append(pb)
+
 	var cauldron_script: GDScript = load("res://scripts/cauldron.gd")
 	for i in Tuning.CAULDRON_OFFSETS.size():
 		var c := Area2D.new()
@@ -1603,6 +1613,15 @@ func _place_barrel_once() -> void:
 	var depth: float = maxf(Tuning.BARREL_BLOCK_DEPTH, step * 0.5 + 8.0)
 	for j in n_wall:
 		barrels[n_loose + j].place(Vector2(wx, first + step * float(j)), depth)
+
+	# Pot previews: one above and one below the first loose barrel, close to the hero.
+	for k in Tuning.POT_PREVIEW_DIRS.size():
+		var pfeet: Vector2 = hero_feet + Vector2(240.0, -90.0 + 180.0 * float(k))
+		var ptop: float = walk_top_for_x(pfeet.x) + Tuning.BARREL_EDGE_INSET
+		var pbottom: float = walk_bottom_for_x(pfeet.x) - Tuning.BARREL_EDGE_INSET
+		if pbottom > ptop:
+			pfeet.y = clampf(pfeet.y, ptop, pbottom)
+		barrels[n_loose + n_wall + k].place(pfeet)
 
 
 func _on_throw_requested(from: Vector2, dir: Vector2) -> void:

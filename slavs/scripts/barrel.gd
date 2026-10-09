@@ -12,6 +12,13 @@ signal broken(at: Vector2)
 ## Every hit: where the barrel stands and whether this one broke it.
 signal damaged(feet: Vector2, broke: bool)
 
+## Which prop this is: the same script serves barrels and ceramic pots (2026-10-09).
+## main.gd sets these BEFORE add_child. A one-frame folder has no break clip yet,
+## so breaking just hides the picture (preview of the pot art).
+var art_dir: String = Tuning.BARREL_ART_DIR
+var hit_size: Vector2 = Tuning.BARREL_HIT_SIZE
+var _single_frame: bool = false
+
 var hp: int = Tuning.BARREL_HP
 var is_broken: bool = false
 
@@ -37,7 +44,8 @@ func _ready() -> void:
 	collision_mask = 0
 	monitoring = false
 
-	var frames := SpriteSequence.load_frames(Tuning.BARREL_ART_DIR)
+	var frames := SpriteSequence.load_frames(art_dir)
+	_single_frame = frames.size() <= 1
 	var sheet := SpriteFrames.new()
 	sheet.remove_animation(&"default")
 	sheet.add_animation(&"whole")
@@ -74,7 +82,7 @@ func _ready() -> void:
 	# T31: ground shadow, wider than the hit box (the barrel bulges).
 	_shadow = ShadowScript.new()
 	add_child(_shadow)
-	_shadow.setup(Vector2(0.0, -2.0), Tuning.BARREL_HIT_SIZE.x * 1.5)
+	_shadow.setup(Vector2(0.0, -2.0), hit_size.x * 1.5)
 
 
 ## The node's origin is the barrel's FEET - where it stands on the field -
@@ -85,8 +93,8 @@ func _fit() -> void:
 	# Bottom of the drawing (not of the canvas) on the origin.
 	_sprite.position = Vector2(0.0, -(_art_height * 0.5 - _foot_margin) * s)
 	var rect := _shape.shape as RectangleShape2D
-	rect.size = Tuning.BARREL_HIT_SIZE
-	_shape.position = Vector2(0.0, -Tuning.BARREL_HIT_SIZE.y * 0.5)
+	rect.size = hit_size
+	_shape.position = Vector2(0.0, -hit_size.y * 0.5)
 
 
 ## Blocks the hero's FEET within `depth` above or below the barrel's own feet.
@@ -133,6 +141,7 @@ func place(feet: Vector2, block_depth: float = 0.0) -> void:
 	collision_layer = Tuning.LAYER_TARGET
 	_sprite.animation = &"whole"
 	_sprite.stop()
+	_sprite.show()
 	_shadow.show()
 	show()
 	global_position = feet
@@ -164,7 +173,10 @@ func hit() -> void:
 		# The wreck is flat - walk over it.
 		_block_shape.set_deferred("disabled", true)
 		_shadow.hide()
-		_sprite.play(&"break")
+		if _single_frame:
+			_sprite.hide()
+		else:
+			_sprite.play(&"break")
 		broken.emit(global_position)
 
 

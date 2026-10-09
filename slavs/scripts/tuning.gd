@@ -396,6 +396,9 @@ const CAULDRON_OFFSETS: Array[Vector2] = [
 
 # --- Breakable barrel (2026-10-03) ---
 const BARREL_ART_DIR: String = "res://art/barrel_pl"
+## Ceramic pot previews (2026-10-09): variant 1 (two handles) and 2 (one handle).
+const POT_PREVIEW_DIRS: Array[String] = ["res://art/pot_a_pl", "res://art/pot_b_pl"]
+const POT_HIT_SIZE: Vector2 = Vector2(76.0, 100.0)
 ## 6 since 2026-10-03 (was 3): the returning axe hits twice per throw.
 const BARREL_HP: int = 6
 ## Integer like every PixelLab sprite - 2x matches the hero.
@@ -422,7 +425,7 @@ const BARREL_EDGE_INSET: float = 30.0
 ## 2026-10-03: one barrel is just stepped round). Rebuilt with the others
 ## after every death. It does NOT span the whole field (that is ~970 deep);
 ## six barrels edge to edge are ~240.
-const BARREL_WALL_COUNT: int = 6
+const BARREL_WALL_COUNT: int = 0  # wall removed 2026-10-09 (Pavel: scatter at random instead)
 const BARREL_WALL_X: float = 600.0
 const BARREL_WALL_SPACING: float = 40.0
 ## How far, in depth (Y), a barrel blocks the hero's FEET either side of its
