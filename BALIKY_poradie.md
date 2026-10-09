@@ -90,6 +90,8 @@ stun and knockdown T41). Later, with final art and palette (T17): C1 readability
 silhouettes, T41 animations. Existing: rusher swing clip, thrower fire clip (muzzle flash on frame
 5), brute grab (`enemy.gd _think_*`). Sounds need new files (CC0 / ElevenLabs SFX), ask Pavel.
 
+**FIRST THING in package 3 (Pavel 2026-10-09, agreed, not started): enemy variety by dirt.** Pavel's idea: more randomness for the mass-shooter crowd without a design change. Colour shade +-5 % (`RAND_TINT`) and size +-5 % (`RAND_SIZE`) are already done. Next: a few dark "dirt" pixels on clothes and helmets. Plan: at game start bake 4-5 variants of each enemy's `SpriteFrames` (rusher, gunman, brute) with random dark/dirty pixels placed only on already opaque pixels, the same pixel positions on every frame of a variant; at spawn pick one variant (no per-frame cost, no PixelLab credits, only a little load time and memory). The spots are fixed to the canvas, so they may "swim" a little on the body while walking - keep them small. Colour swaps of whole items (helmet, clothes) would need a palette-swap shader: separate, harder step, ask Pavel first. Use `Tuning.jitter` / panel NAHODNOST rules (CLAUDE.md rule 7); add a panel switch with a description. Also still open from package 2: real ceramic sounds (the pot sounds are synthesised placeholders).
+
 ## Package 4 - Prvá odmena: zber a séria (together with T09)
 
 Codes: **A15** rewards fly to the hero (magnet), **D1** signature pickup sound, **A16** rising
