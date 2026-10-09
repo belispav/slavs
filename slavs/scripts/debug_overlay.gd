@@ -230,6 +230,8 @@ func _build_panel() -> void:
 	fx_toggle.toggled.connect(func(on: bool) -> void: Tuning.fx_enabled = on)
 	_add_slider("ako dlho lezi krv na zemi (s)", 0.5, 60.0, 0.5, Tuning.fx_stain_time,
 		func(v: float) -> void: Tuning.fx_stain_time = v)
+	_add_slider("ako dlho lezia trosky (s)", 1.0, 60.0, 1.0, Tuning.wreck_time,
+		func(v: float) -> void: Tuning.wreck_time = v)
 
 	# Explosive cauldron (cauldron.gd). Added 2026-10-04.
 	_add_slider("kotol: odpocet do vybuchu (s)", 0.5, 8.0, 0.5, Tuning.cauldron_fuse,

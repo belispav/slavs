@@ -22,6 +22,8 @@ var sfx_break: StringName = &"barrel_break"
 var _single_frame: bool = false
 ## Per-prop size factor (place() sets it): class size x a small random variation.
 var _size: float = 1.0
+## Seconds until the wreck is gone (counts down from the break; <= 0 = gone, -1 = idle).
+var _wreck_left: float = -1.0
 
 var hp: int = Tuning.BARREL_HP
 var is_broken: bool = false
@@ -145,6 +147,7 @@ func place(feet: Vector2, block_depth: float = 0.0, size_factor: float = 1.0) ->
 	is_broken = false
 	_shake = 0.0
 	_flash = 0.0
+	_wreck_left = -1.0
 	collision_layer = Tuning.LAYER_TARGET
 	_sprite.animation = &"whole"
 	_sprite.stop()
@@ -176,6 +179,7 @@ func hit() -> void:
 	Sfx.play(sfx_break if hp <= 0 else sfx_hit, global_position)
 	if hp <= 0:
 		is_broken = true
+		_wreck_left = Tuning.jitter(Tuning.wreck_time, Tuning.RAND_WRECK) + Tuning.WRECK_FADE
 		set_deferred("collision_layer", 0)
 		# The wreck is flat - walk over it.
 		_block_shape.set_deferred("disabled", true)
@@ -191,7 +195,14 @@ func _process(delta: float) -> void:
 	if _block_width != Tuning.barrel_block_width:
 		_set_blocking(_block_depth)
 	_flash = maxf(_flash - delta * 6.0, 0.0)
-	_sprite.modulate = Color.WHITE.lerp(Color(1.0, 0.55, 0.45), _flash * 0.7)
+	var col: Color = Color.WHITE.lerp(Color(1.0, 0.55, 0.45), _flash * 0.7)
+	if is_broken and _wreck_left > -0.5:
+		_wreck_left -= delta
+		col.a = clampf(_wreck_left / Tuning.WRECK_FADE, 0.0, 1.0)
+		if _wreck_left <= 0.0:
+			_sprite.hide()
+			_wreck_left = -1.0
+	_sprite.modulate = col
 	if _shake > 0.0:
 		_shake = maxf(_shake - delta, 0.0)
 		_sprite.offset.x = 1.0 if int(_shake * 60.0) % 2 == 0 else -1.0

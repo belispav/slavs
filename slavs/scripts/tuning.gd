@@ -225,6 +225,11 @@ const FX_BLOOD_PLAYER: int = 14
 ## How long blood/splinters lie on the ground before they are gone (s).
 const FX_STAIN_TIME: float = 12.0
 var fx_stain_time: float = FX_STAIN_TIME
+## Wrecks of barrels, pots and cauldrons fade away like the blood (Pavel 2026-10-09: 10 s).
+const WRECK_TIME: float = 10.0
+var wreck_time: float = WRECK_TIME
+const WRECK_FADE: float = 1.0
+const RAND_WRECK: float = 0.25
 var fx_enabled: bool = true
 
 # --- Sounds (2026-10-04, sfx.gd) ---
@@ -332,6 +337,8 @@ const RAND_SLOWMO_SCALE: float = 0.125
 const RAND_WHITE: float = 0.25
 ## Body height of every enemy and size of every barrel/pot (Pavel 2026-10-09: +-5 %).
 const RAND_SIZE: float = 0.05
+## Colour shade of every enemy: each channel +-5 % (a free modulate, set once at spawn).
+const RAND_TINT: float = 0.05
 var random_strength: float = 1.0
 
 

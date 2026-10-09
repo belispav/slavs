@@ -24,6 +24,8 @@ var _whistle: AudioStreamPlayer2D
 var _block: StaticBody2D
 var _block_shape: CollisionShape2D
 var _flash: float = 0.0
+## Seconds until the burnt wreck is gone (-1 = idle).
+var _wreck_left: float = -1.0
 var _art_height: float = 64.0
 var _foot_margin: float = 0.0
 var _whole_tex: Texture2D
@@ -111,6 +113,8 @@ func refit_block() -> void:
 
 ## Whole again at `feet`. Cauldrons are reused, never freed.
 func place(feet: Vector2) -> void:
+	_wreck_left = -1.0
+	_sprite.show()
 	hp = Tuning.CAULDRON_HP
 	lit = false
 	spent = false
@@ -170,7 +174,15 @@ func _light() -> void:
 func _process(delta: float) -> void:
 	_flash = maxf(_flash - delta * 6.0, 0.0)
 	if not lit or spent:
-		_sprite.modulate = Color.WHITE.lerp(Color(1.0, 0.5, 0.4), _flash * 0.7)
+		var col: Color = Color.WHITE.lerp(Color(1.0, 0.5, 0.4), _flash * 0.7)
+		# The wreck fades away after Tuning.wreck_time, like the blood.
+		if spent and _wreck_left > -0.5:
+			_wreck_left -= delta
+			col.a = clampf(_wreck_left / Tuning.WRECK_FADE, 0.0, 1.0)
+			if _wreck_left <= 0.0:
+				_sprite.hide()
+				_wreck_left = -1.0
+		_sprite.modulate = col
 		return
 	_fuse -= delta
 	# 0 when just lit, 1 at the bang: everything ramps with it.
@@ -208,6 +220,7 @@ func _explode() -> void:
 	_sprite.offset = Vector2.ZERO
 	# The wreck: burnt black, no longer a target, no longer in the way.
 	_sprite.modulate = Color(0.25, 0.22, 0.2)
+	_wreck_left = Tuning.jitter(Tuning.wreck_time, Tuning.RAND_WRECK) + Tuning.WRECK_FADE
 	_show_debris()
 	_shadow.hide()
 	set_deferred("collision_layer", 0)

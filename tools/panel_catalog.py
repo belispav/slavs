@@ -39,6 +39,7 @@ INFO = {
     "sud: odstup postavy": ("Ako daleko pred hrdinom sa postavi novy sud.", "N"),
     "EFEKTY (krv, triesky, dym)": ("Zapne/vypne vizualne efekty.", "N"),
     "ako dlho lezi krv na zemi (s)": ("Ako dlho ostane krv na zemi.", "N"),
+    "ako dlho lezia trosky (s)": ("Ako dlho ostanú na zemi trosky sudov, hrncov a kotlov, kým zmiznú (náhodne ±25 %).", "N"),
     "kotol: odpocet do vybuchu (s)": ("Za kolko sekund kotol vybuchne po zasahu.", "A"),
     "kotol: dosah vybuchu": ("Polomer vybuchu kotla v px.", "A"),
     "VYBUCH ZRANI AJ HRDINU": ("Ak je vypnute, vybuch kotla zraňuje len nepriatelov.", "A"),

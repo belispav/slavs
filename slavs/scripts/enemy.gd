@@ -397,6 +397,13 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	# Every person is a different height (Pavel 2026-10-09): the whole body, hurtbox and
 	# shadow follow one factor, +-RAND_SIZE per enemy. Reach and strike zones stay in px.
 	scale = Vector2.ONE * Tuning.jitter(1.0, Tuning.RAND_SIZE)
+	# A slightly different shade per enemy (each colour channel +-RAND_TINT). Free: one
+	# modulate set here, no shader, no extra draw call.
+	var tint := Color(Tuning.jitter(1.0, Tuning.RAND_TINT), Tuning.jitter(1.0, Tuning.RAND_TINT),
+		Tuning.jitter(1.0, Tuning.RAND_TINT))
+	for spr in [_thrower_sprite, _rusher_sprite, _brute_sprite]:
+		if spr != null:
+			spr.modulate = tint
 	_fit_hurtbox(_drawn_height)
 	_shadow.set_width((_drawn_height if _drawn_height > 0.0 else SIZE.y * 2.0)
 		* Tuning.SHADOW_WIDTH_PER_HEIGHT)
