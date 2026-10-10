@@ -112,6 +112,8 @@ var _rusher_sprite: AnimatedSprite2D
 ## A9: the rusher's falling clip, played by corpses.gd on its body.
 var _rusher_death_frames: Array[Texture2D] = []
 var _thrower_death_frames: Array[Texture2D] = []
+## Death clip of this enemy's dirty variant (empty = use the clean clip), see _apply_dirt.
+var _dirt_death: Array = []
 var _fire_timer: float = 0.0
 ## Counts down from the start of the fire clip to the muzzle flash; the shot
 ## leaves when it reaches zero. < 0 = no shot pending.
@@ -224,6 +226,7 @@ func _build_sprite() -> void:
 		Tuning.THROWER_SPRITE_SCALE, Tuning.THROWER_ANIM_FPS)
 	_thrower_drawn_height = thrower_height[0]
 	_thrower_death_frames = SpriteSequence.load_frames(Tuning.THROWER_DEATH_ART_DIR)
+	_register_dirt(&"thrower", _thrower_sprite, &"idle", _thrower_death_frames)
 	var rusher_height := [0.0]
 	_rusher_sprite = _build_sprite_from(&"idle_unaware", Tuning.RUSHER_IDLE_ART_DIR, [
 		[&"idle_ready", Tuning.RUSHER_IDLE_READY_ART_DIR, true],
@@ -235,6 +238,7 @@ func _build_sprite() -> void:
 		Tuning.RUSHER_SPRITE_SCALE, Tuning.RUSHER_ANIM_FPS)
 	_rusher_drawn_height = rusher_height[0]
 	_rusher_death_frames = SpriteSequence.load_frames(Tuning.RUSHER_DEATH_ART_DIR)
+	_register_dirt(&"rusher", _rusher_sprite, &"idle_unaware", _rusher_death_frames)
 	var brute_height := [0.0]
 	_brute_sprite = _build_sprite_from(&"idle", Tuning.BRUTE_IDLE_ART_DIR, [
 		[&"walk", Tuning.BRUTE_WALK_ART_DIR, true],
@@ -242,12 +246,24 @@ func _build_sprite() -> void:
 	], _brute_shift, brute_height,
 		Tuning.BRUTE_SPRITE_SCALE, Tuning.BRUTE_ANIM_FPS)
 	_brute_drawn_height = brute_height[0]
+	_register_dirt(&"brute", _brute_sprite, &"idle", [])
 	if _thrower_sprite != null:
 		add_child(_thrower_sprite)
 	if _rusher_sprite != null:
 		add_child(_rusher_sprite)
 	if _brute_sprite != null:
 		add_child(_brute_sprite)
+
+
+## Package 3 (dirt): remember this sprite's clean SpriteFrames (so a spawn can put it back)
+## and hand them to EnemyDirt, which bakes the dirty variants once per kind.
+func _register_dirt(key: StringName, spr: AnimatedSprite2D, base_anim: StringName, death: Array) -> void:
+	if spr == null:
+		return
+	spr.set_meta(&"clean_frames", spr.sprite_frames)
+	spr.set_meta(&"base_anim", base_anim)
+	spr.set_meta(&"dirt_key", key)
+	EnemyDirt.register(key, spr.sprite_frames, spr.sprite_frames.get_frame_texture(base_anim, 0), death)
 
 
 ## One AnimatedSprite2D from a base animation plus any extra clips whose
@@ -394,6 +410,7 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 			_sprite = _rusher_sprite
 			_clip_shift = _rusher_shift
 			_drawn_height = _rusher_drawn_height
+	_apply_dirt()
 	# Every person is a different height (Pavel 2026-10-09): the whole body, hurtbox and
 	# shadow follow one factor, +-RAND_SIZE per enemy. Reach and strike zones stay in px.
 	scale = Vector2.ONE * Tuning.jitter(1.0, Tuning.RAND_SIZE)
@@ -557,6 +574,22 @@ func _start_white() -> void:
 	_set_white(true)
 
 
+## Package 3: this enemy shows one random dirty variant (or the clean look when the panel
+## switch is off); its death clip carries the same dirt. The sprite is restarted on its base
+## clip because swapping SpriteFrames can reset the animation; _drive_sprite picks the right
+## clip on the next frame.
+func _apply_dirt() -> void:
+	_dirt_death = []
+	if _sprite == null or not _sprite.has_meta(&"clean_frames"):
+		return
+	var pick: Dictionary = EnemyDirt.pick(_sprite.get_meta(&"dirt_key"))
+	var frames: SpriteFrames = pick.get("sheet", _sprite.get_meta(&"clean_frames"))
+	if _sprite.sprite_frames != frames:
+		_sprite.sprite_frames = frames
+		_sprite.play(_sprite.get_meta(&"base_anim"))
+	_dirt_death = pick.get("death", [])
+
+
 func _set_white(on: bool) -> void:
 	var mat: ShaderMaterial = _get_white_material() if on else null
 	for s in [_thrower_sprite, _rusher_sprite, _brute_sprite]:
@@ -608,6 +641,8 @@ func _emit_corpse() -> void:
 			global_position + feet_off * k, body_h)
 		return
 	var clip: Array = _rusher_death_frames if kind == Kind.RUSHER else _thrower_death_frames
+	if not _dirt_death.is_empty():
+		clip = _dirt_death
 	corpse_requested.emit(tex, _sprite.flip_h, _sprite.scale * k, (_sprite.position - feet_off) * k,
 		global_position + feet_off * k, body_h,
 		_weapon_dir if _by_weapon else Vector2.ZERO, clip, kind == Kind.THROWER)

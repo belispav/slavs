@@ -339,6 +339,15 @@ const RAND_WHITE: float = 0.25
 const RAND_SIZE: float = 0.05
 ## Colour shade of every enemy: each channel +-5 % (a free modulate, set once at spawn).
 const RAND_TINT: float = 0.05
+## Package 3: dirt on enemies (enemy_dirt.gd). DIRT_VARIANTS baked copies per enemy kind,
+## each with dirt_spots mud spots (1-3 px) blended onto already drawn pixels with weight
+## dirt_weight; panel switch + slider. The number of spots is also scaled by the panel
+## NAHODNOST (0 = clean enemies).
+const DIRT_VARIANTS: int = 5
+const DIRT_COLOR: Color = Color8(78, 58, 40)
+var dirt_on: bool = true
+var dirt_spots: int = 32
+var dirt_weight: float = 0.8
 var random_strength: float = 1.0
 
 

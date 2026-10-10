@@ -346,6 +346,11 @@ func _build_panel() -> void:
 	_add_slider_d("NAHODNOST (nasobok)", 0.0, 2.0, 0.1, Tuning.random_strength,
 		"Kazdy nepriatel a efekt sa trochu lisi. Posuvniky vyssie drzia STRED, nahodnost sa pridava okolo neho: sila odletu 0,9-1,1x, rychlost animacie 7-9, lezanie 0,5-1 s, spomalenie 500-700 ms pri rychlosti 0,35-0,45, biely zablesk 15-25 ms. Posuvnik nasobi rozptyl (1 = dohodnuty, 0 = ziadna nahodnost, 2 = dvojnasobna).",
 		func(v: float) -> void: Tuning.random_strength = v)
+	_add_toggle("SPINA NA NEPRIATELOCH", Tuning.dirt_on,
+		func(on: bool) -> void: Tuning.dirt_on = on)
+	_add_slider_d("spina: pocet skvrn na nepriatela", 0.0, 80.0, 2.0, float(Tuning.dirt_spots),
+		"Kazdy nepriatel ma pri zjaveni jeden z 5 vzhladov s malymi blatovymi skvrnami na oblecku a prilbe (rovnake skvrny aj po smrti). Posuvnik = kolko skvrn (0 = ziadne). Pocet nasobi aj NAHODNOST. Zmena sa prejavi u nepriatelov, ktori sa zjavia po nej.",
+		func(v: float) -> void: Tuning.dirt_spots = int(v))
 	var vib_test := Button.new()
 	vib_test.text = "TEST VIBRACIE (rovnaka ako pri mojom zasahu)"
 	vib_test.custom_minimum_size = Vector2(0, 52)

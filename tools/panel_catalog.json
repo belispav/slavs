@@ -81,7 +81,13 @@
 		"name": "ako dlho lezi krv na zemi (s)",
 		"section": "TEST",
 		"type": "slider",
-		"value": "3.0"
+		"value": "12.0"
+	},
+	{
+		"name": "ako dlho lezia trosky (s)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "10.0"
 	},
 	{
 		"name": "kotol: odpocet do vybuchu (s)",
@@ -177,7 +183,7 @@
 		"name": "dlzka bieleho zablesku (ms)",
 		"section": "TEST",
 		"type": "slider",
-		"value": "40.0"
+		"value": "20.0"
 	},
 	{
 		"name": "TRASENIE OBRAZU PRI ZASAHU",
@@ -214,6 +220,90 @@
 		"section": "TEST",
 		"type": "slider",
 		"value": "200.0"
+	},
+	{
+		"name": "TELO PO SMRTI",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "sila odletu tela",
+		"section": "TEST",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "rychlost animacie padu (fps)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "8.0"
+	},
+	{
+		"name": "ako dlho telo lezi (s)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "TELO ZMIZNE V DYME",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "SPOMALENIE PRI POSLEDNOM ZABITI",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "dlzka spomalenia (ms)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "600.0"
+	},
+	{
+		"name": "rychlost pocas spomalenia",
+		"section": "TEST",
+		"type": "slider",
+		"value": "0.4"
+	},
+	{
+		"name": "spomalenie: max. odstup zabiti (s)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "8.0"
+	},
+	{
+		"name": "spomalenie: kolko zabiti v serii",
+		"section": "TEST",
+		"type": "slider",
+		"value": "3.0"
+	},
+	{
+		"name": "spomalenie: dosah 'posledny' (px)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "900.0"
+	},
+	{
+		"name": "NAHODNOST (nasobok)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "SPINA NA NEPRIATELOCH",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "spina: pocet skvrn na nepriatela",
+		"section": "TEST",
+		"type": "slider",
+		"value": "32.0"
 	},
 	{
 		"name": "TEST VIBRACIE (rovnaka ako pri mojom zasahu)",
@@ -423,7 +513,7 @@
 		"name": "sekera: polomer zasahu (px)",
 		"section": "NEPRIATELIA",
 		"type": "slider",
-		"value": "30.0"
+		"value": "20.0"
 	},
 	{
 		"name": "UKAZ ZONU UDERU BEZCA",

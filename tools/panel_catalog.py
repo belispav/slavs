@@ -64,6 +64,8 @@ INFO = {
     "spomalenie: kolko zabiti v serii": ("Kolko zabiti za sebou treba pre spomalenie na poslednom.", "A"),
     "spomalenie: dosah 'posledny' (px)": ("V akom okruhu okolo hraca nesmie byt dalsi zivy nepriatel.", "A"),
     "NAHODNOST (nasobok)": ("Nasobok nahodneho rozptylu pri silach, rychlostiach a dlzkach efektov (1 = dohodnuty, 0 = vypnute).", "A"),
+    "SPINA NA NEPRIATELOCH": ("Nepriatelia maju pri zjaveni jeden z 5 vzhladov s malymi blatovymi skvrnami (aj po smrti).", "A"),
+    "spina: pocet skvrn na nepriatela": ("Kolko skvrn ma kazdy nepriatel (0 = ziadne; nasobi to aj NAHODNOST).", "A"),
     "dlzka spomalenia (ms)": ("Ako dlho trva spomalenie (skutocne ms).", "A"),
     "rychlost pocas spomalenia": ("Aky rychly je cas pocas spomalenia (1 = normalne).", "A"),
     "BIELY ZABLESK": ("Zasiahnuty nepriatel na chvilu cely zbeli.", "A"),
