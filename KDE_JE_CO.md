@@ -216,6 +216,7 @@ Samostatný scenár neexistuje. Odsúhlasené je jadro:
 | `HLASKY.md` | Pavel | Návrh hlášok (angl.) na schválenie |
 | `NAPADY_vylepsenia.md` | obaja | Výskum 2026-10-07: 148 nápadov s popisom a zdrojmi; otvorené nápady sú v ToDo (kódy A1…Z8) |
 | `BALIKY_poradie.md` | Claude | Balíky práce (poradie, stav, čo už v kóde je, ako balík uzavrieť); číta sa na začiatku každej session |
+| `KATALOG_efektov.md` | Pavel + Claude | Katalóg efektov (T42): čo môžu nepriatelia robiť nám a my im, hodnoty a stav; dopĺňa sa pri každom novom efekte |
 | `PLAN_hry.md` | obaja | Plán hry, business case, fázy; kap. 2 (citlivá téma) je nemenná |
 | `DIZAJN_core_loop.md` | obaja | Štruktúra hry: run-based, klietky |
 | `SPEC_ovladanie_implementacia.md` | obaja | Ovládanie, jediný zdroj pravdy |
