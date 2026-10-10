@@ -112,8 +112,6 @@ var _rusher_sprite: AnimatedSprite2D
 ## A9: the rusher's falling clip, played by corpses.gd on its body.
 var _rusher_death_frames: Array[Texture2D] = []
 var _thrower_death_frames: Array[Texture2D] = []
-## F2 (package 3): the brute's wind-up before a grab, seconds left (0 = not winding up).
-var _windup_left: float = 0.0
 ## Death clip of this enemy's dirty variant (empty = use the clean clip), see _apply_dirt.
 var _dirt_death: Array = []
 var _fire_timer: float = 0.0
@@ -380,7 +378,6 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	active = true
 	_fire_timer = 0.0
 	_shot_delay = -1.0
-	_windup_left = 0.0
 	_aware = false
 	_attack_timer = 0.0
 	_attack_cd = 0.0
@@ -796,7 +793,7 @@ func _drive_sprite(delta: float) -> void:
 ## Playing an attack clip: firing for the thrower, swinging for the rusher.
 ## Both plant the feet, so both root the body - see _physics_process.
 func _is_attacking() -> bool:
-	return _fire_timer > 0.0 or _attack_timer > 0.0 or _windup_left > 0.0
+	return _fire_timer > 0.0 or _attack_timer > 0.0
 
 
 ## T24: an enemy in the middle of its attack is locked in place. Read by
@@ -1222,43 +1219,19 @@ func _think_brute(delta: float, free: bool) -> void:
 	var reach: bool = absf(to_target.x) <= Tuning.BRUTE_GRAB_RANGE \
 		and absf(to_target.y) <= Tuning.BRUTE_GRAB_DEPTH \
 		and signf(to_target.x) == _face
-	# F2: a short wind-up before the grab. The brute stands still, growls and blinks; the grab
-	# only happens if the hero is STILL in reach when it ends, so stepping away is a real dodge.
-	if _windup_left > 0.0:
-		velocity = Vector2.ZERO
-		_windup_left -= delta
-		if _windup_left <= 0.0:
-			_windup_left = 0.0
-			if reach and _begin_grab():
-				return
-			_grab_cd = Tuning.BRUTE_WINDUP_RECOVER
+	if reach and _grab_cd <= 0.0 and target.has_method("grabbed_by") \
+			and target.grabbed_by(self):
+		_grabbing = true
+		_grab_time = 0.0
+		_grab_tick = Tuning.BRUTE_GRAB_TICK * 0.5
+		Sfx.play(&"brute_grab", global_position)
 		return
-	if reach and _grab_cd <= 0.0 and target.has_method("grabbed_by"):
-		if Tuning.brute_windup > 0.0:
-			_windup_left = maxf(Tuning.jitter(Tuning.brute_windup, Tuning.RAND_WARN), 0.05)
-			if Tuning.warn_sound_on:
-				Sfx.play(&"warn_brute", global_position)   # folder empty until real voice lines exist
-			velocity = Vector2.ZERO
-			return
-		if _begin_grab():
-			return
 	velocity.x = signf(to_target.x) * speed if absf(to_target.x) > Tuning.BRUTE_GRAB_RANGE * 0.6 else 0.0
 	if absf(to_target.x) > Tuning.BRUTE_GRAB_RANGE * 0.6:
 		_wish_speed = speed
 	if free:
 		var goal: float = clampf(to_target.y / 40.0, -1.0, 1.0) * speed * 0.6
 		velocity.y = move_toward(velocity.y, goal, speed * 4.0 * delta)
-
-
-## Take the hero into the grab (the hero may refuse, e.g. when already held).
-func _begin_grab() -> bool:
-	if not target.has_method("grabbed_by") or not target.grabbed_by(self):
-		return false
-	_grabbing = true
-	_grab_time = 0.0
-	_grab_tick = Tuning.BRUTE_GRAB_TICK * 0.5
-	Sfx.play(&"brute_grab", global_position)
-	return true
 
 
 func _release_grab() -> void:

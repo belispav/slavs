@@ -66,8 +66,6 @@ INFO = {
     "NAHODNOST (nasobok)": ("Nasobok nahodneho rozptylu pri silach, rychlostiach a dlzkach efektov (1 = dohodnuty, 0 = vypnute).", "A"),
     "SPINA NA NEPRIATELOCH": ("Nepriatelia maju pri zjaveni jeden z 5 vzhladov s malymi blatovymi skvrnami (aj po smrti).", "A"),
     "spina: pocet skvrn na nepriatela": ("Kolko skvrn ma kazdy nepriatel (0 = ziadne; nasobi to aj NAHODNOST).", "A"),
-    "ZVUK VAROVANIA OBORA": ("Obor zavrci pred chytenim (zatial ticho, kym nie su hlasy).", "A"),
-    "obor: vymah pred chytenim (s)": ("Obor sa pred chytenim na chvilu zastavi; vtedy mozes uhnut (0 = chyti okamzite).", "A"),
     "dlzka spomalenia (ms)": ("Ako dlho trva spomalenie (skutocne ms).", "A"),
     "rychlost pocas spomalenia": ("Aky rychly je cas pocas spomalenia (1 = normalne).", "A"),
     "BIELY ZABLESK": ("Zasiahnuty nepriatel na chvilu cely zbeli.", "A"),

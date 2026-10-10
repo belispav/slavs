@@ -1,6 +1,6 @@
 # KDE JE ČO — mapa priečinka Slavs fight back
 
-Stav k 2026-10-09. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
+Stav k 2026-10-10. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
 Claude: túto mapu aktualizuj pri každom presune alebo pridaní súboru v koreni.
 
 ## Balíky – poradie práce (master: `BALIKY_poradie.md`)
@@ -9,8 +9,8 @@ Pavel rieši každý balík v novej session (Sonnet). Na rade je balík so stavo
 
 1. **Úder má váhu** – HOTOVÉ 2026-10-08 (kódy sú v `_archiv/TODO_hotove.md`)
 2. **Smrť nepriateľa a stopy boja** – HOTOVÉ 2026-10-09 (kódy sú v `_archiv/TODO_hotove.md`)
-3. **Féroví a čitateľní nepriatelia** – NA RADE – F2, D4, T42
-4. **Prvá odmena: zber a séria (+ T09)** – čaká – A15, D1, A16, J4, H1, H3, T09
+3. **Féroví a čitateľní nepriatelia** – HOTOVÉ 2026-10-10 (špina na nepriateľoch hotová; F2 zamietnuté a archivované; D4 a T42 ostávajú otvorené, ale mimo balíka)
+4. **Prvá odmena: zber a séria (+ T09)** – NA RADE – A15, D1, A16, J4, H1, H3, T09
 5. **Hrdina v pohybe** – čaká – B1, T37, B2, A17
 
 ## ToDo's (otvorené úlohy; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, DIZAJN_core_loop.md §3-4)
@@ -73,11 +73,10 @@ C6 Parallax pozadie (ak ešte nie je) {C ★ stredná}
 D1 Podpisový zvuk zberu {D ★★★ nízka}
 D2 Hudba podľa intenzity {D ★★ stredná}
 D3 Slovanský zvukový podpis {D ★★ stredná}
-D4 Zvukové varovanie pred útokom {D ★★ nízka}
+D4 ODLOŽENÉ (Pavel 2026-10-10): zvukové varovanie pred útokom. Strelec ho nepotrebuje (zvuk výstrelu je signál); bežec a obor môžu dostať zavrčanie/výkrik, až keď budú skutočné hlasy (syntetické zvuky zamietnuté). {D ★★ nízka}
 D5 Zajatci ďakujú v slovanských jazykoch {D ★★ nízka}
 D6 Stíšenie hudby pri dôležitej udalosti {D ★ nízka}
 F1 Odlišné siluety podľa role {F ★★★ stredná}
-F2 Varovanie pred každým útokom {F ★★★ nízka}
 F3 Elitní nepriatelia s istou odmenou {F ★★★ stredná}
 F4 Zlatý nepriateľ (vzácny utečenec) {F ★★★ nízka}
 F5 Komické správanie nepriateľov {F ★★ stredná}

@@ -33,7 +33,7 @@ Hodnoty sú z kódu (`tuning.gd`); finálne sa ladia až s finálnou grafikou (T
 
 | Efekt | Čo to robí | Stav |
 |---|---|---|
-| Výmah obora pred chytením (F2) | Obor sa na 0,4 s zastaví, v tom čase sa dá uhnúť; chytí len ak si stále v dosahu. Blikanie pred útokmi a syntetické zvuky varovania Pavel zamietol | hotové v kóde, čaká na test na telefóne |
+| Varovanie pred útokom (F2) | Zamietnuté 2026-10-10: blikanie (červená = zranenie, biela = zásah) aj výmah obora pred chytením; strelcov signál je zvuk výstrelu | zamietnuté |
 | Špina na nepriateľoch | 5 vzhľadov so škvrnami, obor nemá škvrny na hlave | hotové, čaká na finálne čísla |
 | Náhodnosť (pravidlo 7) | Každý nepriateľ a efekt sa trochu líši | hotové, posuvník NAHODNOST |
 

@@ -353,18 +353,9 @@ var dirt_on: bool = true
 ## the brute's head; slider now 50-200, final value to be confirmed.
 var dirt_spots: int = 80
 var dirt_weight: float = 0.8
-## Package 3 F2 (2026-10-10): the red/white blinking before attacks was tried and REJECTED by
-## Pavel (red reads as damage, white is the hit flash, blinking looks odd). The gunman's shot
-## sound is already his warning. What stays: the brute stands still for a short wind-up before
-## the grab (brute_windup, 0 = instant grab as before; the grab only happens if the hero is
-## still in reach) and plays warn_brute, whose folder is empty until real voice lines exist.
-## The wind-up length is jittered per brute by RAND_WARN (panel NAHODNOST).
-const RAND_WARN: float = 0.2
-const BRUTE_WINDUP: float = 0.4
-## Pause after a wind-up the hero escaped from (the grab missed).
-const BRUTE_WINDUP_RECOVER: float = 0.8
-var warn_sound_on: bool = true
-var brute_windup: float = BRUTE_WINDUP
+## Package 3 F2 (2026-10-10): a warning blink before attacks and a brute wind-up before the grab were
+## tried and REJECTED by Pavel (the gunman's shot sound is already his warning; the brute stops
+## anyway). No warning code remains.
 var random_strength: float = 1.0
 
 
