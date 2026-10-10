@@ -345,8 +345,13 @@ const RAND_TINT: float = 0.05
 ## NAHODNOST (0 = clean enemies).
 const DIRT_VARIANTS: int = 5
 const DIRT_COLOR: Color = Color8(78, 58, 40)
+## Kinds whose head stays clean: share of the body height from the top (Pavel 2026-10-10:
+## dirt on the bare head of the brute looks like wounds). Helmets of the others may be dirty.
+const DIRT_HEAD_FREE: Dictionary = {&"brute": 0.25}
 var dirt_on: bool = true
-var dirt_spots: int = 32
+## Pavel's phone test 2026-10-10: 32 showed nothing, 80 was the max and nearly too much on
+## the brute's head; slider now 50-200, final value to be confirmed.
+var dirt_spots: int = 80
 var dirt_weight: float = 0.8
 var random_strength: float = 1.0
 

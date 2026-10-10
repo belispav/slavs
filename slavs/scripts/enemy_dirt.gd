@@ -69,6 +69,20 @@ static func _rebake(key: StringName) -> void:
 	var body: Array[Vector2i] = _opaque_pixels(ref_img)
 	if body.is_empty():
 		return
+	# Some kinds keep the top part of the body (head) free of dirt: Tuning.DIRT_HEAD_FREE
+	# = share of the body height measured from the top of the reference frame.
+	var head_limit: int = 0
+	var head_frac: float = float(Tuning.DIRT_HEAD_FREE.get(key, 0.0))
+	if head_frac > 0.0:
+		var top: int = ref_img.get_height()
+		var bottom: int = 0
+		for p in body:
+			top = mini(top, p.y)
+			bottom = maxi(bottom, p.y)
+		head_limit = top + int(round(head_frac * float(bottom - top + 1)))
+		body = body.filter(func(p: Vector2i) -> bool: return p.y >= head_limit)
+		if body.is_empty():
+			return
 	# Source images are decoded once and shared by all variants.
 	var images: Dictionary = {}    # Texture2D -> Image (RGBA8)
 	for anim in sheet.get_animation_names():
@@ -80,7 +94,7 @@ static func _rebake(key: StringName) -> void:
 		if not images.has(tex):
 			images[tex] = _image_of(tex)
 	for v in Tuning.DIRT_VARIANTS:
-		var layer: Image = _make_layer(ref_img.get_size(), body, 7919 * (v + 1) + 13, spots)
+		var layer: Image = _make_layer(ref_img.get_size(), body, 7919 * (v + 1) + 13, spots, head_limit)
 		var dirty: Dictionary = {}     # Texture2D -> ImageTexture, so a shared frame is baked once
 		var new_sheet := SpriteFrames.new()
 		for anim in sheet.get_animation_names():
@@ -125,22 +139,22 @@ static func _opaque_pixels(img: Image) -> Array[Vector2i]:
 ## Transparent image the size of the canvas with the mud spots: colour = DIRT_COLOR,
 ## alpha = how strongly the spot replaces the pixel underneath. Each spot is 1 pixel,
 ## half of them get a 1-2 pixel smudge next to them.
-static func _make_layer(size: Vector2i, body: Array[Vector2i], seed_value: int, spots: int) -> Image:
+static func _make_layer(size: Vector2i, body: Array[Vector2i], seed_value: int, spots: int, min_y: int) -> Image:
 	var layer := Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
 	var dirs: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 	for _s in spots:
 		var p: Vector2i = body[rng.randi() % body.size()]
-		_put(layer, p, rng.randf_range(0.8, 1.2))
+		_put(layer, p, rng.randf_range(0.8, 1.2), min_y)
 		var extra: int = [0, 0, 1, 2][rng.randi() % 4]
 		for _e in extra:
-			_put(layer, p + dirs[rng.randi() % 4], rng.randf_range(0.6, 1.0))
+			_put(layer, p + dirs[rng.randi() % 4], rng.randf_range(0.6, 1.0), min_y)
 	return layer
 
 
-static func _put(layer: Image, p: Vector2i, strength: float) -> void:
-	if p.x < 0 or p.y < 0 or p.x >= layer.get_width() or p.y >= layer.get_height():
+static func _put(layer: Image, p: Vector2i, strength: float, min_y: int) -> void:
+	if p.x < 0 or p.y < min_y or p.x >= layer.get_width() or p.y >= layer.get_height():
 		return
 	var c: Color = Tuning.DIRT_COLOR
 	c.a = clampf(Tuning.dirt_weight * strength, 0.0, 1.0)

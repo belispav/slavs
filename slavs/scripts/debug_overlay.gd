@@ -348,8 +348,8 @@ func _build_panel() -> void:
 		func(v: float) -> void: Tuning.random_strength = v)
 	_add_toggle("SPINA NA NEPRIATELOCH", Tuning.dirt_on,
 		func(on: bool) -> void: Tuning.dirt_on = on)
-	_add_slider_d("spina: pocet skvrn na nepriatela", 0.0, 80.0, 2.0, float(Tuning.dirt_spots),
-		"Kazdy nepriatel ma pri zjaveni jeden z 5 vzhladov s malymi blatovymi skvrnami na oblecku a prilbe (rovnake skvrny aj po smrti). Posuvnik = kolko skvrn (0 = ziadne). Pocet nasobi aj NAHODNOST. Zmena sa prejavi u nepriatelov, ktori sa zjavia po nej.",
+	_add_slider_d("spina: pocet skvrn na nepriatela", 50.0, 200.0, 5.0, float(Tuning.dirt_spots),
+		"Kazdy nepriatel ma pri zjaveni jeden z 5 vzhladov s malymi blatovymi skvrnami na oblecku a prilbe (rovnake skvrny aj po smrti). Posuvnik = kolko skvrn (50-200). Obor ma hlavu bez skvrn. Pocet nasobi aj NAHODNOST (0 = ziadna spina). Zmena sa prejavi u nepriatelov, ktori sa zjavia po nej.",
 		func(v: float) -> void: Tuning.dirt_spots = int(v))
 	var vib_test := Button.new()
 	vib_test.text = "TEST VIBRACIE (rovnaka ako pri mojom zasahu)"
