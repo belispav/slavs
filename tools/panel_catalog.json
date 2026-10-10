@@ -306,22 +306,10 @@
 		"value": "80.0"
 	},
 	{
-		"name": "VAROVANIE PRED UTOKOM (blikanie)",
+		"name": "ZVUK VAROVANIA OBORA",
 		"section": "TEST",
 		"type": "switch",
 		"value": "ZAP"
-	},
-	{
-		"name": "ZVUK VAROVANIA",
-		"section": "TEST",
-		"type": "switch",
-		"value": "ZAP"
-	},
-	{
-		"name": "varovanie: sila blikania",
-		"section": "TEST",
-		"type": "slider",
-		"value": "1.0"
 	},
 	{
 		"name": "obor: vymah pred chytenim (s)",

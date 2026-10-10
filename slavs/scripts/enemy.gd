@@ -112,12 +112,7 @@ var _rusher_sprite: AnimatedSprite2D
 ## A9: the rusher's falling clip, played by corpses.gd on its body.
 var _rusher_death_frames: Array[Texture2D] = []
 var _thrower_death_frames: Array[Texture2D] = []
-## F2 warning (package 3): remaining blink time, blink clock and speed, the colour the
-## sprite has between blinks, and the brute's wind-up before a grab (0 = not winding up).
-var _warn_time: float = 0.0
-var _warn_clock: float = 0.0
-var _warn_hz: float = 8.0
-var _base_tint: Color = Color.WHITE
+## F2 (package 3): the brute's wind-up before a grab, seconds left (0 = not winding up).
 var _windup_left: float = 0.0
 ## Death clip of this enemy's dirty variant (empty = use the clean clip), see _apply_dirt.
 var _dirt_death: Array = []
@@ -385,7 +380,6 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	active = true
 	_fire_timer = 0.0
 	_shot_delay = -1.0
-	_warn_time = 0.0
 	_windup_left = 0.0
 	_aware = false
 	_attack_timer = 0.0
@@ -427,7 +421,6 @@ func spawn(pos: Vector2, new_kind: int, player: Node2D) -> void:
 	# modulate set here, no shader, no extra draw call.
 	var tint := Color(Tuning.jitter(1.0, Tuning.RAND_TINT), Tuning.jitter(1.0, Tuning.RAND_TINT),
 		Tuning.jitter(1.0, Tuning.RAND_TINT))
-	_base_tint = tint
 	for spr in [_thrower_sprite, _rusher_sprite, _brute_sprite]:
 		if spr != null:
 			spr.modulate = tint
@@ -584,29 +577,6 @@ func _start_white() -> void:
 	_set_white(true)
 
 
-## F2/D4: announce an attack. `duration` = how long the blink lasts (until the blow lands or
-## the shot leaves), `event` = this enemy type's warning sound (folder audio/sfx/<event>/).
-func _start_warning(duration: float, event: StringName) -> void:
-	if Tuning.warn_sound_on:
-		Sfx.play(event, global_position)
-	if Tuning.warn_visual_on and duration > 0.0:
-		_warn_time = duration
-		_warn_clock = 0.0
-		_warn_hz = maxf(Tuning.jitter(Tuning.WARN_BLINK_HZ, Tuning.RAND_WARN), 1.0)
-
-
-## Blink the visible sprite between its normal shade and WARN_COLOR while a warning runs.
-## A dropped attack (apply_push) zeroes _warn_time, the very next call restores the shade.
-func _update_warning(delta: float) -> void:
-	if _warn_time <= 0.0:
-		return
-	_warn_time = maxf(_warn_time - delta, 0.0)
-	_warn_clock += delta
-	var on: bool = _warn_time > 0.0 and fmod(_warn_clock * _warn_hz, 1.0) < 0.5
-	if _sprite != null:
-		_sprite.modulate = _base_tint.lerp(Tuning.WARN_COLOR, Tuning.warn_strength) if on else _base_tint
-
-
 ## Package 3: this enemy shows one random dirty variant (or the clean look when the panel
 ## switch is off); its death clip carries the same dirt. The sprite is restarted on its base
 ## clip because swapping SpriteFrames can reset the animation; _drive_sprite picks the right
@@ -753,7 +723,6 @@ func _physics_process(delta: float) -> void:
 	# slider in the debug panel actually live instead of only taking effect
 	# after the next redeploy - same reasoning as player.gd's own call.
 	_fit_hurtbox(_drawn_height)
-	_update_warning(delta)
 	_drive_sprite(delta)
 
 
@@ -862,7 +831,6 @@ func apply_push(push: Vector2) -> void:
 	_attack_hit_done = true
 	_fire_timer = 0.0
 	_shot_delay = -1.0
-	_warn_time = 0.0       # the swing/shot is dropped, so is its warning (the blink ends next frame)
 
 
 func _apply_push(delta: float) -> void:
@@ -1034,7 +1002,6 @@ func _update_attack_timer(in_range: bool, delta: float) -> void:
 		_attack_len = _attack_anim_duration()
 		_attack_timer = _attack_len
 		_attack_hit_done = false
-		_start_warning(_attack_len * Tuning.rusher_attack_hit_at, &"warn_rusher")
 		# Not every swing - a shout on each one, from a crowd, is a choir.
 		if randf() < Tuning.RUSHER_SHOUT_CHANCE:
 			Sfx.play(&"rusher_shout", global_position)
@@ -1118,7 +1085,6 @@ func _think_thrower(delta: float, free: bool) -> void:
 		# be read, and dodging is the whole answer to a gunman.
 		_fire_timer = Tuning.THROWER_FIRE_TIME
 		_shot_delay = Tuning.THROWER_SHOT_DELAY
-		_start_warning(Tuning.THROWER_SHOT_DELAY, &"warn_thrower")
 
 
 ## The shot, from the muzzle of the drawn arquebus towards the player's body.
@@ -1270,7 +1236,8 @@ func _think_brute(delta: float, free: bool) -> void:
 	if reach and _grab_cd <= 0.0 and target.has_method("grabbed_by"):
 		if Tuning.brute_windup > 0.0:
 			_windup_left = maxf(Tuning.jitter(Tuning.brute_windup, Tuning.RAND_WARN), 0.05)
-			_start_warning(_windup_left, &"warn_brute")
+			if Tuning.warn_sound_on:
+				Sfx.play(&"warn_brute", global_position)   # folder empty until real voice lines exist
 			velocity = Vector2.ZERO
 			return
 		if _begin_grab():
