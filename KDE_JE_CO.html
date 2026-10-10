@@ -21,6 +21,7 @@
   --c-oboch:#1c6b58; --c-oboch-bg:#dcebe5;
   --c-archiv:#5c6460; --c-archiv-bg:#e6e9e6;
   --c-tech:#8a5a00; --c-tech-bg:#f7ecd2;
+  --c-done:#1f6b3a; --c-done-bg:#dcefe2;
   --bar-old:#c9a24a;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
@@ -31,6 +32,7 @@
   --c-oboch:#5cc2a3; --c-oboch-bg:#1f3b33;
   --c-archiv:#a3aeaa; --c-archiv-bg:#27302d;
   --c-tech:#e2bb6a; --c-tech-bg:#3d3319;
+  --c-done:#7fd29c; --c-done-bg:#1d3a28;
   --bar-old:#a3822f; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#111715; --surface:#192220; --ink:#e4ebe8; --muted:#92a39c; --line:#2a3733;
@@ -40,6 +42,7 @@
   --c-oboch:#5cc2a3; --c-oboch-bg:#1f3b33;
   --c-archiv:#a3aeaa; --c-archiv-bg:#27302d;
   --c-tech:#e2bb6a; --c-tech-bg:#3d3319;
+  --c-done:#7fd29c; --c-done-bg:#1d3a28;
   --bar-old:#a3822f; color-scheme:dark}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
 *{box-sizing:border-box}
@@ -142,7 +145,8 @@ code,.mono{font-family:var(--font-mono);font-size:.86em;overflow-wrap:anywhere}
 .tcard.i3{border-left-color:var(--i3)}.tcard.i2{border-left-color:var(--i2)}
 .tcard.hi{background:var(--hi)}
 .tcard.sel{box-shadow:inset 0 0 0 2px var(--star)}
-.th{display:flex;align-items:center;gap:8px}
+.th{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}
+.th .tag{font-size:.75rem;white-space:nowrap}
 .tid{font-family:var(--font-mono);font-size:.95rem;font-weight:600}
 .star{margin-left:auto;appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:4px;font-size:1rem;line-height:1;padding:3px 7px;cursor:pointer}
 .star[aria-pressed="true"]{color:var(--star);border-color:var(--star)}
@@ -154,6 +158,12 @@ code,.mono{font-family:var(--font-mono);font-size:.86em;overflow-wrap:anywhere}
 .tsrc{font-size:.76rem;color:var(--muted);font-family:var(--font-mono);overflow-wrap:anywhere}
 .tsrc a{color:var(--accent)}
 .b-later{color:var(--c-later);background:var(--c-later-bg)}
+.b-done{color:var(--c-done);background:var(--c-done-bg)}
+.b-closed{color:var(--c-archiv);background:var(--c-archiv-bg)}
+.tag.st-open{color:var(--c-teba);border-color:var(--c-teba)}
+.tag.st-done{color:var(--c-done);border-color:var(--c-done)}
+.tcard.isdone{opacity:.92;border-left:3px solid var(--c-done)}
+.tcard.isclosed{opacity:.8;border-left:3px solid var(--c-archiv)}
 .b-napad{color:var(--c-napad);background:var(--c-napad-bg)}
 .tbtn{appearance:none;font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer}
 .tbtn:hover{border-color:var(--muted)}
@@ -197,6 +207,7 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
     <div class="baliky" id="tbaliky"></div>
     <div class="tiles" id="ttiles" role="group" aria-label="Filter podľa stavu"></div>
     <div class="tbar">
+      <div class="trow2"><span class="tlbl">Stav práce</span><span class="chips" id="tst"></span></div>
       <div class="trow2"><span class="tlbl">Balík</span><span class="chips" id="tbal"></span></div>
       <div class="trow2"><span class="tlbl">Oblasť</span><span class="chips" id="tcat"></span></div>
       <div class="trow2"><span class="tlbl">Prínos</span><span class="chips" id="timp"></span></div>
@@ -290,6 +301,7 @@ var ITEMS = [
   {n:".mcp.json  .gitignore  .gitattributes  .claude/", g:"tech", w:"Konfigurácia: PixelLab, ignorované súbory, koncovky riadkov, hook na synchronizáciu gitu.", s:"Nemeniť bez dôvodu."},
   {n:"slavs/", g:"claude", w:"Hra samotná (Godot projekt). Scény, skripty, obrázky, zvuky.", s:"Dnes 211 MB, z toho 52 MB cache .godot a 76 MB build."},
   {n:"tools/", g:"claude", w:"Skripty na nasadenie, PixelLab, zem a kontrolu kódu.", s:"Staré 3D skripty sú v _archiv/3d_stary/."},
+  {n:"_to_delete/", g:"teba", w:"Veci na zmazanie. Claude v tvojom priečinku nemôže mazať, tak ich sem presúva.", s:"Môžeš celý priečinok zmazať, nič z neho hra nepoužíva."},
   {n:"ref/", g:"oboch", w:"Štýlové referencie a návrhy (obrázky). 3D modely odtiaľ odišli do archívu.", s:"22 voľných obrázkov v ref/ je z júla, teda staré; sú mimo gitu."},
   {n:"Claude outputs/", g:"teba", w:"Obrázky z našich pracovných session (2. až 4. 10.): animácie, štýly, pozadia.", s:"Môžeš prezrieť a zmazať, čo už nepotrebuješ."},
   {n:"_archiv/3d_stary/", g:"archiv", w:"Celý starý 3D reťazec (Meshy, Mixamo, Blender): výstupy renderov, modely .blend a .fbx, staré skripty, staré pixel priečinky, staré sekcie PRIKAZY.", s:"505 MB, len na tvojom disku, NIE na GitHube. Claude ho nebere do úvahy."},
@@ -301,7 +313,7 @@ var SIZES = [
   {n:"_archiv/", mb:506, f:2260, d:"505 MB z toho je starý 3D reťazec, len na tvojom disku, nie na GitHube", old:true},
   {n:"ref/", mb:368, f:697, d:"Referencie, väčšina sú obrázky", old:false},
   {n:"slavs/", mb:205, f:2085, d:"Hra", old:false},
-  {n:"Claude outputs/", mb:8, f:14, d:"Obrázky z pracovných session", old:false},
+  {n:"Claude outputs/", mb:12, f:52, d:"Obrázky z pracovných session", old:false},
   {n:"tools/", mb:1, f:49, d:"Skripty", old:false},
   {n:"art/", mb:1, f:1, d:"PixelLab", old:false},
   {n:"docs/", mb:1, f:1, d:"Výskum", old:false}
@@ -1970,14 +1982,337 @@ var TODOS = [
 "u": "https://trysonar.app/blog/play-store-listing-experiments-what-to-test.md"
 }
 ];
+// Hotové, zamietnuté a zavreté úlohy: generované z _archiv/TODO_hotove.md (st: done / rej / closed)
+var DONE = [
+{
+"id": "T01",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "test na telefóne. Pozadie A (pokojná hlina) + objekty na zemi (skúšal 100, môže byť aj viac, ladenie neskôr); ostatné pozadia zrušené. Grafika zeme považovaná za vyriešenú."
+},
+{
+"id": "T02",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "hod sekerou. Počas hodu sa hrdina nehýbe (0 = vlastnosť, treba vybrať moment hodu), zamach 3x rýchlejší; zapečené v `tuning.gd`. Nápad: v hre začať s nižším číslom (napr. 1) a levelovať. Nový klip netreba; pri iných zbraniach (kúzla) bude animácia spojená s útokom."
+},
+{
+"id": "T03",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "chôdza aj boss scény majú ROVNAKÚ vertikálnu logiku (jemný zvislý scroll, hracia plocha = výška obrazovky, horný pás navyše len aby bolo vidieť celé telo). Pri bossoch/klietkach sa zamkne LEN horizontálny scroll (nedá sa odísť vľavo ani vpravo). Prepínanie (zoom-in) ostáva v T13."
+},
+{
+"id": "T05",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "skontrolované na telefóne, všetko v poriadku (viac HP, efekty zásahov, zvuky, kotol, brute, nepriatelia za obrazovkou ho dobehnú)."
+},
+{
+"id": "T11",
+"st": "done",
+"dt": "2026-10-05",
+"cat": "T",
+"t": "zmeny poslané na GitHub pri čistení histórie (T20)."
+},
+{
+"id": "T12",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "(test na telefóne OK; objekty na okraji majú limit výšky): horný okraj zeme je nerovný (zarezaný do zeme až 44 px), stmavený, s trsmi a kameňmi; hráč chodí podľa neho. Pavel vybral najsilnejšie stmavenie a najviac prvkov (nasadené, okraj je jednofarebný bez prasklín); ak test na telefóne prejde, uzavrieť. Plot/zábrana na okraji až pri finálnom dizajne levelov. [Open 3a]"
+},
+{
+"id": "T13",
+"st": "closed",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "mechanika je dohodnutá (hra na určitom mieste zamkne vodorovný scroll). Samotné zamykanie sa naprogramuje spolu s bossmi a klietkami, nie ako samostatná úloha."
+},
+{
+"id": "T14",
+"st": "closed",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "počet ani obsah scén nie je určený; vypálená dedina bola len skúška grafiky, nepadlo rozhodnutie, že je druhou scénou."
+},
+{
+"id": "T15",
+"st": "closed",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "boj na blízko. Prekrývanie bežcov je prijateľné (Pavel: \"je to srandovné, hlavne keď ich je veľa\"). Konkrétne zlepšenia sú T22-T24."
+},
+{
+"id": "T16",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "(Pavel: blikanie aj kĺzanie zmizlo): bežec bliká po švihu pri pohybe v Y. Príčina: na hranici dosahu sa prepínal stoj/chôdza každú snímku (bez hysterézy, cieľ sa kýval). Oprava: bežec, ktorý sa zastavil, ostane stáť, kým hráč nie je 1,2x dosah ďalej; kývanie cieľa zamrznuté počas státia; chôdza sa zapne až nad 40 px/s a vypne pod 12 px/s. [Open 5]"
+},
+{
+"id": "T18",
+"st": "closed",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "gunman idle netreba (stojí, ako keď si ho nevšimol); brute úchop nesedí, ale nič z toho sa teraz nerieši, nevieme, či tieto postavy budú vo finálnej verzii."
+},
+{
+"id": "T19",
+"st": "closed",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "fázy F2-F5 sú plán výroby, nie úloha; keď sa odrobia všetky úlohy, ďalší krok sa berie z `PLAN_hry.md`."
+},
+{
+"id": "T20",
+"st": "done",
+"dt": "2026-10-05",
+"cat": "T",
+"t": ", OVERENÉ 2026-10-06: história GitHubu vyčistená od starých 3D súborov (`tools/github_cistenie.py`, jednorazový). Kontrola: v histórii nie je `render/`, `art/fits`, `tools/blender`, `.blend`/`.fbx`; 130 commitov, 417 MiB (z toho `ref/` 371 MB); `origin/master` na GitHube sedí s lokálnou históriou; `slavs_cisty_...` je zmazaný, `slavs_zaloha_...` ostáva do T21. Zvyšok histórie ~26 MB (staré sprity v zmazanej zložke `volya/`, Meshy obrázky v `ref/`) sa nechal."
+},
+{
+"id": "T24",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "(test OK): nepriateľ sa pri švihu (aj strelec pri výstrele) uzamkne na mieste. Príčina kĺzania: funkcia, čo rozstrkáva prekrývajúcich sa nepriateľov (`_separate_enemies` v main.gd), posúvala aj švihajúcich; teraz je uzamknutý nepriateľ pevný a odtlačí sa ten druhý. Neskôr lepší nepriatelia dostanú animáciu útoku za pohybu. (Pavel 2026-10-06)"
+},
+{
+"id": "T25",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "(Pavel: sudy blokujú nepriateľov, obchádzanie funguje): sudy majú blokovať nepriateľov rovnako ako hrdinu (nepriatelia cez ne prechádzali). Oprava: maska kolízií nepriateľa obsahuje vrstvu rekvizít. Pozor na zaseknutie nepriateľov za stenou sudov. (Pavel 2026-10-06)"
+},
+{
+"id": "T26",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "(nahradené kruhovou zónou T29): zóna zásahu bežca nebola vycentrovaná na hrdinu. Príčina: dosah sa meral k cieľovému bodu posunutému o hĺbkový posun bežca + kývanie (až ±80 px). Teraz sa dosah meria k hrdinovi samotnému. Dosah je stále kruh (rovnaký v X aj Y); či má byť v hĺbke menší, je rozhodnutie na neskôr. (Pavel 2026-10-06)"
+},
+{
+"id": "T28",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "(Pavel: obchádzanie funguje dobre): nepriatelia sa zasekávali za stenou sudov. Teraz: ak sa dlhšie nehýbu, hoci chcú k hrdinovi, vyberú si JEDEN smer v osi Y (k riadku hrdinu) a idú ním, kým sa môžu znova posunúť v X k hrdinovi alebo kým nenarazia na okraj plochy (vtedy sa otočia). Nastavenia `DETOUR_*` v `tuning.gd`. (Pavel 2026-10-06)"
+},
+{
+"id": "T29",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "(Pavel: oveľa lepšie, ideálne hodnoty pre bežca 40 / 50 / 40 = dopredu / výška / polomer, nastavené ako predvolené): zóna úderu bežca je KRUH so stredom v mieste dopadu zbrane (dopredu 40 px, výška nad nohami 50 px) a polomerom 40 px. Hrdina je zasiahnutý, ak sa jeho zraniteľný obdĺžnik (telo od nôh nahor) dotýka kruhu. Bežec sa zastaví, hneď ako sa hrdina kruhu dotkne (preto zmizol slider „na akú vzdialenosť sa zastaví“). Panel: slidery dopredu / výška / polomer a prepínač „UKAZ ZONU UDERU BEZCA“ (kruh; po zásahu tmavší)."
+},
+{
+"id": "T30",
+"st": "done",
+"dt": "2026-10-06",
+"cat": "T",
+"t": "(test OK): nepriatelia sa zastavia na spodnom okraji ako hrdina (OK). Pruh pri spodnom okraji bol príliš široký (odstup 20 px) → spodný odstup zmenšený na polovicu, 10 px, pre hrdinu aj nepriateľov (`WALK_BOTTOM_INSET`, slider „odstup od SPODNEHO okraja“); horný odstup ostáva 20 px. Nepriateľ nesmie mať ani pixel pod hracou plochou (`Enemy.clamp_to_field`)."
+},
+{
+"id": "T27",
+"st": "closed",
+"dt": "2026-10-07",
+"cat": "T",
+"t": "poskočenie hrdinu po zásahu patrilo len bežcovi, funguje (test na telefóne). Nahradené T33 (odhodenie obojsmerne)."
+},
+{
+"id": "T31",
+"st": "done",
+"dt": "2026-10-07",
+"cat": "T",
+"t": "tiene pod hrdinom, nepriateľmi, sudmi a kotlami (`shadow.gd`), otestované na telefóne; zapečené: sila 0,3, veľkosť 1."
+},
+{
+"id": "T32",
+"st": "done",
+"dt": "2026-10-07",
+"cat": "T",
+"t": "náhodnosť zvukov, otestované na telefóne; zapečené: efekty ±2,5 dB hlasitosť a ±25 % výška tónu, hlasy ±1 dB a ±3 %."
+},
+{
+"id": "T22",
+"st": "done",
+"dt": "2026-10-07",
+"cat": "T",
+"t": "(Pavel: zmeny OK): pevné telá hrdinu a nepriateľov; šírka 60, hĺbka 30, oprava asymetrie (zamrznutí nepriatelia si nepreskladali box nôh)."
+},
+{
+"id": "T33",
+"st": "done",
+"dt": "2026-10-07",
+"cat": "T",
+"t": "(Pavel: OK): odhodenie po zásahu 0,4 s; bežec 90, strela 35, sekera 70, výbuch kotla 140 px; sekera zraňuje a odhadzuje len cestou k nepriateľom, späť z polovice priehľadná a 1,5x rýchlejšia; zásah preruší útok nepriateľa."
+},
+{
+"id": "T45",
+"st": "done",
+"dt": "2026-10-07",
+"cat": "T",
+"t": "(Pavel: OK): srdiečka nad postavami (`hearts.gd`, panel 0/1/2, predvolené 2)."
+},
+{
+"id": "T46",
+"st": "done",
+"dt": "2026-10-07",
+"cat": "T",
+"t": "(Pavel: OK): panel UKAZ ZONY ZASAHU (kruh sekery, obdĺžniky zásahu); polomer sekery zapečený na 20; páčka ľavého palca s posúvajúcim sa stredom (pohyb je oveľa lepší)."
+},
+{
+"id": "A1",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "A",
+"t": "(Pavel: OK): zastavenie pri zásahu sekery 30 ms (pri zabití 1,8x dlhšie, najmenší odstup 0,18 s medzi zastaveniami); vypínač + posuvník v paneli.",
+"b": 1
+},
+{
+"id": "A2",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "A",
+"t": "(Pavel: OK): biely záblesk zasiahnutého nepriateľa 40 ms (len ak zásah nezabije; mŕtvy zmizne hneď, telo rieši balík 2).",
+"b": 1
+},
+{
+"id": "A3",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "A",
+"t": "(Pavel: OK): otras obrazovky pri zásahu sekerou a zabití, zapečené x1,5 (3,75 / 7,5).",
+"b": 1
+},
+{
+"id": "A4",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "A",
+"t": "(Pavel: OK): kopnutie kamery v smere letu sekery, zapečené x1,5 (7,5 / 13,5). Pavel: otras a kopnutie sa zlievajú, rozlíši ich vypnutím jedného.",
+"b": 1
+},
+{
+"id": "A5",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "A",
+"t": "(Pavel: OK): čísla poškodenia nad nepriateľom, veľkosť písma 16; samotné písmo sa Pavlovi nepáči, vyberie sa pri finálnom ladení (T51).",
+"b": 1
+},
+{
+"id": "A6",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "A",
+"t": "(Pavel: OK): kritický zásah 15 % (berie 2 životy, žlté 'KRIT 2!', efekty x1,5); šanca sa bude líšiť podľa zbrane a vylepšení (T50).",
+"b": 1
+},
+{
+"id": "A8",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "A",
+"t": "(Pavel: OK): zvuk zásahu podľa materiálu: telo `enemy_hit`, brnenie `armor_clang`, drevo `barrel_hit`; kotol je teraz kov (`armor_clang`). Zvuky sú zatiaľ náhradné, nové súbory na materiál ešte nie sú.",
+"b": 1
+},
+{
+"id": "E1",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "E",
+"t": "(Pavel: OK): vibrácia pri zásahu sekerou 200 ms (pri zabití 300 ms); pod 100 ms nič necítiť. Jemnejšie podľa útočníka a počtu životov: T49.",
+"b": 1
+},
+{
+"id": "P1",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "P",
+"t": "(Pavel: OK): každý nový efekt balíka 1 má vypínač a posuvník v paneli s popisom; tlačidlo TEST VIBRACIE.",
+"b": 1
+},
+{
+"id": "A14",
+"st": "done",
+"dt": "2026-10-08",
+"cat": "A",
+"t": "(Pavel: OK): potvrdené: po zásahu je hrdina 0,9 s nesmrteľný a červeno bliká (`Tuning.PLAYER_IFRAMES`).",
+"b": 1
+},
+{
+"id": "A9",
+"st": "done",
+"dt": "2026-10-09",
+"cat": "A",
+"t": "(Pavel: OK): smrť s pointou. Bežec padá podľa PixelLab klipu `rusher_pl_death`, gunman sa zosype na kolená a padne dopredu (`gunman_pl_death`), brute sa rozpadne na kúsky (kód, `corpses.gd burst`). Sila odletu 1,0, rýchlosť animácie 8 fps, ležanie 0,5-1 s.",
+"b": 2
+},
+{
+"id": "T36",
+"st": "done",
+"dt": "2026-10-09",
+"cat": "T",
+"t": "(Pavel: OK): telá po ležaní zmiznú v dymovom obláčiku (vypínač TELO ZMIZNE V DYME).",
+"b": 2
+},
+{
+"id": "A10",
+"st": "done",
+"dt": "2026-10-09",
+"cat": "A",
+"t": "(Pavel: OK): spomalenie pri poslednom zabití / brutovi: 600 ms pri rýchlosti 0,4 (náhodne 500-700 ms, 0,35-0,45), séria zabití do 8 s; 4 posuvníky v paneli. Biely záblesk 20 ms (15-25).",
+"b": 2
+},
+{
+"id": "A12",
+"st": "done",
+"dt": "2026-10-09",
+"cat": "A",
+"t": "(Pavel: OK): krv a triesky ostávajú na zemi dlhšie (`FX_STAIN_TIME` 12 s, ladiť pri finálnej hre).",
+"b": 2
+},
+{
+"id": "A11",
+"st": "done",
+"dt": "2026-10-09",
+"cat": "A",
+"t": "(Pavel: OK, prvá časť): okrem sudov sú keramické hrnce (PixelLab, animácia rozbitia), mix 3 sudy + 3 hrnce rozhodené náhodne, dve veľkosti +-5 %, vlastné zvuky (náhradné). Ploty, stany a debny prípadne neskôr s finálnou grafikou.",
+"b": 2
+},
+{
+"id": "F2",
+"st": "rej",
+"dt": "2026-10-10",
+"cat": "F",
+"t": "(Pavel, test na telefóne): varovanie pred každým útokom blikaním (červené blikanie evokuje zranenie, biele je zásah, blikanie vyzerá čudne) a syntetické zvuky varovania. Skúšané aj 0,4 s výmah obora pred chytením: zamietnuté, obor sa zastavuje aj bez neho. Strelec varovanie nepotrebuje (výstrel je signál).",
+"b": 3
+},
+{
+"id": "T52",
+"st": "done",
+"dt": "2026-10-10",
+"cat": "F",
+"t": "(balík 3, Pavlov nápad z 2026-10-09): špina na nepriateľoch, 5 vzhľadov na typ nepriateľa (`enemy_dirt.gd`), posuvník počtu škvŕn 50-200 (predvolene 80), obor bez škvŕn na hlave; finálne čísla Pavel ešte potvrdí.",
+"b": 3
+}
+];
+
 var BALIKY = [{"n": 1, "name": "Úder má váhu", "st": "done", "d": "Hotové 2026-10-08: zastavenie času, biely záblesk, otras, kopnutie kamery, čísla poškodenia, kritický zásah, zvuk podľa materiálu, vibrácia, vypínače v paneli.", "codes": ["A1", "A2", "A3", "A4", "A5", "A6", "A8", "E1", "P1", "A14"]}, {"n": 2, "name": "Smrť nepriateľa a stopy boja", "st": "done", "d": "Hotové 2026-10-09: telá padajú podľa animácie (bežec, gunman), brute sa rozpadne, spomalenie pri poslednom zabití, dlhšie stopy krvi, keramické hrnce, náhodnosť všade.", "codes": ["A9", "T36", "A10", "A12", "A11"]}, {"n": 3, "name": "Féroví a čitateľní nepriatelia", "st": "done", "d": "Hotové 2026-10-10: špina na nepriateľoch (5 vzhľadov, panel). Varovanie blikaním zamietnuté, zvuky varovania čakajú na skutočné hlasy, katalóg efektov založený. Siluety a čitateľnosť v dave až s finálnou grafikou.", "codes": ["F2"]}, {"n": 4, "name": "Prvá odmena: zber a séria (+ T09)", "st": "next", "d": "Odmeny letia k hrdinovi, podpisový zvuk, séria s násobičom, ohrozenie a hodnotenie záchrany zajatcov. Začína sa otázkami z T09.", "codes": ["A15", "D1", "A16", "J4", "H1", "H3", "T09"]}, {"n": 5, "name": "Hrdina v pohybe", "st": "wait", "d": "Úskok, prach spod nôh, pružnosť postavy, červený okraj pri nízkom zdraví. Úskok mení ovládanie – najprv návrh gesta.", "codes": ["B1", "T37", "B2", "A17"]}];
-var TCATS = [{"c": "A", "n": "Pocit z úderu", "d": "Malé efekty, vďaka ktorým má každý úder váhu. Najlacnejšie a najviditeľnejšie zlepšenia."}, {"c": "B", "n": "Hrdina a pohyb", "d": "Ako sa hrdina hýbe a ako vyzerá, keď rastie."}, {"c": "C", "n": "Vizuál a atmosféra", "d": "Pixel art, svetlo, prostredie, čitateľnosť v dave."}, {"c": "D", "n": "Zvuk a hudba", "d": "Polovica pocitu z hry je zvuk."}, {"c": "E", "n": "Vibrácie", "d": "Haptika – silný nástroj na mobile, ak sa nepreženie."}, {"c": "F", "n": "Nepriatelia", "d": "Rozmanitosť, čitateľnosť a humor nepriateľov."}, {"c": "G", "n": "Bossovia", "d": "Najlepšie momenty na klipy a najväčšie odmeny."}, {"c": "H", "n": "Klietky a zajatci", "d": "Nápady priamo pre váš hlavný mechanizmus."}, {"c": "I", "n": "Zbrane a schopnosti", "d": "Variabilita behov a pocit, že hráč skladá vlastnú silu."}, {"c": "J", "n": "Beh a level", "d": "Štruktúra jedného behu, napätie, koniec behu."}, {"c": "K", "n": "Meta-progresia", "d": "Dôvod hrať ďalší beh a ďalší deň."}, {"c": "L", "n": "Odmeny (dopamín)", "d": "Rytmus odmien, ktorý drží hráča pri hre."}, {"c": "M", "n": "Udržanie hráča", "d": "Návrat o deň, o týždeň, o mesiac."}, {"c": "N", "n": "Prvé minúty", "d": "Rozhodujú, či hráč hru nezmaže."}, {"c": "O", "n": "Ovládanie a HUD", "d": "Mobilné ovládanie a čistá obrazovka."}, {"c": "P", "n": "Prístupnosť", "d": "Rozširujú publikum a zlepšujú recenzie."}, {"c": "Q", "n": "Príbeh a svet", "d": "Identita hry, ktorú si ľudia zapamätajú."}, {"c": "R", "n": "Virálnosť", "d": "Čo v hre robí z hráčov propagátorov."}, {"c": "S", "n": "Marketing", "d": "Ako hru dostať k ľuďom (premium hra sa sama nepredá)."}, {"c": "Z", "n": "Monetizácia", "d": "Všetky modely s plusmi a mínusmi. Rozhodnutie je tvoje."}, {"c": "U", "n": "Technika a kvalita", "d": "Bez tohto Google hru stiahne z očí."}, {"c": "V", "n": "Stránka v Google Play", "d": "Premena návštevy obchodu na stiahnutie."}];
+var TCATS = [{"c": "A", "n": "Pocit z úderu", "d": "Malé efekty, vďaka ktorým má každý úder váhu. Najlacnejšie a najviditeľnejšie zlepšenia."}, {"c": "B", "n": "Hrdina a pohyb", "d": "Ako sa hrdina hýbe a ako vyzerá, keď rastie."}, {"c": "C", "n": "Vizuál a atmosféra", "d": "Pixel art, svetlo, prostredie, čitateľnosť v dave."}, {"c": "D", "n": "Zvuk a hudba", "d": "Polovica pocitu z hry je zvuk."}, {"c": "E", "n": "Vibrácie", "d": "Haptika – silný nástroj na mobile, ak sa nepreženie."}, {"c": "F", "n": "Nepriatelia", "d": "Rozmanitosť, čitateľnosť a humor nepriateľov."}, {"c": "G", "n": "Bossovia", "d": "Najlepšie momenty na klipy a najväčšie odmeny."}, {"c": "H", "n": "Klietky a zajatci", "d": "Nápady priamo pre váš hlavný mechanizmus."}, {"c": "I", "n": "Zbrane a schopnosti", "d": "Variabilita behov a pocit, že hráč skladá vlastnú silu."}, {"c": "J", "n": "Beh a level", "d": "Štruktúra jedného behu, napätie, koniec behu."}, {"c": "K", "n": "Meta-progresia", "d": "Dôvod hrať ďalší beh a ďalší deň."}, {"c": "L", "n": "Odmeny (dopamín)", "d": "Rytmus odmien, ktorý drží hráča pri hre."}, {"c": "M", "n": "Udržanie hráča", "d": "Návrat o deň, o týždeň, o mesiac."}, {"c": "N", "n": "Prvé minúty", "d": "Rozhodujú, či hráč hru nezmaže."}, {"c": "O", "n": "Ovládanie a HUD", "d": "Mobilné ovládanie a čistá obrazovka."}, {"c": "P", "n": "Prístupnosť", "d": "Rozširujú publikum a zlepšujú recenzie."}, {"c": "Q", "n": "Príbeh a svet", "d": "Identita hry, ktorú si ľudia zapamätajú."}, {"c": "R", "n": "Virálnosť", "d": "Čo v hre robí z hráčov propagátorov."}, {"c": "S", "n": "Marketing", "d": "Ako hru dostať k ľuďom (premium hra sa sama nepredá)."}, {"c": "Z", "n": "Monetizácia", "d": "Všetky modely s plusmi a mínusmi. Rozhodnutie je tvoje."}, {"c": "U", "n": "Technika a kvalita", "d": "Bez tohto Google hru stiahne z očí."}, {"c": "T", "n": "Staršie úlohy (T01–T52)", "d": "Úlohy z prvých týždňov; väčšina je už hotová (zobrazíš cez Stav práce)."}, {"c": "V", "n": "Stránka v Google Play", "d": "Premena návštevy obchodu na stiahnutie."}];
 var TG = {teba:"Čaká na teba", claude:"Čaká na Claude", later:"Neskôr", napad:"Nápady z výskumu"};
 var TGD = {teba:"Tvoje rozhodnutia, testy a schválenia", claude:"Claude urobí po tvojom OK", later:"Zapísané, riešiť neskôr", napad:"Výskum 7. 10., vyber, čo chceš riešiť"};
 var IMPL = {3:"★★★ zásadné", 2:"★★ veľký rozdiel", 1:"★ drobnosť"};
 var EFFL = {N:"nízka", S:"stredná", V:"vysoká"};
 var GORDER = ["teba","claude","later","napad"], EORDER = {N:0,S:1,V:2};
-var ts = {g:"all", b:"all", cat:"all", imp:"all", eff:"all", by:"cat", q:""};
+var ts = {st:"open", g:"all", b:"all", cat:"all", imp:"all", eff:"all", by:"cat", q:""};
+var DLBL = {done:"Hotové",rej:"Zamietnuté",closed:"Zavreté"};
 var SELKEY = "slavs_todo_vyber", sel = {};
 try { sel = JSON.parse(localStorage.getItem(SELKEY) || "{}") || {}; } catch(e) { sel = {}; }
 function saveSel(){ try { localStorage.setItem(SELKEY, JSON.stringify(sel)); } catch(e) {} }
@@ -2004,6 +2339,7 @@ function tcard(x){
   h.appendChild(el("span","badge b-"+x.g, x.g==="napad" ? "Nápad" : TG[x.g]+" · "+x.k));
   var st=el("button","star",sel[x.id]?"★":"☆"); st.type="button"; st.title="Vybrať / zrušiť výber"; st.setAttribute("aria-pressed",String(!!sel[x.id]));
   st.onclick=function(){ if(sel[x.id]) delete sel[x.id]; else sel[x.id]=1; saveSel(); renderTodos(); };
+  h.appendChild(el("span","tag st-open","Nehotové"));
   if(x.b) h.appendChild(el("span","tag bal","Balík "+x.b));
   h.appendChild(st); c.appendChild(h);
   var t=el("div","tt"); t.innerHTML=x.t; c.appendChild(t);
@@ -2012,6 +2348,25 @@ function tcard(x){
   var s=el("div","tsrc");
   if(x.u){ var a=el("a",null,x.s); a.href=x.u; a.target="_blank"; a.rel="noopener"; s.appendChild(a); } else s.textContent=x.s;
   c.appendChild(s); return c;
+}
+function dmatch(x){
+  if(ts.st==="open") return false;
+  if(ts.g!=="all" || ts.imp!=="all" || ts.eff!=="all") return false;
+  if(ts.b!=="all" && String(x.b||"")!==ts.b) return false;
+  if(ts.cat!=="all" && x.cat!==ts.cat) return false;
+  var q=ts.q.trim().toLowerCase();
+  if(q && (x.id+" "+x.t).toLowerCase().indexOf(q)<0) return false;
+  return true;
+}
+function dcard(x){
+  var c=el("div","tcard "+(x.st==="done"?"isdone":"isclosed"));
+  var h=el("div","th"); h.appendChild(el("span","tid",x.id));
+  h.appendChild(el("span","badge "+(x.st==="done"?"b-done":"b-closed"),(x.st==="done"?"✓ ":"")+DLBL[x.st]+(x.dt?" · "+x.dt:"")));
+  if(x.b) h.appendChild(el("span","tag bal","Balík "+x.b));
+  c.appendChild(h);
+  c.appendChild(el("div","tt",x.t));
+  c.appendChild(el("div","tsrc","Archív: _archiv/TODO_hotove.md"));
+  return c;
 }
 function renderBaliky(){
   var box=document.getElementById("tbaliky"); if(!box) return; box.textContent="";
@@ -2031,30 +2386,36 @@ function renderTodos(){
     b.appendChild(el("span","n",String(n))); b.appendChild(el("span","l",k==="vyb"?"Tvoj výber ☆":TG[k])); b.appendChild(el("span","d",k==="vyb"?"Označené hviezdičkou":TGD[k]));
     b.onclick=function(){ ts.g=(ts.g===k?"all":k); renderTodos(); }; tiles.appendChild(b);
   });
+  tchips("tst",[["open","Nehotové ("+TODOS.length+")"],["done","Hotové a zavreté ("+DONE.length+")"],["all","Všetko ("+(TODOS.length+DONE.length)+")"]],"st");
   tchips("tbal",[["all","Všetko"]].concat(BALIKY.map(function(b){return [String(b.n),b.n+". "+b.name+(b.st==="next"?" ← na rade":b.st==="done"?" ✓":"")]})),"b");
   renderBaliky();
   tchips("tcat",[["all","Všetko"]].concat(TCATS.map(function(c){return [c.c,c.c+" "+c.n]})),"cat");
   tchips("timp",[["all","Všetko"],["3",IMPL[3]],["2",IMPL[2]],["1",IMPL[1]]],"imp");
   tchips("teff",[["all","Všetko"],["N","nízka"],["S","stredná"],["V","vysoká"]],"eff");
   tchips("tgrp",[["cat","Oblasti"],["g","Stavu"],["imp","Prínosu"],["eff","Náročnosti"]],"by");
-  var list=TODOS.filter(tmatch).sort(tsort);
+  var openL = ts.st==="done" ? [] : TODOS.filter(tmatch).sort(tsort);
+  var doneL = DONE.filter(dmatch).sort(function(a,b){ return (b.dt||"").localeCompare(a.dt||"") || a.id.localeCompare(b.id); });
+  var list = openL.concat(doneL);
   var groups=[];
   if(ts.by==="cat") groups=TCATS.map(function(c){return {k:c.c,h:c.c+". "+c.n,d:c.d}});
   else if(ts.by==="g") groups=GORDER.map(function(k){return {k:k,h:TG[k],d:TGD[k]}});
   else if(ts.by==="imp") groups=[3,2,1].map(function(k){return {k:k,h:IMPL[k],d:""}});
   else groups=["N","S","V"].map(function(k){return {k:k,h:"Náročnosť: "+EFFL[k],d:""}});
+  if(ts.by!=="cat") groups.push({k:"done",h:"Hotové, zamietnuté a zavreté",d:"Z archívu; nezobrazené, kým je Stav práce „Nehotové“"});
   var box=document.getElementById("todos"); box.textContent="";
   groups.forEach(function(g){
-    var its=list.filter(function(x){ return ts.by==="cat"?x.cat===g.k : ts.by==="g"?x.g===g.k : ts.by==="imp"?x.imp===g.k : x.eff===g.k; });
+    var its=list.filter(function(x){
+      if(x.st) return ts.by==="cat" ? x.cat===g.k : g.k==="done";
+      return ts.by==="cat"?x.cat===g.k : ts.by==="g"?x.g===g.k : ts.by==="imp"?x.imp===g.k : ts.by==="eff"?x.eff===g.k : false; });
     if(!its.length) return;
     var d=el("details","tgrp"); d.open=true; var sm=el("summary"); sm.appendChild(el("h3",null,g.h)); sm.appendChild(el("span",null,String(its.length))); d.appendChild(sm);
     if(g.d) d.appendChild(el("p","tgd",g.d));
-    var grid=el("div","tgrid"); its.forEach(function(x){ grid.appendChild(tcard(x)); }); d.appendChild(grid); box.appendChild(d);
+    var grid=el("div","tgrid"); its.forEach(function(x){ grid.appendChild(x.st?dcard(x):tcard(x)); }); d.appendChild(grid); box.appendChild(d);
   });
   if(!list.length) box.appendChild(el("div","empty","Nič nezodpovedá filtru."));
-  document.getElementById("tcount").textContent=list.length+" z "+TODOS.length;
+  document.getElementById("tcount").textContent=list.length+" z "+(ts.st==="open"?TODOS.length:ts.st==="done"?DONE.length:TODOS.length+DONE.length);
   var c=function(k){return TODOS.filter(function(x){return x.g===k}).length};
-  document.getElementById("todo-sum").textContent=c("teba")+" čaká na teba, "+c("claude")+" na Claude, "+c("later")+" neskôr a "+c("napad")+" nápadov z výskumu (7. 10.). Triediš podľa oblasti, prínosu a náročnosti; zvýraznené pozadie = zásadné a lacné. Hviezdičkou si označ, čo chceš riešiť, a tlačidlom skopíruj kódy pre Claude. Kódy (T04, A1…) sú stále. Detail a zdroje nápadov: NAPADY_vylepsenia.md. Hotové úlohy tu nie sú, sú v _archiv/TODO_hotove.md.";
+  document.getElementById("todo-sum").textContent=c("teba")+" čaká na teba, "+c("claude")+" na Claude, "+c("later")+" neskôr a "+c("napad")+" nápadov z výskumu (7. 10.). Triediš podľa oblasti, prínosu a náročnosti; zvýraznené pozadie = zásadné a lacné. Hviezdičkou si označ, čo chceš riešiť, a tlačidlom skopíruj kódy pre Claude. Kódy (T04, A1…) sú stále. Detail a zdroje nápadov: NAPADY_vylepsenia.md. Predvolene vidíš len nehotové; filtrom „Stav práce“ zobrazíš aj hotové a zamietnuté (plný zápis je v _archiv/TODO_hotove.md).";
 }
 document.getElementById("tq").addEventListener("input",function(e){ ts.q=e.target.value; renderTodos(); });
 document.getElementById("tclear").onclick=function(){ sel={}; saveSel(); renderTodos(); };
