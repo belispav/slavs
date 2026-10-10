@@ -351,6 +351,17 @@ func _build_panel() -> void:
 	_add_slider_d("spina: pocet skvrn na nepriatela", 50.0, 200.0, 5.0, float(Tuning.dirt_spots),
 		"Kazdy nepriatel ma pri zjaveni jeden z 5 vzhladov s malymi blatovymi skvrnami na oblecku a prilbe (rovnake skvrny aj po smrti). Posuvnik = kolko skvrn (50-200). Obor ma hlavu bez skvrn. Pocet nasobi aj NAHODNOST (0 = ziadna spina). Zmena sa prejavi u nepriatelov, ktori sa zjavia po nej.",
 		func(v: float) -> void: Tuning.dirt_spots = int(v))
+	# Package 3 F2/D4: warning before every enemy attack.
+	_add_toggle("VAROVANIE PRED UTOKOM (blikanie)", Tuning.warn_visual_on,
+		func(on: bool) -> void: Tuning.warn_visual_on = on)
+	_add_toggle("ZVUK VAROVANIA", Tuning.warn_sound_on,
+		func(on: bool) -> void: Tuning.warn_sound_on = on)
+	_add_slider_d("varovanie: sila blikania", 0.1, 1.0, 0.05, Tuning.warn_strength,
+		"Pred kazdym utokom (udrer bezca, vystrel strelca, chytenie obora) nepriatel blika do cervena. Posuvnik = ako vyrazne (1 = plne, 0.1 = sotva). Kazdy blika trochu inak rychlo.",
+		func(v: float) -> void: Tuning.warn_strength = v)
+	_add_slider_d("obor: vymah pred chytenim (s)", 0.0, 1.0, 0.05, Tuning.brute_windup,
+		"Obor sa pred chytenim na chvilu zastavi, zavrci a blika; v tom case mozes uhnut. 0 = chyti okamzite ako predtym. Ak z dosahu vyjdes, chytenie sa nepodari a obor chvilu caka.",
+		func(v: float) -> void: Tuning.brute_windup = v)
 	var vib_test := Button.new()
 	vib_test.text = "TEST VIBRACIE (rovnaka ako pri mojom zasahu)"
 	vib_test.custom_minimum_size = Vector2(0, 52)

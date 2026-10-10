@@ -303,7 +303,31 @@
 		"name": "spina: pocet skvrn na nepriatela",
 		"section": "TEST",
 		"type": "slider",
-		"value": "32.0"
+		"value": "80.0"
+	},
+	{
+		"name": "VAROVANIE PRED UTOKOM (blikanie)",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "ZVUK VAROVANIA",
+		"section": "TEST",
+		"type": "switch",
+		"value": "ZAP"
+	},
+	{
+		"name": "varovanie: sila blikania",
+		"section": "TEST",
+		"type": "slider",
+		"value": "1.0"
+	},
+	{
+		"name": "obor: vymah pred chytenim (s)",
+		"section": "TEST",
+		"type": "slider",
+		"value": "0.4"
 	},
 	{
 		"name": "TEST VIBRACIE (rovnaka ako pri mojom zasahu)",

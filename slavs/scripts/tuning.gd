@@ -353,6 +353,22 @@ var dirt_on: bool = true
 ## the brute's head; slider now 50-200, final value to be confirmed.
 var dirt_spots: int = 80
 var dirt_weight: float = 0.8
+## Package 3 F2/D4 (2026-10-10): every attack is announced. The attacker blinks towards
+## WARN_COLOR (a multiplying modulate, brighter than 1 on purpose) from the start of the
+## wind-up until the blow lands/the shot leaves, and plays its own warn_<type> sound.
+## Rusher: swing start to hit moment; gunman: raise-and-aim before the shot; brute: a short
+## wind-up before the grab (brute_windup, 0 = instant grab as before). Blink speed and wind-up
+## length are jittered per enemy by RAND_WARN (panel NAHODNOST).
+const WARN_COLOR: Color = Color(1.9, 0.75, 0.65)
+const WARN_BLINK_HZ: float = 8.0
+const RAND_WARN: float = 0.2
+const BRUTE_WINDUP: float = 0.4
+## Pause after a wind-up the hero escaped from (the grab missed).
+const BRUTE_WINDUP_RECOVER: float = 0.8
+var warn_visual_on: bool = true
+var warn_sound_on: bool = true
+var warn_strength: float = 1.0
+var brute_windup: float = BRUTE_WINDUP
 var random_strength: float = 1.0
 
 

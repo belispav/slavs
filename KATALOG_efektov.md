@@ -33,7 +33,7 @@ Hodnoty sú z kódu (`tuning.gd`); finálne sa ladia až s finálnou grafikou (T
 
 | Efekt | Čo to robí | Stav |
 |---|---|---|
-| Varovanie pred útokom (F2) | Pred úderom/výstrelom nepriateľ bliká a vydá svoj zvuk (D4), aby sa dalo uhnúť | rozpracované v balíku 3 |
+| Varovanie pred útokom (F2, D4) | Pred úderom/výstrelom/chytením nepriateľ bliká do červena a vydá svoj zvuk; obor má pred chytením výmah 0,4 s, v ktorom sa dá uhnúť | hotové v kóde, čaká na test na telefóne |
 | Špina na nepriateľoch | 5 vzhľadov so škvrnami, obor nemá škvrny na hlave | hotové, čaká na finálne čísla |
 | Náhodnosť (pravidlo 7) | Každý nepriateľ a efekt sa trochu líši | hotové, posuvník NAHODNOST |
 

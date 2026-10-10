@@ -8,7 +8,7 @@ Local Claude Desktop and cloud both work - never in both at once.
 CLAUDE.md was shortened on 2026-10-05 (done, no longer a task).
 
 ## WORK PACKAGES (Pavel 2026-10-07) - read `BALIKY_poradie.md` FIRST
-Pavel now works in packages of ToDo items, each in a clean Sonnet session. `BALIKY_poradie.md` says which package is NEXT (now: **Package 3 - Féroví a čitateľní nepriatelia**: F2, D4, T42; Packages 1 and 2 are closed), what already exists in code, and how to close a package. Work only on that package unless Pavel says otherwise. Package 3 status 2026-10-10: dirt variants built (see `BALIKY_poradie.md`), phone test pending; next in the package: F2, D4, T42. Research ideas with codes A1...Z8: `NAPADY_vylepsenia.md`.
+Pavel now works in packages of ToDo items, each in a clean Sonnet session. `BALIKY_poradie.md` says which package is NEXT (now: **Package 3 - Féroví a čitateľní nepriatelia**: F2, D4, T42; Packages 1 and 2 are closed), what already exists in code, and how to close a package. Work only on that package unless Pavel says otherwise. Package 3 status 2026-10-10: dirt variants built (see `BALIKY_poradie.md`), phone test pending; F2 + D4 built 2026-10-10 (phone test pending), T42 catalog started; then close the package. Research ideas with codes A1...Z8: `NAPADY_vylepsenia.md`.
 
 ## What comes next (Pavel's call; he brings device-test feedback himself)
 IDs [T..] = Pavel's ToDo list, see `KDE_JE_CO.md`.
