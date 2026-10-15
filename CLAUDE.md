@@ -34,11 +34,12 @@ You are the AI development partner for Slavs fight back, a 2D side-scrolling run
   will need to type again in here.
 
 - `PLAN_hry.md` — full plan: game design, business case, phase plan (F0–F5), deployment, roadmap, risks.
+- `PLAN_vydanie_NextFest_2027.md` — release + monetization PROPOSAL of 2026-10-12 (Steam Next Fest Feb 2027, milestones PL01-PL15, model Steam 9,99 € / Android free start + 4,99 € unlock / web demo). Preliminarily approved by Pavel; open points listed there (T53). Until he closes them, `PLAN_hry.md` stays valid. Marketing theme: satire of politicians breaking election promises; **no immigration frame** (Pavel 2026-10-12); never the phrase "mass shooter" in public copy.
 - `DIZAJN_pozadie_a_rozlisenie.md` — **closed 2026-09-15** (Pavel satisfied with the parallax/background state; reopens only if he asks). Kept in the root because code comments point at it. Parallax for the static background, and unifying asset resolution between characters and background. Contains the measured facts, the decisions already made, the hard constraints, and the three questions only Pavel answers. Read it before touching anything about the background, `env_*`, sprite scale or texture filtering.
 - `DIZAJN_core_loop.md` — **supersedes the plan's §3.2 and §3.5 on game structure.** The game is a run-based score attack, not 12 handcrafted levels. Cage encounters are the core mechanic and the currency source. Read this before designing anything about levels, progression or economy. The plan's §2 (sensitive topic) is untouched and remains absolute.
 - `SPEC_ovladanie_implementacia.md` — the control system spec + implementation addendum. This is the single source of truth for controls. Controls are the product; everything else comes second.
 - `_archiv/Phone controls instrucitons.txt` — original control philosophy document (superseded by the SPEC file, kept for reference).
-- `_archiv/F2P Monetization Strategies Analysis.md` — background research only; the game is PREMIUM (5,99 €), no IAP in v1.0, no ads, no gacha. Ever.
+- `_archiv/F2P Monetization Strategies Analysis.md` — background research only; the game is PREMIUM (5,99 €), no IAP in v1.0, no ads, no gacha. Ever. (T10 reopened 2026-10-12: a free-start + one-time unlock proposal is in `PLAN_vydanie_NextFest_2027.md`; not decided. No ads and no gacha stand either way.)
 - `SETUP_F0.md` — Pavel's setup + testing guide (Godot, JDK 17, Android SDK, one-click USB deploy, F1 test protocol).
 - `slavs/` — the Godot 4.7 project itself. Scenes are built in code (`main.gd`); only `main.tscn` exists as a scene file. Control tunables live in `slavs/config/control_config.tres`, gameplay constants in `slavs/scripts/tuning.gd`.
 
@@ -160,6 +161,22 @@ shared state.** Rules for switching:
 5. **Performance target:** 60 fps on a ~150 € Android phone. Object pooling for enemies/projectiles from the start.
 6. **Tunables in one place.** All gameplay constants (control thresholds, damage, speeds) in exported variables / a single config resource so Pavel can tune without code.
 7. **Randomness by default (Pavel 2026-10-09).** Every enemy behaviour and effect gets a small random variation per instance - always, without being asked (e.g. +-10-25 % of the tuned value, agreed ranges are listed in `tuning.gd` under RANDOMNESS). Use `Tuning.jitter(base, frac)`; the panel sliders hold the MIDDLE value and the panel slider NAHODNOST scales all spreads (0 = off). Applies to the corpse power/animation speed/lying time, slow-motion length and speed and the white flash so far; apply it to every new enemy, attack, sound and effect. Sizes too (2026-10-09): every enemy's body height and every barrel/pot is scaled +-5 % (`RAND_SIZE`), props come in two size classes (`PROP_SIZE_CLASSES`).
+
+## Know-how from the market analysis (2026-10-12, apply without asking)
+
+Lessons from `2026.10.12 - analyza-mechanik-updated.md` (comparable games). Pavel does not review these; apply them in every session.
+
+- **World:** fictional, with a clear parallel to real politics (Pavel 2026-10-12). Never real people, parties or current named events; Not Tonight (Brexit) was rejected by part of its audience as propaganda.
+- **No dated promises in public.** Never announce chapters, DLC or features with a date we may miss (Katana ZERO's free DLC announced 2019, still undated 2025). For a game about broken promises this would be a PR disaster. Public roadmap = only what is done or nearly done.
+- **Translations early.** Every player-facing string goes through one translation table from the first line of text (no text baked into images, no strings hard-coded in scripts). Check the longest language (German) fits 640x360 and the large font. Reigns slipped its launch a week over translations.
+- **Text on 640x360:** one thought per box, max 2 lines, large font. Reigns pattern: short question, quick answer, clear consequence.
+- **Touch first, PC is the port.** Never carry PC controls over to touch (Katana ZERO on mobile was criticised for it; Papers, Please spent months reworking its phone UI). The SPEC controls stay the reference; PC/keyboard is the adaptation.
+- **Weak-phone testing.** Test on the weakest phone we support, with the worst case on screen (max enemies + all effects + corpses). 20 Minutes Till Dawn slowed down with many enemies. Target stays 60 fps on a ~150 EUR phone (working rule 5).
+- **Difficulty must not stop the story.** Instant restart, checkpoint at the start of each action section; very hard modes only as options (Hotline Miami 2 lost players by being too hard).
+- **A chapter needs its own climax.** A cliffhanger ending is good, but without a resolved peak the ending reads as abrupt (Katana ZERO criticism).
+- **Name the free part clearly** (e.g. "Chapter 1 free"); 10 vs 20 Minutes Till Dawn confused players.
+- **No grind.** If unlocks/upgrades exist, keep them generous and the tree small and clear (Army of Ruin, Spirit Hunters failed on grind and an unclear tree). Strong weapons must look strong on screen.
+- **No pay-to-win, energy or ads** (standing decision, confirmed by the analysis).
 
 ## Work packages (Pavel 2026-10-07)
 

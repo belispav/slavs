@@ -4,6 +4,8 @@
 **Žáner:** 2D side-scrolling run-and-gun / horde shooter (štýl Metal Slug)
 **Platforma:** Android (v1.0), neskôr iOS a Steam
 **Model:** Premium 5,99 € pri launchi, bez IAP; DLC a kozmetika neskôr
+
+> **2026-10-12:** návrh plánu vydania (Steam Next Fest február 2027, Steam + Android naraz, nový model a ceny) je v `PLAN_vydanie_NextFest_2027.md`. Pavel ho predbežne schválil; otvorené body sú tam (T53). Kým ich neuzavrie, platí tento plán.
 **Tvorca:** 1 osoba, vývoj s pomocou AI, nulová predchádzajúca znalosť game devu
 **Dátum dokumentu:** 19. 7. 2026
 

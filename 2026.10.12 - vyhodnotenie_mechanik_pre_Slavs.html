@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jadro hry Slavs</title>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600&display=swap">
+<style>
+/* Layout: one column. Summary + the one open question first, then status tiles that filter the mechanic list, then money and risks. Tokens follow the project dashboard KDE_JE_CO.html. */
+:root{
+  --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --font-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --bg:#f2f4f1; --surface:#ffffff; --ink:#18211e; --muted:#58665f; --line:#d8ded9;
+  --accent:#1c6b58; --accent-soft:#dcebe5;
+  --c-have:#1f6b3a; --c-have-bg:#dcefe2;
+  --c-prop:#1f5fa8; --c-prop-bg:#e1ecf8;
+  --c-dec:#8a5a00; --c-dec-bg:#f7ecd2;
+  --c-no:#5c6460; --c-no-bg:#e6e9e6;
+  --c-fix:#9a3b2e; --c-fix-bg:#f6e3df;
+  --meter-off:#d8ded9;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111715; --surface:#192220; --ink:#e4ebe8; --muted:#92a39c; --line:#2a3733;
+  --accent:#5cc2a3; --accent-soft:#1f3b33;
+  --c-have:#7fd29c; --c-have-bg:#1d3a28;
+  --c-prop:#8fbdf0; --c-prop-bg:#1d3047;
+  --c-dec:#e2bb6a; --c-dec-bg:#3d3319;
+  --c-no:#a3aeaa; --c-no-bg:#27302d;
+  --c-fix:#f0a497; --c-fix-bg:#45261f;
+  --meter-off:#2f3d38; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111715; --surface:#192220; --ink:#e4ebe8; --muted:#92a39c; --line:#2a3733;
+  --accent:#5cc2a3; --accent-soft:#1f3b33;
+  --c-have:#7fd29c; --c-have-bg:#1d3a28;
+  --c-prop:#8fbdf0; --c-prop-bg:#1d3047;
+  --c-dec:#e2bb6a; --c-dec-bg:#3d3319;
+  --c-no:#a3aeaa; --c-no-bg:#27302d;
+  --c-fix:#f0a497; --c-fix-bg:#45261f;
+  --meter-off:#2f3d38; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:flex;flex-direction:column;gap:30px}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,2.8rem);line-height:1.05}
+h2{font-size:1.5rem;line-height:1.1}
+h3{font-size:1.15rem;line-height:1.15}
+p{margin:0}
+.eyebrow{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+.lede{color:var(--muted);max-width:66ch}
+header{display:flex;flex-direction:column;gap:8px}
+section{display:flex;flex-direction:column;gap:12px}
+.note{border:1px solid var(--line);background:var(--c-fix-bg);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;max-width:78ch}
+.note b{color:var(--c-fix)}
+ol.points{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;max-width:72ch}
+.ask{background:var(--accent-soft);border:1px solid var(--accent);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.ask h2{color:var(--accent)}
+.ask .q{font-size:1.15rem;font-weight:600;max-width:60ch}
+.ask .rec{max-width:72ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{appearance:none;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;flex-direction:column;gap:0;min-width:0}
+.tile .n{font-family:var(--font-display);font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.tile .l{font-size:.9rem;color:var(--muted)}
+.tile[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:-1px}
+.tile:focus-visible,.chipbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.t-all .n{color:var(--ink)} .t-have .n{color:var(--c-have)} .t-prop .n{color:var(--c-prop)} .t-dec .n{color:var(--c-dec)} .t-no .n{color:var(--c-no)}
+.list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:6px;background:var(--surface);overflow:hidden}
+.row{display:grid;grid-template-columns:92px 1fr 150px;gap:6px 16px;padding:12px 14px;border-top:1px solid var(--line);align-items:start}
+.row:first-child{border-top:0}
+.code{font-family:var(--font-mono);font-size:.82rem;font-weight:500;padding-top:2px}
+.main{min-width:0;display:flex;flex-direction:column;gap:3px}
+.main .t{font-weight:600}
+.main .d{color:var(--ink)}
+.main .g{font-size:.85rem;color:var(--muted)}
+.side{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+.pill{display:inline-block;font-size:.78rem;font-weight:600;padding:1px 8px;border-radius:999px}
+.p-have{color:var(--c-have);background:var(--c-have-bg)} .p-prop{color:var(--c-prop);background:var(--c-prop-bg)}
+.p-dec{color:var(--c-dec);background:var(--c-dec-bg)} .p-no{color:var(--c-no);background:var(--c-no-bg)}
+.meter{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
+.meter .lab{width:62px}
+.dots{display:flex;gap:3px}
+.dots i{width:9px;height:9px;border-radius:2px;background:var(--meter-off)}
+.dots.ef i.on{background:var(--c-dec)} .dots.im i.on{background:var(--accent)}
+.legend{font-size:.85rem;color:var(--muted)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:5px}
+.foot{font-size:.85rem;color:var(--muted)}
+code{font-family:var(--font-mono);font-size:.85em}
+.p-now{color:var(--bg);background:var(--accent)}
+.ask dl{margin:0;display:grid;grid-template-columns:110px 1fr;gap:6px 14px;max-width:80ch}
+.ask dt{font-weight:600;color:var(--accent)}
+.ask dd{margin:0;min-width:0}
+.order{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+@media (max-width:640px){
+  .ask dl{grid-template-columns:1fr}
+  .ask dd{margin-bottom:6px}
+
+  .row{grid-template-columns:1fr}
+  .side{flex-direction:row;flex-wrap:wrap;gap:6px 14px}
+  .cols{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Slavs · T09 jadro hry · vyhodnotenie v3 · 12. 10. 2026</p>
+    <h1>Čo si z analýzy mechaník vziať do jadra hry</h1>
+    <p class="lede">Zdroj: <code>2026.10.12 - analyza-mechanik-updated.md</code> (kódy MCH). Skóre sú odhad AI. Jadro nie je rozhodnuté. Návrhy prechádzame po jednom, od najväčšieho vplyvu.</p>
+  </header>
+
+  <section>
+    <h2>Čo už platí</h2>
+    <ol class="points">
+      <li><b>Peniaze:</b> podľa <code>PLAN_vydanie_NextFest_2027.md</code>. Android prvá kapitola zadarmo a odomknutie 4,99 €, Steam 9,99 €, webové demo, bez reklám. Predbežne schválené, otvorené body sú v T53.</li>
+      <li><b>Svet:</b> vymyslený, ale s jasnou paralelou.</li>
+      <li><b>Technické poučenia</b> (termíny, preklady, test na slabom telefóne, ovládanie pre dotyk, text na 2 riadky, jasný názov bezplatnej časti, žiadna drina) som zapísal do <code>CLAUDE.md</code>. Platia v každej session, nemusíš ich prezerať.</li>
+    </ol>
+  </section>
+
+  <div class="ask">
+    <p class="eyebrow">Na rade · návrh 1 z 11 · vplyv 5, náročnosť 1</p>
+    <h2>MCH54 Koniec kapitoly v napätí</h2>
+    <dl>
+      <dt>Čo to je</dt><dd>Kapitola má vlastný vrchol (boss alebo veľká záchrana) a hneď potom končí otázkou alebo odhalením, ktoré ťahá do ďalšej kapitoly.</dd>
+      <dt>V Slavs</dt><dd>Akčné úseky, potom vrchol, potom krátka scéna: 2–3 obrazovky textu po 2 riadkoch a jeden obrázok. Na konci odhalenie a názov ďalšej kapitoly.</dd>
+      <dt>Čo ti dá</dt><dd>Prvá kapitola je zároveň demo na Next Fest a bezplatná časť na Androide. Jej háčik je presne miesto, kde sa hráč rozhoduje: na Steame pridá hru do želaní, na Androide zaplatí 4,99 €. Plán vydania to už čiastočne má (PL09: „demo končí háčikom“).</dd>
+      <dt>Cena</dt><dd>Nízka. Text a 1–2 obrázky z PixelLabu. Obrazovku s textom budeme potrebovať aj tak.</dd>
+      <dt>Čo je tvoje</dt><dd>Obsah háčikov je tvoj príbeh. Ja ho nepíšem, potrebujem len súhlas s pravidlom.</dd>
+    </dl>
+    <p class="q">Platí pravidlo: každá kapitola má vlastný vrchol a končí háčikom?</p>
+    <p class="rec"><b>Odporúčam áno.</b></p>
+  </div>
+
+  <section>
+    <h2>Mechaniky pre Slavs</h2>
+    <p class="legend">Ťukni na dlaždicu a zoznam sa vyfiltruje. Číslo pri návrhu je poradie, v akom ich prejdeme. Náročnosť a vplyv sú na stupnici 1–5.</p>
+    <div class="tiles" id="tiles"></div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section>
+    <h2>Rozhodnutia v tejto téme</h2>
+    <ol class="points">
+      <li>12. 10.: peniaze podľa plánu vydania (predbežne), svet vymyslený s jasnou paralelou.</li>
+      <li>12. 10.: zbieranie (MCH03), vylepšenia (MCH02) a truhla (MCH05) presunuté z „neberieme“ do „treba rozhodnúť“.</li>
+    </ol>
+  </section>
+
+  <p class="foot">Pre AI je ten istý obsah v <code>2026.10.12 - vyhodnotenie_mechanik_pre_Slavs.md</code>.</p>
+</div>
+
+<script>
+const ITEMS=[
+ {c:"MCH54",s:"prop",o:1,now:1,t:"Koniec kapitoly v napätí",d:"Kapitola má vlastný vrchol a končí háčikom. Háčik prvej kapitoly predáva hru.",g:"Katana ZERO, Beholder",e:1,i:5},
+ {c:"MCH35",s:"prop",o:2,t:"Silný úvod",d:"V prvej minúte akcia aj téma. O kúpe rozhodujú prvé minúty.",g:"Survivor.io, Vampire Survivors",e:2,i:5},
+ {c:"MCH42+43",s:"prop",o:3,t:"Voľby s cenou a viac koncov",d:"Vetvenie na dve cesty už je v dizajne. Z neho sa stane voľba s následkom. Koniec hry závisí od volieb a od počtu zachránených.",g:"Papers, Please, Beholder",e:3,i:5},
+ {c:"MCH41",s:"prop",o:4,t:"Hrdina pracuje pre moc",d:"Len inšpirácia pre tvoj príbeh. Príbeh nezačínam, kým neprinesieš návrh.",g:"Papers, Please, Beholder",e:3,i:5},
+ {c:"MCH06",s:"prop",o:5,t:"Kapitola 10–15 min s jasným koncom",d:"Kapitola = 3–5 akčných úsekov po 2–4 min. Smrť ťa vráti na začiatok úseku, nie celej kapitoly.",g:"Halls of Torment, 20 Minutes Till Dawn",e:1,i:4},
+ {c:"MCH45",s:"prop",o:6,t:"Krátka správa medzi kapitolami",d:"Titulka ukáže, čo spôsobili tvoje voľby. Hotový obrázok na zdieľanie.",g:"Papers, Please",e:1,i:4},
+ {c:"MCH18",s:"prop",o:7,t:"Vtipné názvy nepriateľov podľa role",d:"Závisí od tvojho príbehu.",g:"Enter the Gungeon",e:1,i:4},
+ {c:"MCH44",s:"prop",o:8,t:"Každá kapitola nové nariadenie",d:"Nové pravidlo alebo nový nepriateľ v každej kapitole. Pestrosť bez novej mechaniky.",g:"Papers, Please, Katana ZERO",e:2,i:4},
+ {c:"MCH21",s:"prop",o:9,t:"Pomoc pri mierení",d:"Strela sa jemne pritiahne k nepriateľovi. Len ako prepínač v paneli na test, ovládanie ostáva podľa SPEC.",g:"Soul Knight",e:2,i:4},
+ {c:"MCH53",s:"prop",o:10,t:"Smrť ako plán, ktorý by nevyšiel",d:"Neúspešný pokus príbeh nepretrhne, len pár slov textu.",g:"Katana ZERO",e:2,i:3},
+ {c:"MCH17",s:"prop",o:11,t:"Zajatci sa stanú súčasťou príbehu",d:"Zachránení sa objavia v ďalšom rozhovore alebo pomôžu v boji.",g:"Broforce",e:3,i:3},
+ {c:"R1",s:"dec",t:"Trvalé vylepšenia, mena, aréna Jama, denné výzvy",d:"Doterajší dizajn (DIZAJN_core_loop.md). Pre príbehovú hru analýza hodnotí ako menej vhodné.",g:"MCH07, MCH32",e:2,i:2},
+ {c:"MCH03",s:"dec",t:"Čo budeme zbierať",d:"Niečo zbierať máme. Či to bude mena a na čo, ešte rozhodneme.",g:"Vampire Survivors, Survivor.io",e:1,i:3},
+ {c:"MCH02",s:"dec",t:"Vylepšenia počas hrania",d:"Výber 1 z 3 počas hrania áno alebo nie, ešte rozhodneme.",g:"Vampire Survivors, Halls of Torment",e:2,i:3},
+ {c:"MCH05",s:"dec",t:"Truhla s efektným otváraním",d:"Závisí od vylepšovania: náhodné odmeny, alebo mena a nákup vylepšení (prepínateľné, dajú sa získať všetky), alebo pevný strom schopností.",g:"Vampire Survivors",e:2,i:3},
+ {c:"R2",s:"dec",t:"Čo ostane v balíku 4",d:"Magnet a zvuk zberu majú zmysel, len ak je čo zbierať. Čaká na R1 a MCH03.",g:"BALIKY_poradie.md",e:2,i:3},
+ {c:"R3",s:"dec",t:"Rozsah prvej verzie",d:"12 levelov, 8 nepriateľov, 3 bossovia prepočítať na kapitoly a termín Next Fest február 2027.",g:"CLAUDE.md, pilier 4",e:3,i:4},
+ {c:"MCH10",s:"have",t:"Silný pocit zo zásahu",d:"Hotové v balíku 1: zastavenie 30 ms, biely záblesk, trasenie.",g:"Nuclear Throne, Hotline Miami",e:2,i:5},
+ {c:"MCH11",s:"have",t:"Okamžitý reštart po smrti",d:"Pilier 3. Pri ťažkých úsekoch kľúčové.",g:"Hotline Miami, Katana ZERO",e:1,i:4},
+ {c:"MCH15",s:"have",t:"Predmety v boji",d:"Sudy, kotol a hrnce už vybuchujú a rozbíjajú sa.",g:"Enter the Gungeon",e:3,i:2},
+ {c:"MCH22",s:"have",t:"Boss ako vrchol kapitoly",d:"Plán z 5. 10.: pri bossovi sa plocha zamkne.",g:"Spirit Hunters",e:3,i:4},
+ {c:"MCH57",s:"have",t:"Ovládanie robené pre dotyk od začiatku",d:"Ovládanie dvoma palcami bez dvíhania prstov, už testované na telefóne.",g:"Papers, Please, Beholder",e:3,i:5},
+ {c:"MCH46",s:"have",t:"Vymyslený svet s jasnou paralelou",d:"Tvoje rozhodnutie z 12. 10. Žiadne reálne osoby ani strany.",g:"Papers, Please",e:1,i:5},
+ {c:"MCH51",s:"have",t:"Text najviac na 2 riadky",d:"Zapísané v CLAUDE.md ako pravidlo.",g:"Reigns",e:1,i:4},
+ {c:"MCH13",s:"have",t:"Hodnotenie na konci",d:"V balíku 4 (H3), napríklad koľko zajatcov si zachránil.",g:"Hotline Miami",e:1,i:3},
+ {c:"MCH14",s:"have",t:"Úskok s krátkou nezraniteľnosťou",d:"V balíku 5 (B1).",g:"Enter the Gungeon, Katana ZERO",e:2,i:3},
+ {c:"MCH40",s:"have",t:"Čitateľnosť na malej obrazovke",d:"Neskôr s finálnou grafikou (C1, F1).",g:"Vampire Survivors",e:2,i:4},
+ {c:"MCH01",s:"no",t:"Iba chôdza, bez mierenia",d:"U nás mieri pravý palec.",g:"Vampire Survivors",e:1,i:2},
+ {c:"MCH09",s:"no",t:"Viac hrdinov na výber",d:"Drahá grafika. Až po prvej verzii.",g:"Nuclear Throne",e:3,i:2},
+ {c:"MCH12",s:"no",t:"Smrť na jeden zásah",d:"Proti pilieru 1. Na dotyku príliš ťažké.",g:"Hotline Miami",e:1,i:3},
+ {c:"MCH16",s:"no",t:"Zničiteľný terén",d:"Drahé.",g:"Broforce",e:4,i:3},
+ {c:"MCH19",s:"no",t:"Stovky zbraní",d:"Pár zbraní pridaných dejom stačí.",g:"Enter the Gungeon",e:4,i:2},
+ {c:"MCH23–26",s:"no",t:"Energia, reklamy, skiny",d:"Plán vydania je bez reklám a bez nákupov v hre okrem odomknutia.",g:"Survivor.io",e:2,i:1},
+ {c:"MCH31",s:"no",t:"Hra viacerých hráčov",d:"Drahé, príbeh je pre jedného.",g:"Broforce",e:5,i:2},
+ {c:"MCH36",s:"no",t:"Hra na výšku jedným palcom",d:"Máme šírku a dva palce.",g:"Survivor.io",e:1,i:1},
+ {c:"MCH48–49",s:"no",t:"Karty a ukazovatele ako v Reigns",d:"Iný žáner. Prípadne až neskôr medzi kapitolami.",g:"Reigns",e:2,i:4},
+ {c:"MCH52",s:"no",t:"Prerušovanie rozhovoru",d:"Zaujímavé, ale až neskôr.",g:"Katana ZERO",e:3,i:3}
+];
+const ST={prop:["Navrhujem","p-prop","t-prop"],dec:["Treba rozhodnúť","p-dec","t-dec"],have:["Už máme / platí","p-have","t-have"],no:["Neberieme","p-no","t-no"]};
+let filter="all";
+try{const f=localStorage.getItem("slavs-mch-filter");if(f&&(f==="all"||ST[f]))filter=f}catch(e){}
+function dots(n,cls){let h='<span class="dots '+cls+'">';for(let k=1;k<=5;k++)h+='<i class="'+(k<=n?'on':'')+'"></i>';return h+'</span>'}
+function render(){
+  const tiles=document.getElementById("tiles");
+  const defs=[["all","Všetko","t-all",ITEMS.length]].concat(Object.keys(ST).map(k=>[k,ST[k][0],ST[k][2],ITEMS.filter(x=>x.s===k).length]));
+  tiles.innerHTML=defs.map(d=>'<button class="tile '+d[2]+'" data-f="'+d[0]+'" aria-pressed="'+(filter===d[0])+'"><span class="n">'+d[3]+'</span><span class="l">'+d[1]+'</span></button>').join("");
+  tiles.querySelectorAll(".tile").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.f;try{localStorage.setItem("slavs-mch-filter",filter)}catch(e){}render()}));
+  const rows=ITEMS.filter(x=>filter==="all"||x.s===filter);
+  document.getElementById("list").innerHTML=rows.map(x=>'<div class="row"><div class="code">'+x.c+(x.o?'<div class="order">poradie '+x.o+'</div>':'')+'</div><div class="main"><span class="t">'+x.t+'</span><span class="d">'+x.d+'</span><span class="g">'+x.g+'</span></div><div class="side">'+(x.now?'<span class="pill p-now">Na rade</span>':'<span class="pill '+ST[x.s][1]+'">'+ST[x.s][0]+'</span>')+'<span class="meter"><span class="lab">náročnosť</span>'+dots(x.e,"ef")+'</span><span class="meter"><span class="lab">vplyv</span>'+dots(x.i,"im")+'</span></div></div>').join("");
+}
+render();
+</script>
+
+</body>
+</html>

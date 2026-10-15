@@ -1,6 +1,6 @@
 # KDE JE ČO — mapa priečinka Slavs fight back
 
-Stav k 2026-10-10. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
+Stav k 2026-10-12. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
 Claude: túto mapu aktualizuj pri každom presune alebo pridaní súboru v koreni.
 
 ## Balíky – poradie práce (master: `BALIKY_poradie.md`)
@@ -16,7 +16,7 @@ Pavel rieši každý balík v novej session (Sonnet). Na rade je balík so stavo
 ## ToDo's (otvorené úlohy; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, DIZAJN_core_loop.md §3-4)
 
 Claude: pri zmene stavu aktualizuj zdroje aj tento zoznam aj `KDE_JE_CO.html`.
-ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T52).
+ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T53).
 Každá úloha má v zátvorke {oblasť prínos námaha}: oblasť = písmeno A–Z (zoznam nižšie), prínos ★★★ zásadné / ★★ veľký rozdiel / ★ drobnosť, námaha nízka/stredná/vysoká. V dashboarde (`TODOS` v `KDE_JE_CO.html`) sú to polia `cat`, `imp` (3/2/1), `eff` (N/S/V); skupina `g`: teba / claude / later / napad. Nápady z výskumu 2026-10-07 majú STÁLE kódy A1…Z8 (písmeno oblasti + poradie, detail a zdroje v `NAPADY_vylepsenia.md`); keď Pavel nápad vyberie, kód ostáva, len sa zmení skupina. Nová úloha mimo výskumu dostane ďalšie T-číslo.
 Tu a v dashboarde sú LEN otvorené úlohy. Keď je úloha hotová, zrušená alebo zavretá: presuň jej riadok do `_archiv/TODO_hotove.md` (tam ho Claude nečíta, len na požiadanie) a zmaž ho odtiaľto aj z `KDE_JE_CO.html`. Hotové veci sa v dashboarde nezobrazujú.
 
@@ -26,7 +26,8 @@ T06 Schváliť hlášky v `HLASKY.md` (angl.). [HLASKY.md] {D ★★ nízka}
 T07 AKTÍVNE (Pavel urobí v najbližších dňoch): krátky test (cca 10 min) na inom telefóne: ovládanie a či sedí obrazovka pri inom pomere strán (zamknutá scéna, horný pás). Plné ladenie DPI až neskôr. [Open 7] {O ★★★ nízka}
 T08 ODLOŽENÉ (Pavel 2026-10-06): kontrola Google Play pravidiel/IARC až keď bude hotová kostra hry (príbeh, hlášky...). Nemá zmysel kontrolovať hru, ktorá je z 10 % hotová. [Open 10] {U ★★★ stredná}
 T09 AKTÍVNE (Pavel 2026-10-06): základy grafiky sú hotové, teraz sa riešia herné mechanizmy: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4] {J ★★★ vysoká}
-T10 ODLOŽENÉ (Pavel 2026-10-06, zatiaľ nevieme): monetizácia (premium 5,99 EUR vs. F2P). [core_loop §4] {Z ★★★ stredná}
+T10 OTVORENÉ ZNOVA 2026-10-12: monetizácia. Návrh: Steam 9,99 €, Android prvá časť zadarmo + odomknutie 4,99 €, web demo, bez reklám (rieši sa v T53). [core_loop §4, PLAN_vydanie_NextFest_2027.md] {Z ★★★ stredná}
+T53 Rozhodnúť otvorené body plánu vydania (Pavel predbežne schválil 2026-10-12): model, Steam spolu s Androidom, cena Steam, jazyky, kedy založiť účty, variant termínu A/B/C. Prvý termín: registrácia Steam stránky do 1. 12. 2026. [PLAN_vydanie_NextFest_2027.md] {S ★★★ nízka}
 T21 Po 2026-10-12: zmazať zálohu `slavs_zaloha_...` v D:\2026 (Pavel, v Prieskumníku). Priečinok `slavs_cisty_...` sa maže hneď. [T20] {U ★ nízka}
 T44 ČAKÁ NA PAVLA: skrývanie posuvníkov. Otvor `PANEL_prvky.xlsx` (stĺpec Zobraziť A/N, S-čísla), prepíš a daj Claudovi vedieť; ten spustí `python3 tools/panel_catalog.py import` (zapíše `slavs/scripts/panel_hidden.gd`). Skryté prvky ostávajú v kóde. Teraz skrytých 44 z 75 (odporúčanie Claude). (Pavel 2026-10-07) {U ★ nízka}
 
@@ -217,6 +218,10 @@ Samostatný scenár neexistuje. Odsúhlasené je jadro:
 | `BALIKY_poradie.md` | Claude | Balíky práce (poradie, stav, čo už v kóde je, ako balík uzavrieť); číta sa na začiatku každej session |
 | `KATALOG_efektov.md` | Pavel + Claude | Katalóg efektov (T42): čo môžu nepriatelia robiť nám a my im, hodnoty a stav; dopĺňa sa pri každom novom efekte |
 | `PLAN_hry.md` | obaja | Plán hry, business case, fázy; kap. 2 (citlivá téma) je nemenná |
+| `PLAN_vydanie_NextFest_2027.md` | obaja | Návrh plánu vydania a monetizácie (12. 10. 2026): Next Fest február 2027, míľniky PL01–PL15, otvorené body (T53) |
+| `2026.10.12 - analyza-mechanik.md` | obaja | Analýza mechaník úspešných pixel strieľačiek (kódy MCHxx), 1. kolo |
+| `2026.10.12 - analyza-mechanik-updated.md` | obaja | Analýza mechaník, 2. kolo: príbehová akčná hra (nahrádza smer 1. kola) |
+| `2026.10.12 - vyhodnotenie_mechanik_pre_Slavs.md` / `.html` | obaja | Čo z analýzy mechaník sa hodí pre Slavs (návrhy k T09); `.html` je dashboard pre Pavla |
 | `DIZAJN_core_loop.md` | obaja | Štruktúra hry: run-based, klietky |
 | `SPEC_ovladanie_implementacia.md` | obaja | Ovládanie, jediný zdroj pravdy |
 | `DIZAJN_pozadie_a_rozlisenie.md` | obaja | Pozadie a rozlíšenie; uzavreté 2026-09-15, kód naň odkazuje |
