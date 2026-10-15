@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<!-- saved from url=(0098)https://agents.pioneerlands.net/daedalus-files/ov3bBY__XU_fqr4kgisY27eIPJfPwmw6/VOLYA_mena_v6.html -->
+<html lang="sk"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOLYA — mená pre globálnu anglickú verziu (v6)</title>
+<style>
+  :root{
+    --bg:#12141a; --surface:#1b1f28; --surface2:#222836; --line:#2e3544;
+    --text:#e7eaf0; --muted:#98a1b3; --faint:#6b7486;
+    --a1:#6fbf73; --a2:#e0a458; --a3:#6ba6d8; --boss:#d8696a; --hero:#b48ce0; --good:#5fbf8a; --warn:#e0a458; --bad:#d8696a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:28px 20px 90px}
+  .wrap{max-width:1120px;margin:0 auto}
+  h1{font-size:29px;margin:0 0 4px;letter-spacing:.5px}
+  h1 .accent{color:var(--a2)}
+  .sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+  h2{font-size:20px;margin:44px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);letter-spacing:.3px}
+  h2 .tag{font-size:12px;color:var(--faint);font-weight:600;text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:4px}
+  h3{margin:0 0 6px;font-size:14.5px}
+  p{margin:0}
+  code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12.5px;color:var(--muted)}
+  .grid{display:grid;gap:12px}
+  .cols-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  .cols-3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .card p{color:var(--muted);font-size:13.5px}
+  .card p+p{margin-top:7px}
+  .muted{color:var(--muted)} .faint{color:var(--faint)}
+
+  .nav{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:0 0 6px;font-size:13.5px;display:flex;flex-wrap:wrap;gap:8px 16px}
+  .nav a{color:var(--a3);text-decoration:none}
+  .nav a:hover{text-decoration:underline}
+
+  .lead{background:linear-gradient(180deg,#1e2430,#1b1f28);border:1px solid var(--line);border-left:4px solid var(--a2);border-radius:10px;padding:16px 18px}
+  .lead .lt{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;color:var(--a2);display:block;margin-bottom:6px}
+  .lead p{font-size:14px;color:var(--muted)}
+  .lead p b{color:#fff}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--faint);font-size:11.5px;text-transform:uppercase;letter-spacing:.7px;font-weight:600;background:var(--surface2)}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--text)}
+  td .pick{color:var(--good);font-weight:700}
+  td .drop{color:var(--bad)}
+  .say{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--a3);white-space:nowrap}
+  .root{font-size:12.5px;color:var(--faint)}
+
+  .note{background:var(--surface2);border:1px dashed var(--line);border-radius:10px;padding:12px 16px;color:var(--muted);font-size:13.5px;margin-top:12px}
+  .note b{color:var(--text)}
+  .alert{background:#241a1a;border:1px solid var(--bad);border-left:4px solid var(--bad);border-radius:10px;padding:14px 17px;margin-top:12px}
+  .alert .al{font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--bad)}
+  .alert p{font-size:13.5px;margin-top:6px;color:var(--muted)}
+  .alert p b{color:var(--text)}
+  .ok{background:#1a2420;border:1px solid var(--good);border-left:4px solid var(--good);border-radius:10px;padding:14px 17px;margin-top:12px}
+  .ok .al{font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--good)}
+  .ok p{font-size:13.5px;margin-top:6px;color:var(--muted)}
+  .ok p b{color:var(--text)}
+
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:11px;margin-top:10px}
+  .opt{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 15px;border-top:3px solid var(--faint)}
+  .opt.rec{border-top-color:var(--good)}
+  .opt.a{border-top-color:var(--a2)} .opt.b{border-top-color:var(--a3)} .opt.c{border-top-color:var(--hero)}
+  .opt h3{font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .opt .rb{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--good);background:#1a2420;border:1px solid var(--good);border-radius:20px;padding:1px 7px;white-space:nowrap}
+  .opt p{color:var(--muted);font-size:12.5px;margin-top:6px}
+  .opt .fx{font-size:12px;color:var(--faint);margin-top:7px;padding-top:7px;border-top:1px dashed var(--line)}
+  .opt .fx b{color:var(--warn)}
+
+  .qlist{list-style:none;padding:0;margin:0}
+  .qlist li{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:11px 15px;margin-bottom:8px;font-size:13.5px;color:var(--muted)}
+  .qlist li b{color:var(--text)}
+  .qlist li .n{display:inline-block;background:var(--surface2);border:1px solid var(--line);color:var(--a3);font-weight:700;font-size:12px;border-radius:6px;padding:1px 8px;margin-right:8px}
+
+  .rules{counter-reset:r;list-style:none;padding:0;margin:10px 0 0}
+  .rules li{counter-increment:r;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:11px 15px 11px 48px;position:relative;margin-bottom:8px;font-size:13.5px;color:var(--muted)}
+  .rules li:before{content:counter(r);position:absolute;left:13px;top:11px;width:22px;height:22px;border-radius:6px;background:var(--surface2);border:1px solid var(--line);color:var(--a2);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+  .rules li b{color:var(--text)}
+
+  .bad-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+  .bad-list span{font-family:ui-monospace,monospace;font-size:13px;background:#241a1a;border:1px solid var(--bad);color:#e6a3a3;border-radius:6px;padding:3px 10px}
+  .good-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+  .good-list span{font-family:ui-monospace,monospace;font-size:13px;background:#1a2420;border:1px solid var(--good);color:#9fd9bb;border-radius:6px;padding:3px 10px}
+
+  .banks{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:11px;margin-top:10px}
+  .bank{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .bank .bt{font-weight:700;font-size:13.5px;margin-bottom:7px}
+  .bank .row{font-size:13px;color:var(--muted);line-height:1.9}
+  .bank .row b{color:var(--text);font-weight:600}
+  .bank .row i{color:var(--faint);font-style:normal;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Mená pre <span class="accent">globálnu anglickú verziu</span> (v6)</h1>
+  <p class="sub">Slovanské mená, ktoré Angličan vysloví na prvý raz — a Slovan v nich spozná svoje.</p>
+
+  <div class="nav">
+    <a href="https://agents.pioneerlands.net/daedalus-files/ov3bBY__XU_fqr4kgisY27eIPJfPwmw6/VOLYA_mena_v6.html#pravidlo">Pravidlo (5 testov)</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/ov3bBY__XU_fqr4kgisY27eIPJfPwmw6/VOLYA_mena_v6.html#navrhy">Návrhy — tabuľka</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/ov3bBY__XU_fqr4kgisY27eIPJfPwmw6/VOLYA_mena_v6.html#nechat">Čo nechať tak</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/ov3bBY__XU_fqr4kgisY27eIPJfPwmw6/VOLYA_mena_v6.html#alternativy">Alternatívy na výber</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/ov3bBY__XU_fqr4kgisY27eIPJfPwmw6/VOLYA_mena_v6.html#kolizie">Kolízne kontroly</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/ov3bBY__XU_fqr4kgisY27eIPJfPwmw6/VOLYA_mena_v6.html#banka">Banka mien do budúcna</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/ov3bBY__XU_fqr4kgisY27eIPJfPwmw6/VOLYA_mena_v6.html#kod">Kódex vs. hra</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/ov3bBY__XU_fqr4kgisY27eIPJfPwmw6/VOLYA_mena_v6.html#otazky">Otázky</a>
+  </div>
+
+  <div class="lead">
+    <span class="lt">Pointa v jednej vete</span>
+    <p><b>Nehľadáme anglické mená. Hľadáme slovanské mená, ktoré Angličan prečíta na prvý raz správne</b> — a Slovan pri nich povie „to je naše". Väčšina tvojich mien je už teraz dobrá; problém robí päť–šesť z nich, a to z jedného konkrétneho dôvodu: <b>diakritika a začiatočné zhluky spoluhlások.</b> Opravíme presne to a zvyšok necháme.</p>
+  </div>
+
+  <!-- ============ PRAVIDLO ============ -->
+  <h2 id="pravidlo"><span class="tag">Filter, ktorý používam</span>Päť testov, ktoré meno musí prejsť</h2>
+  <p class="muted" style="font-size:13.5px">Toto je dôležitejšie než samotné mená — lebo podľa toho vieme pomenovať <b style="color:var(--text)">každú ďalšiu postavu</b>, ktorú ešte len vymyslíme. (V hre bude ešte veľa dedinčanov, vojakov, vdov.)</p>
+  <ol class="rules">
+    <li><b>Žiadna diakritika.</b> V anglickej verzii píšeme len ASCII — <code>c s z r e t d n</code> bez mäkčeňov a dĺžňov. Anglický hráč „š" prečíta ako „s", „ž" ako „z", a „ř" vzdá úplne. Takže píšeme to, čo chceme, aby prečítal.</li>
+    <li><b>Max. 3 slabiky, ideálne 2.</b> Plné slovanské mená (Stanislav, Miroslav, Jaroslav, Bohuslav) majú štyri — preto v hre používame <b>domácku krátku formu</b> a plné meno dáme do Kódexu.</li>
+    <li><b>Žiadne zhluky na začiatku slova.</b> <code>Mst-</code>, <code>Vlk-</code>, <code>Krk-</code>, <code>Zby-</code>, <code>Stř-</code> — Angličan to vzdá, prípadne si tam vloží samohlásku. Presne to je problém <b>Mstislava</b>.</li>
+    <li><b>Prízvuk na prvú slabiku musí znieť dobre.</b> Angličtina ťahá prízvuk dopredu — meno musí prežiť to, že ho prekrúti. <i>Dobrava</i> na „DOH-bra-va" je stále v pohode; <i>Vavrinec</i> na „VAV-ri-nec" už nie.</li>
+    <li><b>Slovanský koreň musí byť poznateľný.</b> Toto je tvoja podmienka a je to správna podmienka: Slovan musí vidieť, že meno je naše — aj keď je zjednodušené. <i>Jarek</i> je skrátené Jaroslav, ale každý Slovan to vie prečítať.</li>
+  </ol>
+  <div class="ok"><div class="al">✓ Bonus, ktorý z toho vypadne</div><p>Keď meno prejde týmito piatimi testami, funguje <b>aj v marketingu, aj v Google Play popise, aj keď ho niekto napíše do Googlu</b> — a to je pri globálnej hre reálna vec, nie detail.</p></div>
+
+  <!-- ============ NAVRHY ============ -->
+  <h2 id="navrhy"><span class="tag">Hlavný výstup</span>Návrhy pre celý register</h2>
+  <p class="muted" style="font-size:13.5px">Stĺpec <b style="color:var(--text)">„Ako to povie Angličan"</b> je najdôležitejší — to je zvuková skúška. Ak znie dobre tam, meno je hotové.</p>
+  <table>
+    <tbody><tr>
+      <th style="width:16%">Postava</th>
+      <th style="width:13%">Teraz</th>
+      <th style="width:24%">Prečo to Angličanovi robí problém</th>
+      <th style="width:15%">Návrh (v hre)</th>
+      <th style="width:18%">Slovanský základ</th>
+      <th style="width:14%">Ako to povie Angličan</th>
+    </tr>
+    <tr>
+      <td><b>Vlad</b><br><span class="faint">hrdina</span></td>
+      <td>Vlad</td>
+      <td><span class="faint">Nič — funguje.</span></td>
+      <td class="pick">Vlad <span class="faint">(nechať)</span></td>
+      <td><span class="root">vlad- = vládnuť (Vladislav, Vladimir)</span></td>
+      <td class="say">vlad ✓</td>
+    </tr>
+    <tr>
+      <td><b>Zora</b><br><span class="faint">čitateľka</span></td>
+      <td>Zora</td>
+      <td><span class="faint">Nič — funguje. Krátke, čisté, čitateľné.</span></td>
+      <td class="pick">Zora <span class="faint">(nechať)</span></td>
+      <td><span class="root">zora = úsvit (zaria)</span></td>
+      <td class="say">ZOR-ah ✓</td>
+    </tr>
+    <tr>
+      <td><b>Radko</b><br><span class="faint">Dobravin syn</span></td>
+      <td>Radko</td>
+      <td>Funguje, <b>ale</b> pletie sa s Radimom — dvaja „Rad-" v jednej hre sú pre hráča jeden človek.</td>
+      <td class="pick">Vojtek<br><span class="faint">(alebo Marek / Janko)</span></td>
+      <td><span class="root">voj = bojovník (Vojtěch). <b>Presné pre chlapca, ktorý sa zverbuje.</b></span></td>
+      <td class="say">VOY-tek ✓</td>
+    </tr>
+    <tr>
+      <td><b>Mstislav</b><br><span class="faint">žiarlivý náčelník</span></td>
+      <td>Mstislav</td>
+      <td><span class="drop">Najhoršie meno v hre pre Angličana.</span> Začína na <code>Mst-</code> — to sa v angličtine nedá vysloviť, hráč to preskočí alebo prečíta ako „Mista-slav".</td>
+      <td class="pick">Jarek<br><span class="faint">(alebo Stanko)</span></td>
+      <td><span class="root">jarý = čulý, silný (Jaroslav)</span></td>
+      <td class="say">YAH-rek ✓</td>
+    </tr>
+    <tr>
+      <td><b>Radim</b><br><span class="faint">zradca z L2</span></td>
+      <td>Radim</td>
+      <td><span class="faint">Funguje — krátke, tvrdé, čitateľné. Necháme.</span></td>
+      <td class="pick">Radim <span class="faint">(nechať)</span></td>
+      <td><span class="root">rad = rád, radosť</span></td>
+      <td class="say">RAH-dim ✓</td>
+    </tr>
+    <tr>
+      <td><b>Hruboň</b><br><span class="faint">násilník z L4</span></td>
+      <td>Hruboň</td>
+      <td><code>ň</code> sa v angličtine nedá zapísať ani prečítať; bez neho to je „Hrubon", čo znie ako hrubý omyl. A je to skôr opis než meno.</td>
+      <td class="pick">Kamen<br><span class="faint">(prezývka)</span></td>
+      <td><span class="root">kameň = kameň. <b>A odkazuje na Kamennú radu.</b></span></td>
+      <td class="say">KAH-men ✓</td>
+    </tr>
+    <tr>
+      <td><b>Vavrinec</b><br><span class="faint">pisár Rady</span></td>
+      <td>Vavrinec</td>
+      <td>Tri slabiky, znie latinácky a pre Angličana ťažko („Va-VREE-nec"?). Úradnícke meno, ale nečitateľné.</td>
+      <td class="pick">Prokop<br><span class="faint">(alebo Klim / Danilo)</span></td>
+      <td><span class="root">sv. Prokop — u Slovanov úradnícke a pisárske meno. <b>Presne sedí na pisára.</b></span></td>
+      <td class="say">PRO-kop ✓</td>
+    </tr>
+    <tr>
+      <td><b>Hájnik</b><br><span class="faint">lesník Rady (L5)</span></td>
+      <td>Hájnik</td>
+      <td>Je to <b>funkcia, nie meno</b> — a s „j" a „á" Angličan nevie, či je to „HAY-nik" alebo „HAJ-nik".</td>
+      <td class="pick">Bor<br><span class="faint">(alebo Dub)</span></td>
+      <td><span class="root">bor = borovicový les. <b>Meno aj charakter v jednej slabike.</b></span></td>
+      <td class="say">BOR ✓</td>
+    </tr>
+    <tr>
+      <td><b>Verbovač</b><br><span class="faint">náborár (L6)</span></td>
+      <td>Verbovač</td>
+      <td>Opäť funkcia, nie meno — a „Verbovač" znie pre Angličana ako sloveso („verb").</td>
+      <td class="pick">Milo<br><span class="faint">(alebo Lubo)</span></td>
+      <td><span class="root">mil = milý (Miloš, Milodan). <b>Príjemný chlap, ktorý ťa predá.</b></span></td>
+      <td class="say">MEE-lo ✓</td>
+    </tr>
+    <tr>
+      <td><b>Bohuš</b><br><span class="faint">obchodník (hub)</span></td>
+      <td>Bohuš</td>
+      <td><span class="drop">Dva problémy:</span> <code>š</code> treba zahodiť — a „Bohus" bez neho sa v angličtine číta takmer ako <b>„bogus"</b> (falošný). To obchodníkovi nechceme.</td>
+      <td class="pick">Bohdan<br><span class="faint">(alebo Bohuslav → Bohuš v Kódexe)</span></td>
+      <td><span class="root">boh + dan = bohom daný</span></td>
+      <td class="say">BOH-dahn ✓</td>
+    </tr>
+    <tr>
+      <td><b>Miran</b><br><span class="faint">Ordanov syn</span></td>
+      <td>Miran</td>
+      <td><span class="faint">Funguje. Dve slabiky, čisté, čitateľné — a znie ako skutočné meno, nie ako vymyslené.</span></td>
+      <td class="pick">Miran <span class="faint">(nechať)</span></td>
+      <td><span class="root">mir = mier aj svet. <b>Ironické pre človeka, ktorý prinesie vojnu.</b></span></td>
+      <td class="say">MEE-rahn ✓</td>
+    </tr>
+    <tr>
+      <td><b>Ordan</b><br><span class="faint">protivník</span></td>
+      <td>Ordan</td>
+      <td><span class="faint">Funguje — dve slabiky, jasný prízvuk, čitateľné. Na Balkáne bežné.</span></td>
+      <td class="pick">Ordan <span class="faint">(nechať)</span></td>
+      <td><span class="root">južnoslovanské; zvukovo domáce, číta sa samo</span></td>
+      <td class="say">OR-dan ✓</td>
+    </tr>
+    <tr>
+      <td><b>Teodor</b><br><span class="faint">pán pisárov</span></td>
+      <td>Teodor</td>
+      <td><span class="faint">Funguje — Angličan pozná Theodore. A to, že znie „odjinakiaľ", je pre jeho rolu výhoda.</span></td>
+      <td class="pick">Teodor <span class="faint">(nechať)</span></td>
+      <td><span class="root">grécky pôvod, ale všeslovanské meno — <b>a presne preto sedí na toho, kto prišiel zvonku</b></span></td>
+      <td class="say">TEH-oh-dor ✓</td>
+    </tr>
+    <tr>
+      <td><b>Dobrava</b><br><span class="faint">vdova s deťmi</span></td>
+      <td>Dobrava</td>
+      <td><span class="faint">Tri slabiky, ale zvládnuteľné — prízvuk dopredu ju nezabije. Hraničné, ale prejde.</span></td>
+      <td class="pick">Dobrava <span class="faint">(alebo skrátene Dobra)</span></td>
+      <td><span class="root">dobrava = dubový les. <b>Meno z lesa — a celá hra je o tom, komu les patrí.</b></span></td>
+      <td class="say">doh-BRAH-vah ~</td>
+    </tr>
+    <tr>
+      <td><b>Jaga</b><br><span class="faint">bylinkárka (hub)</span></td>
+      <td>Jaga</td>
+      <td><span class="faint">Funguje, len Angličan to prečíta „JAY-ga" (ako Jäger). Nie je to chyba — Baba Jaga znie povedome aj tak.</span></td>
+      <td class="pick">Jaga <span class="faint">(nechať)</span></td>
+      <td><span class="root">Baba Jaga — najznámejšia slovanská postava na svete</span></td>
+      <td class="say">YAH-gah ~</td>
+    </tr>
+  </tbody></table>
+  <div class="note"><b>Súhrn:</b> meníme <b>šesť</b> mien (Mstislav, Hruboň, Vavrinec, Hájnik, Verbovač, Bohuš) a <b>jedno</b> posúvame kvôli kolízii (Radko). Zvyšných osem je v poriadku tak, ako sú — čo je dobrá správa, lebo tie najdôležitejšie (Vlad, Zora, Miran, Ordan) prežili bez zmeny.</div>
+
+  <!-- ============ NECHAŤ ============ -->
+  <h2 id="nechat"><span class="tag">Nič sa nemení</span>Čo funguje už teraz</h2>
+  <div class="grid cols-3">
+    <div class="card"><h3>Vlad</h3><p>Najkratšie možné slovanské meno. <b>Angličan ho prečíta na prvý raz</b> a je to najznámejšie slovanské meno na svete.</p><p><b>Jedna vec vedome:</b> Vlad sa v západnej hlave spája s Draculom. To je na jednej strane <b>zadarmo rozpoznateľnosť v obchode</b>, na druhej strane očakávanie, ktoré hra nenaplní (nie sme horor). Pokiaľ ti to sedí, nechaj — je to marketing. Ak nie, pozri alternatívy nižšie.</p></div>
+    <div class="card"><h3>Zora</h3><p>Dve slabiky, dve silné spoluhlásky, žiadny problém. A <b>význam je krásny</b> — úsvit. Presne pre postavu, ktorá ako prvá uvidí, čo sa deje.</p><p>Pozn.: v angličtine existuje slovo „zora" len zriedka — meno si nikto nepomýli.</p></div>
+    <div class="card"><h3>Miran · Ordan · Radim</h3><p>Všetky tri sú dvojslabičné, bez diakritiky, s prízvukom, ktorý Angličan trafí sám. <b>A znejú ako mená, nie ako vymyslené slová</b> — čo je pri fantasy hre vzácne a treba si to strážiť.</p><p>Miran a Ordan sú navyše dobré protinožci: <i>Miran</i> znie jemne (mir = mier), <i>Ordan</i> tvrdo.</p></div>
+  </div>
+
+  <!-- ============ ALTERNATIVY ============ -->
+  <h2 id="alternativy"><span class="tag">Nech to nie je moje rozhodnutie</span>Alternatívy — vyber si</h2>
+  <p class="muted" style="font-size:13.5px">Pri každom problémovom mene dávam tri možnosti, aby si vybral podľa <b style="color:var(--text)">charakteru postavy</b>, nie podľa môjho vkusu. Všetky prešli piatimi testami.</p>
+
+  <h3 style="margin-top:18px">Žiarlivý náčelník (teraz Mstislav)</h3>
+  <div class="opts">
+    <div class="opt rec"><h3>Jarek <span class="rb">odporúčam</span></h3><p>Skrátené z Jaroslava. Znie <b>priateľsky a mlado</b> — a to je presne ten kontrast, ktorý chceš: veselé meno, skazený človek.</p><div class="fx"><b>Koreň:</b> jarý = čulý, prudký, silný. <b>Angličan:</b> YAH-rek.</div></div>
+    <div class="opt a"><h3>Stanko</h3><p>Skrátené zo Stanislava. Znie <b>sedliacky a trochu hrubo</b> — dobré, ak ho chceš od začiatku nesympatického.</p><div class="fx"><b>Koreň:</b> stan = stať sa, platiť; slav = sláva. <b>Angličan:</b> STAN-ko.</div></div>
+    <div class="opt b"><h3>Zdenko</h3><p>Znie <b>tvrdohlavo a dedinsky</b>. Dobrý pre človeka, ktorý sa drží svojej urazenosti.</p><div class="fx"><b>Pozor:</b> význam je nejasný (staré slovanské meno, výklad sporný) — ber ho pre zvuk, nie pre koreň. <b>Angličan:</b> ZDEN-ko.</div></div>
+  </div>
+
+  <h3 style="margin-top:18px">Násilník z L4 (teraz Hruboň)</h3>
+  <div class="opts">
+    <div class="opt rec"><h3>Kamen <span class="rb">odporúčam</span></h3><p>Prezývka, nie meno — a to je fajn, lebo aj on je skôr funkcia než človek. <b>Naráža na Kamennú radu</b>: kameň Rady, ktorý padne na dedinu.</p><div class="fx"><b>Koreň:</b> kameň. <b>Angličan:</b> KAH-men (a „cayman" v podvedomí — predátor, čo je bonus).</div></div>
+    <div class="opt a"><h3>Sokol</h3><p>Prezývka, ktorá znie <b>hrdo</b> — a o to väčší kontrast, keď ho vidíš biť starca. Slovanské a čitateľné.</p><div class="fx"><b>Koreň:</b> sokol. <b>Angličan:</b> SO-kol.</div></div>
+    <div class="opt b"><h3>Kyj</h3><p>Prezývka podľa zbrane — <b>kratšie a hnusnejšie</b> sa to už nedá. Sedí, ak má byť čisto odporný.</p><div class="fx"><b>Pozor:</b> Angličan to prečíta ako „kai" alebo „kee" — <b>rizikové</b>, preto nie je prvá voľba. <b>Koreň:</b> kyj = palica, mlat.</div></div>
+  </div>
+
+  <h3 style="margin-top:18px">Pisár Rady (teraz Vavrinec)</h3>
+  <div class="opts">
+    <div class="opt rec"><h3>Prokop <span class="rb">odporúčam</span></h3><p><b>Presne pisárske meno</b> — sv. Prokop bol vzdelanec a pisateľ, u Slovanov úplne bežné meno. Znie úradne, ale teplo.</p><div class="fx"><b>Angličan:</b> PRO-kop. <b>Úprimne:</b> grécky pôvod — ale to je pri pisárovi skôr výhoda (pisári nosili cirkevné mená).</div></div>
+    <div class="opt a"><h3>Klim</h3><p>Jedna slabika a pol, <b>suché, kancelárske</b>. Dobré, ak má byť pisár bez emócie — človek, ktorý len zapisuje.</p><div class="fx"><b>Koreň:</b> slovanská podoba Klimenta. <b>Angličan:</b> KLIM (ako „climb" bez b).</div></div>
+    <div class="opt b"><h3>Danilo</h3><p>Tri slabiky, ale <b>veľmi spievavé a známe</b> (Danilo je bežné od Balkánu po Ukrajinu). Sedí, ak má byť pisár skôr byrokrat než zloduch.</p><div class="fx"><b>Koreň:</b> dan = daný (Bohdan má ten istý základ — pozor na podobnosť s obchodníkom). <b>Angličan:</b> dah-NEE-lo.</div></div>
+  </div>
+
+  <h3 style="margin-top:18px">Lesník z L5 (teraz Hájnik)</h3>
+  <div class="opts">
+    <div class="opt rec"><h3>Bor <span class="rb">odporúčam</span></h3><p>Jedna slabika, žiadny problém, a <b>meno je zároveň charakter</b> — bor je borovicový les. Muž, ktorý je z lesa a je les.</p><div class="fx"><b>Angličan:</b> BOR (ako „bore"). <b>Titul v Kódexe:</b> „Bor, hájnik Rady" — <i>hájnika</i> tak zachováme ako funkciu, nie ako meno.</div></div>
+    <div class="opt a"><h3>Dub</h3><p>Ešte tvrdšie a ešte kratšie — <b>dub je Perúnov strom</b>, takže do hry vnáša aj tú mytológiu bez jediného slova.</p><div class="fx"><b>Pozor:</b> „dub" je v angličtine bežné sloveso (dabovať, nazvať) — môže to rušiť. <b>Angličan:</b> DUB.</div></div>
+    <div class="opt b"><h3>Háj</h3><p>Zachová pôvodné slovo takmer bez zmeny — ale to je aj jeho problém.</p><div class="fx"><b>Pozor:</b> Angličan prečíta „HAH-y" alebo „HAY". <b>Neodporúčam ako meno</b>, skôr ako názov miesta („Háj" ako les v Akte II).</div></div>
+  </div>
+
+  <h3 style="margin-top:18px">Náborár z L6 (teraz Verbovač)</h3>
+  <div class="opts">
+    <div class="opt rec"><h3>Milo <span class="rb">odporúčam</span></h3><p>Z Miloša / Milodana. <b>Znie vrúcne a dôveryhodne</b> — a presne preto je strašidelný: predáva ľudí s úsmevom.</p><div class="fx"><b>Koreň:</b> mil = milý, drahý. <b>Angličan:</b> MEE-lo. <b>Pozn.:</b> v angličtine je to známe meno, takže neznie cudzo — to je tu výhoda.</div></div>
+    <div class="opt a"><h3>Lubo</h3><p>Z Luboša / Lubomíra. <b>Mäkké, kamarátske</b> — „kamoš z krčmy", ktorý ťa zverbuje.</p><div class="fx"><b>Koreň:</b> lub = láska, ľúbosť. <b>Angličan:</b> LOO-bo.</div></div>
+    <div class="opt b"><h3>Vitek</h3><p>Z Víta. <b>Mladé, energické</b> — dobré, ak chceš náborára ako mladého nadšenca, nie ako falošného strýka.</p><div class="fx"><b>Koreň:</b> vít = pán, víťaz (Vít, Vitoslav). <b>Angličan:</b> VEE-tek.</div></div>
+  </div>
+
+  <h3 style="margin-top:18px">Obchodník (teraz Bohuš)</h3>
+  <div class="opts">
+    <div class="opt rec"><h3>Bohdan <span class="rb">odporúčam</span></h3><p>Zachová „boh-" a pridá „-dan". <b>Znie ako meno obchodníka s históriou</b> — nie ako prezývka.</p><div class="fx"><b>Koreň:</b> boh + dan = bohom daný. <b>Angličan:</b> BOH-dahn. <b>Pozor:</b> znie blízko k Bohdanovi v ženskej podobe — nevadí.</div></div>
+    <div class="opt a"><h3>Bohuslav → „Bohuš"</h3><p>Ak chceš <b>zachovať Bohuša</b>: v hre ho volajú plným menom a <i>Bohuš</i> použijeme len v Kódexe, kde diakritika nič nekazí.</p><div class="fx"><b>Angličan:</b> BOH-oo-slav. Dlhé, ale zvládnuteľné. <b>Ale:</b> v dialógoch je to ťažkopádne.</div></div>
+    <div class="opt b"><h3>Kupko</h3><p>Od „kupčiť" — <b>priamo obchodnícke meno</b>, znie ľudovo a v angličtine funguje (KUP-ko) bez toho, aby niečo znamenalo.</p><div class="fx"><b>Koreň:</b> kup = kúpa, obchod. <b>Angličan:</b> KOOP-ko. <b>Nevýhoda:</b> znie skôr ako prezývka dedinského handliara než meno.</div></div>
+  </div>
+
+  <h3 style="margin-top:18px">Radko — syn Dobravy</h3>
+  <div class="opts">
+    <div class="opt rec"><h3>Vojtek <span class="rb">odporúčam</span></h3><p>Od Vojtěcha. <b>Dvojitá pointa:</b> znie ako chlapec, ktorý sa teší — a znamená „ten z vojny". Chlapec, ktorý sa zverbuje, sa volá <b>Bojovník</b>.</p><div class="fx"><b>Koreň:</b> voj = vojna, bojovník. <b>Angličan:</b> VOY-tek. <b>Pozn.:</b> „voj" je v angličtine čitateľné ako „voy".</div></div>
+    <div class="opt a"><h3>Marek</h3><p><b>Najbezpečnejšia voľba</b> — všeslovanské, v angličtine úplne bežné, nikto sa nezasekne. Dobré, ak chceš, aby znel ako úplne obyčajný chlapec.</p><div class="fx"><b>Koreň:</b> Marcus, ale u Slovanov doma už tisíc rokov. <b>Angličan:</b> MAH-rek.</div></div>
+    <div class="opt b"><h3>Janko</h3><p>Domácka podoba Jána — <b>najmladšie a najteplejšie</b> z tých troch. Sedí, ak chceš, aby jeho smrť bolela.</p><div class="fx"><b>Koreň:</b> Ján (grécky základ, ale u Slovanov najčastejšie meno vôbec). <b>Angličan:</b> YAN-ko (môže povedať „JANK-o" — mierne riziko).</div></div>
+  </div>
+
+  <!-- ============ KOLIZIE ============ -->
+  <h2 id="kolizie"><span class="tag">Kontrola, ktorú som spravil</span>Čo som vylúčil a prečo</h2>
+  <p class="muted" style="font-size:13.5px">Toto je tá menej viditeľná časť práce: pri anglických menách je najhoršia vec <b style="color:var(--text)">podobnosť</b>. Anglický hráč si nepamätá mená presne — pamätá si zvuk. Dve podobné mená = jeden človek.</p>
+  <table>
+    <tbody><tr><th style="width:24%">Vylúčené</th><th style="width:30%">Prečo by inak bolo dobré</th><th>Prečo nie</th></tr>
+    <tr><td><b>Miro</b> (z Miroslava)</td><td>Ideálne meno pre žiarlivého náčelníka — mäkké, slovanské, dvojslabičné.</td><td><span class="drop">Koliduje s Miranom.</span> „MEE-ro" a „MEE-ran" sú pre Angličana to isté meno — a Miran je kľúčový pre zvrat.</td></tr>
+    <tr><td><b>Zoran</b></td><td>Pekné, južnoslovanské, dobre čitateľné — dobrá alternatíva k Ordanovi.</td><td><span class="drop">Koliduje so Zorou.</span> A Zora je prvá postava hry; jej meno musí byť jedinečné.</td></tr>
+    <tr><td><b>Radek</b></td><td>Krátke, ľahké, slovanské.</td><td><span class="drop">Tretie „Rad-" v hre.</span> Radim + Radko + Radek = hráč to vzdá a bude hovoriť „ten zradca". Preto jedno „Rad-" posúvame na Vojteka.</td></tr>
+    <tr><td><b>Bohus</b> (bez mäkčeňa)</td><td>Zachovalo by pôvodného Bohuša.</td><td><span class="drop">Číta sa takmer ako „bogus"</span> = falošný, podvodný. Pri obchodníkovi je to nešťastná náhoda.</td></tr>
+    <tr><td><b>Vlk, Krk, Zby, Mst-</b></td><td>Autenticky slovanské, presne tie najstaršie korene.</td><td><span class="drop">Angličan to nevysloví.</span> Toto je jediné miesto, kde musíme obetovať autentickosť — a netreba to robiť často.</td></tr>
+    <tr><td><b>Vladan</b> (alternatíva k Vladovi)</td><td>Reálne slovanské meno, ešte „vladnejšie" než Vlad.</td><td><span class="faint">Nevylučujem — nechávam na teba.</span> Je to slušná voľba, ak ti prekáža Draculova asociácia. Ale Vlad je silnejší a známejší.</td></tr>
+  </tbody></table>
+
+  <!-- ============ BANKA ============ -->
+  <h2 id="banka"><span class="tag">Do budúcna</span>Banka mien, ktoré prejdú filtrom</h2>
+  <p class="muted" style="font-size:13.5px">Hra bude potrebovať ešte veľa mien — dedinčania, vdovy, vojaci, pisári, náčelníci. Toto je zásobník, z ktorého môžeme brať, aby sme to nemuseli riešiť pri každej postave zvlášť.</p>
+  <div class="banks">
+    <div class="bank">
+      <div class="bt">Mužské — bezpečné</div>
+      <div class="row"><b>Marek</b> <i>(Marek)</i> · <b>Milan</b> <i>(MEE-lan)</i> · <b>Janko</b> · <b>Milo</b> · <b>Lubo</b> · <b>Bor</b> · <b>Radim</b> · <b>Miran</b> · <b>Ordan</b> · <b>Jarek</b> · <b>Stanko</b> · <b>Vojtek</b> · <b>Vitek</b> · <b>Danilo</b> · <b>Branko</b> <i>(bran = brániť)</i></div>
+    </div>
+    <div class="bank">
+      <div class="bt">Mužské — so slovanským významom</div>
+      <div class="row"><b>Kamen</b> <i>(kameň)</i> · <b>Sokol</b> <i>(sokol)</i> · <b>Dub</b> <i>(dub)</i> · <b>Klim</b> · <b>Prokop</b> · <b>Bohdan</b> · <b>Kupko</b> <i>(obchod)</i> · <b>Zdenko</b> · <b>Dusan</b> <i>(duša — „DOO-san")</i> · <b>Milos</b> <i>(bez mäkčeňa)</i></div>
+    </div>
+    <div class="bank">
+      <div class="bt">Ženské — bezpečné</div>
+      <div class="row"><b>Zora</b> · <b>Vesna</b> <i>(jar)</i> · <b>Zlata</b> <i>(zlatá)</i> · <b>Milena</b> <i>(milá)</i> · <b>Vera</b> · <b>Jana</b> · <b>Iva</b> · <b>Dara</b> · <b>Nina</b> · <b>Nadia</b> <i>(nádej)</i> · <b>Dobrava</b> · <b>Hana</b> · <b>Eva</b> · <b>Dana</b></div>
+    </div>
+    <div class="bank">
+      <div class="bt">Kontrola pred použitím</div>
+      <div class="row" style="line-height:1.6">Pred každým novým menom tri otázky:<br>1. Prečíta to Angličan na prvý raz?<br>2. Pletie sa so <i>žiadnym</i> iným menom v hre?<br>3. Spozná v tom Slovan svoje?</div>
+    </div>
+  </div>
+  <div class="grid cols-2" style="margin-top:14px">
+    <div class="card">
+      <h3>Písmená, ktorým sa v hre vyhneme</h3>
+      <div class="bad-list">
+        <span>č</span><span>š</span><span>ž</span><span>ř</span><span>ě</span><span>ť</span><span>ď</span><span>ň</span><span>ů</span><span>ľ</span><span>ô</span><span>ä</span><span>í</span><span>é</span><span>á</span><span>ý</span><span>ú</span>
+      </div>
+      <p style="margin-top:9px">Nie preto, že sú zlé — ale preto, že <b>anglické fonty ich často nezobrazia správne</b> a v obchode s hrou vyzerajú ako chyba. V slovenských dokumentoch ich samozrejme používame ďalej.</p>
+    </div>
+    <div class="card">
+      <h3>Zhluky a vzory, ktoré zabíjajú čitateľnosť</h3>
+      <div class="bad-list">
+        <span>Mst-</span><span>Vlk-</span><span>Krk-</span><span>Zby-</span><span>Stř-</span><span>č-</span><span>šč-</span><span>-ův</span>
+      </div>
+      <p style="margin-top:9px">Angličtina nemá slová začínajúce na tri spoluhlásky bez samohlásky — hráč si tam automaticky vloží „a" alebo to preskočí. <b>Mstislav → „Mistislav"</b> je presne ten prípad.</p>
+    </div>
+  </div>
+
+  <!-- ============ KODEX ============ -->
+  <h2 id="kod"><span class="tag">Riešenie, ktoré máme zadarmo</span>Hra po anglicky, Kódex po slovansky</h2>
+  <div class="ok">
+    <div class="al">✓ Toto odporúčam ako pravidlo projektu</div>
+    <p><b>V hre (dialógy, titulky, UI):</b> krátka, čistá, ASCII podoba — <i>Jarek, Milo, Prokop, Bor, Vojtek</i>. Hráč ju prečíta na prvý raz.</p>
+    <p><b>V Kódexe (encyklopédia, ktorú už máme v kánone):</b> plné meno s diakritikou a významom — <i>„Jaroslav, zvaný Jarek. Jeho meno znamená prudký, silný — čo je ironické, lebo jeho sila bola vždy len závisť."</i> Tu sa diakritika nič nerozbije a <b>Slovan presne vidí, že meno je naše.</b></p>
+    <p><b>Prečo je to dobré:</b> (1) Nemusíme sa rozhodovať medzi angličtinou a slovanstvom — máme oboje. (2) Kódex tým získa skutočný obsah, nie len pekné obrázky. (3) Ak niekedy pribudne dabing, máme po ruke aj správnu výslovnosť. (4) Je to presne v duchu hry: <b>formálne meno vs. ako ťa volajú ľudia</b> — a to je téma, ktorou sa celá hra zaoberá (úrad vs. človek).</p>
+  </div>
+
+  <!-- ============ OTAZKY ============ -->
+  <h2 id="otazky"><span class="tag">Na teba</span>Štyri veci</h2>
+  <ul class="qlist">
+    <li><span class="n">1</span><b>Berieme sadu ako celok?</b> Vojtek (syn) · Jarek (náčelník) · Kamen (násilník) · Prokop (pisár) · Bor (lesník) · Milo (náborár) · Bohdan (obchodník). Alebo chceš pri niektorom inú z troch možností?</li>
+    <li><span class="n">2</span><b>Vlad</b> — nechávame kvôli rozpoznateľnosti (Dracula), alebo chceš niečo menej zaťažené (Vladan)? Toto je jediné rozhodnutie, ktoré ovplyvní obal hry, tak ho chcem od teba, nie odo mňa.</li>
+    <li><span class="n">3</span><b>Hájnik a Verbovač</b> — súhlasíš, že z funkcií spravíme mená (Bor, Milo) a <i>hájnik</i> / <i>náborár</i> necháme ako funkciu v Kódexe? Alebo chceš, aby sa tak aj volali?</li>
+    <li><span class="n">4</span><b>Kódex s plnými menami a diakritikou</b> — chceš to takto? Je to zadarmo a rieši to celý problém.</li>
+  </ul>
+
+  <div class="note"><b>Stav:</b> toto je samostatná vrstva — <b>príbeh ani levely sa nemenia</b>, len sa vymenia mená v texte. Keď povieš „áno", premietnem to do `STORY_BIBLE` / `SPEC_MASTER` spolu s v2 prepisom (ktorý stále čaká na potvrdenie pôdorysu a Zory).</div>
+
+</div>
+
+
+<div role="status" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0px; border: 0px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); white-space: nowrap;"></div><div role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0px; border: 0px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); white-space: nowrap;"></div></body></html>

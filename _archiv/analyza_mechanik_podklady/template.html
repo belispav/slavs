@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analýza mechaník strieľačiek</title>
+<style>
+:root{
+  --bg:#f6f5f1; --panel:#ffffff; --ink:#1d1d1b; --muted:#6a675f; --line:#e2dfd6;
+  --accent:#c2410c; --accent-soft:#fff1e8; --top:#1e7a4a; --top-soft:#e8f6ee;
+  --chip:#efece4; --warn:#9a3412;
+  --s1:#d9480f; --s2:#e8890c; --s3:#c9a227; --s4:#6aa84f; --s5:#2f8f4e;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151513; --panel:#1f1f1c; --ink:#ecebe6; --muted:#a19e95; --line:#34332e;
+    --accent:#fb8c4c; --accent-soft:#3a2418; --top:#5fcf8f; --top-soft:#173326;
+    --chip:#2b2a26; --warn:#fdba74;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151513; --panel:#1f1f1c; --ink:#ecebe6; --muted:#a19e95; --line:#34332e;
+  --accent:#fb8c4c; --accent-soft:#3a2418; --top:#5fcf8f; --top-soft:#173326;
+  --chip:#2b2a26; --warn:#fdba74;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:19px;margin:34px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+.sub{color:var(--muted);margin:0 0 14px}
+.legend{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px;color:var(--muted)}
+.legend b{color:var(--ink)}
+.keypoints{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));margin-top:14px}
+.kp{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:10px 12px;font-size:14px}
+.top10{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.tcard{background:var(--top-soft);border:1px solid var(--top);border-radius:10px;padding:12px}
+.tcard .rank{font-weight:700;color:var(--top);font-size:13px}
+.tcard h3{margin:2px 0 6px;font-size:15.5px}
+.tcard p{margin:4px 0;font-size:13.5px}
+.tcard .idea{font-style:italic}
+.note{font-size:13.5px;color:var(--muted);margin-top:10px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+.controls label{display:flex;flex-direction:column;font-size:12.5px;color:var(--muted);gap:3px;min-width:150px;flex:1}
+.controls select,.controls input{font:inherit;padding:7px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink)}
+.count{font-size:13px;color:var(--muted);margin-left:auto;align-self:center}
+.tablewrap{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:var(--chip);position:sticky;top:0;font-size:12.5px;white-space:nowrap}
+th.sort{cursor:pointer}
+th.sort:hover{color:var(--accent)}
+tr.is-top td:first-child{box-shadow:inset 4px 0 0 var(--top)}
+.code{font-family:ui-monospace,Consolas,monospace;font-weight:700;white-space:nowrap}
+.topbadge{display:inline-block;background:var(--top);color:var(--panel);font-size:11px;border-radius:5px;padding:0 5px;margin-left:4px}
+.chip{display:inline-block;background:var(--chip);border-radius:5px;padding:1px 6px;margin:1px 2px 1px 0;font-size:12px;white-space:nowrap}
+.cat{display:inline-block;border-radius:5px;padding:1px 7px;font-size:12px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.score{display:inline-block;min-width:24px;text-align:center;border-radius:5px;font-weight:700;color:#fff;padding:1px 0}
+.sidea{display:block;font-size:12.5px;color:var(--muted);margin-top:3px}
+.src a{color:var(--accent);text-decoration:none;font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.src a:hover{text-decoration:underline}
+.models{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.model{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px}
+.model h3{margin:0 0 6px;font-size:15.5px}
+.model .grp{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.model ul{margin:4px 0 8px;padding-left:18px}
+.plus{color:var(--top);font-weight:700}
+.minus{color:var(--warn);font-weight:700}
+.avoid{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px 10px 32px;margin:0}
+.avoid li{margin:5px 0}
+.games{font-size:13.5px}
+.sources{columns:2 360px;font-size:13px;padding-left:0;list-style:none}
+.sources li{margin:3px 0;break-inside:avoid}
+.sources a{color:var(--accent)}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+@media (max-width:760px){
+  table.mech thead{display:none}
+  table.mech tr{display:block;border-bottom:2px solid var(--line);padding:8px 4px}
+  table.mech td{display:block;border:0;padding:3px 8px}
+  table.mech td[data-l]::before{content:attr(data-l) ": ";font-weight:600;color:var(--muted);font-size:12px}
+  .count{margin-left:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Analýza mechaník: pixel-art akčné strieľačky</h1>
+<p class="sub">Stav k 12. 10. 2026 · 11 zadaných hier + Magic Survival · 40 mechaník · podklad pre tvoju mobilnú horde shooter hru so satirou o nesplnených sľuboch</p>
+
+<div class="legend"><b>Ako čítať:</b> „Fakt“ = overené v zdroji (kód Z.. je klikateľný). „Názor“ = moje hodnotenie. Všetky skóre 1–5 sú môj odhad. <b>Náročnosť</b>: 1 = ľahké pre jedného človeka s AI, 5 = veľmi ťažké. <b>Mobil, Satira, Vplyv</b>: 5 = najlepšie. <b>Pomer</b> = Vplyv ÷ Náročnosť.</div>
+
+<div class="keypoints">
+  <div class="kp"><b>Základ žánru:</b> automatická streľba + výber vylepšenia pri leveli + trvalé vylepšenia medzi hrami.</div>
+  <div class="kp"><b>Jeden autor uspel</b> s cenou ~3 $ alebo zadarmo s dobrovoľnými reklamami – nikdy s energiou a tvrdými balíčkami.</div>
+  <div class="kp"><b>Survivor.io zarába najviac</b>, ale ~50 % reklamného rozpočtu dáva do TikToku a po 30 dňoch drží 4 % hráčov.</div>
+  <div class="kp"><b>Viralitu robili streameri a festivaly</b>, nie Twitter autora (20 Minutes Till Dawn mal 720 sledovateľov).</div>
+  <div class="kp"><b>Slabšie hry prehrali na drine a opakovaní</b>, nie na grafike.</div>
+</div>
+
+<h2>Top 10 mechaník na prevzatie</h2>
+<p class="sub">Zoradené podľa pomeru vplyv ÷ náročnosť. Pri rovnosti: vyšší vplyv → mobil → satira.</p>
+<div class="top10" id="top10"></div>
+<p class="note" id="nextnote"></p>
+
+<h2>Všetky mechaniky</h2>
+<div class="controls">
+  <label>Kategória<select id="fCat"></select></label>
+  <label>Hra<select id="fGame"></select></label>
+  <label>Triediť podľa<select id="fSort">
+    <option value="ratio">Pomer vplyv ÷ náročnosť (najlepšie hore)</option>
+    <option value="I">Vplyv (najvyšší hore)</option>
+    <option value="Dasc">Náročnosť (najľahšie hore)</option>
+    <option value="Ddesc">Náročnosť (najťažšie hore)</option>
+    <option value="M">Vhodnosť pre mobil (najlepšie hore)</option>
+    <option value="S">Väzba na satiru (najlepšie hore)</option>
+    <option value="code">Kód</option>
+  </select></label>
+  <label>Hľadať<input id="fText" type="search" placeholder="napr. reklama"></label>
+  <span class="count" id="count"></span>
+</div>
+<div class="tablewrap">
+<table class="mech">
+<thead><tr>
+  <th class="sort" data-s="code">Kód</th><th>Mechanika</th><th>Hry</th><th>Kategória</th><th>Prečo funguje</th>
+  <th class="sort" data-s="Dasc">Nár.</th><th class="sort" data-s="M">Mob.</th><th class="sort" data-s="S">Satira</th><th class="sort" data-s="I">Vpl.</th><th class="sort" data-s="ratio">Pomer</th>
+</tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+
+<h2>Platená hra vs. zadarmo s nákupmi</h2>
+<p class="sub">Nerozhodujem za teba – dva modely, každý v dvoch variantoch.</p>
+<div class="models">
+  <div class="model"><div class="grp">Platená · A1</div><h3>Jednorazová cena</h3>
+    <p>Hráč zaplatí pred stiahnutím.</p>
+    <p><b>Príklady:</b> 20 Minutes Till Dawn (mobil, platená verzia); na PC cena žánru 3–5 $.</p>
+    <p class="plus">Plusy</p><ul><li>Najjednoduchšie na výrobu, žiadna ekonomika v hre.</li><li>Férové recenzie.</li><li>Google Play od 2026: skúška platenej hry zadarmo, „kúp raz, hraj na mobile aj PC“ <span class="src" data-src="Z49"></span></li></ul>
+    <p class="minus">Mínusy</p><ul><li>Indie hra potrebuje na mobile už predtým úspech a komunitu <span class="src" data-src="Z47"></span></li><li>Bez reklamného rozpočtu málo stiahnutí (názor).</li></ul>
+    <p><b>Čo urobíš:</b> nastavíš cenu, vydáš.</p></div>
+  <div class="model"><div class="grp">Platená · A2</div><h3>Zadarmo začiatok, plná hra za 1 platbu</h3>
+    <p>Stiahnutie zadarmo, časť hry zadarmo, jedna platba odomkne všetko (alebo 2 verzie v obchode).</p>
+    <p><b>Príklady:</b> 20 Minutes Till Dawn (bezplatný prológ / verzia) <span class="src" data-src="Z17"></span>; Loop Hero, Shapez fungovali, TMNT sklamal <span class="src" data-src="Z47"></span>; Beholder: 5× viac s bezplatnou verziou <span class="src" data-src="Z48"></span></p>
+    <p class="plus">Plusy</p><ul><li>Dosah ako hra zadarmo + férová jednorazová platba.</li><li>Žiadny tlak na hráča.</li></ul>
+    <p class="minus">Mínusy</p><ul><li>Treba trafiť miesto, kde žiadať platbu; konverzia neistá <span class="src" data-src="Z47"></span></li></ul>
+    <p><b>Čo urobíš:</b> rozdelíš hru (napr. 1. kapitola zadarmo), pridáš 1 nákup.</p></div>
+  <div class="model"><div class="grp">Zadarmo · B1</div><h3>Mäkká: dobrovoľné reklamy + vypnutie reklám</h3>
+    <p>Celá hra zadarmo; reklama len keď ju hráč chce; voliteľne platba za vypnutie reklám, lacné postavy.</p>
+    <p><b>Príklady:</b> Vampire Survivors mobil <span class="src" data-src="Z13"></span>; Magic Survival 3,99 $ <span class="src" data-src="Z46"></span>; Soul Knight postavy 1 $, oživenie 2 $ <span class="src" data-src="Z07"></span></p>
+    <p class="plus">Plusy</p><ul><li>Najväčší dosah, dobré recenzie.</li><li>Jednoduché: reklamná knižnica + 1–3 nákupy.</li><li>Vampire Survivors: 1 mil. stiahnutí za týždeň bez platenej reklamy <span class="src" data-src="Z15"></span></li></ul>
+    <p class="minus">Mínusy</p><ul><li>Nízky príjem na hráča – treba veľa stiahnutí (názor).</li><li>Koľko zarábajú reklamy vo Vampire Survivors, nezverejnili.</li></ul>
+    <p><b>Čo urobíš:</b> reklamy s odmenou + 1 nákup „bez reklám“.</p></div>
+  <div class="model"><div class="grp">Zadarmo · B2</div><h3>Tvrdá F2P ekonomika</h3>
+    <p>Energia na hranie, stena v postupe, balíčky, náhodné odmeny.</p>
+    <p><b>Príklady:</b> Survivor.io <span class="src" data-src="Z01"></span><span class="src" data-src="Z04"></span>; Soul Knight dnes čiastočne <span class="src" data-src="Z08"></span></p>
+    <p class="plus">Plusy</p><ul><li>Najvyšší strop: Survivor.io ~5 mil. $ mesačne aj po 3 rokoch <span class="src" data-src="Z05"></span></li></ul>
+    <p class="minus">Mínusy</p><ul><li>Veľký rozpočet na reklamu <span class="src" data-src="Z02"></span></li><li>Udalosti, ekonomika, analytika – pre jedného autora nereálne (názor).</li><li>Sťažnosti na „plať a vyhrávaj“ <span class="src" data-src="Z50"></span>; poncle preto odmietol partnerov <span class="src" data-src="Z14"></span></li></ul>
+    <p><b>Čo urobíš:</b> navrhneš ekonomiku, obchod, udalosti; platíš reklamu.</p></div>
+</div>
+
+<h2>Čomu sa vyhnúť</h2>
+<ol class="avoid">
+  <li><b>Drina pri odomykaní</b> – Army of Ruin <span class="src" data-src="Z40"></span></li>
+  <li><b>Klon bez vlastného nápadu, neskoro na trhu</b> – Army of Ruin <span class="src" data-src="Z40"></span>; „zlatý vek“ žánru podľa autorov Halls of Torment prevažne skončil <span class="src" data-src="Z34"></span>. Tvoje odlíšenie je satira.</li>
+  <li><b>Prefarbené postavy</b> <span class="src" data-src="Z42"></span></li>
+  <li><b>Silné veci, ktoré nevyzerajú silno</b> <span class="src" data-src="Z40"></span></li>
+  <li><b>Nevyvážená obťažnosť, nejasný strom vylepšení</b> – Spirit Hunters <span class="src" data-src="Z43"></span>, Hotline Miami 2 <span class="src" data-src="Z21"></span>, Enter the Gungeon bez kontrolných bodov <span class="src" data-src="Z30"></span></li>
+  <li><b>Agresívna monetizácia</b> – „plať a vyhrávaj“, steny v postupe <span class="src" data-src="Z50"></span></li>
+  <li><b>Spomalenie pri veľa nepriateľoch</b> <span class="src" data-src="Z51"></span> – testuj na najslabšom telefóne, ktorý chceš podporovať.</li>
+  <li><b>Náhoda, ktorá berie kontrolu</b> – náhodná výmena postavy v Broforce <span class="src" data-src="Z26"></span></li>
+  <li><b>Mätúce názvy</b> – 10 vs. 20 Minutes Till Dawn <span class="src" data-src="Z17"></span></li>
+  <li><b>Spoliehanie sa na vlastné sociálne siete</b> – rozhodli festivaly, ukážka a streameri <span class="src" data-src="Z17"></span></li>
+  <li><b>Klony na mobile</b> – Vampire Survivors musel mobil vydať narýchlo <span class="src" data-src="Z14"></span></li>
+  <li><b>Reálne osoby v satire</b> – Broforce paroduje skutočné filmové postavy <span class="src" data-src="Z23"></span>; ty len fiktívne archetypy.</li>
+</ol>
+
+<h2>Analyzované hry</h2>
+<div class="tablewrap"><table class="games">
+<thead><tr><th>Hra</th><th>Platforma</th><th>Tržby / stiahnutia (odhad)</th><th>Model</th></tr></thead>
+<tbody>
+<tr><td>Survivor.io</td><td>mobil</td><td>55 mil.+ stiahnutí, 170 mil. $+ za ~6 mes.; ~5 mil. $/mes. po 3 rokoch</td><td>F2P tvrdá</td></tr>
+<tr><td>Soul Knight</td><td>mobil (+PC, Switch)</td><td>100 mil.+ stiahnutí (Google Play)</td><td>F2P mäkká → stredná</td></tr>
+<tr><td>Vampire Survivors</td><td>PC + mobil</td><td>~6,5 mil. kópií, ~26 mil. $; mobil 5,1 mil. za 3 mes.</td><td>PC 4,99 $, mobil zadarmo s dobrovoľnými reklamami</td></tr>
+<tr><td>20 Minutes Till Dawn</td><td>PC + mobil</td><td>~750 tis. kópií, ~3 mil. $</td><td>PC 2,99 $, mobil platená + bezplatná</td></tr>
+<tr><td>Hotline Miami</td><td>PC, konzoly</td><td>~5,3 mil. kópií, ~43 mil. $</td><td>platená</td></tr>
+<tr><td>Broforce</td><td>PC, konzoly</td><td>~2,3 mil. kópií, ~20 mil. $</td><td>platená</td></tr>
+<tr><td>Enter the Gungeon</td><td>PC, konzoly</td><td>~2,1 mil. kópií, ~19 mil. $</td><td>platená</td></tr>
+<tr><td>Halls of Torment</td><td>PC</td><td>~820 tis. kópií, ~4,4 mil. $</td><td>platená ~5 $</td></tr>
+<tr><td>Nuclear Throne</td><td>PC, konzoly</td><td>~400 tis. kópií, ~2,9 mil. $</td><td>platená</td></tr>
+<tr><td>Army of Ruin</td><td>PC, konzoly</td><td>~65 tis. kópií, ~420 tis. $ (Vaporlens: ~188 tis., ~1,5 mil. $)</td><td>platená ~8 $</td></tr>
+<tr><td>Spirit Hunters</td><td>PC</td><td>~41 tis. kópií, ~260 tis. $</td><td>platená</td></tr>
+<tr><td>Magic Survival (navyše)</td><td>mobil</td><td>6,4 mil. stiahnutí od 2020</td><td>zadarmo, reklamy, vypnutie 3,99 $</td></tr>
+</tbody></table></div>
+<p class="note">Čísla hier 1–11 sú tvoje vstupné odhady (Raijin.gg k 11. 10. 2026, Google Play, mobilegamer.biz); doplnky sú zo zdrojov v analyza-mechanik.md.</p>
+
+<h2>Zdroje</h2>
+<ul class="sources" id="sources"></ul>
+</div>
+
+<script>
+const DATA = {{DATA}};
+const M = DATA.mechanics, SRC = DATA.sources, TOP = DATA.top10;
+const ratio = m => m.I / m.D;
+const colors = ["","var(--s1)","var(--s2)","var(--s3)","var(--s4)","var(--s5)"];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const srcLink = z => SRC[z] ? `<a href="${esc(SRC[z][1])}" target="_blank" rel="noopener" title="${esc(SRC[z][0])}">[${z}]</a>` : "";
+const linkify = t => esc(t).replace(/\[(Z\d\d)\]/g, (_, z) => srcLink(z));
+const score = (v, invert) => { const c = invert ? colors[6 - v] : colors[v]; return `<span class="score" style="background:${c}">${v}</span>`; };
+
+document.querySelectorAll(".src[data-src]").forEach(el => el.innerHTML = srcLink(el.dataset.src));
+
+// Top 10
+document.getElementById("top10").innerHTML = TOP.map((code, i) => {
+  const m = M.find(x => x.code === code);
+  return `<div class="tcard"><div class="rank">#${i + 1} · <span class="code">${m.code}</span> · pomer ${ratio(m).toFixed(1).replace(".", ",")}</div>
+  <h3>${esc(m.name)}</h3>
+  <p>${esc(m.what)}</p>
+  <p>Vplyv ${m.I} · Náročnosť ${m.D} · Mobil ${m.M} · Satira ${m.S}</p>
+  <p class="idea">Pre tvoju tému: ${esc(m.top)}</p></div>`;
+}).join("");
+document.getElementById("nextnote").innerHTML = esc(DATA.nextNote);
+
+// Filters
+const cats = [...new Set(M.map(m => m.cat))].sort((a, b) => a.localeCompare(b, "sk"));
+const games = [...new Set(M.flatMap(m => m.games))].sort((a, b) => a.localeCompare(b, "sk"));
+const fCat = document.getElementById("fCat"), fGame = document.getElementById("fGame"),
+      fSort = document.getElementById("fSort"), fText = document.getElementById("fText");
+fCat.innerHTML = `<option value="">Všetky kategórie</option>` + cats.map(c => `<option>${esc(c)}</option>`).join("");
+fGame.innerHTML = `<option value="">Všetky hry</option>` + games.map(g => `<option>${esc(g)}</option>`).join("");
+
+const tieBreak = (a, b) => (b.I - a.I) || (b.M - a.M) || (b.S - a.S) || a.code.localeCompare(b.code);
+const sorters = {
+  ratio: (a, b) => (ratio(b) - ratio(a)) || tieBreak(a, b),
+  I: (a, b) => (b.I - a.I) || (ratio(b) - ratio(a)) || a.code.localeCompare(b.code),
+  Dasc: (a, b) => (a.D - b.D) || (b.I - a.I) || a.code.localeCompare(b.code),
+  Ddesc: (a, b) => (b.D - a.D) || (b.I - a.I) || a.code.localeCompare(b.code),
+  M: (a, b) => (b.M - a.M) || (ratio(b) - ratio(a)) || a.code.localeCompare(b.code),
+  S: (a, b) => (b.S - a.S) || (ratio(b) - ratio(a)) || a.code.localeCompare(b.code),
+  code: (a, b) => a.code.localeCompare(b.code)
+};
+
+function render() {
+  const c = fCat.value, g = fGame.value, q = fText.value.trim().toLowerCase();
+  let list = M.filter(m => (!c || m.cat === c) && (!g || m.games.includes(g)) &&
+    (!q || [m.name, m.what, m.why, m.sIdea, m.games.join(" ")].join(" ").toLowerCase().includes(q)));
+  list.sort(sorters[fSort.value]);
+  document.getElementById("count").textContent = `Zobrazené: ${list.length} z ${M.length}`;
+  document.getElementById("rows").innerHTML = list.length ? list.map(m => {
+    const isTop = TOP.includes(m.code);
+    return `<tr class="${isTop ? "is-top" : ""}">
+      <td data-l="Kód"><span class="code">${m.code}</span>${isTop ? `<span class="topbadge">TOP ${TOP.indexOf(m.code) + 1}</span>` : ""}</td>
+      <td data-l="Mechanika"><b>${esc(m.name)}</b><br>${esc(m.what)}</td>
+      <td data-l="Hry">${m.games.map(x => `<span class="chip">${esc(x)}</span>`).join("")}</td>
+      <td data-l="Kategória"><span class="cat">${esc(m.cat)}</span></td>
+      <td data-l="Prečo funguje" class="src">${linkify(m.why)}</td>
+      <td data-l="Náročnosť">${score(m.D, true)}</td>
+      <td data-l="Mobil">${score(m.M)}</td>
+      <td data-l="Satira">${score(m.S)}<span class="sidea">${esc(m.sIdea)}</span></td>
+      <td data-l="Vplyv">${score(m.I)}</td>
+      <td data-l="Pomer"><b>${ratio(m).toFixed(1).replace(".", ",")}</b></td></tr>`;
+  }).join("") : `<tr><td colspan="10" class="empty">Žiadna mechanika nespĺňa filter.</td></tr>`;
+}
+[fCat, fGame, fSort].forEach(el => el.addEventListener("change", render));
+fText.addEventListener("input", render);
+document.querySelectorAll("th.sort").forEach(th => th.addEventListener("click", () => { fSort.value = th.dataset.s; render(); }));
+render();
+
+// Sources
+document.getElementById("sources").innerHTML = Object.entries(SRC).map(([k, v]) =>
+  `<li><b>${k}</b> <a href="${esc(v[1])}" target="_blank" rel="noopener">${esc(v[0])}</a></li>`).join("");
+</script>
+</body>
+</html>

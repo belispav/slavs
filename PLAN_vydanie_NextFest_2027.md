@@ -8,8 +8,8 @@ Pripravené v session o marketingu a monetizácii. Prehľad 65 možností market
 ## Posolstvo a pravidlá komunikácie
 
 - Téma marketingu: **satira na politikov, ktorí pred voľbami sľubujú a sľuby neplnia** (ľudia majú pocit, že ich nikto nepočúva).
-- **Žiadny imigračný rámec** v príbehu ani v marketingu (Pavel 2026-10-12). Otrokári sú otrokári, nie zástupcovia dnešných ľudí alebo skupín.
-- Platí `PLAN_hry.md` kap. 2 bez výnimky: nepriateľ = rola, nie etnikum; žiadne „my proti nim“.
+- **Žiadny imigračný rámec** v príbehu ani v marketingu (Pavel 2026-10-12). Nepriatelia sú roly (nájazdníci, domobrana, garda), nie zástupcovia dnešných ľudí alebo skupín.
+- Platí `PLAN_hry.md` kap. 2 bez výnimky: nepriateľ = rola, nie etnikum; žiadne „my proti nim“. Od 15. 10. aj §2 príbehu (`20261015 - Handoff Slavs fight back.md`).
 - V textoch, tagoch a reklamách nikdy výraz „mass shooter“. Používať: run-and-gun, akčná strieľačka, horde shooter.
 - Satira mieri na moc a sľuby (napr. Kamenná rada), nie na žiadnu reálnu osobu, stranu ani skupinu.
 
@@ -20,7 +20,7 @@ Pripravené v session o marketingu a monetizácii. Prehľad 65 možností market
 | Steam (PC) | platená hra | 9,99 € | pred vydaním bezplatné demo na Next Feste |
 | Android | prvá časť zadarmo + jednorazové odomknutie celej hry | 4,99 € | bez reklám; v `NAPADY_vylepsenia.md` je to možnosť Z3 |
 | Web | bezplatné demo (to isté ako na Steame) | 0 € | odkaz z videí rovno do hry; Godot web export treba overiť |
-| Po vydaní | platené rozšírenia (nové éry / kapitoly) | ~2,99 € | zhoda s `PLAN_hry.md` 6.5 (DLC éry) |
+| Po vydaní | platené rozšírenia (pokračovanie príbehu / kapitoly) | ~2,99 € | zhoda s `PLAN_hry.md` 6.5 (pokračovanie príbehu) |
 
 Jeden obsah (prvá časť hry) slúži ako Steam demo, web demo aj bezplatná časť na Androide.
 Odhad (návrh 2026-10-12, predpoklady, nie predpoveď): pri 10 000 kupujúcich na mobile a 5 000 na PC ~58 000 € pred daňou;
@@ -64,7 +64,7 @@ obsah už dostupný zákazníkom (napr. vydaný prológ) sa nemusí uznať ako d
 | Model | premium 5,99 €, bez nákupov a reklám (`PLAN_hry.md`, `CLAUDE.md`); T10 odložené | tabuľka vyššie |
 | Poradie platforiem | najprv Android, Steam 2–4 mesiace po vydaní, iOS o 9–12 mesiacov | Steam demo vo februári, Steam a Android naraz |
 | Cena Steam | 5,99–7,99 € | 9,99 € |
-| Demo | — | prvý svet / prvé behy (podľa `DIZAJN_core_loop.md`) |
+| Demo | — | Akt I (príbeh v5: Akt I ide na mobile zadarmo) |
 | Jazyky | EN + SK pri vydaní | EN + SK + AI preklad 5–7 jazykov EÚ |
 | Google Play účet | odložený (T08, F4) | založiť do 31. 10. 2026 |
 | Termín vydania | ~6 mesiacov popri práci | variant A, B alebo C |

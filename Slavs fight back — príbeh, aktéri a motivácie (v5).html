@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<!-- saved from url=(0100)https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html -->
+<html lang="sk"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOLYA — príbeh, aktéri a motivácie (v5)</title>
+<style>
+  :root{
+    --bg:#12141a; --surface:#1b1f28; --surface2:#222836; --line:#2e3544;
+    --text:#e7eaf0; --muted:#98a1b3; --faint:#6b7486;
+    --a1:#6fbf73; --a2:#e0a458; --a3:#6ba6d8; --boss:#d8696a; --hero:#b48ce0; --good:#5fbf8a; --warn:#e0a458; --bad:#d8696a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:28px 20px 90px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:29px;margin:0 0 4px;letter-spacing:.5px}
+  h1 .accent{color:var(--a2)}
+  .sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+  h2{font-size:20px;margin:44px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);letter-spacing:.3px}
+  h2 .tag{font-size:12px;color:var(--faint);font-weight:600;text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:4px}
+  h3{margin:0 0 6px;font-size:14.5px}
+  h4{margin:0 0 4px;font-size:13px;color:var(--faint);text-transform:uppercase;letter-spacing:.8px}
+  p{margin:0}
+  code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12.5px;color:var(--muted)}
+  .grid{display:grid;gap:12px}
+  .cols-2{grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+  .cols-3{grid-template-columns:repeat(auto-fit,minmax(226px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .card p{color:var(--muted);font-size:13.5px}
+  .card p+p{margin-top:7px}
+  .muted{color:var(--muted)} .faint{color:var(--faint)}
+
+  .nav{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:0 0 6px;font-size:13.5px;display:flex;flex-wrap:wrap;gap:8px 16px}
+  .nav a{color:var(--a3);text-decoration:none}
+  .nav a:hover{text-decoration:underline}
+
+  .answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+  .ans{background:linear-gradient(180deg,#1e2430,#1b1f28);border:1px solid var(--line);border-left:4px solid var(--a3);border-radius:10px;padding:14px 16px}
+  .ans .an{font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--a3);display:block;margin-bottom:5px}
+  .ans b{color:#fff}
+  .ans.fix{border-left-color:var(--warn)} .ans.fix .an{color:var(--warn)}
+  .ans.new{border-left-color:var(--good)} .ans.new .an{color:var(--good)}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--faint);font-size:11.5px;text-transform:uppercase;letter-spacing:.7px;font-weight:600;background:var(--surface2)}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--text)}
+
+  .actwrap{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden;margin-bottom:14px}
+  .acthead{padding:13px 18px;background:var(--surface2);border-top:3px solid var(--faint);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  .actwrap.a1 .acthead{border-top-color:var(--a1)} .actwrap.a2 .acthead{border-top-color:var(--a2)} .actwrap.a3 .acthead{border-top-color:var(--a3)}
+  .acthead .aname{font-weight:700;font-size:16.5px}
+  .acthead .aname span{color:var(--faint);font-weight:600;font-size:13px}
+  .foechip{font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:3px 11px;color:var(--muted)}
+  .foechip b{color:var(--boss)}
+  .actbody{padding:14px 16px;display:grid;gap:10px}
+
+  .story{background:var(--surface2);border-left:3px solid var(--faint);border-radius:0 8px 8px 0;padding:12px 16px}
+  .actwrap.a1 .story{border-left-color:var(--a1)} .actwrap.a2 .story{border-left-color:var(--a2)} .actwrap.a3 .story{border-left-color:var(--a3)}
+  .story p{font-size:13.5px;color:var(--muted)}
+  .story p+p{margin-top:8px}
+  .story p b{color:var(--text)}
+  .story .quote{color:var(--faint);font-style:italic;border-top:1px dashed var(--line);margin-top:10px;padding-top:9px;font-size:12.5px}
+
+  .lvl{background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+  .lvl.new{border-color:var(--warn);border-style:dashed}
+  .lvl .lhead{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+  .lvl .lid{font-size:12px;color:var(--faint);font-weight:800;letter-spacing:.5px}
+  .lvl .lname{font-weight:700;font-size:15px}
+  .lvl .ldesc{color:var(--muted);font-size:13px;margin-top:5px}
+  .lvl .ldesc b{color:var(--text)}
+  .lvl .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .tagchip{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.3px;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+  .tagchip.boss{background:var(--boss);color:#1a0e0e;border-color:var(--boss)}
+  .tagchip.rage{background:var(--a2);color:#241a08;border-color:var(--a2)}
+  .tagchip.why{border-color:var(--warn);color:var(--warn);background:#2a2418}
+  .tagchip.q{border-color:var(--hero);color:var(--hero);background:#241d2a}
+  .tagchip.magic{border-color:var(--a3);color:var(--a3);background:#18222c}
+
+  .kv{display:grid;grid-template-columns:132px 1fr;gap:4px 12px;margin-top:10px;font-size:13px}
+  .kv dt{color:var(--faint);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;padding-top:2px}
+  .kv dd{margin:0;color:var(--muted)}
+  .kv dd b{color:var(--text)}
+
+  .note{background:var(--surface2);border:1px dashed var(--line);border-radius:10px;padding:12px 16px;color:var(--muted);font-size:13.5px;margin-top:12px}
+  .note b{color:var(--text)}
+  .alert{background:#241a1a;border:1px solid var(--bad);border-left:4px solid var(--bad);border-radius:10px;padding:14px 17px;margin-top:12px}
+  .alert .al{font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--bad)}
+  .alert p{font-size:13.5px;margin-top:6px;color:var(--muted)}
+  .alert p b{color:var(--text)}
+  .ok{background:#1a2420;border:1px solid var(--good);border-left:4px solid var(--good);border-radius:10px;padding:14px 17px;margin-top:12px}
+  .ok .al{font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--good)}
+  .ok p{font-size:13.5px;margin-top:6px;color:var(--muted)}
+  .ok p b{color:var(--text)}
+
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:11px;margin-top:10px}
+  .opt{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 15px;border-top:3px solid var(--faint)}
+  .opt.rec{border-top-color:var(--good)}
+  .opt.a{border-top-color:var(--a2)} .opt.b{border-top-color:var(--a3)} .opt.c{border-top-color:var(--hero)}
+  .opt h3{font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .opt .rb{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--good);background:#1a2420;border:1px solid var(--good);border-radius:20px;padding:1px 7px;white-space:nowrap}
+  .opt p{color:var(--muted);font-size:12.5px;margin-top:6px}
+  .opt .fx{font-size:12px;color:var(--faint);margin-top:7px;padding-top:7px;border-top:1px dashed var(--line)}
+  .opt .fx b{color:var(--warn)}
+
+  .qlist{list-style:none;padding:0;margin:0}
+  .qlist li{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:11px 15px;margin-bottom:8px;font-size:13.5px;color:var(--muted)}
+  .qlist li b{color:var(--text)}
+  .qlist li .n{display:inline-block;background:var(--surface2);border:1px solid var(--line);color:var(--a3);font-weight:700;font-size:12px;border-radius:6px;padding:1px 8px;margin-right:8px}
+
+  .who{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+  .who span{font-size:11.5px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:2px 10px;color:var(--muted)}
+  .who span b{color:var(--text)}
+
+  .markers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:11px;margin-top:10px}
+  .mk{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .mk.pick{border-color:var(--good)}
+  .mk .mkt{font-weight:700;font-size:13.5px}
+  .mk p{color:var(--muted);font-size:12.5px;margin-top:5px}
+  .swatch{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+
+  .tl{list-style:none;padding:0;margin:10px 0 0;border-left:2px solid var(--line)}
+  .tl li{position:relative;padding:0 0 14px 18px}
+  .tl li:before{content:"";position:absolute;left:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--surface2);border:2px solid var(--hero)}
+  .tl li b{color:var(--text);display:block;font-size:13.5px}
+  .tl li span{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>VOLYA — <span class="accent">príbeh a aktéri</span> (v5)</h1>
+  <p class="sub">Kompletný popis: čo sa deje, kto je na scéne, čo ho ženie, čo to spustí. Toto je dokument, z ktorého sa dá písať hra.</p>
+
+  <div class="nav">
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#odpovede">Odpovede na tvoje otázky</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#akt1">Akt I</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#akt2">Akt II</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#akt3">Akt III</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#epilog">Epilóg</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#postavy">Register postáv</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#zora">Zora — celý oblúk</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#rage">Zúrivosť (vietor)</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#spustace">Čo spúšťa ľudí a zlato</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#garda">Znak gardy</a>
+    <a href="https://agents.pioneerlands.net/daedalus-files/d8Ak18Rx1d87oIwX3Vfhsizgj_5OaEpn/VOLYA_pribeh_v5.html#otazky">Otázky</a>
+  </div>
+
+  <!-- ================= ODPOVEDE ================= -->
+  <h2 id="odpovede"><span class="tag">Najprv</span>Odpovede na to, čo si písal</h2>
+  <div class="answers">
+    <div class="ans fix"><span class="an">Lesný level — moja chyba</span><b>Bol tam, ale zahrabaný.</b> V v4 som ho mal až <i>pod</i> osou aktov, ako samostatnú sekciu — v osi Aktu II bol jeden riadok. Preto si ho nenašiel. Teraz je <b>L5 priamo v Aktu II</b>, rozšírený o dej, aktérov a motivácie.</div>
+    <div class="ans fix"><span class="an">Postavy — tiež moja chyba</span><b>Vyhodil som register, aby bol dashboard „prehľadný".</b> Zlý nápad — práve naopak. Teraz je register späť a <b>väčší než kedykoľvek</b>: každá postava má, čo chce, a to zvlášť <b>v každom akte</b> (motivácia sa vyvíja).</div>
+    <div class="ans new"><span class="an">Zora — prijaté a posilnené</span><b>Prvá postava, ktorú Vlad v hre stretne.</b> Vlečú ju, chce jej niekto niečo urobiť, on zasiahne. Dobravin syn sa do nej zaľúbi — jeho smrť je <b>spúšťač finále</b>. A Zora sama má silu (viď nižšie).</div>
+    <div class="ans new"><span class="an">Koniec — prijaté</span><b>Ordan chce krajinu, majster chce Zoru.</b> To je lepšie rozdelenie než „Ordan unesie Zoru": Ordan = politický protivník (DLC/2. diel), majster = magický protivník. Portál je dobrý. Jednu poistku pridávam nižšie.</div>
+    <div class="ans new"><span class="an">Zúrivosť — vietor, a máš pravdu</span><b>Vietor + zbelie oči + blesky.</b> A odpoveď na Perúna: <b>Perún bol boh hromu a blesku</b> — takže tvoj inštinkt trafil presne slovanskú mytológiu. Oheň patrí Svarogovi, vietor Stribogovi. Perúnova búrka = <b>blesk + vietor</b>. To je presne to, čo chceš.</div>
+  </div>
+
+  <!-- ================= AKT I ================= -->
+  <h2 id="akt1"><span class="tag">Prvá tretina · 3 levely</span>Akt I — Neznámy</h2>
+  <div class="actwrap a1">
+    <div class="acthead"><div class="aname">Akt I — Neznámy <span>· L1–L3 · free verzia na mobil</span></div><div class="foechip">Nepriateľ: <b>Ordanovi nájazdníci</b> (cudzí, jasné zlo)</div></div>
+    <div class="actbody">
+
+      <div class="story">
+        <p><b>O čom to je:</b> Vlad sa objaví z ničoho. Nevie, kto je, hráč tiež nie. Prvé, čo uvidí, je bezprávie — a zasiahne. Za tri levely sa z nikoho stane ten, komu dediny veria.</p>
+        <p><b>Zlo je tu jednoduché a to je správne.</b> Ordanovi nájazdníci pália, berú ľudí a odvádzajú ich na juh do kolón. Žiadna politika, žiadne odtiene — čistý dôvod masakrovať hordy. Presne to, čo potrebuješ na free prvú epizódu.</p>
+        <p><b>A čo je dôležité:</b> Vlad na konci Aktu I <b>vyhrá bitku a nechtiac tým vytvorí prázdne miesto po moci</b>. Nikto nesedí na tróne, dediny sú bez pána. Do tej prázdnoty v Akte II vojde Kamenná rada. To je celý oblúk hry v jednej vete: <b>vyhral si vojnu a tým si umožnil, čo príde.</b></p>
+        <div class="quote">Karta na konci Aktu I: „Ordan odtiahol na juh. Dediny boli voľné. Nikto si nevšimol, že prázdne miesto sa zaplní vždy — len otázka je, kým."</div>
+      </div>
+
+      <div class="lvl">
+        <div class="lhead"><span class="lid">L1</span><span class="lname">Horiaca dedina</span><span class="tagchip boss">BOSS · nájazdový kapitán</span><span class="tagchip q">prvé stretnutie so Zorou</span></div>
+        <div class="ldesc">Ordanovi nájazdníci pália dedinu Hradisko a odvádzajú ľudí. Vlad sa objaví z ničoho — <b>a prvé, čo uvidí, je dievča, ktoré dvaja chlapi vlečú za dedinu.</b> Zasiahne skôr, než si stihne položiť otázku, kto vlastne je. To je celá jeho definícia.</div>
+        <dl class="kv">
+          <dt>Kto je na scéne</dt><dd><b>Vlad</b> (neznámy), <b>Zora</b> — prvá postava hry, <b>Dobrava</b> — vdova, ktorá bráni deti vlastným telom, <b>Mstislav</b> — vtedajší náčelník, ktorý sa schováva v pivnici, <b>Bohuš</b> — obchodník, čo prežil schovaný vo voze.</dd>
+          <dt>Motivácia</dt><dd><b>Nájazdníci:</b> korisť a otroci, žiadna ideológia — robia to pre zisk. <b>Mstislav:</b> prežiť, hlavne prežiť. <b>Dobrava:</b> deti. <b>Zora:</b> vzdor — uhryzne, kopne, aj keď to nemá šancu.</dd>
+          <dt>Čo to spustí</dt><dd>Vlad nemá minulosť ani dôvod — <b>má len to, čo vidí.</b> Hráč si spolu s ním položí otázku „prečo mi to vadí?" a odpoveď príde až v Akte III.</dd>
+          <dt>Záchrana a zlato</dt><dd>Prvé <b>klietky</b> — ľudia na vozoch, pripútaní, pripravení na odchod. Každý zachránený = zlato a meno. Prvý raz hráč vidí, že neúspech má tvár.</dd>
+          <dt>Zasadí sa</dt><dd><b>Mstislav</b> vidí, ako ho niekto cudzí zatienil pred jeho vlastnou dedinou. <b>Radko</b> (Dobravin syn) vidí Zoru, ako sa bije. <b>Zora</b> vidí Vlada. Tri vzťahy, tri budúce problémy.</dd>
+        </dl>
+      </div>
+
+      <div class="lvl">
+        <div class="lhead"><span class="lid">L2</span><span class="lname">Porada náčelníkov</span><span class="tagchip rage">SPEKTÁKL · prvý RAGE</span><span class="tagchip boss">BOSS · zradca Radim</span></div>
+        <div class="ldesc">Náčelníci sa zídu, aby sa dohodli — a nevedia sa dohodnúť o ničom. <b>Jeden z nich, Radim, privolá Ordanovu presilu</b> (Ordan mu sľúbil, že jeho dedinu nechá na pokoji). Vlad prepadne zúrivosti — prvý raz, na dlho, a je to masaker.</div>
+        <dl class="kv">
+          <dt>Kto je na scéne</dt><dd>Päť–šesť náčelníkov (každý iný typ: starý, bohatý, vystrašený, tvrdohlavý), <b>Mstislav</b> — cíti sa odsunutý, <b>Zora</b> — všimne si, že Radim odchádza z porady skôr.</dd>
+          <dt>Motivácia</dt><dd><b>Radim:</b> strach. Nezradil pre zlato, zradil preto, že mu Ordan sľúbil nechať dedinu nažive — a svojim ľuďom to nepovie. <b>Náčelníci:</b> každý chce veliť. <b>Vlad:</b> nechce veliť vôbec, chce len, aby ľudia prežili.</dd>
+          <dt>Čo to spustí</dt><dd>Zrada + presila = <b>prvý RAGE</b>. Vizualizácia nižšie (vietor, biele oči, blesky). Vlad zmasakruje hordy v krátkom čase, sám, bez slov. <b>Tým si vyslúži rešpekt — a tým sa aj odlepí od ľudí.</b> Od tejto chvíle sa ho trochu boja.</dd>
+          <dt>Záchrana a zlato</dt><dd>Rukojemníci, ktorých Radim drží, aby náčelníkov prinútil súhlasiť. Oslobodíš ich počas bitky.</dd>
+          <dt>Boss</dt><dd><b>Radim</b> — nie bojovník, ale zbabelec s nožom a s cudzími vojakmi pred sebou. Necháva sa kryť. Keď padne, povie vetu, ktorá je celá téma hry: <i>„Ja som len chcel, aby moja dedina prežila."</i></dd>
+        </dl>
+      </div>
+
+      <div class="lvl">
+        <div class="lhead"><span class="lid">L3</span><span class="lname">Spojené dediny</span><span class="tagchip boss">BOSS · Ordanov veliteľ</span><span class="tagchip q">Vlad odmietne vládu</span></div>
+        <div class="ldesc">Vlad vedie spojené dediny a udrie na Ordanov tábor, aby dostal späť odvlečených ľudí. <b>Ordan nepadne — ustúpi na juh.</b> Nie je porazený, len odíde, aby sa vrátil neskôr. A dediny, ktoré práve vyhrali, zostanú bez pána.</div>
+        <dl class="kv">
+          <dt>Kto je na scéne</dt><dd><b>Jaga</b> — bylinkárka, lieči Vlada, prvá, kto si všimne, že sa hojí „divne rýchlo", <b>Bohuš</b> — zbohatne na vojne a je mu to vidieť, <b>Mstislav</b>, <b>Dobrava</b>, <b>Radko</b>.</dd>
+          <dt>Motivácia</dt><dd><b>Náčelníci:</b> ponúknu Vladovi miesto veliteľa/náčelníka — <b>a on to odmietne.</b> <i>„Ja nie som váš pán. Ja som ten, čo stojí pred vami."</i> <b>Ordan:</b> strategicky ustupuje a sleduje.</dd>
+          <dt>Čo to spustí</dt><dd><b>Odmietnutie je spúšťač celého zvyšku hry.</b> (1) Prázdne miesto po moci → v Akte II ho vyplní Rada. (2) Mstislavova žiarlosť sa zacementuje — <i>„ani to nechcel"</i> je pre neho najhoršie poníženie. (3) Ordan vidí krajinu bez pána a pošle svojich ľudí medzi ľudí.</dd>
+          <dt>Záchrana a zlato</dt><dd>Najväčšia klietková pasáž hry — kolóna zajatcov na ceste na juh. Čím viac ich zachrániš, tým je dedina na konci hry väčšia a živšia.</dd>
+          <dt>Boss</dt><dd><b>Ordanov veliteľ</b>, ktorý kryje ústup. Porazíš ho — <b>a práve tento chlap sa vráti v Akte III v uniforme gardy</b> (ak zvolíš tú možnosť L6).</dd>
+        </dl>
+        <div class="meta"><span class="tagchip magic">✦ mágia v akte: len náznak</span><span class="tagchip">Jaga: „hojíš sa ako niekto iný"</span></div>
+      </div>
+
+      <div class="note"><b>Poznámka k free epizóde:</b> Akt I takto stojí sám — Vlad príde z ničoho, zachráni dediny, vyhrá, odmietne vládu. Uspokojujúci koniec. A posledná karta („Ordan odtiahol na juh…") + hub scéna, kde <b>po prvý raz prichádzajú pisári Rady</b>, je teaser do plnej verzie. Presne to, čo chceš.</div>
+    </div>
+  </div>
+
+  <!-- ================= AKT II ================= -->
+  <h2 id="akt2"><span class="tag">Druhá tretina · 3 levely</span>Akt II — Zákon</h2>
+  <div class="actwrap a2">
+    <div class="acthead"><div class="aname">Akt II — Zákon <span>· L4–L6</span></div><div class="foechip">Nepriateľ: <b>vlastní dedinčania</b> v mene Rady</div></div>
+    <div class="actbody">
+
+      <div class="story">
+        <p><b>O čom to je:</b> Ordan odtiahol a dediny zostali bez pána. <b>Nikto neprišiel s mečom. Prišli pisári.</b> Najprv „len zapisovať". Potom pravidlá. Potom pravidlá platia priamo pre každého. Potom poplatky. A nakoniec spoločný dlh, za ktorý ručíš ty, hoci si ho nenarobil.</p>
+        <p><b>Prečo to funguje ako zlo:</b> Kamenná rada nemá tvár. Nemá zlého kráľa, ktorého by si zabil. Je to <b>stroj z pisárov a susedov</b>. Zákony nevynucujú cudzí vojaci — vynucujú ich <b>vojaci jednotlivých dedín</b>, tvoji susedia, ktorí to zväčša robia neradi. Ale vždy sa nájde niekto, komu sa to zapáči — niekto, kto to použije, aby si vybil vlastnú malosť. <b>Takí sú ľudia.</b></p>
+        <p><b>Vlad teda nebojuje proti votrelcovi. Bojuje proti vlastným.</b> Každý nepriateľ v Akte II má meno, dedinu a dôvod, a väčšina z nich nie je zlá — len slabá. Presne tá psychológia, ktorú si chcel.</p>
+        <div class="quote">Karta na začiatku Aktu II: „Ordan odtiahol na juh. Dediny zostali voľné. Prvý rok boli voľné. Druhý rok prišli pisári — a nikto sa nebránil, lebo to bolo len na papieri."</div>
+      </div>
+
+      <!-- HUB DRIP -->
+      <h3 style="margin-top:6px">Kde presne žije „Rada postupne uberá" — v dedine, nie v leveloch</h3>
+      <p class="muted" style="font-size:13.5px;margin-top:4px">Toto je tabuľka, ktorú si chcel. Medzi levelmi sa vraciaš do hubu a <b style="color:var(--text)">tam</b> vidno, ako Rada každú návštevu uberie o kus viac. Level je vždy len <b style="color:var(--text)">následok</b> — niekto prišiel a niečo si vzal.</p>
+      <table>
+        <tbody><tr><th>Návšteva dediny</th><th>Čo Rada urobí</th><th>Čo to spustí v ľuďoch</th><th>Záchrana / zlato</th></tr>
+        <tr>
+          <td><b>Po L3</b><br><span class="faint">prvý raz</span></td>
+          <td>Prídu pisári — „len zapisovať". Na bránu pribudne prvá výveska.</td>
+          <td>Zvedavosť a posmech. <b>Nikto to nečíta, nikto sa nebojí.</b> Jaga: „Písmo je ako oheň. Najprv svieti."</td>
+          <td>Záchrana: nič (mäkký úvod). Zlato len z behu.</td>
+        </tr>
+        <tr>
+          <td><b>Po L4</b></td>
+          <td>Sudcovia. Pravidlá už platia <b>priamo pre každého</b>. Rozhoduje cudzí človek.</td>
+          <td>Suseda predvolajú kvôli sporu o mlyn — a rozhodne niekto, kto tu nikdy nebol. <b>Prvá nespravodlivosť, ktorá sa týka konkrétneho človeka.</b> Ľudia začnú počítať, kto z toho vyšiel dobre.</td>
+          <td>Záchrana: <b>obilie a náradie</b> zabavené pri výkone rozhodnutia. Zlato + prvé trvalé vylepšenie dediny (zásoby na zimu).</td>
+        </tr>
+        <tr>
+          <td><b>Po L5</b></td>
+          <td>Výmer na lesy. Poplatok za drevo. <b>Drevo patrí Rade</b>, aj to, čo rástlo za dedinou.</td>
+          <td><b>Zima.</b> Toto je zlom — ľudia už nebojujú o hrdosť, ale o teplo. Vdove zabavia drevo pred zimou. Prvý raz sa nedá kúriť. <b>Hnev sa prvýkrát obráti proti Rade, nie proti Vladovi.</b></td>
+          <td>Záchrana: <b>drevo, uhlie, klády</b>. Najsilnejšia meta-progresia — z dreva sa v hube <b>doslova stavajú domy</b>.</td>
+        </tr>
+        <tr>
+          <td><b>Po L6</b></td>
+          <td>Spoločný groš a spoločný dlh. Dedina ručí za dlhy iných dedín — a začne verbovanie.</td>
+          <td><b>Rozpad vnútri dediny.</b> Jedni chcú platiť a mať pokoj, druhí nechcú platiť za cudzie dlhy — susedia sa hádajú medzi sebou. A mladí muži sa hlásia do gardy, lebo je to <b>istý groš</b>. Medzi nimi aj Dobravin syn.</td>
+          <td>Záchrana: <b>listiny a zatýkaní</b> — prvý raz sa zachraňuje pravda, nie vec. Zlato + otvorené nové budovy v hube.</td>
+        </tr>
+      </tbody></table>
+      <div class="note"><b>Prečo je to takto správne:</b> v leveloch strieľaš, v dedine <b>sa to dozvedáš</b>. Ak by to bolo v leveloch, boli by to chodby s ničím na streľbu (presne tá hluchosť z v2). Takto je každý level dôsledok nejakej kraviny, ktorú Rada spravila mimo obrazovky — a hráč ju vidí v hube, kde mu ju povie sused.</div>
+
+      <!-- L4 -->
+      <div class="lvl">
+        <div class="lhead"><span class="lid">L4</span><span class="lname">Výveska</span><span class="tagchip why">Prečo: sused v „uniforme" bije ľudí</span><span class="tagchip boss">BOSS · Mstislav</span></div>
+        <div class="ldesc">Zákony sa začnú <b>vynucovať</b>. Vojaci jednotlivých dedín — tvoji susedia — chodia vyberať a predvolávať. Väčšina to robí nerada, oči odvrátené. Ale <b>Hruboň</b>, chlap, ktorého doma nikdy nikto nepočúval, zrazu <b>môže</b>. Vešia človeka pred dedinou za dlh. Vlad tam je.</div>
+        <dl class="kv">
+          <dt>Kto je na scéne</dt><dd><b>Mstislav</b> — teraz „radný veliteľ", velí dedinskej milícii, <b>Hruboň</b> — násilník (nie meno, ale prezývka — a to je pointa: je to <b>rola</b>, nie etnikum), <b>Vavrinec</b> — pisár Rady, presvedčený, že bez pravidiel je chaos, <b>Dobrava</b>, <b>Radko</b>, <b>Zora</b>.</dd>
+          <dt>Motivácia</dt><dd><b>Mstislav:</b> konečne byť niekým. Vlad mu vzal dedinu, Rada mu dala moc — a on si to nechce nechať vziať. <b>Hruboň:</b> vybiť sa. Jeho dedina ho celý život ignorovala. <b>Vavrinec:</b> úprimne verí, že zachraňuje krajinu pred chaosom. <b>Ostatní milicionári:</b> robia to, lebo musia — a hanbia sa.</dd>
+          <dt>Čo to spustí</dt><dd><b>Ľudia sa neboja o seba — boja sa, keď to vidia na druhom.</b> Až keď Hruboň vešia suseda, dedina zistí, že výveska nie je „len papier". Vlad zasiahne — a tým sa <b>prvý raz postaví proti vlastným</b>. To je ten zlom, o ktorý ti išlo.</dd>
+          <dt>Záchrana a zlato</dt><dd>Zabavené obilie, náradie, dobytok. Meta-progresia: dedina začína mať <b>zásoby</b> — prvý raz vidno, že niečo zachraňuješ natrvalo.</dd>
+          <dt>Boss</dt><dd><b>Mstislav.</b> Prvý boss, ktorého hráč pozná z Aktu I. Bojuje ako veliteľ milície — <b>posiela na teba svojich ľudí</b> a sám sa kryje, kým ho nezrazíš. Jeho ľudia sa postupne vzdávajú, keď vidia, že prehráva — čo je jeho skutočná prehra.</dd>
+        </dl>
+      </div>
+
+      <!-- L5 FOREST -->
+      <div class="lvl new">
+        <div class="lhead"><span class="lid">L5</span><span class="lname">Lesy <span class="faint" style="font-weight:400">— NOVÝ LEVEL</span></span><span class="tagchip">pasce z dreva · postreh a pohyb</span><span class="tagchip magic">✦ záblesk jeleňa</span><span class="tagchip boss">BOSS · Hájnik</span></div>
+        <div class="ldesc">Rada zaviedla výmer na lesy, takže dedina nemá čím kúriť. Vlad ide s drevármi do hôr — a <b>niekto tam nastražil pasce</b>. Nikto nevie kto. Rafinované, vojenské, robené niekým, kto les pozná lepšie než domáci.</div>
+        <p class="muted" style="font-size:13px;margin-top:9px"><b style="color:var(--text)">Dej sa nestráca — je v pasci samotnej.</b> Vlad ide po drevo, lebo Rada dedine drevo vzala. Gameplay a príbeh sú to isté.</p>
+        <dl class="kv">
+          <dt>Kto je na scéne</dt><dd><b>Drevári</b> (dedinčania, bez zbraní — a <b>nesmú byť zraniteľní</b>, to je naše <code>[HARD]</code> pravidlo), <b>Hájnik</b> — lesník Rady, ktorý „vlastní" drevo a vie, že dedina kradne, <b>Ordanovi ľudia — nevidno ich ani raz</b>. Iba stopy: poderané lano, cudzia podrážka, ešte teplé ohnisko, poriadok, aký domáci nemajú.</dd>
+          <dt>Motivácia</dt><dd><b>Drevári:</b> prežiť zimu. <b>Hájnik:</b> chránil ten les celý život a teraz mu ho niekto vzal a premenoval na majetok — <b>je zlomený, nie zlý</b>. <b>Ordanovi ľudia:</b> pripravujú krajinu. Pasce nie sú na Vlada — sú na <b>každého, kto by vstúpil do lesa</b>. Oni tu už len <b>sú</b> a čakajú.</dd>
+          <dt>Čo to spustí</dt><dd>Prvý náznak, že v krajine je <b>niekto tretí</b>. Hráč to má vycítiť, nie vedieť. A v hube sa prvý raz objaví reč: „V lese je niekto cudzí."</dd>
+          <dt>Záchrana a zlato</dt><dd><b>Drevo a uhlie.</b> Každá kláda = v hube <b>viditeľná stavba</b> (dom, kôlňa, kováčska vyhňa). Najhmatateľnejšia odmena v hre.</dd>
+          <dt>Boss</dt><dd><b>Hájnik</b> — sekera a svorka psov, bojuje v teréne, kde má výhodu; súboj je o priestor, nie o hp. Slovami: <i>„Ja som ten les sadil. Kde ste boli vy?"</i> — a Vlad nemá čo odpovedať, lebo má pravdu.</dd>
+        </dl>
+        <p class="muted" style="font-size:12.5px;margin-top:9px"><b style="color:var(--faint)">Alternatívy k L5 bossovi</b> (ak sa ti Hájnik nepozdá): medveď, ktorého Rada drží v ohrade ako „strážcu lesa" · Mstislavov pobočník · Ordanov veliteľ z L3 (ale to prezrádza Ordanovcov skôr, než chceš).</p>
+      </div>
+
+      <h4 style="margin-top:14px">Šesť pascí — všetko z dreva, čitateľné na prvý pohľad, zradné v rýchlosti</h4>
+      <div class="grid cols-3" style="margin-top:8px">
+        <div class="card"><h3>🪵 Kotúľajúci sa kmeň</h3><p>Spustí sa z kopca. Musíš uhneť nahor/nadol — využíva náš dvojosový pohyb bez gravitácie.</p></div>
+        <div class="card"><h3>🌲 Padajúci vývrat</h3><p>Zviazané stromy sa sklopia. Zóna, kam nesmieš vkročiť, kým sa nezrútia.</p></div>
+        <div class="card"><h3>🪤 Jama pod listím</h3><p>Skryté kolíky. Vidno ich len podľa toho, ako sa listie prepadá.</p></div>
+        <div class="card"><h3>⛓️ Reťazový hák</h3><p>Kmeň na lane medzi stromami — zhodený v tej najhoršej chvíli.</p></div>
+        <div class="card"><h3>💧 Splav</h3><p>Klády sa valia po potoku. Rytmická pasáž, všetko o časovaní.</p></div>
+        <div class="card"><h3>🔥 Uhliarska míla</h3><p>Horíaca míla uhlia — plošný oheň, musíš okolo. A pripomína, o čo celý spor ide.</p></div>
+      </div>
+      <div class="ok"><div class="al">✦ Jeleň — všetka mágia Aktu II</div><p>V strede levelu, v tichu medzi pascami, sa <b>na chvíľu mihne jeleň</b> — a zmizne. Žiadne slovo, žiadne vysvetlenie, žiadna replika. Vlad sa na sekundu zastaví a ide ďalej. Hráč zostane s otázkou. <b>To je celé — a stačí to.</b> (V Akte II je inak mágia len v Teodorových cutscénach.)</p></div>
+
+      <!-- L6 -->
+      <div class="lvl">
+        <div class="lhead"><span class="lid">L6</span><span class="lname">Zlom</span><span class="tagchip why">Prečo: Rada ide po ľuďoch, nie po veciach</span><span class="tagchip boss">BOSS · Verbovač</span></div>
+        <div class="ldesc">Vlad podkope Radu — oslobodí zadržaných a spáli archív výmer. Rada má <b>nedostatok verných vojakov</b> (veď sú to tvoji susedia a je im to proti vôli) a začne <b>verbovať</b>. Za groš. A hlásia sa muži, ktorí sú až <b>príliš ochotní</b> — cudzí, ktorých nikto nikdy nevidel orať.</div>
+        <dl class="kv">
+          <dt>Kto je na scéne</dt><dd><b>Verbovač</b> — nie vojak, ale milý, presvedčivý chlap, ktorý chodí po dedinách, <b>Radko</b> (Dobravin syn) — hlási sa, lebo je to istý groš a chce si niekoho zaslúžiť, <b>Vavrinec</b>, <b>Mstislavov zvyšok milície</b>.</dd>
+          <dt>Motivácia</dt><dd><b>Verbovač:</b> nebojuje, <b>organizuje</b>. Je presvedčený, že dáva ľuďom prácu a poriadok. <b>Radko:</b> zlá, ale ľudská motivácia — chce dosť groša, aby si mohol dovoliť Zoru (a netuší, že je to naopak). <b>Noví muži:</b> tí ochotní majú v očiach niečo iné ako groš.</dd>
+          <dt>Čo to spustí</dt><dd><b>Prvá prasklina.</b> Hráč (a Vlad) si všimne, že noví muži zakazujú brutálnejšie než starí, hoci sú tu kratšie. Zora si to zapíše. Radko odíde s nimi. <b>A Rada získa to, čo jej chýbalo — vojakov, ktorí to robia radi.</b></dd>
+          <dt>Záchrana a zlato</dt><dd>Zatýkaní ľudia a listiny. Meta: v hube sa objaví <b>archív</b> — Vladova „zberateľská" miestnosť, kde sa dá čítať, čo Rada naozaj píše.</dd>
+          <dt>Boss</dt><dd><b>Verbovač.</b> Nebije sa s tebou priamo — <b>preženieš sa cez ľudí, ktorých zverboval</b> (chlapci z dedín, ktorí nechcú bojovať, ale majú strach z neho aj z teba) a zakliesniš ho. Keď padne, stihne povedať: <i>„Ja som im dal prácu. Ty im dávaš len mŕtvych."</i> <b>Téma: zlo nie je bitka. Zlo je predajca systému.</b></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= AKT III ================= -->
+  <h2 id="akt3"><span class="tag">Tretia tretina · 3 levely</span>Akt III — Odkrývanie</h2>
+  <div class="actwrap a3">
+    <div class="acthead"><div class="aname">Akt III — Odkrývanie <span>· L7–L9 + epilóg</span></div><div class="foechip">Nepriateľ: <b>zmiešaná garda</b> — dedinčania + zaprisahaní</div></div>
+    <div class="actbody">
+
+      <div class="story">
+        <p><b>O čom to je:</b> Rada už nie je pisári. <b>Rada má gardu.</b> Polovica sú zverbovaní dedinčania — robia to pre groš, so sklopenými očami. Polovica sú <b>zaprisahaní</b>: muži, ktorí sa prihlásili dobrovoľne, s vlastným znakom, a ktorí zákony nevynucujú pre groš, ale preto, že v nepriateľovi žijú. Velí im <b>Miran</b>.</p>
+        <p><b>A Zora začne čítať.</b> To je celá pointa tretieho aktu — nie meč, ale <b>zápisník</b>. Zora nájde v radných listinách mená veliteľov, ktorí neexistujú v žiadnej dedine. Mužov, ktorí sú v papieroch, ale nie v krajine. Začne sa pýtať — a tým sa rozbehne koniec.</p>
+        <p><b>Finále nie je len bitka, ale odhalenie:</b> Rada nie je najvyššia. Rada tiež len slúži — a my sa dozvieme komu. To je ten „Teodor ako mostík", ktorý máme v kánone.</p>
+        <div class="quote">Karta na začiatku Aktu III: „Nikdy neboli cudzí vojaci. Boli tu len naši — a potom sa medzi nami objavili muži, ktorí mali na remeni niečo, čo sme im nedali."</div>
+      </div>
+
+      <div class="lvl">
+        <div class="lhead"><span class="lid">L7</span><span class="lname">Garda</span><span class="tagchip boss">BOSS · MIRAN</span><span class="tagchip why">Prečo: Radko umrie</span></div>
+        <div class="ldesc">Vlad ide po Radka — chlapec, ktorého pozná z L1, je teraz v garde. Nájde ho v jednotke, kde zaprisahaní velia zverbovaným. Radko <b>odmietne splniť rozkaz</b> (má obesiť niekoho zo svojej dediny, alebo má vydať Zoru) — <b>a zaprisahaní ho zabijú pred Vladovými očami</b>. Miran sa potom postaví Vladovi.</div>
+        <dl class="kv">
+          <dt>Kto je na scéne</dt><dd><b>Miran</b> — veliteľ gardy; hráč ho pozná z Aktu I ako <b>zajatého chlapca</b>, ktorého Vlad vyslobodil (a ktorý potom zostal), <b>Radko</b>, <b>Zora</b> — tá Mirana odhalí, <b>zaprisahaní</b> (Ordanovi ľudia, v civilnom oblečení + znak), <b>zverbovaní</b> (dedinčania, zlá výstroj, vyhýbavé animácie).</dd>
+          <dt>Motivácia</dt><dd><b>Miran:</b> Ordanov syn, nasadený ešte v teenagerovskom veku. <b>Nie je fanatik — je trpezlivý.</b> Celý Akt I a II čakal pri Vladovi. <b>Radko:</b> chce byť niekým — a zomrie na tom, že na rozdiel od ostatných <b>odmietne</b>. <b>Zaprisahaní:</b> robia to preto, lebo veria, že krajina má dostať poriadok.</dd>
+          <dt>Čo to spustí</dt><dd><b>Spúšťač finále.</b> Dobravin syn — chlapec, ktorého si zachránil v prvom leveli — umrie rukou niekoho, kto sa tváril ako tvoj. To nie je „ublíženie Dobrave", to je <b>smrť niekoho, koho hráč pozná od prvej minúty a o kom vie, že miloval Zoru</b>. Vlad stratí posledný dôvod na zdržanlivosť.</dd>
+          <dt>Záchrana a zlato</dt><dd>Zatýkaní + <b>zoznamy</b>. Zora začne prepisovať mená, ktoré Rada vymazala.</dd>
+          <dt>Boss</dt><dd><b>Miran</b> — a je to vrchol hry. Prezlečený do uniformy z Aktu I (presne ako si povedal): <b>Vyzerá ako tvoj prvý nepriateľ, ale je to niekto, koho si sám vytiahol z klietky.</b> Jeho garda má na sebe znak (viď nižšie). Keď padne, nechá za sebou jeden papier — a na ňom meno, ktoré Zora pozná.</dd>
+        </dl>
+      </div>
+
+      <div class="lvl new">
+        <div class="lhead"><span class="lid">L8</span><span class="lname">? <span class="faint" style="font-weight:400">— NOVÝ, ešte nevybraný</span></span><span class="tagchip q">Návrat odporúčam</span></div>
+        <div class="ldesc">Extra level v Akte III. Tri návrhy nižšie. Odporúčam <b>Návrat</b> — Vlad sa vráti do dediny z L1, ktorá je teraz pod Radou. <b>Zrkadlo otvorenia hry</b>, recyklácia assetov, najsilnejšia emócia.</div>
+      </div>
+
+      <div class="lvl">
+        <div class="lhead"><span class="lid">L9</span><span class="lname">Pán pisárov</span><span class="tagchip boss">BOSS · TEODOR (finále, mágia)</span></div>
+        <div class="ldesc">Posledný boss a <b>zmena rytmu</b>: proti mass shooteru príde jeden muž s mágiou. Teodor nie je radca — je <b>ten, kto celý stroj postavil</b>. A dostáva príkazy odniekiaľ (guľa — náš „palantír", nikdy explicitne). Zora odhalí, komu Rada slúži — a <b>v tej chvíli ju vezme portál</b>, nie Ordan.</div>
+        <dl class="kv">
+          <dt>Kto je na scéne</dt><dd><b>Teodor</b>, <b>Zora</b>, <b>Vlad</b>, <b>Ordan</b> — objaví sa na konci ako <b>politický protivník</b>, nie ako únosca.</dd>
+          <dt>Motivácia</dt><dd><b>Teodor:</b> slúži niekomu, kto si chce podmaniť krajinu. <b>Ordan:</b> chce krajinu — mocensky, pochopiteľne, bez mágie. <b>Majster (nikdy nie na scéne):</b> chce Zoru, lebo <b>jej sila je jediná vec, ktorú nedokáže obísť</b>.</dd>
+          <dt>Čo to spustí</dt><dd>Odhalenie: <b>Rada nebola najvyššia.</b> A únos portálom = Vlad zlyhal v jedinej veci, na ktorú bol poslaný.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= EPILÓG ================= -->
+  <h2 id="epilog"><span class="tag">Po L9</span>Epilóg — hrateľná dedina</h2>
+  <div class="actwrap">
+    <div class="actbody">
+      <div class="story">
+        <p><b>Hrateľný, nie cutscéna.</b> Po poslednom leveli sa vrátiš do hubu — ale <b>dedina je v rozvalinách</b>. Môžeš chodiť, pozrieť sa, komu z tých, ktorých si zachránil, sa čo stalo. Nikto nevíta hrdinu.</p>
+        <p><b>Potom príde jeleň.</b> Prvý raz nie na sekundu — zastaví sa pred Vladom. A povie mu (jediná replika, ktorú v hre zviera má): <b>že zlyhal v tom hlavnom cieli.</b> Ale že ešte dostane šancu. Vlad nerozumie, o čom to je — <b>a hráč áno.</b> Recontextualizuje sa celá hra: on nebol poslaný chrániť dediny, bol poslaný chrániť <b>ju</b> — a dediny boli len to, kadiaľ šiel.</p>
+        <p><b>Posledný obraz:</b> Ordan je späť (politický, jasný, ľudský nepriateľ) a <b>nový neznámy je tiež späť</b> (mágia, bez tváre). Dve hrozby, dva rôzne smery pokračovania. Otvorený koniec, presne ako chceš.</p>
+      </div>
+      <div class="grid cols-3" style="margin-top:12px">
+        <div class="card"><h3>DLC / 2. diel — Ordan</h3><p>Politický protivník. Chce krajinu, nie mágiu. <b>Tu sa dá s ním vysporiadať</b> — je to ľudský, pochopiteľný, poraziteľný nepriateľ, akurát má veľa ľudí.</p></div>
+        <div class="card"><h3>2. diel — majster</h3><p>Magický protivník. Morthaxov mostík. Nevidno ho, len jeho príkazy a jeho guľu. <b>Zora je u neho.</b> Toto je hlavná linka pokračovania.</p></div>
+        <div class="card"><h3>Vlad a Zora</h3><p>Vlad už vie, načo tu je — a musí si vybrať, či krajina alebo ona. <b>To je cena za „ešte jednu šancu".</b> Bez ceny by to bol darček.</p></div>
+      </div>
+      <div class="alert" style="background:#241f1a;border-color:var(--warn);border-left-color:var(--warn)">
+        <div class="al" style="color:var(--warn)">⚠ Poistka: Zora nesmie byť odmena</div>
+        <p>Nápad s portálom a s „Vlad zlyhal" je silný. Ale pozor na jednu vec: keď sa celá hra zvrtne na „hrdina chráni dievča, dievča je odnesené", Zora sa <b>zmení z postavy na predmet</b> — a ty si ju pôvodne chcel ako <b>čitateľku zákonov</b>, teda ako niekoho, kto niečo <b>robí</b>.</p>
+        <p><b>Riešenie je jednoduché:</b> únos sa musí stať <b>preto, že Zora niečo spravila</b> — nie preto, že tam bola. Konkrétne: ona odhalí Mirana, ona prečíta mená, ktoré Rada vymazala, ona sa postaví a prečíta ich nahlas. <b>Portál ju vezme v tej chvíli</b> — nie ako slabú, ale ako <b>tú, ktorá to povedala nahlas</b>. Potom je únos dôsledok jej sily, nie jej slabosti. A Vlad nezlyhal preto, že bol pomalý, ale preto, že <b>ona bola rýchlejšia než on.</b></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= POSTAVY ================= -->
+  <h2 id="postavy"><span class="tag">Register — teraz naozaj kompletný</span>Kto je na scéne a čo chce</h2>
+  <table>
+    <tbody><tr><th>Postava</th><th>Kto to je</th><th>Čo chce (motivácia)</th><th>I · II · III</th></tr>
+    <tr>
+      <td><b>Vlad</b></td><td>Neznámy, ktorý sa objaví v L1. Nevie, kto je — hráč tiež nie.</td>
+      <td><b>Neche veliť.</b> Chce, aby ľudia prežili — a nevie, prečo mu to tak vadí. Postupne zisťuje, že bol poslaný (na konci).</td>
+      <td>✔ · ✔ · ✔</td>
+    </tr>
+    <tr>
+      <td><b>Zora</b></td><td>Dievča, ktoré v L1 vlečú za dedinu. Prvá postava hry. Neskôr čitateľka zákonov.</td>
+      <td><b>Chce vedieť, ako to celé funguje.</b> Nevzdor vzdorom, ale tým, že číta. A má silu, o ktorej nevie (viď nižšie).</td>
+      <td>✔ · ✔ · ✔</td>
+    </tr>
+    <tr>
+      <td><b>Dobrava</b></td><td>Vdova s deťmi z L1. Nezachráni ju Vlad — <b>zachráni sa sama</b>, keď bráni deti.</td>
+      <td>Chce, aby jej deti prežili. Nič viac. Je to jediná postava, ktorá nikdy nič nechce od Vlada.</td>
+      <td>✔ · ✔ · ✔</td>
+    </tr>
+    <tr>
+      <td><b>Radko</b> <span class="faint">(meno na výber)</span></td><td><b>Dobravin syn.</b> V L1 vidí Zoru, ako sa bije — a je hotový.</td>
+      <td>Chce byť niekým, koho si Zora všimne. <b>Zverbuje sa preto</b> — a v L7 zomrie na tom, že odmietne rozkaz. <b>Spúšťač finále.</b></td>
+      <td>✔ · ✔ · ✔ (†L7)</td>
+    </tr>
+    <tr>
+      <td><b>Mstislav</b> <span class="faint">(pracovné)</span></td><td>Náčelník Hradiska, ktorý sa v L1 schová. Vlad ho zatieni.</td>
+      <td><b>Konečne byť niekým.</b> Vlad mu vzal dedinu, Rada mu dala moc. Boss L4 — nie zloduch, ale sused, ktorého zžrala závisť.</td>
+      <td>✔ · boss · ?</td>
+    </tr>
+    <tr>
+      <td><b>Radim</b> <span class="faint">(pracovné)</span></td><td>Náčelník, ktorý v L2 zradí poradu a privolá Ordanovu presilu.</td>
+      <td><b>Strach.</b> Ordan mu sľúbil nechať dedinu nažive. Svojim ľuďom to nepovie. <i>„Ja som len chcel, aby moja dedina prežila."</i></td>
+      <td>boss · — · —</td>
+    </tr>
+    <tr>
+      <td><b>Hruboň</b> <span class="faint">(prezývka)</span></td><td>Násilník z L4. Chlap, ktorého doma nikto nikdy nepočúval.</td>
+      <td><b>Vybiť sa.</b> Moc mu dala to, čo mu dedina odoprela. Čistá, obyčajná ľudská odpornosť.</td>
+      <td>— · ✔ · ?</td>
+    </tr>
+    <tr>
+      <td><b>Vavrinec</b> <span class="faint">(pracovné)</span></td><td>Pisár Rady. Nie bojovník — úradník.</td>
+      <td><b>Úprimne verí, že zachraňuje krajinu pred chaosom.</b> Najnebezpečnejší typ zla: presvedčený, že robí dobro.</td>
+      <td>— · ✔ · ✔</td>
+    </tr>
+    <tr>
+      <td><b>Hájnik</b> <span class="faint">(ak zvolíš)</span></td><td>Lesník Rady, ktorý „vlastní" les. Boss L5.</td>
+      <td>Les sadil celý život a teraz ho niekto premenoval na majetok. <b>Zlomený, nie zlý.</b></td>
+      <td>— · boss · —</td>
+    </tr>
+    <tr>
+      <td><b>Verbovač</b> <span class="faint">(odporúčaný)</span></td><td>Muž, ktorý chodí po dedinách a nahovára. Boss L6.</td>
+      <td><b>Organizuje.</b> Je milý, presvedčivý, a dáva ľuďom prácu. <i>„Ja som im dal prácu. Ty im dávaš len mŕtvych."</i></td>
+      <td>— · boss · ✔</td>
+    </tr>
+    <tr>
+      <td><b>Miran</b></td><td>Chlapec, ktorého Vlad vyslobodí z klietky v L1 — a ktorý zostane pri ňom. <b>Ordanov syn.</b></td>
+      <td><b>Trpezlivosť.</b> Celý Akt I a II čakal. Velí garde, nosí uniformu z Aktu I. <b>Boss L7.</b></td>
+      <td>✔ · ✔ · boss</td>
+    </tr>
+    <tr>
+      <td><b>Ordan</b></td><td>Veliteľ nájazdníkov z juhu. V Akte I ustúpi — nie je porazený.</td>
+      <td><b>Chce krajinu.</b> Mocensky, bez mágie. To ho robí pochopiteľným — a preto nebezpečným. Vráti sa v epilógu.</td>
+      <td>✔ (ustúpi) · pošle ľudí · vracia sa</td>
+    </tr>
+    <tr>
+      <td><b>Teodor</b></td><td>Pán pisárov. Postavil celý stroj Rady.</td>
+      <td>Slúži niekomu, kto si chce podmaniť krajinu. Príkazy dostáva cez guľu. <b>Boss L9 — jediný s mágiou.</b></td>
+      <td>— · cutscény · boss</td>
+    </tr>
+    <tr>
+      <td><b>Bohuš</b></td><td>Obchodník z L1. Canon postava (obchodník v hube).</td>
+      <td><b>Zbohatnúť.</b> Na vojne zbohatol a je mu to vidieť. Komentuje dianie — cynicky, ale nie zle.</td>
+      <td>✔ · ✔ · ✔</td>
+    </tr>
+    <tr>
+      <td><b>Jaga</b></td><td>Bylinkárka. Canon postava (v hube).</td>
+      <td>Liečiť. Prvá si všimne, že sa Vlad hojí divne rýchlo. Hovorí v hádankách, ale nikdy nič nevysvetlí.</td>
+      <td>✔ · ✔ · ✔</td>
+    </tr>
+    <tr>
+      <td><b>Kamenná rada</b></td><td>Nie postava — <b>stroj</b>. Pisári, sudcovia, výbercovia, verbovač.</td>
+      <td><b>Nemá tvár a nemá plán, ktorý by dával zmysel na konci.</b> Každý jej človek má vlastný malý dôvod. Presne preto sa nedá zabiť.</td>
+      <td>— · ✔ · ✔</td>
+    </tr>
+  </tbody></table>
+
+  <!-- ================= ZORA ================= -->
+  <h2 id="zora"><span class="tag">Rozpísané, ako si chcel</span>Zora — celý oblúk</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>Jej sila — návrh</h3>
+      <p><b>Zora číta to, čo sa niekto snažil vymazať.</b> Keď sa pozrie na listinu, vidí aj to, čo bolo prečiarknuté, vyškrabané, prepísané. Jej <b>obyčajná rola (čitateľka zákonov) JE jej mágia</b> — len zjemnene, neviditeľne, bez efektov.</p>
+      <p><b>Prečo je to dobré:</b> (1) Vysvetľuje, prečo ju Rada chce — je dôkaz, ktorý sa nedá spáliť. (2) Vysvetľuje, prečo poslali Vlada — chrániť tú, ktorá odhalí pravdu. (3) Je to <b>originálne</b> — nie ďalšia žiariaca vyvolená. (4) Drží to našu líniu „mágia len letmo, nevysvetlená".</p>
+      <div class="fx" style="font-size:12px;color:var(--faint);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)"><b style="color:var(--warn)">Alternatívy:</b> počuje, čo sa v mieste povedalo · nedá sa jej klamať (nevýhodné pre hru, odpadá)</div>
+    </div>
+    <div class="card">
+      <h3>Ako sa to hrá</h3>
+      <p>V hube si môžeš nechať <b>prečítať listinu</b> — a hra ti ukáže prečiarknuté mená. Je to lacné (text + jeden filter) a zároveň je to <b>herná mechanika, nie cutscéna</b>: čím viac listín zachrániš, tým viac toho Zora prečíta. <b>Záchrana v Akte III tak priamo odomyká príbeh.</b></p>
+    </div>
+  </div>
+  <h3 style="margin-top:18px">Jej cesta hrou</h3>
+  <ul class="tl">
+    <li><b>L1 — Vlečú ju za dedinu.</b><span>Vlad zasiahne skôr, než vie, kto je. Ona sa nebije ako obeť — uhryzne, kopne. <b>Prvý kontakt v hre je jej vzdor.</b></span></li>
+    <li><b>L1 — Radko ju vidí.</b><span>Dobravin syn sa do nej zaľúbi v tej istej chvíli. Je to jeho motivácia až do smrti.</span></li>
+    <li><b>Akt I — Učí sa čítať od Vlada? Nie.</b><span>Učí sa od pisárov. <b>Všíma si, že písmo je moc</b> — a to ju nastaví na celý Akt III.</span></li>
+    <li><b>Akt II — Začne si písať.</b><span>Vlastný zápisník: kto čo zabavil, komu, kedy. Prvý dôkaz, ktorý nie je v rukách Rady. <b>Tu si ju hráč obľúbi</b> — lebo robí to, čo hráč: skladá si obraz.</span></li>
+    <li><b>L5 — Zmienka o „niekom cudzom v lese".</b><span>Počuje to v hube a zapíše si to. Neskôr to bude prvý dôkaz o Ordanových ľuďoch.</span></li>
+    <li><b>L7 — Odhalí Mirana.</b><span>Nájde mená veliteľov, ktorí neexistujú. <b>Ona je tá, kto pomenuje, čo sa deje.</b> Miran o tom vie.</span></li>
+    <li><b>L9 — Prečíta mená nahlas.</b><span>Pred Radou, pred ľuďmi. <b>A v tej chvíli ju vezme portál</b> — nie preto, že je slabá, ale preto, že to povedala nahlas.</span></li>
+    <li><b>Epilóg — Jeleň povie Vladovi, že zlyhal.</b><span>Nie preto, že bol pomalý. Preto, že <b>ona bola rýchlejšia než on.</b></span></li>
+  </ul>
+  <div class="note"><b>Poznámka k Dobravinmu synovi:</b> to, že sa zaľúbi do Zory a zomrie, dáva Zore <b>vinu aj motiváciu</b> — nie je len unesená, je to aj ona, koho niekto zomrel kvôli. A hráčovi to dá druhý dôvod, prečo sa vrátiť v druhom dieli. <b>Meno:</b> Radko (teplé, mladé) — alebo Vojtek / Miloš, ak chceš niečo tvrdšie.</div>
+
+  <!-- ================= RAGE ================= -->
+  <h2 id="rage"><span class="tag">Tvoja otázka na Perúna</span>Zúrivosť — vietor, biele oči, blesky</h2>
+  <div class="ok">
+    <div class="al">✓ Perún mal blesky, nie oheň</div>
+    <p><b>Perún je boh hromu a blesku</b> — jeho zbrane sú <b>sekera</b> a <b>„Perunova strela"</b> (blesk), jeho strom je dub, jeho deň štvrtok. <b>Oheň</b> patrí skôr <b>Svarogovi</b> (božský kováč, nebeský oheň), <b>vietor Stribogovi</b>. Takže <b>blesk + búrkový vietor = Perún</b> — čiže tvoja voľba je presne slovanská, nemusíš importovať Odina ani Thora (aj keď pocit je podobný, lebo je to ten istý indoeurópsky základ).</p>
+  </div>
+  <p class="muted" style="font-size:13.5px;margin:14px 0 6px"><b style="color:var(--text)">Ako to vyzerá — poradie je dôležité, aby to bolo čitateľné na mobile:</b></p>
+  <div class="grid cols-3">
+    <div class="card"><h3>1 — Vietor</h3><p>Prach, lístie a plášť sa <b>trhajú smerom od neho</b>. Prvých pár sekúnd je len toto. <b>Zvuk sa stlmí</b> — vietor pohlcuje zvuk, takže sa dá použiť aj ticho.</p></div>
+    <div class="card"><h3>2 — Oči</h3><p><b>Zbelie (bez zreníc).</b> Jeden záber, nič viac. Najsilnejší a najlacnejší efekt v hre.</p></div>
+    <div class="card"><h3>3 — Blesky</h3><p>Krátke výboje <b>medzi ním a zemou / kovovými zbraňami</b> nepriateľov. Nie z neba — <b>z neho</b>. To je rozdiel proti klasickému „hrom z neba".</p></div>
+  </div>
+  <div class="grid cols-2" style="margin-top:12px">
+    <div class="card"><h3>Prečo je vietor lepší než oheň — aj herne</h3><p>Oheň je len „väčší damage". <b>Vietor môže mechanicky niečo robiť:</b> odráža strely, odtláča nepriateľov, rozhadzuje dav. To je <b>iná hra</b> na pár sekúnd — a presne to chceš pre L2 spektákl. A uhlie a oheň máme inde (uhliarska míla) — nech to nezaplaví celú hru.</p></div>
+    <div class="card"><h3>A aby to nebolo lacné</h3><p>Rage <b>nie je len buff</b>: nech Vlad v rage <b>nepočuje barks</b> (ani svoje, ani nepriateľské) — len vietor. A nech sa po ňom <b>dedinčania odtiahnu</b>, keď sa vracia do hubu. <b>Cena za to, že si to vyslúžil, je strach.</b></p></div>
+  </div>
+
+  <!-- ================= SPUSTACE ================= -->
+  <h2 id="spustace"><span class="tag">To, čo ti pomáha písať</span>Čo spúšťa ľudí a čo spúšťa zlato</h2>
+  <div class="grid cols-3">
+    <div class="card">
+      <h3>Čo spúšťa ľudí</h3>
+      <p><b>Strach</b> → poslušnosť a udávanie. <b>Hlad</b> (drevo, obilie) → ochota kradnúť, ale aj zradiť. <b>Závisť</b> (Mstislav) → kolaborácia. <b>Láska</b> (Radko a Zora) → ochota riskovať až po smrť. <b>Poníženie</b> pred susedmi → buď zlomí, alebo spustí vzdor.</p>
+      <p><b>A hlavné pravidlo:</b> ľudia sa neburujú, keď sa to deje <b>im</b>. Burujú sa, keď to vidia na druhom — alebo keď ich okradnú o drevo pred zimou. <b>Vlad je ten, kto nevie mlčať</b> — a preto je výnimočný, nie preto, že má silu.</p>
+    </div>
+    <div class="card">
+      <h3>Čo spúšťa zlato</h3>
+      <p><b>Zlato nie je skóre — je to, čo si nenechal vziať.</b> Akt I: zachránení ľudia (každý = groš od Bohuša? nie — radšej <b>každý zachránený = budúci obyvateľ hubu</b>, a zlato z predaných vecí po nájazdníkoch). Akt II: drevo, obilie, náradie → <b>doslova stavby v hube</b>. Akt III: listiny a zoznamy → <b>odomykajú Zorine čítania</b> (mechanika = príbeh).</p>
+      <p><b>Trik:</b> nech sa zlato v Akte II <b>nevracia do výbavy</b>, ale do dediny. Hráč tak míňa na niečo, čo vidí rásť — a to je silnejšie než ďalšia puška.</p>
+    </div>
+    <div class="card">
+      <h3>Čo spúšťa príbeh</h3>
+      <p><b>Akt I → II:</b> Vlad odmietne vládu (L3) → prázdne miesto → Rada. <b>Akt II:</b> zima (drevo) → ľudia prvý raz na strane Vlada → verbovanie. <b>Akt II → III:</b> Radko sa zverbuje (L6) → umrie (L7) → <b>finále</b>. <b>Akt III → koniec:</b> Zora prečíta mená (L9) → portál → jeleň → Vlad vie, že zlyhal.</p>
+      <p><b>Každý spúšťač je niečo, čo hráč videl na vlastné oči.</b> Žiadne „medzitým sa stalo".</p>
+    </div>
+  </div>
+
+  <!-- ================= GARDA ================= -->
+  <h2 id="garda"><span class="tag">Zatiaľ nerozhodnuté — v pohode</span>Znak gardy: náznak, nie uniforma</h2>
+  <p class="muted" style="font-size:13.5px;margin:-4px 0 10px">Píšeš, že to nechceš napevno — „možno nejakú šatku alebo niečo". Súhlasím, že <b>náznak je lepší než uniforma</b>: lacnejšie na kreslenie, lepšie čitateľné a viac to sedí k téme (nie sú to cudzí vojaci, sú to tvoji ľudia s jednou vecou navyše). <b>Šatka je teraz favorit</b> — dám ju do zoznamu:</p>
+  <div class="markers">
+    <div class="mk pick"><div class="mkt"><span class="swatch" style="background:#7a3a3a"></span>Šatka <span class="faint">· favorit</span></div><p>Obyčajná tmavá šatka, <b>uviazaná rovnakým uzlom na ramene</b>. Čitateľné na diaľku, prefarbiteľné, lacné. Vymyslená — žiadny symbol, len spôsob viazania.</p></div>
+    <div class="mk"><div class="mkt"><span class="swatch" style="background:#8a6a3a"></span>Bronzový znak</div><p>Malý bronzový pliešok na remeni. Vymyslená heraldika v štýle „železného goliera" z pôvodnej hry.</p></div>
+    <div class="mk"><div class="mkt"><span class="swatch" style="background:#5a4a6a"></span>Uzol na pleci</div><p>Zviazaná tmavá šnúra. Geometrické, prírodné — v štýle Rift Marku.</p></div>
+    <div class="mk"><div class="mkt"><span class="swatch" style="background:#3a3a42"></span>Čierny remienok</div><p>Kožený remienok cez hruď. Nič viac. Najjednoduchšie.</p></div>
+  </div>
+  <div class="note"><b>Ako to funguje v hre (platí pre všetky možnosti):</b> <b>Odvedení</b> (dedinčania) — nedbalá výstroj, žiadny znak, <i>animácie zaváhajú, odvrátia zrak, pri mierení na Vlada nechajú zbraň klesnúť</i>. <b>Zaprisahaní</b> (Ordanovi) — rovnaké oblečenie <b>+ znak</b>, istý postoj, nekompromisní. Hráč to prečíta bez jediného slova.</div>
+  <div class="alert">
+    <div class="al">⚠ Len pripomínam — „niečo arabské" nie</div>
+    <p>Viem, že si to už posunul k šatke/náznaku, tak to len zamykám: <b>etnický znak na nepriateľovi by porušil naše <code>[HARD]</code> pravidlo</b> (nepriateľ sa definuje len rolou, nikdy etnikom ani náboženstvom) a <b>oslabil tvoju tému</b> („nie ľudia, ale politika"). Šatka je presne to, čo chceš: <b>vymyslená, funkčná, politická</b> — a číta sa ako „bratstvo dobrovoľníkov vnútri Rady", nie ako cudzí národ.</p>
+  </div>
+
+  <!-- ================= OTÁZKY ================= -->
+  <h2 id="otazky"><span class="tag">Na teba</span>Čo potrebujem vedieť</h2>
+  <ul class="qlist">
+    <li><span class="n">1</span><b>Zora:</b> súhlasíš s jej silou („číta, čo bolo vymazané")? Ak áno, je to zadarmo herná mechanika — a vysvetľuje, prečo tu Vlad je.</li>
+    <li><span class="n">2</span><b>Radko:</b> necháme meno, alebo chceš iné (Vojtek / Miloš)? A sedí ti, že <b>jeho smrť v L7 je spúšťač finále</b> — namiesto Dobravy?</li>
+    <li><span class="n">3</span><b>L5 boss:</b> Hájnik (odporúčam) / medveď / Mstislavov pobočník / nechaj otvorené?</li>
+    <li><span class="n">4</span><b>L6 boss:</b> Verbovač (odporúčam) / Kat / Ordanov kapitán v prestrojení?</li>
+    <li><span class="n">5</span><b>L8:</b> Návrat (odporúčam) / Kontrolný bod / Kasárne gardy?</li>
+    <li><span class="n">6</span><b>Mstislav a Radim</b> — necháš pracovné mená, alebo si vyberieš iné?</li>
+    <li><span class="n">7</span><b>Rozsah:</b> smelo do 9 levelov + epilóg, alebo chceš vidieť aj štíhlu verziu (7–8) na porovnanie?</li>
+  </ul>
+
+  <div class="note"><b>Stav kánonu:</b> <code>STORY_BIBLE</code> a <code>SPEC_MASTER</code> sú stále <b>neprepísané</b> — zámerne, kým nepotvrdíš pôdorys a hlavne Zoru (bez nej nevieme, kto je pri Vladovi). Keď povieš „áno", prepíšem oba dokumenty do v2 a rozpíšem každý level do detailu: prostredie, hordy, textové karty, boss dialógy.</div>
+
+</div>
+
+
+<div role="status" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0px; border: 0px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); white-space: nowrap;"></div><div role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0px; border: 0px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); white-space: nowrap;"></div></body></html>

@@ -23,7 +23,7 @@ here and the next one to NEXT. Pavel may come back with feedback or reorder; his
 1. Start: `git pull`, read `CLAUDE.md`, then this file. Work ONLY on the package marked NEXT
    (or the one Pavel names). Do not jump ahead into other packages or other ToDo items.
 2. Item codes (A1, E1, T36 ...) are permanent; full wording, importance and sources are in
-   `NAPADY_vylepsenia.md` and in the ToDo of `KDE_JE_CO.md`. Content rules of `PLAN_hry.md` §2 always apply.
+   `NAPADY_vylepsenia.md` and in the ToDo of `KDE_JE_CO.md`. Content rules of `PLAN_hry.md` §2 and story §2 (`20261015 - Handoff Slavs fight back.md`) always apply.
 3. Pavel has zero game-dev knowledge: Slovak, plain words, one question at a time, 2-3 sentences
    after each step on what changed. Code/comments/commits in English.
 3b. **Randomness (Pavel 2026-10-09):** every enemy behaviour and effect varies a little per instance by default (`Tuning.jitter`, panel NAHODNOST scales it); see CLAUDE.md working rule 7.

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analýza mechaník v2</title>
+<style>
+:root{
+  --bg:#f6f5f1; --panel:#ffffff; --ink:#1d1d1b; --muted:#6a675f; --line:#e2dfd6;
+  --accent:#c2410c; --accent-soft:#fff1e8; --top:#1e7a4a; --top-soft:#e8f6ee;
+  --chip:#efece4; --warn:#9a3412;
+  --s1:#d9480f; --s2:#e8890c; --s3:#c9a227; --s4:#6aa84f; --s5:#2f8f4e;
+  --st-new:#1d4ed8; --st-new-bg:#e5edff; --st-upd:#7c3aed; --st-upd-bg:#f1e8ff;
+  --st-same:#4b5563; --st-same-bg:#eceae4; --st-less:#9a3412; --st-less-bg:#fde9dd;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151513; --panel:#1f1f1c; --ink:#ecebe6; --muted:#a19e95; --line:#34332e;
+    --accent:#fb8c4c; --accent-soft:#3a2418; --top:#5fcf8f; --top-soft:#173326;
+    --chip:#2b2a26; --warn:#fdba74;
+    --st-new:#93b4ff; --st-new-bg:#1c2847; --st-upd:#c4a5ff; --st-upd-bg:#2c1f45;
+    --st-same:#c8c5bc; --st-same-bg:#2b2a26; --st-less:#fdba74; --st-less-bg:#3a2418;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151513; --panel:#1f1f1c; --ink:#ecebe6; --muted:#a19e95; --line:#34332e;
+  --accent:#fb8c4c; --accent-soft:#3a2418; --top:#5fcf8f; --top-soft:#173326;
+  --chip:#2b2a26; --warn:#fdba74;
+  --st-new:#93b4ff; --st-new-bg:#1c2847; --st-upd:#c4a5ff; --st-upd-bg:#2c1f45;
+  --st-same:#c8c5bc; --st-same-bg:#2b2a26; --st-less:#fdba74; --st-less-bg:#3a2418;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:19px;margin:34px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+.sub{color:var(--muted);margin:0 0 14px}
+.legend{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px;color:var(--muted)}
+.legend b{color:var(--ink)}
+.changes{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:10px 14px 10px 30px;margin:14px 0 0;font-size:14px}
+.changes li{margin:4px 0}
+.changes a{color:var(--accent);text-decoration:none;font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.counts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.top10{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.tcard{background:var(--top-soft);border:1px solid var(--top);border-radius:10px;padding:12px}
+.tcard .rank{font-weight:700;color:var(--top);font-size:13px}
+.tcard h3{margin:2px 0 6px;font-size:15.5px}
+.tcard p{margin:4px 0;font-size:13.5px}
+.tcard .idea{font-style:italic}
+.note{font-size:13.5px;color:var(--muted);margin-top:10px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+.controls label{display:flex;flex-direction:column;font-size:12.5px;color:var(--muted);gap:3px;min-width:150px;flex:1}
+.controls select,.controls input{font:inherit;padding:7px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink)}
+.count{font-size:13px;color:var(--muted);margin-left:auto;align-self:center}
+.tablewrap{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:var(--chip);position:sticky;top:0;font-size:12.5px;white-space:nowrap}
+th.sort{cursor:pointer}
+th.sort:hover{color:var(--accent)}
+tr.is-top td:first-child{box-shadow:inset 4px 0 0 var(--top)}
+tr.is-less{opacity:.62}
+.code{font-family:ui-monospace,Consolas,monospace;font-weight:700;white-space:nowrap}
+.topbadge{display:inline-block;background:var(--top);color:var(--panel);font-size:11px;border-radius:5px;padding:0 5px;margin-left:4px}
+.chip{display:inline-block;background:var(--chip);border-radius:5px;padding:1px 6px;margin:1px 2px 1px 0;font-size:12px;white-space:nowrap}
+.cat{display:inline-block;border-radius:5px;padding:1px 7px;font-size:12px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.st{display:inline-block;border-radius:5px;padding:1px 7px;font-size:12px;font-weight:600}
+.st-nové{color:var(--st-new);background:var(--st-new-bg)}
+.st-upravené{color:var(--st-upd);background:var(--st-upd-bg)}
+.st-bez{color:var(--st-same);background:var(--st-same-bg)}
+.st-menej{color:var(--st-less);background:var(--st-less-bg)}
+.score{display:inline-block;min-width:24px;text-align:center;border-radius:5px;font-weight:700;color:#fff;padding:1px 0}
+.sidea{display:block;font-size:12.5px;color:var(--muted);margin-top:3px}
+.v2note{display:block;font-size:12.5px;margin-top:5px;padding-top:5px;border-top:1px dashed var(--line)}
+.src a{color:var(--accent);text-decoration:none;font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.src a:hover{text-decoration:underline}
+.models{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.model{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px}
+.model h3{margin:0 0 6px;font-size:15.5px}
+.model ul{margin:4px 0 8px;padding-left:18px}
+.plus{color:var(--top);font-weight:700;margin:6px 0 0}
+.minus{color:var(--warn);font-weight:700;margin:6px 0 0}
+.avoid{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px 10px 32px;margin:0}
+.avoid li{margin:5px 0}
+.games{font-size:13.5px}
+.sources{columns:2 360px;font-size:13px;padding-left:0;list-style:none}
+.sources li{margin:3px 0;break-inside:avoid}
+.sources a{color:var(--accent)}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+@media (max-width:760px){
+  table.mech thead{display:none}
+  table.mech tr{display:block;border-bottom:2px solid var(--line);padding:8px 4px}
+  table.mech td{display:block;border:0;padding:3px 8px}
+  table.mech td[data-l]::before{content:attr(data-l) ": ";font-weight:600;color:var(--muted);font-size:12px}
+  .count{margin-left:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Analýza mechaník v2: príbehová akčná pixel strieľačka</h1>
+<p class="sub">Stav k 12. 10. 2026 · 2. kolo · 5 nových príbehových/satirických hier + vybrané hry z 1. kola · <span id="ncount"></span> mechaník</p>
+
+<div class="legend"><b>Ako čítať:</b> „Fakt“ = overené v zdroji (kód Z.. je klikateľný). „Názor“ = moje hodnotenie. Skóre 1–5 sú môj odhad. <b>Náročnosť</b>: 1 = ľahké pre jedného človeka s AI, 5 = veľmi ťažké. <b>Mobil, Satira, Vplyv</b>: 5 = najlepšie. <b>Pomer</b> = Vplyv ÷ Náročnosť. <b>Stav</b>: nové / upravené / bez zmeny / menej vhodné pre príbehovú hru.</div>
+
+<h2>Čo sa oproti 1. kolu zmenilo a prečo</h2>
+<ul class="changes" id="changes"></ul>
+<div class="counts" id="counts"></div>
+
+<h2>Top 10 pre príbehovú hru</h2>
+<p class="sub">Zoradené podľa pomeru vplyv ÷ náročnosť. Pri rovnosti: vyšší vplyv → mobil → satira. Mechaniky „menej vhodné“ do výberu nevstupujú.</p>
+<div class="top10" id="top10"></div>
+<p class="note" id="nextnote"></p>
+
+<h2>Všetky mechaniky</h2>
+<div class="controls">
+  <label>Stav<select id="fStat"></select></label>
+  <label>Kategória<select id="fCat"></select></label>
+  <label>Hra<select id="fGame"></select></label>
+  <label>Triediť podľa<select id="fSort">
+    <option value="ratio">Pomer vplyv ÷ náročnosť (najlepšie hore)</option>
+    <option value="I">Vplyv (najvyšší hore)</option>
+    <option value="Dasc">Náročnosť (najľahšie hore)</option>
+    <option value="Ddesc">Náročnosť (najťažšie hore)</option>
+    <option value="M">Vhodnosť pre mobil (najlepšie hore)</option>
+    <option value="S">Väzba na satiru (najlepšie hore)</option>
+    <option value="code">Kód</option>
+  </select></label>
+  <label>Hľadať<input id="fText" type="search" placeholder="napr. dilema"></label>
+  <span class="count" id="count"></span>
+</div>
+<div class="tablewrap">
+<table class="mech">
+<thead><tr>
+  <th class="sort" data-s="code">Kód</th><th>Stav</th><th>Mechanika</th><th>Hry</th><th>Kategória</th><th>Prečo funguje · poznámka v2</th>
+  <th class="sort" data-s="Dasc">Nár.</th><th class="sort" data-s="M">Mob.</th><th class="sort" data-s="S">Satira</th><th class="sort" data-s="I">Vpl.</th><th class="sort" data-s="ratio">Pomer</th>
+</tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+
+<h2>Tvoje tri varianty ceny – čo hovoria nové hry</h2>
+<p class="sub">Nerozhodujem za teba – fakty k variantom, ktoré zvažuješ.</p>
+<div class="models">
+  <div class="model"><h3>Jednorazová cena ~5 € na mobile</h3>
+    <p><b>Príklady:</b> Reigns – rovnaká cena všade, 80 % predaja mobil <span class="src" data-src="Z61"></span>; Papers, Please prémiovo na telefónoch <span class="src" data-src="Z56"></span></p>
+    <p class="plus">Plusy</p><ul><li>Príbehové hry za jednu cenu na mobile predávajú.</li><li>Hráč nemá pocit „ždímania“.</li></ul>
+    <p class="minus">Mínusy</p><ul><li>Úspechy mimo hier zadarmo sú na mobile zriedkavé <span class="src" data-src="Z63"></span></li><li>Oba príklady mali vydavateľa alebo známe meno (názor).</li></ul></div>
+  <div class="model"><h3>Jednorazová cena ~10 € na PC</h3>
+    <p><b>Príklady:</b> Papers, Please 9,99 $, Beholder 13,99 $, Katana ZERO 14,99 $ (tvoj vstup).</p>
+    <p class="plus">Plusy</p><ul><li>10 € je v spodnej časti cien príbehových pixel hier na PC.</li></ul>
+    <p class="minus">Mínusy</p><ul><li>PC príde neskôr; predaj závisí od pozornosti pri vydaní (názor).</li></ul></div>
+  <div class="model"><h3>Prvá kapitola zadarmo, zvyšok jednou platbou</h3>
+    <p><b>Príklady:</b> Beholder na Androide 5× viac so skúšobnou verziou <span class="src" data-src="Z48"></span>; Loop Hero a Shapez fungovali, TMNT sklamal <span class="src" data-src="Z47"></span>; Google Play „Game Trials“ od 2026 <span class="src" data-src="Z49"></span></p>
+    <p class="plus">Plusy</p><ul><li>Hráč skúsi bez rizika.</li><li>Cliffhanger na konci kapitoly (MCH54) robí z ukážky predajcu.</li></ul>
+    <p class="minus">Mínusy</p><ul><li>Treba trafiť miesto platby <span class="src" data-src="Z47"></span></li><li>Bezplatnú časť pomenuj jasne <span class="src" data-src="Z17"></span></li></ul></div>
+</div>
+<p class="note"><b>Príjem po vydaní:</b> nové príbehy na rovnakom systéme (Reigns, Beholder, Not Tonight) <span class="src" data-src="Z62"></span><span class="src" data-src="Z64"></span><span class="src" data-src="Z65"></span>; platené DLC kapitoly; Papers, Please žil z portov bez DLC <span class="src" data-src="Z55"></span></p>
+
+<h2>Čomu sa vyhnúť</h2>
+<ol class="avoid">
+  <li><b>Aktuálna politika namiesto všeobecnej satiry</b> – Not Tonight časť hráčov odmietla ako propagandu <span class="src" data-src="Z66"></span>; Pope zámerne volil všeobecný svet <span class="src" data-src="Z54"></span></li>
+  <li><b>Sľúbiť obsah a nedodať</b> – bezplatné DLC Katana ZERO od 2019 stále bez dátumu <span class="src" data-src="Z59"></span><span class="src" data-src="Z60"></span></li>
+  <li><b>Preniesť PC ovládanie na dotyk</b> – Katana ZERO na mobile <span class="src" data-src="Z59"></span>; Papers, Please prerábal mesiace <span class="src" data-src="Z57"></span></li>
+  <li><b>Náhly koniec bez uzavretia</b> – Katana ZERO <span class="src" data-src="Z59"></span></li>
+  <li><b>Opakovanie a pocit nútenej cesty</b> – Beholder <span class="src" data-src="Z64"></span>, Reigns <span class="src" data-src="Z62"></span></li>
+  <li><b>Preklady na poslednú chvíľu</b> – Reigns sa oneskoril o týždeň <span class="src" data-src="Z62"></span></li>
+  <li><b>Obťažnosť, ktorá zastaví príbeh</b> – Hotline Miami 2 <span class="src" data-src="Z21"></span>; potrebný okamžitý reštart <span class="src" data-src="Z58"></span></li>
+  <li><b>Drina a opakovanie pre odmeny</b> – Army of Ruin <span class="src" data-src="Z40"></span></li>
+  <li><b>Agresívna monetizácia</b> <span class="src" data-src="Z50"></span></li>
+  <li><b>Reálne osoby a skupiny</b> – Broforce paroduje skutočné postavy <span class="src" data-src="Z23"></span></li>
+  <li><b>Mätúce názvy verzií</b> <span class="src" data-src="Z17"></span> – jasne pomenuj bezplatnú kapitolu.</li>
+  <li><b>Spomalenie na slabých telefónoch</b> <span class="src" data-src="Z51"></span></li>
+</ol>
+
+<h2>Analyzované hry</h2>
+<div class="tablewrap"><table class="games">
+<thead><tr><th>Hra</th><th>V 2. kole</th><th>Platforma</th><th>Predaj / stiahnutia (odhad)</th><th>Model</th></tr></thead>
+<tbody>
+<tr><td>Papers, Please</td><td>nová</td><td>PC, iPad, telefóny (2022)</td><td>~1,7 mil. Steam, ~13,5 mil. $; 5 mil. všetky platformy (2023)</td><td>prémiová 9,99 $, bez DLC</td></tr>
+<tr><td>Katana ZERO</td><td>nová</td><td>PC, Switch, Xbox; mobil cez Netflix</td><td>~3 mil. Steam, ~27 mil. $; rozpočet 60 tis. $</td><td>prémiová 14,99 $</td></tr>
+<tr><td>Reigns</td><td>nová</td><td>mobil (80 %) + PC</td><td>~1,8 mil. (50 % iOS, 30 % Android, 20 % Steam)</td><td>jednorazová cena, séria</td></tr>
+<tr><td>Beholder</td><td>nová</td><td>PC, mobil, konzoly</td><td>~570 tis. Steam, ~4,8 mil. $</td><td>prémiová 13,99 $, DLC, 3 pokračovania</td></tr>
+<tr><td>Not Tonight</td><td>nová</td><td>PC, Switch</td><td>nezverejnené; top 10 Steam pri vydaní</td><td>prémiová, DLC, pokračovanie</td></tr>
+<tr><td>Hotline Miami, Broforce, Enter the Gungeon, Nuclear Throne</td><td>ostávajú</td><td>PC, konzoly</td><td>pozri 1. kolo</td><td>prémiové</td></tr>
+<tr><td>Soul Knight</td><td>len ovládanie</td><td>mobil</td><td>100 mil.+ stiahnutí</td><td>zadarmo</td></tr>
+<tr><td>Survivor.io, Vampire Survivors, 20 Minutes Till Dawn, Halls of Torment, Magic Survival, Army of Ruin, Spirit Hunters</td><td>len pocit, ovládanie, poučenia</td><td>rôzne</td><td>pozri 1. kolo</td><td>rôzne</td></tr>
+</tbody></table></div>
+<p class="note">Ďalšie príbehové pixel hry úspešné na mobile so zverejneným predajom som nenašiel (preverené: Death Road to Canada, INMOST, To the Moon) – podrobnosti v analyza-mechanik-v2.md.</p>
+
+<h2>Zdroje</h2>
+<ul class="sources" id="sources"></ul>
+</div>
+
+<script>
+const DATA = {{DATA}};
+const M = DATA.mechanics, SRC = DATA.sources, TOP = DATA.top10;
+const LESS = "menej vhodné pre príbehovú hru";
+const ratio = m => m.I / m.D;
+const fmt = x => x.toFixed(1).replace(".", ",");
+const colors = ["","var(--s1)","var(--s2)","var(--s3)","var(--s4)","var(--s5)"];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const srcLink = z => SRC[z] ? `<a href="${esc(SRC[z][1])}" target="_blank" rel="noopener" title="${esc(SRC[z][0])}">[${z}]</a>` : "";
+const linkify = t => esc(t).replace(/\[(Z\d\d)\]/g, (_, z) => srcLink(z));
+const score = (v, invert) => { const c = invert ? colors[6 - v] : colors[v]; return `<span class="score" style="background:${c}">${v}</span>`; };
+const stClass = s => "st st-" + s.split(" ")[0];
+const stLabel = s => s === LESS ? "menej vhodné" : s;
+
+document.querySelectorAll(".src[data-src]").forEach(el => el.innerHTML = srcLink(el.dataset.src));
+document.getElementById("ncount").textContent = M.length;
+document.getElementById("changes").innerHTML = DATA.changes.map(c => `<li>${linkify(c)}</li>`).join("");
+const statuses = ["nové", "upravené", "bez zmeny", LESS];
+document.getElementById("counts").innerHTML = statuses.map(s =>
+  `<span class="${stClass(s)}">${esc(stLabel(s))}: ${M.filter(m => m.status === s).length}</span>`).join("");
+
+// Top 10
+document.getElementById("top10").innerHTML = TOP.map((code, i) => {
+  const m = M.find(x => x.code === code);
+  return `<div class="tcard"><div class="rank">#${i + 1} · <span class="code">${m.code}</span> · pomer ${fmt(ratio(m))} · <span class="${stClass(m.status)}">${esc(stLabel(m.status))}</span></div>
+  <h3>${esc(m.name)}</h3>
+  <p>${esc(m.what)}</p>
+  <p>Vplyv ${m.I} · Náročnosť ${m.D} · Mobil ${m.M} · Satira ${m.S}</p>
+  <p class="idea">Satira o sľuboch: ${esc(m.top)}</p></div>`;
+}).join("");
+document.getElementById("nextnote").innerHTML = esc(DATA.nextNote);
+
+// Filters
+const cats = [...new Set(M.map(m => m.cat))].sort((a, b) => a.localeCompare(b, "sk"));
+const games = [...new Set(M.flatMap(m => m.games))].sort((a, b) => a.localeCompare(b, "sk"));
+const fStat = document.getElementById("fStat"), fCat = document.getElementById("fCat"), fGame = document.getElementById("fGame"),
+      fSort = document.getElementById("fSort"), fText = document.getElementById("fText");
+fStat.innerHTML = `<option value="">Všetky stavy</option><option value="__fit">Vhodné pre príbehovú hru (bez „menej vhodné“)</option>` +
+  statuses.map(s => `<option value="${esc(s)}">${esc(stLabel(s))}</option>`).join("");
+fStat.value = "__fit";
+fCat.innerHTML = `<option value="">Všetky kategórie</option>` + cats.map(c => `<option>${esc(c)}</option>`).join("");
+fGame.innerHTML = `<option value="">Všetky hry</option>` + games.map(g => `<option>${esc(g)}</option>`).join("");
+
+const tieBreak = (a, b) => (b.I - a.I) || (b.M - a.M) || (b.S - a.S) || a.code.localeCompare(b.code);
+const sorters = {
+  ratio: (a, b) => (ratio(b) - ratio(a)) || tieBreak(a, b),
+  I: (a, b) => (b.I - a.I) || (ratio(b) - ratio(a)) || a.code.localeCompare(b.code),
+  Dasc: (a, b) => (a.D - b.D) || (b.I - a.I) || a.code.localeCompare(b.code),
+  Ddesc: (a, b) => (b.D - a.D) || (b.I - a.I) || a.code.localeCompare(b.code),
+  M: (a, b) => (b.M - a.M) || (ratio(b) - ratio(a)) || a.code.localeCompare(b.code),
+  S: (a, b) => (b.S - a.S) || (ratio(b) - ratio(a)) || a.code.localeCompare(b.code),
+  code: (a, b) => a.code.localeCompare(b.code)
+};
+
+function render() {
+  const st = fStat.value, c = fCat.value, g = fGame.value, q = fText.value.trim().toLowerCase();
+  let list = M.filter(m => (!st || (st === "__fit" ? m.status !== LESS : m.status === st)) &&
+    (!c || m.cat === c) && (!g || m.games.includes(g)) &&
+    (!q || [m.name, m.what, m.why, m.sIdea, m.v2note, m.games.join(" ")].join(" ").toLowerCase().includes(q)));
+  list.sort(sorters[fSort.value]);
+  document.getElementById("count").textContent = `Zobrazené: ${list.length} z ${M.length}`;
+  document.getElementById("rows").innerHTML = list.length ? list.map(m => {
+    const isTop = TOP.includes(m.code);
+    return `<tr class="${isTop ? "is-top" : ""}${m.status === LESS ? " is-less" : ""}">
+      <td data-l="Kód"><span class="code">${m.code}</span>${isTop ? `<span class="topbadge">TOP ${TOP.indexOf(m.code) + 1}</span>` : ""}</td>
+      <td data-l="Stav"><span class="${stClass(m.status)}">${esc(stLabel(m.status))}</span></td>
+      <td data-l="Mechanika"><b>${esc(m.name)}</b><br>${esc(m.what)}</td>
+      <td data-l="Hry">${m.games.map(x => `<span class="chip">${esc(x)}</span>`).join("")}</td>
+      <td data-l="Kategória"><span class="cat">${esc(m.cat)}</span></td>
+      <td data-l="Prečo funguje" class="src">${linkify(m.why)}<span class="v2note"><b>v2:</b> ${linkify(m.v2note)}</span></td>
+      <td data-l="Náročnosť">${score(m.D, true)}</td>
+      <td data-l="Mobil">${score(m.M)}</td>
+      <td data-l="Satira">${score(m.S)}<span class="sidea">${esc(m.sIdea)}</span></td>
+      <td data-l="Vplyv">${score(m.I)}</td>
+      <td data-l="Pomer"><b>${fmt(ratio(m))}</b></td></tr>`;
+  }).join("") : `<tr><td colspan="11" class="empty">Žiadna mechanika nespĺňa filter.</td></tr>`;
+}
+[fStat, fCat, fGame, fSort].forEach(el => el.addEventListener("change", render));
+fText.addEventListener("input", render);
+document.querySelectorAll("th.sort").forEach(th => th.addEventListener("click", () => { fSort.value = th.dataset.s; render(); }));
+render();
+
+// Sources
+document.getElementById("sources").innerHTML = Object.entries(SRC).map(([k, v]) =>
+  `<li><b>${k}</b> <a href="${esc(v[1])}" target="_blank" rel="noopener">${esc(v[0])}</a></li>`).join("");
+</script>
+</body>
+</html>

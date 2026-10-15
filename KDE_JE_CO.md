@@ -1,6 +1,6 @@
 # KDE JE ČO — mapa priečinka Slavs fight back
 
-Stav k 2026-10-12. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
+Stav k 2026-10-15. Prehľad pre človeka: `KDE_JE_CO.html` (dashboard, otvor dvojklikom).
 Claude: túto mapu aktualizuj pri každom presune alebo pridaní súboru v koreni.
 
 ## Balíky – poradie práce (master: `BALIKY_poradie.md`)
@@ -13,20 +13,20 @@ Pavel rieši každý balík v novej session (Sonnet). Na rade je balík so stavo
 4. **Prvá odmena: zber a séria (+ T09)** – NA RADE – A15, D1, A16, J4, H1, H3, T09
 5. **Hrdina v pohybe** – čaká – B1, T37, B2, A17
 
-## ToDo's (otvorené úlohy; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, DIZAJN_core_loop.md §3-4)
+## ToDo's (otvorené úlohy; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, príbeh `20261015 - Handoff Slavs fight back.md` §12)
 
 Claude: pri zmene stavu aktualizuj zdroje aj tento zoznam aj `KDE_JE_CO.html`.
-ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T53).
+ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T54).
 Každá úloha má v zátvorke {oblasť prínos námaha}: oblasť = písmeno A–Z (zoznam nižšie), prínos ★★★ zásadné / ★★ veľký rozdiel / ★ drobnosť, námaha nízka/stredná/vysoká. V dashboarde (`TODOS` v `KDE_JE_CO.html`) sú to polia `cat`, `imp` (3/2/1), `eff` (N/S/V); skupina `g`: teba / claude / later / napad. Nápady z výskumu 2026-10-07 majú STÁLE kódy A1…Z8 (písmeno oblasti + poradie, detail a zdroje v `NAPADY_vylepsenia.md`); keď Pavel nápad vyberie, kód ostáva, len sa zmení skupina. Nová úloha mimo výskumu dostane ďalšie T-číslo.
 Tu a v dashboarde sú LEN otvorené úlohy. Keď je úloha hotová, zrušená alebo zavretá: presuň jej riadok do `_archiv/TODO_hotove.md` (tam ho Claude nečíta, len na požiadanie) a zmaž ho odtiaľto aj z `KDE_JE_CO.html`. Hotové veci sa v dashboarde nezobrazujú.
 
 ### Čaká na Pavla
-T04 Offline: prerobiť príbeh; Claude nezačne, kým Pavel neprinesie návrh. [Open 12, Open Brain Biznis P3] {Q ★★★ vysoká}
-T06 Schváliť hlášky v `HLASKY.md` (angl.). [HLASKY.md] {D ★★ nízka}
+T04 Príbeh v5 prevzatý 2026-10-15 (Pavel ho ešte upravuje). Rozhodnúť otvorené body príbehu (§12: sila Zory, meno Vojtek, bossovia L5/L6, L8, mená Jarek/Radim, 9 alebo 7–8 levelov, znak gardy, finálna forma) + meno rage VOLYA + 6 rozporov s hotovou hrou (CLAUDE.md Open 12). [príbeh §12, CLAUDE.md Open 12] {Q ★★★ stredná}
+T54 AKTÍVNE (Pavel 2026-10-15): začať generovať levely/scény a postavy podľa príbehu v5; prvá dávka = scény S01–S10 (príbeh §10). Pred finálnou grafikou vyriešiť T17 (jednotná paleta). [príbeh §8, §10] {C ★★★ vysoká}
 T07 AKTÍVNE (Pavel urobí v najbližších dňoch): krátky test (cca 10 min) na inom telefóne: ovládanie a či sedí obrazovka pri inom pomere strán (zamknutá scéna, horný pás). Plné ladenie DPI až neskôr. [Open 7] {O ★★★ nízka}
 T08 ODLOŽENÉ (Pavel 2026-10-06): kontrola Google Play pravidiel/IARC až keď bude hotová kostra hry (príbeh, hlášky...). Nemá zmysel kontrolovať hru, ktorá je z 10 % hotová. [Open 10] {U ★★★ stredná}
-T09 AKTÍVNE (Pavel 2026-10-06): základy grafiky sú hotové, teraz sa riešia herné mechanizmy: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [DIZAJN_core_loop §3-4] {J ★★★ vysoká}
-T10 OTVORENÉ ZNOVA 2026-10-12: monetizácia. Návrh: Steam 9,99 €, Android prvá časť zadarmo + odomknutie 4,99 €, web demo, bez reklám (rieši sa v T53). [core_loop §4, PLAN_vydanie_NextFest_2027.md] {Z ★★★ stredná}
+T09 AKTÍVNE (Pavel 2026-10-06): základy grafiky sú hotové, teraz sa riešia herné mechanizmy: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [príbeh §4; otázky z `_archiv/pribeh_stary/DIZAJN_core_loop.md` §3] {J ★★★ vysoká}
+T10 OTVORENÉ ZNOVA 2026-10-12: monetizácia. Návrh: Steam 9,99 €, Android prvá časť zadarmo + odomknutie 4,99 €, web demo, bez reklám (rieši sa v T53). [PLAN_vydanie_NextFest_2027.md; príbeh: Akt I zadarmo] {Z ★★★ stredná}
 T53 Rozhodnúť otvorené body plánu vydania (Pavel predbežne schválil 2026-10-12): model, Steam spolu s Androidom, cena Steam, jazyky, kedy založiť účty, variant termínu A/B/C. Prvý termín: registrácia Steam stránky do 1. 12. 2026. [PLAN_vydanie_NextFest_2027.md] {S ★★★ nízka}
 T21 Po 2026-10-12: zmazať zálohu `slavs_zaloha_...` v D:\2026 (Pavel, v Prieskumníku). Priečinok `slavs_cisty_...` sa maže hneď. [T20] {U ★ nízka}
 T44 ČAKÁ NA PAVLA: skrývanie posuvníkov. Otvor `PANEL_prvky.xlsx` (stĺpec Zobraziť A/N, S-čísla), prepíš a daj Claudovi vedieť; ten spustí `python3 tools/panel_catalog.py import` (zapíše `slavs/scripts/panel_hidden.gd`). Skryté prvky ostávajú v kóde. Teraz skrytých 44 z 75 (odporúčanie Claude). (Pavel 2026-10-07) {U ★ nízka}
@@ -36,6 +36,7 @@ T17 AKTÍVNE, DÔLEŽITÉ (Pavel 2026-10-06): farebná paleta nie je zjednotená
 T48 CHYBA (Pavel 2026-10-07, len zapísané, zatiaľ sa nerieši): nepriatelia sa zasekávajú, keď je sud blízko okraja obrazovky, najčastejšie pri spodnom okraji (sudy sa tam objavujú často). Pozorované 2026-10-07: pri kotli sa zasekli 4 bežci nad sebou, akoby sa neustále vyhýbali jeden druhému a prekážali si (Pavel: doladíme). Možná súvislosť: obchádzanie prekážok T28 a spodná hranica pola T30. Pri riešení najprv nájsť príčinu, potom opraviť. {F ★★ stredná}
 
 ### Neskôr, nápady a na zváženie
+T06 Nové hlášky podľa príbehu v5 (staré hlášky otrokárov sú v `_archiv/pribeh_stary/HLASKY.md`); hrdina vážny, bez vtipkovania. Napíšu sa, keď budú uzavreté postavy (T04). {D ★★ nízka}
 T50 ZOZNAM VLASTNOSTÍ ZBRANÍ (Pavel 2026-10-07, priebežne dopĺňať): čo sa môže líšiť podľa zbrane a jej vylepšení. Zatiaľ: šanca na kritický zásah (teraz 15 % pre sekeru, `Tuning.CRIT_CHANCE`; kritický zásah berie 2 životy a efekty zásahu sú o polovicu silnejšie, `CRIT_DAMAGE`, `CRIT_FX_FACTOR`); dosah zásahu sekery (`AXE_HIT_RADIUS` 20); odhodenie (`AXE_PUSH_DIST`); zraňovanie aj cestou späť (T43). {I ★★ nízka}
 T51 NA FINÁLNE LADENIE (Pavel 2026-10-07): čísla poškodenia nad nepriateľom: veľkosť písma 16 (odladené), ale Pavlovi sa nepáči hlavne samotné písmo (teraz štandardný font hry). Vybrať pixelový font a dolaďovať veľkosť pri ladení finálnej hry. {A ★ nízka}
 T49 NÁPAD (Pavel 2026-10-07, na neskôr): vibrácia podľa toho, KTO nás zasiahne a koľko životov nám zobral (nie jedna dĺžka pre všetko). Odladené na telefóne: pod 100 ms nič, ~100 ms slabé cuknutie, 200 ms cítiť ako zásah, 300 ms ešte lepší zásah. Teraz je pri zásahu hrdinu 180 ms, pri zásahu sekerou 200 ms. {E ★★ nízka}
@@ -189,19 +190,24 @@ V2 Prvé screenshoty s akciou a krátkym textom {V ★★ nízka}
 V3 Video začína najväčšou akciou {V ★★ nízka}
 V4 Testovať aspoň týždeň {V ★ nízka}
 
-## Odsúhlasený príbeh a popis hry (kde to je)
+## Platný príbeh a popis hry (od 2026-10-15)
 
-Samostatný scenár neexistuje. Odsúhlasené je jadro:
+Príbeh v5 (Pavel s inou AI, ešte ho upravuje) prepisuje všetko staršie:
 
-- Hrdina: utečený slovanský otrok, 15. storočie, bojuje proti otrokárom (rola, nikdy etnikum).
-  Bez mena, bez cutscén (len textové karty).
-- Hra: 2D side-scroller run-and-gun (štýl Metal Slug), Android, Godot 4.7, premium 5,99 €, bez reklám a IAP.
-- Jadro hry: run-based score attack; klietky so zajatcami (mena = prežili zajatci); vracajúca sa
-  sekera; nepriatelia len sprava; voľný 2.5D pohyb bez skákania.
-- Zdroje: `PLAN_hry.md` (§1, §3; éra v texte zastaraná, platí 15. storočie), `DIZAJN_core_loop.md`
-  (štruktúra, nahrádza §3.2 a §3.5 plánu), `CLAUDE.md` (aktuálny stav).
-- Draupnir koncept (Vladan, Zorica, 24 levelov) NIE je odsúhlasený, je v `_archiv/draupnir_koncept/`.
-- Príbeh sa bude prerábať (Pavel pracuje offline), viď ToDo nižšie.
+- Názov hry: **Slavs fight back**. Svet: fiktívna feudálna stredná Európa, ~1420–1480.
+- Hrdina: **Vlad** (v kódexe Vladan), objaví sa z ničoho, nevie kto je; vážny, nevtipkuje.
+- 3 akty, 9 levelov + hrateľný epilóg: Akt I nájazdníci (zadarmo na mobile), Akt II zákon
+  Kamennej rady a vlastní susedia, Akt III garda a odhalenie. Postavy a mená v §5 príbehu.
+- Jadro: Záchrana (ľudia → živobytie → pravda), roguelite behy z dediny, dedina rastie,
+  výstroj namiesto štatistík, rage „VOLYA" (vietor, biele oči, blesky).
+- Hra: 2D run-and-gun (štýl Metal Slug), Android, Godot 4.7; nepriatelia len sprava; voľný
+  pohyb bez skákania.
+- Zdroje: `20261015 - Handoff Slavs fight back.md` (pre Claude), dashboardy
+  `Slavs fight back — príbeh, aktéri a motivácie (v5).html` a
+  `Slavs fight back — mená pre globálnu anglickú verziu (v6).html` (pre Pavla, nemeniť),
+  `PLAN_hry.md` kap. 1–3 (prepísané), `CLAUDE.md` Open 12 (otvorené body a rozpory).
+- Starý príbeh (utečený otrok proti otrokárom), starý plán, jadro hry, hlášky a koncept
+  druhej AI sú v `_archiv/pribeh_stary/`.
 
 ## Súbory v koreni
 
@@ -213,16 +219,17 @@ Samostatný scenár neexistuje. Odsúhlasené je jadro:
 | `PRIKAZY.md` | Pavel | Ťahák príkazov (nasadenie, PixelLab, riešenie problémov) |
 | `SETUP_F0.md` | Pavel | Inštalácia a testovanie na telefóne |
 | `POSTUP_cloud_github.md` | Pavel | Práca v cloude a GitHub |
-| `HLASKY.md` | Pavel | Návrh hlášok (angl.) na schválenie |
 | `NAPADY_vylepsenia.md` | obaja | Výskum 2026-10-07: 148 nápadov s popisom a zdrojmi; otvorené nápady sú v ToDo (kódy A1…Z8) |
 | `BALIKY_poradie.md` | Claude | Balíky práce (poradie, stav, čo už v kóde je, ako balík uzavrieť); číta sa na začiatku každej session |
 | `KATALOG_efektov.md` | Pavel + Claude | Katalóg efektov (T42): čo môžu nepriatelia robiť nám a my im, hodnoty a stav; dopĺňa sa pri každom novom efekte |
-| `PLAN_hry.md` | obaja | Plán hry, business case, fázy; kap. 2 (citlivá téma) je nemenná |
+| `20261015 - Handoff Slavs fight back.md` | Claude | **Platný príbeh** (v5): svet, postavy, mená, levely, vizuálne scény, prvá dávka scén S01–S10, otvorené body §12 |
+| `Slavs fight back — príbeh, aktéri a motivácie (v5).html` | Pavel | Dashboard príbehu (nemeniť, kým Pavel nepovie) |
+| `Slavs fight back — mená pre globálnu anglickú verziu (v6).html` | Pavel | Dashboard mien postáv (nemeniť, kým Pavel nepovie) |
+| `PLAN_hry.md` | obaja | Plán hry, business case, fázy; kap. 1–3 prepísané 2026-10-15 podľa príbehu |
 | `PLAN_vydanie_NextFest_2027.md` | obaja | Návrh plánu vydania a monetizácie (12. 10. 2026): Next Fest február 2027, míľniky PL01–PL15, otvorené body (T53) |
-| `2026.10.12 - analyza-mechanik.md` | obaja | Analýza mechaník úspešných pixel strieľačiek (kódy MCHxx), 1. kolo |
-| `2026.10.12 - analyza-mechanik-updated.md` | obaja | Analýza mechaník, 2. kolo: príbehová akčná hra (nahrádza smer 1. kola) |
+| `2026.10.12 - analyza-mechanik.md` | obaja | Analýza mechaník úspešných pixel strieľačiek (kódy MCHxx), 1. kolo; rovnomenné `.html` je dashboard pre Pavla |
+| `2026.10.12 - analyza-mechanik-updated.md` | obaja | Analýza mechaník, 2. kolo: príbehová akčná hra (nahrádza smer 1. kola); rovnomenné `.html` je dashboard pre Pavla; zdrojové dáta a skripty na pregenerovanie v `_archiv/analyza_mechanik_podklady/` |
 | `2026.10.12 - vyhodnotenie_mechanik_pre_Slavs.md` / `.html` | obaja | Čo z analýzy mechaník sa hodí pre Slavs (návrhy k T09); `.html` je dashboard pre Pavla |
-| `DIZAJN_core_loop.md` | obaja | Štruktúra hry: run-based, klietky |
 | `SPEC_ovladanie_implementacia.md` | obaja | Ovládanie, jediný zdroj pravdy |
 | `DIZAJN_pozadie_a_rozlisenie.md` | obaja | Pozadie a rozlíšenie; uzavreté 2026-09-15, kód naň odkazuje |
 | `commit_msg.txt` | technické | Záložný text commitu (PRIKAZY.md); gitom ignorovaný |
@@ -241,12 +248,18 @@ Samostatný scenár neexistuje. Odsúhlasené je jadro:
 | `_to_delete/` | ~2 MB | Veci na zmazanie (Claude nemôže mazať): Pavel ho zmaže ručne. Obsahuje staré pot_* a warn_sfx podklady, preview_framing.png |
 | `_archiv/` | 506 MB | Archív. Claude ho NEČÍTA a nebere do úvahy, len ak Pavel požiada |
 | `_archiv/3d_stary/` | 505 MB | Starý 3D reťazec (Meshy/Mixamo/Blender): renderov, modely, skripty, `*_px` sprity, staré sekcie PRIKAZY. LEN lokálne, gitignored, NIE na GitHube. Nepoužívať |
-| `_archiv/draupnir_koncept/` | 0 MB | Iný koncept príbehu od druhej AI, neodsúhlasený |
+| `_archiv/pribeh_stary/` | 0 MB | Starý príbeh (od 2026-10-15): starý `PLAN_hry`, `DIZAJN_core_loop`, `HLASKY`, pred-pivotný koncept druhej AI; README vysvetľuje |
+
+## Upratané 2026-10-15
+
+- Nový príbeh v5 -> koreň: `20261015 - Handoff Slavs fight back.md` + 2 HTML dashboardy (premenované z Draupnir/VOLYA, obsah nezmenený).
+- Starý príbeh -> `_archiv/pribeh_stary/`: `DIZAJN_core_loop.md`, `HLASKY.md`, starý `PLAN_hry.md`, `draupnir_koncept/` (teraz `draupnir_predpivot/`).
+- `PLAN_hry.md` kap. 1–3, `CLAUDE.md`, `ZACNI_TU`, tento súbor a dashboard prepísané podľa príbehu.
 
 ## Upratané 2026-10-05
 
 - `CLAUDE.md`: duplicitná sekcia „Current status" zlúčená do jednej (26 KB -> 22 KB).
-- Draupnir koncept + lexikón -> `_archiv/draupnir_koncept/` (s poznámkou).
+- Draupnir koncept + lexikón -> `_archiv/draupnir_koncept/` (od 2026-10-15 `_archiv/pribeh_stary/draupnir_predpivot/`).
 - `ZACNI_TU_pozadie_pixellab.md` -> `_archiv/` (úloha hotová).
 - Zmluva o aute -> `_archiv/mimo_projektu/` (nepatrí do projektu; vyber ju z repa ručne, ak chceš).
 - Gemini analýza -> `docs/vyskum/`.

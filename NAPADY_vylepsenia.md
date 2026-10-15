@@ -4,7 +4,7 @@ Výskum z internetu, 2026-10-07. Spolu **148 nápadov** v 22 oblastiach. Otvoren
 
 Dôležitosť: ★★★ zásadné (bez toho hra nebude chytľavá) · ★★ veľký rozdiel · ★ drobnosť, ale počíta sa.  
 Námaha: nízka / stredná / vysoká (odhad pre váš projekt: Godot + PixelLab + AI).  
-Nič z toho nie je rozhodnuté ani začaté. Pravidlá z PLAN_hry.md §2 platia pre všetky nápady.
+Nič z toho nie je rozhodnuté ani začaté. Pravidlá z PLAN_hry.md §2 a z §2 príbehu (`20261015 - Handoff Slavs fight back.md`) platia pre všetky nápady.
 
 ## Najlepší pomer: zásadné a lacné (27)
 

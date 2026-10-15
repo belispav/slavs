@@ -221,20 +221,23 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
 
   <section class="story" aria-labelledby="story-h">
     <div>
-      <h2 id="story-h">Odsúhlasený príbeh a popis hry</h2>
+      <h2 id="story-h">Platný príbeh a popis hry (od 15. 10.)</h2>
       <ul class="facts">
-        <li><b>Hrdina</b><span>Utečený slovanský otrok, 15. storočie, bojuje proti otrokárom. Nepriatelia sú definovaní rolou, nikdy etnikom. Bez mena, bez cutscén, len textové karty.</span></li>
-        <li><b>Hra</b><span>2D side-scroller run-and-gun v štýle Metal Slug, Android, Godot 4.7. Platená, 5,99 €, bez reklám a bez nákupov v hre.</span></li>
-        <li><b>Jadro</b><span>Opakované behy na skóre. V klietkach sú zajatci a mena je počet tých, ktorí prežili. Zbraň je sekera, ktorá sa vracia ako bumerang. Nepriatelia idú len sprava, hrdina sa hýbe voľne bez skákania.</span></li>
+        <li><b>Svet</b><span>Hra sa volá Slavs fight back. Fiktívna feudálna stredná Európa okolo rokov 1420 až 1480, nie skutočná krajina ani vojna. Mágia len trikrát: jeleň, portál, čarodejník.</span></li>
+        <li><b>Hrdina</b><span>Vlad (v kódexe Vladan). Objaví sa z ničoho v horiacej dedine a nevie, kto je. Je vážny, nevtipkuje. Nepriatelia sú definovaní rolou, nikdy etnikom.</span></li>
+        <li><b>Príbeh</b><span>3 akty, 9 levelov a hrateľný epilóg. Akt I nájazdníci (na mobile zadarmo), Akt II zákon Kamennej rady a vlastní susedia, Akt III garda a odhalenie, komu Rada slúži.</span></li>
+        <li><b>Jadro</b><span>Záchrana: ľudia, potom živobytie, potom pravda. Opakované výpravy z dediny, dedina rastie, zlato na výstroj. Rage VOLYA: vietor, biele oči, blesky. Nepriatelia idú len sprava, hrdina sa hýbe voľne bez skákania.</span></li>
       </ul>
-      <p class="note">Samostatný scenár ani dej neexistuje. Draupnir koncept (Vladan, Zorica, 24 levelov) nie je odsúhlasený a leží v archíve. Príbeh sa bude prerábať, Pavel na ňom pracuje offline.</p>
+      <p class="note">Príbeh si ešte upravuješ. Otvorené body sú v §12 príbehu. Na 6 miestach sa príbeh líši od hotovej hry (hracie pole, krv, zbrane na blízko, rage, názov, aréna Jama); kým nerozhodneš, v hre ostáva to, čo je otestované. Starý príbeh (utečený otrok proti otrokárom) je v archíve.</p>
     </div>
     <div class="src">
       <h3>Kde je to napísané</h3>
       <ul>
-        <li><code>PLAN_hry.md</code> kap. 1 a 3. Éra v texte je zastaraná, platí 15. storočie.</li>
-        <li><code>DIZAJN_core_loop.md</code> štruktúra hry, nahrádza kap. 3.2 a 3.5 plánu.</li>
-        <li><code>CLAUDE.md</code> aktuálny stav a rozhodnutia.</li>
+        <li><code>Slavs fight back — príbeh, aktéri a motivácie (v5).html</code> dashboard príbehu pre teba.</li>
+        <li><code>Slavs fight back — mená pre globálnu anglickú verziu (v6).html</code> dashboard mien.</li>
+        <li><code>20261015 - Handoff Slavs fight back.md</code> to isté pre Claude, so scénami S01 až S10.</li>
+        <li><code>PLAN_hry.md</code> kap. 1 až 3, prepísané podľa príbehu.</li>
+        <li><code>CLAUDE.md</code> otvorené body a rozpory (Otvorené 12).</li>
       </ul>
     </div>
   </section>
@@ -259,10 +262,11 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
   </section>
 
   <section class="card" aria-labelledby="done-h">
-      <h2 id="done-h">Upratané 5. 10.</h2>
+      <h2 id="done-h">Upratané 15. 10. a 5. 10.</h2>
       <ul>
+        <li><b>15. 10.:</b> nový príbeh a oba jeho dashboardy sú v hlavnom priečinku (premenované na Slavs fight back, obsah nezmenený). Starý príbeh, starý plán, jadro hry, hlášky a koncept druhej AI sú v <code>_archiv/pribeh_stary/</code>.</li>
         <li><code>CLAUDE.md</code> mal sekciu aktuálneho stavu dvakrát. Zlúčená do jednej, súbor je z 26 KB na 22 KB.</li>
-        <li>Draupnir zložka a lexikón sú v <code>_archiv/draupnir_koncept/</code> s poznámkou.</li>
+        <li>Draupnir zložka a lexikón sú v <code>_archiv/pribeh_stary/draupnir_predpivot/</code> (od 15. 10.).</li>
         <li>Hotová odovzdávka pozadia je v <code>_archiv/</code>.</li>
         <li>Starý 3D reťazec (<code>render/</code>, modely, staré skripty, staré pixel priečinky) je v <code>_archiv/3d_stary/</code>, mimo GitHubu. Claude ho nečíta (pravidlo v <code>CLAUDE.md</code>).</li>
         <li>Ťahák <code>PRIKAZY.md</code> je očistený od 3D postupov; nástroj <code>preview_framing.py</code> používa PixelLab hrdinu.</li>
@@ -290,14 +294,15 @@ var ITEMS = [
   {n:"PRIKAZY.md", g:"teba", w:"Ťahák príkazov: nasadenie na telefón, PixelLab, riešenie problémov.", s:"Otvor, keď potrebuješ niečo napísať do PowerShellu."},
   {n:"SETUP_F0.md", g:"teba", w:"Inštalácia (Godot, JDK, Android SDK) a testovací protokol na telefóne.", s:"Pri novom počítači alebo novom telefóne."},
   {n:"POSTUP_cloud_github.md", g:"teba", w:"Ako pracovať v cloude a cez GitHub namiesto na svojom PC.", s:"Pri prepínaní medzi lokálom a cloudom."},
-  {n:"HLASKY.md", g:"teba", w:"Návrh hlášok postáv (v angličtine) na schválenie. Škrtni, prepíš, dopíš.", s:"Čaká na tvoje schválenie, kým sa nahrajú zvuky."},
   {n:"NAPADY_vylepsenia.md", g:"oboch", w:"Výskum z internetu (7. 10.): 148 nápadov na vylepšenie hry s popisom a zdrojmi. Otvorené nápady sú v ToDo hore (rovnaké kódy A1…V4).", s:"Detail a zdroje; dashboard nápadov je teraz tu v ToDo."},
-  {n:"PLAN_hry.md", g:"oboch", w:"Plán hry, business case, fázy F0 až F5, riziká. Kapitola 2 o citlivej téme je nemenná.", s:"Éra v texte je zastaraná, platí 15. storočie."},
+  {n:"Slavs fight back — príbeh, aktéri a motivácie (v5).html", g:"teba", w:"Platný príbeh: akty, levely, postavy a čo chcú, vizuálne scény.", s:"Od 15. 10. Claude ho nemení, kým nepovieš."},
+  {n:"Slavs fight back — mená pre globálnu anglickú verziu (v6).html", g:"teba", w:"Mená postáv pre anglickú verziu, pravidlá mien, zamietnuté mená.", s:"Od 15. 10. Claude ho nemení, kým nepovieš."},
+  {n:"20261015 - Handoff Slavs fight back.md", g:"claude", w:"Platný príbeh pre Claude: svet, postavy, mená, levely, pravidlá obsahu, prvá dávka scén S01 až S10.", s:"Otvorené body sú v jeho §12."},
+  {n:"PLAN_hry.md", g:"oboch", w:"Plán hry, business case, fázy F0 až F5, riziká.", s:"Kapitoly 1 až 3 prepísané 15. 10. podľa príbehu."},
   {n:"PLAN_vydanie_NextFest_2027.md", g:"oboch", w:"Návrh plánu vydania a monetizácie (12. 10.): Steam Next Fest február 2027, míľniky PL01 až PL15, model a ceny.", s:"Predbežne schválené; otvorené body rieši T53."},
-  {n:"2026.10.12 - analyza-mechanik.md", g:"oboch", w:"Analýza mechaník úspešných pixel strieľačiek (kódy MCHxx), 1. kolo.", s:"Písané pre všeobecnú hru, pre Slavs ho vyhodnocuje súbor nižšie."},
-  {n:"2026.10.12 - analyza-mechanik-updated.md", g:"oboch", w:"Analýza mechaník, 2. kolo: príbehová akčná hra.", s:"Nahrádza smer 1. kola."},
+  {n:"2026.10.12 - analyza-mechanik.md", g:"oboch", w:"Analýza mechaník úspešných pixel strieľačiek (kódy MCHxx), 1. kolo. Rovnomenný súbor .html je dashboard pre teba.", s:"Písané pre všeobecnú hru, pre Slavs ho vyhodnocuje súbor nižšie."},
+  {n:"2026.10.12 - analyza-mechanik-updated.md", g:"oboch", w:"Analýza mechaník, 2. kolo: príbehová akčná hra. Rovnomenný súbor .html je dashboard pre teba; dáta a skripty sú v _archiv/analyza_mechanik_podklady/.", s:"Nahrádza smer 1. kola."},
   {n:"2026.10.12 - vyhodnotenie_mechanik_pre_Slavs.md / .html", g:"oboch", w:"Čo z analýzy mechaník sa hodí pre Slavs. HTML je dashboard pre teba.", s:"Návrhy k jadru hry (T09)."},
-  {n:"DIZAJN_core_loop.md", g:"oboch", w:"Štruktúra hry: opakované behy, klietky so zajatcami, bossovia.", s:"Nahrádza kapitoly 3.2 a 3.5 plánu."},
   {n:"SPEC_ovladanie_implementacia.md", g:"oboch", w:"Ovládanie. Jediný zdroj pravdy pre to, ako sa hra ovláda.", s:"Ovládanie je produkt, všetko ostatné je druhé."},
   {n:"DIZAJN_pozadie_a_rozlisenie.md", g:"oboch", w:"Pozadie, parallax a rozlíšenie postáv. Uzavreté 15. 9.", s:"V koreni zostalo, lebo naň odkazuje kód."},
   {n:"docs/vyskum/", g:"oboch", w:"Výskum pravidiel Google Play (nenávistný obsah, násilie).", s:"Súbor: Gemini - Analyza pravidiel Google Play.md"},
@@ -310,7 +315,7 @@ var ITEMS = [
   {n:"Claude outputs/", g:"teba", w:"Obrázky z našich pracovných session (2. až 4. 10.): animácie, štýly, pozadia.", s:"Môžeš prezrieť a zmazať, čo už nepotrebuješ."},
   {n:"_archiv/3d_stary/", g:"archiv", w:"Celý starý 3D reťazec (Meshy, Mixamo, Blender): výstupy renderov, modely .blend a .fbx, staré skripty, staré pixel priečinky, staré sekcie PRIKAZY.", s:"505 MB, len na tvojom disku, NIE na GitHube. Claude ho nebere do úvahy."},
   {n:"_archiv/", g:"archiv", w:"Dokončené prompty, história CLAUDE.md, hotové úlohy (TODO_hotove.md), staré návody a archívy nižšie.", s:"Claude ho nečíta, len ak o to požiadaš (CLAUDE_historia.md na požiadanie)."},
-  {n:"_archiv/draupnir_koncept/", g:"archiv", w:"Draupnir koncept od druhej AI: 7 zadaní pre agentov a lexikón sloganov.", s:"Iný koncept hry, nie je odsúhlasený. Chýba SPEC_MASTER.md, výstupy neexistujú."},
+  {n:"_archiv/pribeh_stary/", g:"archiv", w:"Starý príbeh: starý plán hry, jadro hry z júla, hlášky otrokárov, starší koncept druhej AI.", s:"Nahradené príbehom z 15. 10. README v priečinku vysvetľuje, čo je čo."},
   {n:"_archiv/mimo_projektu/", g:"archiv", w:"Návrh kúpnopredajnej zmluvy na auto.", s:"Nepatrí do projektu. Vyber ho z repa ručne, ak chceš."}
 ];
 var SIZES = [
@@ -328,20 +333,20 @@ var TODOS = [
 "g": "teba",
 "cat": "Q",
 "imp": 3,
-"eff": "V",
-"k": "Offline",
-"t": "<b>Prerobiť príbeh.</b> Pracuješ na ňom offline, bez termínu. Claude ho nezačne, kým neprinesieš návrh. Úloha je aj v Open Brain (Biznis, P3).",
-"s": "CLAUDE.md Otvorené 12, Open Brain"
+"eff": "S",
+"k": "Rozhodnúť",
+"t": "<b>Príbeh v5 je prevzatý (15. 10.)</b>, ešte ho upravuješ. Rozhodnúť otvorené body príbehu (§12: sila Zory, meno Vojtek, bossovia L5 a L6, L8, mená Jarek a Radim, 9 alebo 7 až 8 levelov, znak gardy, finálna forma), meno rage VOLYA a 6 rozporov s hotovou hrou.",
+"s": "príbeh §12, CLAUDE.md Otvorené 12"
 },
 {
 "id": "T06",
-"g": "teba",
+"g": "later",
 "cat": "D",
 "imp": 2,
 "eff": "N",
-"k": "Schváliť",
-"t": "<b>Hlášky postáv</b> (angl.): návrh je v HLASKY.md. Škrtni, prepíš, dopíš; čo ostane, to sa nahrá. Hlasové priečinky sú zatiaľ prázdne.",
-"s": "HLASKY.md, CLAUDE.md Sound"
+"k": "Neskôr",
+"t": "<b>Nové hlášky podľa príbehu v5.</b> Staré hlášky otrokárov sú v archíve. Hrdina je vážny, bez vtipkovania. Napíšu sa, keď budú uzavreté postavy (T04).",
+"s": "_archiv/pribeh_stary/HLASKY.md, CLAUDE.md Sound"
 },
 {
 "id": "T07",
@@ -371,7 +376,7 @@ var TODOS = [
 "eff": "V",
 "k": "Teraz",
 "t": "<b>Jadro hry, herné mechanizmy</b> (grafika je v základoch hotová): čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. Riešime po jednej otázke.",
-"s": "DIZAJN_core_loop §3–4",
+"s": "príbeh §4; otázky z _archiv/pribeh_stary/DIZAJN_core_loop.md §3",
 "b": 4
 },
 {
@@ -382,7 +387,7 @@ var TODOS = [
 "eff": "S",
 "k": "Otvorené znova",
 "t": "<b>Monetizácia</b>: návrh z 12. 10.: Steam 9,99 €, Android prvá časť zadarmo + odomknutie 4,99 €, web demo, bez reklám. Rozhoduje sa spolu s T53.",
-"s": "PLAN_vydanie_NextFest_2027.md, DIZAJN_core_loop §4"
+"s": "PLAN_vydanie_NextFest_2027.md; príbeh: Akt I zadarmo"
 },
 {
 "id": "T53",
@@ -393,6 +398,16 @@ var TODOS = [
 "k": "Rozhodnúť",
 "t": "<b>Plán vydania – otvorené body</b> (predbežne schválené 12. 10.): model, Steam spolu s Androidom, cena na Steame, jazyky, kedy založiť účty, termín vydania A/B/C. Prvý pevný termín: odoslať Steam stránku do 1. 12. 2026.",
 "s": "PLAN_vydanie_NextFest_2027.md"
+},
+{
+"id": "T54",
+"g": "teba",
+"cat": "C",
+"imp": 3,
+"eff": "V",
+"k": "Teraz",
+"t": "<b>Začať generovať levely, scény a postavy podľa príbehu v5.</b> Prvá dávka sú scény S01 až S10 (príbeh §10, čo v nich nesmie byť je tam tiež). Pred finálnou grafikou vyriešiť jednotnú paletu (T17).",
+"s": "príbeh §8 a §10"
 },
 {
 "id": "T21",

@@ -1,5 +1,11 @@
 # Hotové prompty pre generovanie referencií
 
+> **2026-10-15: svet a hrdina v týchto promptoch sú zo starého príbehu** („15th century Eastern
+> European slave-raid country", „escaped slave"). Platí príbeh v5
+> (`20261015 - Handoff Slavs fight back.md`): fiktívna feudálna stredná Európa ~1420–1480,
+> hrdina Vlad, scény a čo v nich nesmie byť v §8 a §10. Technické časti (§4 pozadie,
+> pomer strán, kľúčovanie) platia ďalej, odkazuje na ne kód.
+
 Skopíruj celý blok, vymeň len obsah v `[HRANATÝCH ZÁTVORKÁCH]`. Zvyšok nemeň —
 tie frázy tam sú preto, aby generátor nespravil hrdinský portrét namiesto
 herného záberu.

@@ -1,72 +1,50 @@
-# Slavs — Kompletný plán hry, business case a stratégia nasadenia
+# Slavs fight back — plán hry, business case a stratégia nasadenia
 
-**Pracovný názov:** Slavs (staroslovanské „sloboda/vôľa"; alternatívy: OKOVY, SAQALIBA)
-**Žáner:** 2D side-scrolling run-and-gun / horde shooter (štýl Metal Slug)
-**Platforma:** Android (v1.0), neskôr iOS a Steam
-**Model:** Premium 5,99 € pri launchi, bez IAP; DLC a kozmetika neskôr
-
-> **2026-10-12:** návrh plánu vydania (Steam Next Fest február 2027, Steam + Android naraz, nový model a ceny) je v `PLAN_vydanie_NextFest_2027.md`. Pavel ho predbežne schválil; otvorené body sú tam (T53). Kým ich neuzavrie, platí tento plán.
+**Názov:** Slavs fight back (pracovne „Slavs"; Pavel 2026-10-03, potvrdené 2026-10-15)
+**Žáner:** 2D side-scrolling run-and-gun (štýl Metal Slug) + roguelite score-attack
+**Platforma:** Android (Google Play), offline, jeden hráč; Steam podľa plánu vydania
+**Jazyk v hre:** angličtina (dialógy, UI, kódex); slovenčina len v dizajnových dokumentoch
+**Model:** pôvodne premium 5,99 € bez IAP; návrh 2026-10-12 (Akt I zadarmo na mobile + odomknutie) je v `PLAN_vydanie_NextFest_2027.md`, otvorené body T53
 **Tvorca:** 1 osoba, vývoj s pomocou AI, nulová predchádzajúca znalosť game devu
-**Dátum dokumentu:** 19. 7. 2026
+**Dátum dokumentu:** 19. 7. 2026, kap. 1–3 prepísané 15. 10. 2026
+
+> **2026-10-15 — nový príbeh.** Kapitoly 1–3 sú prepísané podľa príbehu v5
+> (`20261015 - Handoff Slavs fight back.md` + HTML dashboardy príbehu a mien v koreni).
+> Pri rozpore platí príbeh, okrem ovládania a už nameraných hodnôt v hre (tie platia
+> podľa `SPEC_ovladanie_implementacia.md` a `CLAUDE.md`). Starý plán (otrok proti
+> otrokárom, éry, 12 levelov) je v `_archiv/pribeh_stary/PLAN_hry_do_2026-10-15.md`.
 
 ---
 
 ## 1. Zhrnutie (Executive Summary)
 
-Hra o slovanskom otrokovi, ktorý sa prebije na slobodu cez hordy otrokárov. Extrémne jednoduché dvojpalcové ovládanie (podľa priloženej špecifikácie „Zero Thumb-Lifting"), prepálená absurdná akcia, krátke levely na mobilné sessions. Historicky ukotvené v reálnom obchode so slovanskými otrokmi (9.–18. storočie) — čo je zároveň najväčšie marketingové aktívum aj najväčšie riziko projektu.
+Fiktívna feudálna stredná Európa, ~1420–1480. **Vlad** sa objaví z ničoho v horiacej
+dedine, nevie, kto je, a zasiahne. Tri akty, **9 levelov + hrateľný epilóg**:
+Akt I nájazdníci (jasné zlo), Akt II zákon Kamennej rady vymáhaný vlastnými susedmi,
+Akt III zmiešaná garda a odhalenie, komu Rada slúži. Akt I vychádza na mobile zadarmo.
 
-Kľúčové rozhodnutia tohto plánu:
+Jadro: jedna mechanika **Záchrana** v troch podobách (ľudia → živobytie → pravda),
+roguelite behy z dediny, dedina ako trvalá meta-progresia, výstroj namiesto štatistík.
+Dvojpalcové ovládanie bez skákania, prepálená akcia, krátke behy (2–4 min).
 
-- **Engine: Godot 4.7** — zadarmo, ľahký, výborný pre 2D, AI nástroje ho poznajú dokonale.
-- ~~**Prvá éra: 9.–10. storočie** (obchodné cesty Volga/Dneper)~~ → **PREKONANÉ. Prvá éra je 15. storočie** („žatva stepi", nájazdové trasy do Kaffy). Rozhodnuté, neotvárať znova. Dôsledok, ktorý z toho plynie a je správny, nie anachronizmus: **strelné zbrane existujú** (arkebúza, hákovnica). Dôsledok, ktorý z toho plynie a je rizikový, je popísaný v §2 nižšie — prečítaj si ho.
-- **Monetizácia: premium 5,99 €**, žiadne IAP vo verzii 1.0. DLC kampane (nové éry = noví otrokári) a kozmetické balíky až po validácii. Žiadna gacha, žiadne reklamy — v platenej hre by generovali „anger factor" (viď vlastná analýza, kap. 4.5 a 6).
-- **Časový plán: ~6 mesiacov part-time** do launchu na Google Play.
-- **Break-even: ~160 predajov.** Realistický scenár prvý rok: 2 000–4 000 predajov ≈ 9 000–18 000 € hrubého príjmu pre teba.
+Platí ďalej: **Godot 4.7**, cieľ 60 fps na ~150 € telefóne, ~6 mesiacov part-time,
+nízky break-even (kap. 6). Detail príbehu, postáv, levelov a scén: príbehový súbor.
 
 ---
 
-## 2. Citlivá téma: fakty a nepriestrelné pravidlá
+## 2. Citlivá téma: pravidlá (nikdy neporušiť)
 
-Toto je najdôležitejšia kapitola. Tvoj koncept („bieli otroci vs. primárne arabskí a africkí otrokári") v doslovnej podobe **neprejde** cez Google Play a Apple. Obe platformy majú politiku proti obsahu, ktorý démonizuje etnickú alebo náboženskú skupinu; hra, kde je nepriateľ definovaný rasou, bude klasifikovaná ako hate content a odstránená — bez ohľadu na historickú presnosť argumentácie.
+Platí **10 pravidiel z §2 príbehu** bez výnimky (nepriateľ len politickou, vojenskou
+alebo ekonomickou rolou; žiadna skutočná náboženská symbolika, len vymyslená
+heraldika; hráč nikdy nezraní necivilistu; žiadne gore, rozčlenenie ani mučenie;
+žiadne odkazy na dnešnú politiku; zakázané výrazy; morálna rôznorodosť; disclaimer
+pri prvom spustení). K nim naše vlastné:
 
-Riešenie nie je tému opustiť, ale definovať nepriateľa **rolou a frakciou, nie etnikom**. A tu hrá história v tvoj prospech, lebo obchod so slovanskými otrokmi (tzv. saqaliba) bol multietnický biznis:
-
-| Éra | Frakcia otrokárov | Historický základ |
-|---|---|---|
-| **15. stor. (v1.0)** | **Krymský chanát, Nogajci, Osmani** | **„Žatva stepi", odhadom 2+ mil. odvlečených z Ukrajiny/Ruska/Poľska** |
-| 9.–10. stor. (DLC) | Varjagovia (Vikingovia), Chazari, stepní nájazdníci, strážcovia arabských karaván | Volžská a dneperská obchodná cesta, trh v Itile a Bulgare |
-| 10.–12. stor. (DLC) | Benátski a janovskí obchodníci, Byzancia | Stredomorské trhy, Kaffa |
-| 16.–18. stor. (DLC) | Barbarskí korzári | Nájazdy na pobrežia Európy, otroci v Alžíri a Tunise |
-
-**Čo zmena éry stála (napísané raz, aby sa to nemuselo riešiť v každom sedení).**
-Pôvodný plán začínal 9.–10. storočím schválne: hlavní otrokári tam sú Vikingovia
-a Chazari, teda prevažne „bieli", čo je historicky korektné a samo osebe rozbíja
-obvinenie z rasovej agendy. Posunom v1.0 do 15. storočia sa tento štít stráca —
-Krymský chanát a Osmani sú moslimské a turkické frakcie, takže hra začína presne
-tam, kde politika storov vníma najväčšie riziko.
-
-To sa nedá vyriešiť výberom éry, ale iba disciplínou pri stvárnení, a preto sú
-pravidlá nižšie od tejto chvíle **prísnejšie, nie voľnejšie**:
-
-- Frakcia sa pomenúva politicky (chanát, nájazdnícka horda, karavána), nikdy
-  nábožensky ani etnicky. Žiadne „Turci", „moslimovia", žiadny polmesiac.
-- Žiadny turban, žiadna čalma, žiadne sakrálne motívy na nepriateľoch. Klobúk,
-  kožušinová čiapka, prilba, kapucňa. (Toto je zároveň dôvod, prečo tuningové
-  arty `Enemy_rusher_01` a `Enemy_gunman_01` musia ísť preč pred F3.)
-- Medzi nepriateľmi musia byť aj domáci kolaboranti a žoldnieri, aby nepriateľ
-  nebol jednofarebný.
-- Kódex uvádza zdroje a explicitne pomenúva aj európsky podiel na obchode.
-- Éry v DLC sa zoraďujú tak, aby Varjagovia a Benátčania prišli čo najskôr.
-
-**Nepriestrelné pravidlá (nikdy neporušiť):**
-
-1. Nepriatelia sú vždy pomenovaní rolou/frakciou: „otrokár", „nájazdník", „dozorca", „korzár", „karavánová stráž" — nikdy etnikom.
-2. Civilisti danej kultúry sa v hre nezabíjajú a ideálne sa v nej vyskytujú aj pozitívne postavy z každej kultúry (napr. arabský kupec, ktorý hrdinovi pomôže — historicky doložené prípady vykúpenia otrokov).
-3. Marketing nikdy nepoužije rasový frame. Slogan je „otrok proti otrokárom", „cesta na slobodu" — nie „my proti nim". Kontroverzia „biely otrok" sa v komunikácii nepoužíva ani ako clickbait; internet si ju vygeneruje sám a hra musí byť v tej chvíli obhájiteľná obsahom.
-4. Do hry patrí krátky historický kontext (1 obrazovka na začiatku kampane + odomykateľný „kódex" s faktami a zdrojmi). Lacné na výrobu, obrovská hodnota pri obhajobe hry aj v PR.
-5. Žiadne náboženské symboly v roli terčov.
-
-Toto nastavenie zachováva plný emocionálny náboj (skutočná, málo známa história, silný pocit zadosťučinenia) a znižuje riziko odstránenia zo storu z „takmer isté" na „bežné riziko akčnej hry". Rating bude PEGI 16 (násilie) — s pixel-art štylizáciou bez realistického gore to je bezpečné pásmo.
+1. Svet je fiktívny s jasnou paralelou na politikov, ktorí neplnia sľuby; nikdy
+   skutoční ľudia, strany ani pomenované aktuálne udalosti.
+2. **Žiadny imigračný rámec** v príbehu ani v marketingu (Pavel 2026-10-12).
+3. Verejné texty nikdy nepoužijú výraz „mass shooter".
+4. Rating PEGI 16 (štylizované pixelové násilie).
 
 ---
 
@@ -74,40 +52,46 @@ Toto nastavenie zachováva plný emocionálny náboj (skutočná, málo známa h
 
 ### 3.1 Fantázia hráča
 
-„Som otrok, ktorý pretrhol reťaze, a teraz sa cez hordy otrokárov prebíjam na slobodu — a beriem so sebou každého otroka, ktorého cestou oslobodím." Jadro pocitu: masívna, absurdná, prepálená akcia. Desiatky nepriateľov na obrazovke, všetko vybuchuje, hráč sa cíti ako nezastaviteľná sila. Žiadne komplexné súboje, žiadny stealth, žiadne puzzle.
+„Som cudzinec bez minulosti a nedokážem sa pozerať, ako ľuďom berú život, živobytie
+a pravdu." Hrdina je vážny, absurdnosť a čierny humor prinášajú svet a nepriatelia,
+nikdy hrdina. Desiatky nepriateľov na obrazovke, nepriatelia padajú po 1–3 zásahoch,
+hitboxy v prospech hráča. Žiadny stealth, žiadne puzzle.
 
-### 3.2 Core loop (30–60 s)
+### 3.2 Core loop
 
-Bež doprava → koss hordy → osloboď otrokov v klietkach (= skóre/mena) → naplň „Hnev" → aktivuj rage mód (screen-clear) → mini-boss → koniec levelu → utrať korisť na upgrade → ďalší level.
+Výprava z dediny → beh doprava, hordy len sprava → **Záchrana** (klietka / voz /
+sklad / archív; čím viac zachrániš, tým väčšia odmena) → napĺňa sa rage „VOLYA"
+(~8 s, vietor, biele oči, blesky z hrdinu) → vetvenie (ťažšia cesta = viac na
+záchranu, silnejší boss, viac zlata) → boss → návrat do dediny: zlato na výstroj
+u obchodníka, zachránené veci stavajú dedinu. Smrť = návrat do dediny, zachránené
+ostáva.
 
 ### 3.3 Ovládanie
 
-Presne podľa priloženej špecifikácie „Zero Thumb-Lifting" — bez zmien, je kompletná a implementovateľná:
+Podľa `SPEC_ovladanie_implementacia.md`, ktorý je jediný zdroj pravdy a má prednosť
+pred každým nápadom na level alebo scénu: dva palce, voľný pohyb v dvoch osiach,
+bez gravitácie a bez skákania, smrteľné hrozby len sprava. **Rift Step** (značka na
+zemi → okamžitý presun, bez nového tlačidla) sa odomyká a otvára len voliteľný obsah.
 
-- Pravý palec: virtuálny joystick mierenia, auto-attack počas mierenia.
-- Ľavý palec: beh + skok cez Y-prahovú zónu s tromi kritickými UX prvkami: **oblúková hranica** („windshield wiper"), **reset skoku** návratom do Run Zone, **plávajúca kotva** (dynamický stred podľa položenia palca).
-- Implementácia ovládania je **prvý míľnik projektu** (fáza 1) a testuje sa na reálnom telefóne skôr, než sa postaví čokoľvek iné. Ak ovládanie nesedí, nič ostatné nemá zmysel.
+### 3.4 Rozsah v1.0 (podľa príbehu, rozsah ešte otvorený)
 
-### 3.4 Zbrane a akcia (éra 15. stor.)
+- **Akt I – Neznámy (zadarmo):** L1 Horiaca dedina (boss Kapitán nájazdu), L2 Rada
+  náčelníkov (boss Radim), L3 Spojené dediny (boss Ordanov veliteľ).
+- **Akt II – Zákon:** L4 Vývesná tabuľa (boss Jarek), L5 Les s pascami (boss Bor),
+  L6 Zlom (boss Milo). Pomalá erózia sa deje v dedine medzi levelmi.
+- **Akt III – Odhalenie:** L7 Garda (boss Miran), L8 otvorený (návrh „Návrat"),
+  L9 Majster pisárov (boss Teodor, jediný s mágiou). Potom hrateľný epilóg.
+- **Nepriatelia podľa aktu:** Ordanovi nájazdníci → domobrana vlastných dedín →
+  zmiešaná garda (odvedení + zaprisahaní).
+- **Postup:** zlato → výstroj (brnenie = viac sŕdc; zbrane blízko / na diaľku /
+  hádzané s živlom oheň, blesk, ľad) a dedina, ktorá viditeľne rastie.
+- **Endless aréna „Jama"** je z pôvodného plánu; príbeh ju nerieši, rozhodne Pavel.
+- Pixel art, 2x zväčšenie, celá grafika v PixelLab.
 
-Historické jadro + absurdné prepálenie (presne v duchu Metal Slug, ktorý tiež nebol simulátor):
+### 3.5 Čo v hre zámerne NIE JE (efektivita)
 
-- **Základ:** sekera (hod, vracia sa ako bumerang), luk (rýchlostreľba ako guľomet), oštepy, kladivo (AoE).
-- **Prepálené power-upy:** „Perúnov hnev" (blesky z neba), horiaci sud, stádo splašených koní naprieč obrazovkou, obliehacia balista na rameno.
-- **Rage mód „Slavs":** naplní sa oslobodzovaním otrokov; postava na 8 s zoserie celú obrazovku. Toto je hlavný dopamínový moment hry.
-- Nepriatelia umierajú vo veľkom a rýchlo (1–3 zásahy bežný mob), na obrazovke ich je 15–30 naraz. Hitboxy štedré v prospech hráča.
-
-### 3.5 Štruktúra obsahu v1.0
-
-- **12 levelov** (3 svety × 4 levely: Osada v plameňoch → Riečna cesta → Trh v Itile), každý 2–4 minúty.
-- **8 typov nepriateľov** + 3 bossovia (varjažský jarl na drakkare, chazarský beg s jazdou, obchodný magnát na trhu).
-- **Meta-progresia:** oslobodení otroci = mena; strom vylepšení (zbrane, zdravie, rage). Dôvod na opakovanie levelov.
-- **Endless aréna** („Jama") — 1 mapa, nekonečné vlny, leaderboard lokálny. Lacný obsah s vysokou hernou hodnotou.
-- Pixel art, 16-bit štylizácia — najlacnejšia na AI-asistovanú výrobu a žánrovo očakávaná.
-
-### 3.6 Čo v hre zámerne NIE JE (efektivita)
-
-Príbehové cutscény (len textové karty), dabing, multiplayer, online služby, účty, cloud save, viac jazykov než EN+SK pri launchi. Všetko v addon backlogu (kap. 9).
+Filmové cutscény (príbeh nesú textové karty, dedina a hrateľný epilóg), dabing,
+multiplayer, online služby, účty, cloud save. Všetko v addon backlogu (kap. 9).
 
 ---
 
@@ -143,11 +127,11 @@ Predpoklad: ~10–15 h/týždeň. Pri full-time deľ časy dvomi.
 | **F0 — Setup** | 1–2 týž. | Godot nainštalovaný, „Hello world" beží na tvojom telefóne cez export; Google Play dev účet založený (25 $) — založ HNEĎ, lebo overenie trvá |
 | **F1 — Prototyp ovládania** | 3–4 týž. | Šedé obdĺžniky: beh, skok, mierenie, auto-strelba podľa špecifikácie. Kritérium: 10 min hrania bez jediného nechceného skoku. **Go/No-Go bod projektu** |
 | **F2 — Vertical slice** | 5–6 týž. | 1 kompletný level s finálnou grafikou, 3 typy nepriateľov, 1 boss, rage mód, zvuk. Kritérium: cudzí človek sa hrá 10 min a baví ho to |
-| **F3 — Produkcia obsahu** | 7–8 týž. | 12 levelov, 8 nepriateľov, 3 bossovia, meta-progresia, endless aréna, menu, tutoriál (integrovaný do levelu 1) |
+| **F3 — Produkcia obsahu** | 7–8 týž. | Levely a bossovia podľa kap. 3.4 (príbeh), dedina ako meta-progresia, menu, tutoriál (integrovaný do L1) |
 | **F4 — Polish + uzavretý test** | 4 týž. + 14 dní | Balance, výkon (60 fps na 150 € telefóne), IARC dotazník. **Povinný uzavretý test: 12 testerov, 14 súvislých dní** (podmienka nových osobných účtov Google Play). Testerov nabrať v F3 (Reddit r/AndroidGaming, r/playtesters, SK/CZ gamedev Discordy) |
 | **F5 — Launch** | 1–2 týž. | Store listing (screenshoty, video, popis), žiadosť o produkčný prístup, staged rollout 20 % → 100 % |
 
-**Celkom: ~6 mesiacov.** Najčastejšie zlyhanie sólo projektov je nafukovanie rozsahu — čokoľvek nad rámec kap. 3.5 ide automaticky do backlogu (kap. 9), nie do v1.0.
+**Celkom: ~6 mesiacov.** Najčastejšie zlyhanie sólo projektov je nafukovanie rozsahu — čokoľvek nad rámec kap. 3.4 ide automaticky do backlogu (kap. 9), nie do v1.0.
 
 ---
 
@@ -187,7 +171,7 @@ Triezvy fakt: premium hry na Google Play sa bez marketingu predávajú zle — o
 2. **Google Game Trials / demo** — Google aktívne tlačí platené hry cez skúšobné verzie; znižuje bariéru 5,99 € naslepo.
 3. **Play Pass prihláška** po 3–6 mesiacoch — kurátorovaný katalóg premium hier, historicky silný kanál pre indie tituly (Dead Cells, Slay the Spire).
 4. **Steam port** (kap. 8) — premium model funguje na Steame rádovo lepšie ako na mobile; Godot export je takmer zadarmo. Reálne môže Steam prekonať mobilný príjem.
-5. **PR angle:** „málo známa história obchodu so slovanskými otrokmi" je legitímny hák pre médiá (herné aj mainstreamové v SK/CZ/PL/UA). Kódex s historickými faktami (kap. 2) je podklad pre tieto rozhovory.
+5. **PR angle:** satira na politikov a úradnícku mašinériu vo fiktívnom stredoveku + slovanská mytológia (Perún, búrka) a slovanské mená. Bez imigračného rámca (kap. 2).
 
 ### 6.5 Monetizačná stratégia dlhodobo
 
@@ -196,14 +180,14 @@ Z tvojej analýzy preberáme, čo je kompatibilné s platenou hrou, zvyšok vedo
 | Mechanika | Verdikt | Dôvod |
 |---|---|---|
 | Premium cena 5,99 € | ÁNO (v1.0) | Tvoja preferencia; férové, nulový anger factor |
-| DLC kampane (nové éry, ~2,99 €) | ÁNO (rok 1–2) | Prirodzené rozšírenie: noví otrokári = nový obsah = nový príjem od existujúcich hráčov |
+| Pokračovanie / DLC (~2,99 €) | ÁNO (rok 1–2) | Príbeh končí dvomi hrozbami (Ordan chce zem, majster chce Zoru) = prirodzené pokračovanie |
 | Kozmetické balíky (skiny postavy/zbraní) | ÁNO (po validácii) | Najnižší anger factor, monetizuje fanúšikov navyše |
 | Battle pass („sezónna kampaň") | NESKÔR (backlog) | Dáva zmysel až pri 10 000+ aktívnych hráčoch; predtým je to práca bez publika |
 | Gacha / lootboxy | NIE | V platenej hre reputačná samovražda + regulačné riziko (Belgicko, Holandsko) |
 | Reklamy (aj rewarded) | NIE | Hráč zaplatil; reklamy by zabili recenzie |
 | Pay-to-skip | NIE | Anger factor, v single-player premium hre nedáva zmysel |
 
-Psychologické háky z analýzy, ktoré použijeme **bez monetizácie** (na retenciu): denná výzva v endless aréne, meta-progresia (sunk cost v dobrom zmysle), počítadlo oslobodených otrokov ako celoživotná štatistika, náhodné power-up drops v leveloch (variabilná odmena bez peňazí).
+Psychologické háky z analýzy, ktoré použijeme **bez monetizácie** (na retenciu): denná výzva v endless aréne, meta-progresia (sunk cost v dobrom zmysle), počítadlo zachránených ako celoživotná štatistika, náhodné power-up drops v leveloch (variabilná odmena bez peňazí).
 
 ---
 
@@ -227,9 +211,9 @@ Psychologické háky z analýzy, ktoré použijeme **bez monetizácie** (na rete
 | Mesiac 2–4 | **Steam port** (5,99–7,99 €) + Steam Deck verifikácia | Druhý, pravdepodobne väčší trh |
 | Mesiac 3–6 | Update 1.1 zadarmo: nové zbrane, denná výzva, achievementy | Retencia, recenzie, signál že hra žije |
 | Mesiac 4–6 | Prihláška do Play Pass; Game Trials | Distribúcia |
-| Mesiac 6–9 | **DLC 1: „Žatva stepi"** (Krymský chanát, 4 levely, nový boss, 2,99 €) | Prvý test ochoty platiť za obsah |
+| Mesiac 6–9 | **DLC 1: pokračovanie príbehu** (Ordan alebo portál, podľa príbehu §7; 2,99 €) | Prvý test ochoty platiť za obsah |
 | Mesiac 9–12 | iOS port (Apple 99 $/rok + cloud Mac build ~20 €/mes.) — len ak Android+Steam validovali dopyt | Rozšírenie trhu |
-| Rok 2 | DLC 2 (Barbarskí korzári), kozmetické balíky, prípadne battle pass ak MAU > 10 000 | LiveOps light |
+| Rok 2 | DLC 2, kozmetické balíky, prípadne battle pass ak MAU > 10 000 | LiveOps light |
 
 Pravidlo: každé rozšírenie musí prejsť testom „prinesie to hráčov alebo peniaze úmerne námahe?" — inak backlog.
 
@@ -245,11 +229,11 @@ Nápady so zlým pomerom námaha/prínos pre sólo tvorcu teraz, zaznamenané pr
 
 | Riziko | Pravdepodobnosť | Dopad | Mitigácia |
 |---|---|---|---|
-| Odmietnutie/odstránenie zo storu pre citlivú tému | Stredná | Fatálny | Kap. 2 dodržať bez výnimky; frakcie nie etniká; v1.0 začína varjažsko-chazarskou érou; historický kódex v hre |
+| Odmietnutie/odstránenie zo storu pre citlivú tému | Stredná | Fatálny | Kap. 2 dodržať bez výnimky; fiktívny svet; nepriatelia len rolou; disclaimer pri prvom spustení |
 | Mediálna kontroverzia (z oboch strán) | Stredná | Obojsečný | Nekŕmiť; odpovedať vecne historickými zdrojmi; hra musí byť obhájiteľná obsahom, nie vyhláseniami |
 | Premium hra sa organicky nepredáva | Vysoká | Vysoký | TikTok/Shorts od F2, demo/Trials, Play Pass, Steam port |
 | Ovládanie v praxi nefunguje | Nízka–stredná | Fatálny | F1 ako Go/No-Go míľnik pred akoukoľvek ďalšou investíciou |
-| Scope creep / vyhorenie sólo tvorcu | Vysoká | Vysoký | Fixný rozsah v1.0 (kap. 3.5), všetko navyše do backlogu; malé týždenné míľniky |
+| Scope creep / vyhorenie sólo tvorcu | Vysoká | Vysoký | Fixný rozsah v1.0 (kap. 3.4), všetko navyše do backlogu; malé týždenné míľniky |
 | AI-generovaný kód sa stane neudržiavateľným | Stredná | Stredný | Git od 1. dňa, malé úlohy, týždenný refactor |
 | Neprejdenie 12-testerov/14-dní testu | Nízka | Odklad | Nábor 15–20 testerov s rezervou už vo F3, denné pripomienky testerom |
 
