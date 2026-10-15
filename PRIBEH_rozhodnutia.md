@@ -5,6 +5,8 @@ Claude sem zapisuje každé rozhodnutie Pavla k príbehu; otvorené veci sú na 
 
 ## Rozhodnuté
 
+Názov: postava nad Teodorom, ktorú nikdy neukážeme a ktorá chce Zoru, sa zatiaľ volá **Majster** (s veľkým M, Pavel 2026-10-15).
+
 | Dátum | Čo | Detail |
 |---|---|---|
 | 2026-10-15 | **Zaprisahaní = Ordanovi agenti, definovaní vernosťou, nie pôvodom** | Ordan ich posiela zámerne, sú to v podstate špehovia. Prichádzajú postupne počas Aktu II pod rúškom obchodu a v L6 sa dajú naverbovať, keď Rada verbuje za peniaze. Žiadne kultúrne ani etnické znaky, žiadny migračný rámec (pravidlá §2 príbehu, Google Play: nenávistný obsah chráni aj národnosť a imigračný status). |
@@ -18,7 +20,7 @@ Claude sem zapisuje každé rozhodnutie Pavla k príbehu; otvorené veci sú na 
 ## Otvorené
 
 1. **Spojiť koniec s §7 handoffu?** Návrh: Zora najprv nahlas prečíta vymazané mená (aktívny čin, odhalí, komu Rada slúži), medzi nimi aj vymazané meno rukojemníka z dohody o prímerí; potom sa otvorí portál s „Vojtekom“ a ona vkročí. Jej sila (vidí vymazané) ju nezradí — dvojča je skutočný človek.
-2. **Kto je učiteľ dvojčaťa:** podľa handoffu Teodor (boss L9, guľa) berie rozkazy od neviditeľného „majstra“, ktorý chce Zoru. Návrh: učeň je majstrov (Teodor v L9 padne, majster ostáva na DLC).
+2. **Kto je učiteľ dvojčaťa:** podľa handoffu Teodor (boss L9, guľa) berie rozkazy od neviditeľného Majstra, ktorý chce Zoru. Návrh: učeň je Majstrov (Teodor v L9 padne, Majster ostáva na DLC).
 3. **Meno dvojčaťa** (pravidlá mien §5: ASCII, max 3 slabiky, slovanský koreň).
 4. **Koho Vlad vytiahne z klietky v L1:** bezmenný chlapec, niekto iný, alebo Dobrava s deťmi (handoff zatiaľ: Dobrava sa zachráni sama).
 5. **Miran v L1:** handoff ho má ako chlapca z klietky v L1; ako oficiálny rukojemník od L3 to nesedí. Návrh: Miran prichádza až v L3; odhalenie v L7 je „čo vybudoval“ (sieť zaprisahaných s uzlom), nie „kto je“.
