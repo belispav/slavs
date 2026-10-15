@@ -7,6 +7,9 @@ Local Claude Desktop and cloud both work - never in both at once.
 
 CLAUDE.md was shortened on 2026-10-05 (done, no longer a task).
 
+## STORY SESSION (2026-10-15) - read first if the topic is the story
+Pavel is finishing the story before any generation. Read `20261015 - Handoff Slavs fight back.md` and `PRIBEH_rozhodnutia.md` (decisions after the handoff, they win; open questions at its end). Do not edit the two story HTML dashboards. Waiting on Pavel: (1) ending - his version vs combined (Zora first reads the erased names aloud, then steps into the portal), (2) currency, why replay, cages, how a level ends (T09) - one question at a time, options with pluses/minuses. Record every decision in `PRIBEH_rozhodnutia.md`, commit; Pavel pushes himself (`git push`, the device shell has no GitHub login).
+
 ## WORK PACKAGES (Pavel 2026-10-07) - read `BALIKY_poradie.md` FIRST
 Pavel now works in packages of ToDo items, each in a clean Sonnet session. `BALIKY_poradie.md` says which package is NEXT (now: **Package 4 - Prvá odmena: zber a séria (+ T09)**; Packages 1, 2 and 3 are closed), what already exists in code, and how to close a package. Work only on that package unless Pavel says otherwise.
 
