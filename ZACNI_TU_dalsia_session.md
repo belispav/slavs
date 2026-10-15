@@ -7,8 +7,12 @@ Local Claude Desktop and cloud both work - never in both at once.
 
 CLAUDE.md was shortened on 2026-10-05 (done, no longer a task).
 
-## STORY SESSION (2026-10-15) - read first if the topic is the story
-Pavel is finishing the story before any generation. Read `20261015 - Handoff Slavs fight back.md` and `PRIBEH_rozhodnutia.md` (decisions after the handoff, they win; open questions at its end). Do not edit the two story HTML dashboards. Waiting on Pavel: (1) ending - his version vs combined (Zora first reads the erased names aloud, then steps into the portal), (2) currency, why replay, cages, how a level ends (T09) - one question at a time, options with pluses/minuses. Record every decision in `PRIBEH_rozhodnutia.md`, commit; Pavel pushes himself (`git push`, the device shell has no GitHub login).
+## STORY SESSION (updated 2026-10-15 evening) - read first if the topic is the story
+**Next: the character card of VLAD** (Pavel, next session, at his PC).
+Pavel finishes the story before any generation, going character by character: motivation, what he/she is after, role, relations to the others. Read `PRIBEH_rozhodnutia.md` FIRST (section Postup, the Zora card as the model for a card, decisions table, Otvorené) - it wins over `20261015 - Handoff Slavs fight back.md`; then the handoff only for the parts you need (cast §5, levels §6, Zora §7, set pieces §8, §12). Do not edit the two story HTML dashboards; the v5 one uses old names (Radko = Vojtek, Mstislav = Jarek, Bohuš = Bohdan).
+How to work: first list everything the files say about the character (as was done for Zora), then let Pavel react; record his answers as a card in `PRIBEH_rozhodnutia.md`, one question at a time, flag weak spots briefly. Things already settled that touch Vlad: Zora's card (no love, no explicit father-daughter, both are magical beings who sense they belong together; why Vlad cares for her is to be solved on HIS card), Vlad is against the hostage exchange (decisions table), the slow-motion shot of Vlad shouting "no" at the portal.
+Not now: currency, why replay, cages, how a level ends (T09) - Pavel is still thinking.
+Commit every change; Pavel pushes himself (`git push`; the device shell has no GitHub login, and git there leaves `.git/*.lock` files - move a stale one away, e.g. `mv .git/HEAD.lock .git/stale-HEAD-lock`).
 
 ## WORK PACKAGES (Pavel 2026-10-07) - read `BALIKY_poradie.md` FIRST
 Pavel now works in packages of ToDo items, each in a clean Sonnet session. `BALIKY_poradie.md` says which package is NEXT (now: **Package 4 - Prvá odmena: zber a séria (+ T09)**; Packages 1, 2 and 3 are closed), what already exists in code, and how to close a package. Work only on that package unless Pavel says otherwise.

@@ -3,6 +3,13 @@
 Dopĺňa `20261015 - Handoff Slavs fight back.md`. Pri rozpore platí tento súbor (je novší).
 Claude sem zapisuje každé rozhodnutie Pavla k príbehu; otvorené veci sú na konci.
 
+## Postup (Pavel 2026-10-15)
+
+Pred zložením finálneho príbehu prechádzame postavy po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Každá postava dostane kartu v tomto súbore. Pavel pri tom mení aj dej (zatiaľ hlavne Akt I); Akt II, L5, L6 a Akt III sa riešia až po Akte I. Jedna otázka naraz.
+- **Hotové:** Zora (2026-10-15).
+- **Ďalšia:** Vlad (jeho motivácia, prečo sa stará o Zoru, vzťah k nej). Potom postavy podľa Pavla.
+- **Mená:** platia mená v6 (handoff §5). HTML dashboard v5 používa ešte staré mená: **Radko = Vojtek, Mstislav = Jarek, Bohuš = Bohdan.** Keď Pavel povie staré meno, myslí túto postavu. Mená sa môžu meniť pri kartách (Jarek/Radim sú otvorené v handoffe §12.6).
+
 ## Rozhodnuté
 
 Názov: postava nad Teodorom, ktorú nikdy neukážeme a ktorá chce Zoru, sa zatiaľ volá **Majster** (s veľkým M, Pavel 2026-10-15).
@@ -27,11 +34,15 @@ Kde sa líši od handoffu (§5, §7), platí táto karta.
 - **Povaha:** vzdorovitá, tvrdohlavá, nedá sa ľahko oklamať. Hovorí drzo a provokatívne.
 - **Minulosť:** žiadna, rovnako ako Vlad. Je zámerne tajomná, mystiku na tom postavíme neskôr. Okrem Vlada je to druhá postava so silou; plán s ňou minimálne v DLC a asi aj v 2. diele.
 
-**Sila: cíti Pravdu** (nahrádza návrh handoffu „číta, čo bolo vymazané“)
-- Ľudský detektor lži. Svoju silu nepozná, ale niečo ju ženie odhaľovať pravdu a sila jej často „našepkáva“.
+**Sila: cíti, či to, čo bolo povedané alebo napísané, je pravda** (Pavel 2026-10-15; nahrádza návrh handoffu „číta, čo bolo vymazané“, handoff §12.1 je tým uzavretý)
+- Silu nepozná a neovláda. Má len pocity a niečo, čo ju niekam smeruje („našepkáva“). Neskôr pravdu možno aj vidí, najskôr v DLC.
+- Cíti len to, či je povedané alebo napísané pravdivé. Necíti, čo niekto zamlčal (zbytočne zložité na pochopenie, Pavel to nechce).
+- Priama lož je pred ňou slabá: jednoduchých klamárov odhalí hneď (Pavel uviedol Mstislava, teraz Jarek).
+- Šikovní manipulátori sa snažia neklamať, ale zavádzať. Z nich má iba zlý pocit.
+- **Pravda je pre každého trochu iná**, podľa toho, ako sa kto pozerá na svet. Toto chce hra ukázať. Miran a zaprisahaní majú svoju pravdu (že majú právo ovládnuť Slovanov), preto ich ako „nepravdu“ odhaliť nevie, má z nich len zlý pocit.
+- Hlavné využitie: keď niekto prekrúca veci (zákony a vydania Rady), vycíti, že za tým nie je pravda. Trefnými otázkami na ľudí, ktorí nevedia uhýbať (napr. úradník), ukáže slabý základ toho, čo robí Rada.
 - Preto ju chce Majster: je ultimátna zbraň proti klamu a falši. Ona je Pravda.
-- Hranica sily (vyplýva z konca hry): cíti, či je odpoveď pravdivá, nie či položila správnu otázku.
-- Využitie v príbehu: ukazovať, ako Rada cez zákony a ich vydania deformuje veci.
+- Hranica sily (koniec hry): cíti, či je odpoveď pravdivá, nie či položila správnu otázku.
 
 **Motivácie**
 1. Hľadanie Pravdy. Hlavná, je kladnou silou, ktorá posúva dej.

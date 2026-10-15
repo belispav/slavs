@@ -13,7 +13,7 @@ Pavel rieši každý balík v novej session (Sonnet). Na rade je balík so stavo
 4. **Prvá odmena: zber a séria (+ T09)** – NA RADE – A15, D1, A16, J4, H1, H3, T09
 5. **Hrdina v pohybe** – čaká – B1, T37, B2, A17
 
-## ToDo's (otvorené úlohy; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, príbeh `20261015 - Handoff Slavs fight back.md` §12)
+## ToDo's (otvorené úlohy; MASTER = CLAUDE.md "Open", ZACNI_TU_dalsia_session.md, príbeh `PRIBEH_rozhodnutia.md` -> Otvorené + `20261015 - Handoff Slavs fight back.md` §12)
 
 Claude: pri zmene stavu aktualizuj zdroje aj tento zoznam aj `KDE_JE_CO.html`.
 ID (T01...) sú STÁLE: Pavel na ne odkazuje ("T07"). Nikdy ich neprečísluj; nová vec dostane ďalšie číslo (posledné pridelené: T54).
@@ -21,8 +21,8 @@ Každá úloha má v zátvorke {oblasť prínos námaha}: oblasť = písmeno A�
 Tu a v dashboarde sú LEN otvorené úlohy. Keď je úloha hotová, zrušená alebo zavretá: presuň jej riadok do `_archiv/TODO_hotove.md` (tam ho Claude nečíta, len na požiadanie) a zmaž ho odtiaľto aj z `KDE_JE_CO.html`. Hotové veci sa v dashboarde nezobrazujú.
 
 ### Čaká na Pavla
-T04 Príbeh v5 prevzatý 2026-10-15 (Pavel ho ešte upravuje). Rozhodnúť otvorené body príbehu (§12: sila Zory, meno Vojtek, bossovia L5/L6, L8, mená Jarek/Radim, 9 alebo 7–8 levelov, znak gardy, finálna forma) + meno rage VOLYA + 6 rozporov s hotovou hrou (CLAUDE.md Open 12). [príbeh §12, CLAUDE.md Open 12] {Q ★★★ stredná}
-T54 AKTÍVNE (Pavel 2026-10-15): začať generovať levely/scény a postavy podľa príbehu v5; prvá dávka = scény S01–S10 (príbeh §10). Pred finálnou grafikou vyriešiť T17 (jednotná paleta). [príbeh §8, §10] {C ★★★ vysoká}
+T04 Príbeh v5 prevzatý 2026-10-15, Pavel ho dokončuje po postavách: karta každej postavy (motivácia, cieľ, úloha, vzťahy) v `PRIBEH_rozhodnutia.md`; Zora hotová 2026-10-15, ďalší Vlad. Rozhodnúť otvorené body príbehu (`PRIBEH_rozhodnutia.md` -> Otvorené; §12: meno Vojtek, bossovia L5/L6, L8, mená Jarek/Radim, 9 alebo 7–8 levelov, znak gardy, finálna forma) + meno rage VOLYA + 6 rozporov s hotovou hrou (CLAUDE.md Open 12). [príbeh §12, CLAUDE.md Open 12] {Q ★★★ stredná}
+T54 ČAKÁ na dokončenie príbehu (T04; Pavel 2026-10-15: najprv príbeh, potom generovanie): začať generovať levely/scény a postavy podľa príbehu v5; prvá dávka = scény S01–S10 (príbeh §10). Pred finálnou grafikou vyriešiť T17 (jednotná paleta). [príbeh §8, §10] {C ★★★ vysoká}
 T07 AKTÍVNE (Pavel urobí v najbližších dňoch): krátky test (cca 10 min) na inom telefóne: ovládanie a či sedí obrazovka pri inom pomere strán (zamknutá scéna, horný pás). Plné ladenie DPI až neskôr. [Open 7] {O ★★★ nízka}
 T08 ODLOŽENÉ (Pavel 2026-10-06): kontrola Google Play pravidiel/IARC až keď bude hotová kostra hry (príbeh, hlášky...). Nemá zmysel kontrolovať hru, ktorá je z 10 % hotová. [Open 10] {U ★★★ stredná}
 T09 AKTÍVNE (Pavel 2026-10-06): základy grafiky sú hotové, teraz sa riešia herné mechanizmy: čo ukončí beh, ekonomika klietok, zoznam vylepšení, odomykanie levelov, prepínanie zbraní poklepaním. [príbeh §4; otázky z `_archiv/pribeh_stary/DIZAJN_core_loop.md` §3] {J ★★★ vysoká}
