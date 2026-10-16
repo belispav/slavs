@@ -60,6 +60,8 @@ section{display:flex;flex-direction:column;gap:12px}
 .zora h2{color:var(--zora)}
 .vlad{border-color:var(--next);box-shadow:inset 4px 0 0 var(--next)}
 .vlad h2{color:var(--next)}
+.ordan{border-color:var(--open);box-shadow:inset 4px 0 0 var(--open)}
+.ordan h2{color:var(--open)}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
 .block{background:var(--bg);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .block h3{color:var(--accent)}
@@ -82,15 +84,15 @@ code{font-family:var(--font-mono);font-size:.85em}
 <div class="wrap">
 
 <header>
-  <span class="eyebrow">Slavs fight back · príbeh · stav 16. 10. 2026, 11:30</span>
+  <span class="eyebrow">Slavs fight back · príbeh · stav 17. 10. 2026</span>
   <h1>Karty postáv</h1>
-  <p class="lede">Postavy prechádzame po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Hotoví sú Zora a Vlad, ďalšiu postavu vyberáš ty. Pri ostatných postavách je uvedené len to, čo hovorí handoff a čo sme už rozhodli inde.</p>
+  <p class="lede">Postavy prechádzame po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Hotoví sú Zora, Vlad a Ordan, na rade je Teodor. Pri ostatných postavách je uvedené len to, čo hovorí handoff a čo sme už rozhodli inde.</p>
 </header>
 
 <div class="tiles">
-  <div class="tile t-done"><div class="n">2</div><div class="l">Hotové karty</div><div class="d">Zora, Vlad</div></div>
-  <div class="tile t-next"><div class="n">?</div><div class="l">Na rade</div><div class="d">vyberáš ty</div></div>
-  <div class="tile t-todo"><div class="n">15</div><div class="l">Neprejdené</div><div class="d">podľa handoffu</div></div>
+  <div class="tile t-done"><div class="n">3</div><div class="l">Hotové karty</div><div class="d">Zora, Vlad, Ordan</div></div>
+  <div class="tile t-next"><div class="n">1</div><div class="l">Na rade</div><div class="d">Teodor</div></div>
+  <div class="tile t-todo"><div class="n">13</div><div class="l">Neprejdené</div><div class="d">podľa handoffu</div></div>
   <div class="tile t-open"><div class="n">8</div><div class="l">Otvorené otázky</div><div class="d">dole na stránke</div></div>
 </div>
 
@@ -254,6 +256,53 @@ code{font-family:var(--font-mono);font-size:.85em}
   </div>
 </article>
 
+<!-- ORDAN -->
+<article class="card ordan">
+  <div class="card-head">
+    <div><h2>Ordan</h2><span class="who">cudzí vojvodca · politický protivník · DLC a 2. diel</span></div>
+    <span class="badge b-done">karta hotová 16. 10.</span>
+  </div>
+  <div class="grid2">
+    <div class="block">
+      <h3>Kto je</h3>
+      <ul>
+        <li><span class="key">Pôvod:</span> cudzinec z vymyslenej cudzej krajiny. Bez skutočného národa, náboženstva a svetovej strany. Bez mágie.</li>
+        <li><span class="key">Vzhľad:</span> okolo 40 rokov, vysoký, štíhly. Nemá rád luxus, chodí stále vo vojenskom.</li>
+        <li><span class="key">Povaha:</span> stratég, všetko zvažuje zo strategického hľadiska. Život je boj.</li>
+        <li>Nemá rád zbytočnú krutosť. Zverstvá prikáže, keď treba, pre psychologický efekt.</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3>Čo chce</h3>
+      <ul>
+        <li>Jeho zem je neúrodná, slovanská je úrodná. Chce sa sem dostať.</li>
+        <li>Chamtivosť, ale aj kladná stránka: <b>lepší život pre svoj ľud</b>. To je jeho pravda, takže ho Zora svojou silou neodhalí.</li>
+        <li>Ide mu o dobro svojich ľudí, s inými nemá ľútosť.</li>
+        <li class="note">Súlad s pravidlami (migrácia, Google Play) sa kontroluje až pri výrobe, na textoch a scénach.</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3>Vzťahy</h3>
+      <ul>
+        <li><b>Miran:</b> syn, je naňho naviazaný. Jeho poslanie u Slovanov má ukázať, že Miran bude budúci vodca.</li>
+        <li><b>Čarodejník:</b> vie o ňom a trpí ho z nutnosti, bez neho by Slovanov neporazil. Neverí mu a čaká, kedy sa ho zbaví. Je to háčik na DLC.</li>
+        <li><b>Vlad:</b> krátke stretnutie v L3 pri rokovaní o prímerí. Uvidí v ňom jedinú skutočnú hrozbu, a preto pošle Mirana ako rukojemníka, aby mal oči pri Vladovi.</li>
+        <li><b>Zora:</b> nezaujíma ho, jedine cez Mirana.</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3>Čo už platí z príbehu</h3>
+      <ul>
+        <li>Jeho nájazdníci v L1 pália Hradisko. Radimovi sľúbi, že ušetrí jeho dedinu.</li>
+        <li>Po L3 ustúpi, nie je porazený. Pri prímerí pošle Mirana, dostane Dobravinho syna.</li>
+        <li>Zaprisahaní sú jeho špehovia s uzlom na šatke.</li>
+        <li><b>Nápad:</b> ponuka spojenectva Vladovi, možno neskôr v hre.</li>
+        <li><b>Nie je dané:</b> jeho koniec a epilóg (pri aktoch).</li>
+      </ul>
+    </div>
+  </div>
+</article>
+
 <!-- OSTATNÉ -->
 <section>
   <h2>Ostatné postavy (zatiaľ neprejdené)</h2>
@@ -291,20 +340,7 @@ code{font-family:var(--font-mono);font-size:.85em}
         <li>Či je v L1 v klietke, je otvorené. Návrh: príde až v L3.</li>
         <li>Možno sa zaľúbi do Zory (pozri jej kartu).</li></ul></div></div>
 
-    <div class="card small"><div class="card-head"><h3>Ordan</h3><span class="badge b-next">rozpracovaná</span></div>
-      <div class="lbl">Handoff</div>
-      <p>Veliteľ nájazdu z juhu (smer už neplatí). V Akte I ustúpi, nie je porazený. Chce krajinu. Politický, bez mágie. Vráti sa v epilógu, DLC alebo 2. diel.</p>
-      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
-        <li>Zámerne pošle Mirana ako rukojemníka, je to jeho úskok od začiatku.</li>
-        <li>Zaprisahaní sú jeho agenti, v Akte II prichádzajú pod rúškom obchodu. Ich znak je uzol na šatke.</li>
-        <li><b>16. 10.:</b> je cudzinec z vymyslenej cudzej krajiny. Bez skutočného národa, náboženstva aj svetovej strany.</li>
-        <li><b>Kto je:</b> stratég okolo 40, vysoký, štíhly, bez luxusu, stále vo vojenskom. Dobro svojho ľudu nadovšetko, s inými bez ľútosti („život je boj“). Zbytočnú krutosť nemá rád, ale zverstvá pre psychologický efekt prikáže, keď treba.</li>
-        <li><b>Miran:</b> je naňho naviazaný. Jeho úloha u Slovanov má dokázať, že bude budúcim vodcom.</li>
-        <li><b>Čarodejník:</b> vie o ňom a trpí ho z nutnosti, bez neho by Slovanov neporazil. Neverí mu a čaká, kedy sa ho zbaví (háčik na DLC).</li>
-        <li><b>Vlad:</b> stretnú sa krátko v L3 pri rokovaní o prímerí. Ordan v ňom uvidí jedinú skutočnú hrozbu, a preto pošle Mirana, aby mal oči pri Vladovi. Ponuka spojenectva zatiaľ nie, možno neskôr.</li>
-        <li><b>Prečo chce zem:</b> chamtivosť aj nutnosť. Jeho zem je neúrodná, slovanská úrodná. Chce lepší život pre svoj ľud (jeho kladná stránka a jeho pravda).</li></ul></div></div>
-
-    <div class="card small"><div class="card-head"><h3>Teodor</h3><span class="badge b-todo">neprejdená</span></div>
+    <div class="card small"><div class="card-head"><h3>Teodor</h3><span class="badge b-next">na rade</span></div>
       <div class="lbl">Handoff</div>
       <p>Majster pisárov, postavil celý stroj Rady. Boss L9, jediný s mágiou. Rozkazy dostáva cez guľu.</p>
       <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>

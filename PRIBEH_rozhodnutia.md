@@ -6,8 +6,8 @@ Claude sem zapisuje každé rozhodnutie Pavla k príbehu; otvorené veci sú na 
 ## Postup (Pavel 2026-10-15)
 
 Pred zložením finálneho príbehu prechádzame postavy po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Každá postava dostane kartu v tomto súbore. Pavel pri tom mení aj dej (zatiaľ hlavne Akt I); Akt II, L5, L6 a Akt III sa riešia až po Akte I. Jedna otázka naraz. **Keď nová karta zmení niečo na staršej, staršiu kartu upraviť hneď tiež** (Pavel 2026-10-16), v md aj v dashboarde `POSTAVY_karty.html`.
-- **Hotové:** Zora (2026-10-15), Vlad (2026-10-16).
-- **Ďalšia:** podľa Pavla.
+- **Hotové:** Zora (2026-10-15), Vlad (2026-10-16), Ordan (2026-10-16).
+- **Ďalšia:** Teodor.
 - **Mená:** platia mená v6 (handoff §5). HTML dashboard v5 používa ešte staré mená: **Radko = Vojtek, Mstislav = Jarek, Bohuš = Bohdan.** Keď Pavel povie staré meno, myslí túto postavu. Mená sa môžu meniť pri kartách (Jarek/Radim sú otvorené v handoffe §12.6).
 
 ## Rozhodnuté
@@ -127,7 +127,7 @@ Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
 - Cesta hrou z handoffu (L1 až L9, epilóg) nie je daná, upraví sa pri aktoch. Platí: v L1 zasiahne pri Zore.
 - **Zbrane budú všelijaké.** Sekera je iba prototyp, na ktorom sa stavala hra; nevie sa, či ostane.
 
-## Karta postavy: Ordan (rozpracovaná, Pavel 2026-10-16)
+## Karta postavy: Ordan (hotová, Pavel 2026-10-16)
 
 **Základ**
 - Cudzinec z vymyslenej cudzej krajiny (pozri tabuľku rozhodnutí 2026-10-16). Politický protivník, bez mágie.
