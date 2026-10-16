@@ -132,6 +132,12 @@ Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
 **Základ**
 - Cudzinec z vymyslenej cudzej krajiny (pozri tabuľku rozhodnutí 2026-10-16). Politický protivník, bez mágie.
 
+**Kto je** (Pavel 2026-10-16)
+- **Povaha:** stratég, všetko zvažuje zo strategického hľadiska. Ide mu o dobro jeho ľudí, s inými nemá ľútosť: život je boj.
+- Nemá rád zbytočnú krutosť, robí, čo považuje za nutné. Vojnové zverstvá nemá rád, ale keď treba, neváha ich prikázať pre psychologický efekt.
+- **Miran:** je naňho naviazaný. Jeho úlohu u Slovanov berie ako misiu, ktorá ukáže, že z Mirana bude budúci vodca ich ľudu.
+- **Vzhľad:** okolo 40 rokov, vysoký, štíhly. Nemá rád luxus, chodí stále vo vojenskom.
+
 **Prečo chce túto zem** (Pavel 2026-10-16)
 - Chamtivosť spojená s realitou: slovanská zem v strede Európy je a vždy bola úrodná, jeho zem je neúrodná.
 - Chce lepší život pre svoj ľud. To je jeho kladná stránka a jeho vlastná pravda (Zora ho svojou silou neodhalí, lebo tomu verí).
