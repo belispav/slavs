@@ -127,6 +127,15 @@ Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
 - Cesta hrou z handoffu (L1 až L9, epilóg) nie je daná, upraví sa pri aktoch. Platí: v L1 zasiahne pri Zore.
 - **Zbrane budú všelijaké.** Sekera je iba prototyp, na ktorom sa stavala hra; nevie sa, či ostane.
 
+## Karta postavy: Ordan (rozpracovaná, Pavel 2026-10-16)
+
+**Základ**
+- Cudzinec z vymyslenej cudzej krajiny (pozri tabuľku rozhodnutí 2026-10-16). Politický protivník, bez mágie.
+
+**Prečo chce túto zem** (Pavel 2026-10-16)
+- Chamtivosť spojená s realitou: slovanská zem v strede Európy je a vždy bola úrodná, jeho zem je neúrodná.
+- Chce lepší život pre svoj ľud. To je jeho kladná stránka a jeho vlastná pravda (Zora ho svojou silou neodhalí, lebo tomu verí).
+
 ## Nápady (nie rozhodnuté)
 
 - **Panteón** (ak bude pokračovanie s viac mágiou, Pavel 2026-10-16): Vlad a Zora sú súčasťou panteónu bytostí-bohov. Varianty: (a) spolu jeden celok **Spravodlivosť**: ona súdi (vidí pravdu), on vykonáva (Hnev), preto ich to k sebe ťahá; (b) ona Spravodlivosť, on **Perun**, hlavný vládca panteónu.
