@@ -34,15 +34,17 @@ Kde sa líši od handoffu (§5, §7), platí táto karta.
 - **Povaha:** vzdorovitá, tvrdohlavá, nedá sa ľahko oklamať. Hovorí drzo a provokatívne.
 - **Minulosť:** žiadna, rovnako ako Vlad. Je zámerne tajomná, mystiku na tom postavíme neskôr. Okrem Vlada je to druhá postava so silou; plán s ňou minimálne v DLC a asi aj v 2. diele.
 
-**Sila: cíti, či to, čo bolo povedané alebo napísané, je pravda** (Pavel 2026-10-15; nahrádza návrh handoffu „číta, čo bolo vymazané“, handoff §12.1 je tým uzavretý)
-- Silu nepozná a neovláda. Má len pocity a niečo, čo ju niekam smeruje („našepkáva“). Neskôr pravdu možno aj vidí, najskôr v DLC.
-- Cíti len to, či je povedané alebo napísané pravdivé. Necíti, čo niekto zamlčal (zbytočne zložité na pochopenie, Pavel to nechce).
-- Priama lož je pred ňou slabá: jednoduchých klamárov odhalí hneď (Pavel uviedol Mstislava, teraz Jarek).
-- Šikovní manipulátori sa snažia neklamať, ale zavádzať. Z nich má iba zlý pocit.
-- **Pravda je pre každého trochu iná**, podľa toho, ako sa kto pozerá na svet. Toto chce hra ukázať. Miran a zaprisahaní majú svoju pravdu (že majú právo ovládnuť Slovanov), preto ich ako „nepravdu“ odhaliť nevie, má z nich len zlý pocit.
-- Hlavné využitie: keď niekto prekrúca veci (zákony a vydania Rady), vycíti, že za tým nie je pravda. Trefnými otázkami na ľudí, ktorí nevedia uhýbať (napr. úradník), ukáže slabý základ toho, čo robí Rada.
-- Preto ju chce Majster: je ultimátna zbraň proti klamu a falši. Ona je Pravda.
-- Hranica sily (koniec hry): cíti, či je odpoveď pravdivá, nie či položila správnu otázku.
+**Sila: cíti, či človek verí tomu, čo hovorí** (Pavel 2026-10-16; vidí do srdca, nie do faktov. Nahrádza „cíti, či je povedané pravdivé“ z 15. 10. a návrh handoffu „číta, čo bolo vymazané“; handoff §12.1 je tým uzavretý)
+- Prečo zmena: ak by videla jednu objektívnu Pravdu, Vlad by sa mýlil („jedna Pravda neexistuje“) a téma hry by sa rozpadla.
+- Silu nepozná a neovláda. Má len pocity a niečo, čo ju niekam smeruje („našepkáva“). Neskôr možno aj vidí, najskôr v DLC.
+- Platí pre povedané aj napísané (cíti, či pisateľ veril tomu, čo písal). Necíti, čo niekto zamlčal.
+- **Priamych klamárov a cynikov odhalí hneď** (napr. Jarek; úradník, ktorý sám neverí výmeru, ktorý číta).
+- **Fanatikov a úprimne presvedčených neodhalí.** Miran a zaprisahaní veria, že Ordan má na krajinu právo, preto pred ňou obstoja; má z nich len zlý pocit. Prokop „úprimne verí, že zachraňuje krajinu“ a prejde jej testom: Zora zistí, že úprimný človek môže páchať bezprávie.
+- **Jej oblúk:** na začiatku si myslí, že vidí Pravdu. Postupne zistí, že vidí len presvedčenie. Pochopenie, čo jej sila naozaj robí, je jej cesta k Vladovmu pohľadu.
+- Hlavné využitie: keď Rada prekrúca veci, vycíti, kto tomu sám neverí. Trefnými otázkami na ľudí, ktorí nevedia uhýbať (napr. úradník), ukáže slabý základ toho, čo Rada robí.
+- **Preto ju chce Majster:** pre tyrana je to dokonalý **detektor vernosti**: rozlíši, kto mu naozaj verí a kto len predstiera. Zbraň proti klamu sa stáva nástrojom na ovládanie (Vladovo varovanie).
+- Božský rozmer (pre panteón): súdi úmysel, nie iba činy.
+- Hranica sily (koniec hry): cíti, či odpovedajúci verí svojej odpovedi, nevie, či položila správnu otázku. Dvojča na „Si nažive?“ odpovie „Áno“ úprimne a pravdivo.
 
 **Motivácie**
 1. Hľadanie Pravdy. Hlavná, je kladnou silou, ktorá posúva dej. Spočiatku je čiernobiela a verí, že existuje jedna všeobecná Pravda. Vlad jej ukazuje, že je to veľmi ťažký pojem a jej hľadanie môže byť nebezpečný idealizmus; ona to odmieta a pochopí až na konci (alebo v DLC), keď ju sila sklame pri „Si nažive?“ (Vladova karta, Pravda a hnev).
@@ -63,7 +65,7 @@ Inú osobnú motiváciu nemá.
 - **Vlad:** nie láska, nie otec a dcéra, aspoň nie výslovne. Obaja sú magické bytosti. Cítia (prípadne počujú cez jeleňa, hlasy alebo Jagine veštby), že sa majú držať pri sebe; prečo, sa nevysvetľuje. **Dopĺňajú sa:** ona ho ženie stále hľadať a preverovať jeho vlastnú pravdu, on jej ukazuje, že jedna všeobecná Pravda je nebezpečný idealizmus (Vladova karta, Pravda a hnev).
 - **Vojtek:** zaľúbi sa prvý on, už v L1; ona sa do neho zaľúbi niekedy neskôr. Láska je vzájomná. Vojtek dostane úlohu v Akte II, možno už v L2 a L3. Jej zaľúbenie sa dá použiť na udalosť alebo zvrat (zatiaľ nič). Zabijú ho; kto a ako, je otvorené.
 - **Dvojča Vojteka:** až v DLC, ako v tabuľke vyššie.
-- **Majster:** chce ju, lebo vidí Pravdu.
+- **Majster:** chce ju ako detektor vernosti (vidí, kto naozaj verí).
 - **Miran alebo Teodor:** jeden z nich sa do nej možno tiež zaľúbi. Varianty (otvorené):
   - (a) Miran: zo žiarlivosti zabije Vojteka; Zora potom pomôže Vladovi zabiť Mirana, a tak sa do toho osobne zaplietne Ordan (syn).
   - (b) Teodor: naučí ju čítať. Pavel to vidí skôr takto; Miran by ju iba premostil k Ordanovi, čo pre nás nie je až také dôležité.
@@ -76,7 +78,7 @@ Inú osobnú motiváciu nemá.
 - **L2:** „všimne si, že Radim odchádza z porady skôr“ zatiaľ neplatí. Rada a Radimova úloha sa vyriešia neskôr.
 - **Akt I:** písmo je moc, ale nenaučí sa to od pisárov, vycíti to (viď Čítanie).
 - **Akt II (zápisník), L5, L6, celý Akt III:** otvorené. Najprv Akt I.
-- **Koniec hry:** do portálu vkročí sama, lebo verí, že Vojtek žije. Sklame ju jej vlastná sila: spýta sa „Si nažive?“, dvojča povie „Áno“ a je to pravda. Mala sa spýtať „Si to ty, Vojtek?“.
+- **Koniec hry:** do portálu vkročí sama, lebo verí, že Vojtek žije. Sklame ju jej vlastná sila: spýta sa „Si nažive?“, dvojča povie „Áno“ úprimne a je to pravda. Mala sa spýtať „Si to ty, Vojtek?“.
 
 ## Karta postavy: Vlad (Pavel 2026-10-16)
 
@@ -100,7 +102,7 @@ Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
 - **Jeho misia v hre:** neustále tlačí ľudí, aby vzali osud do vlastných rúk. Keď to nespravia, bezprávie vyrieši, ale je zatrpknutý a pripomína im, že ich nemôže ani nechce zachraňovať: tým, že to čakajú od neho, dávajú svoje životy do cudzích rúk.
 
 **Zora a Vlad: Pravda a hnev, dopĺňajú sa** (opravené 2026-10-16)
-- Zora cíti, či je povedané alebo napísané pravdivé. Vlad sa nahnevá pri bezpraví.
+- Zora cíti, či človek verí tomu, čo hovorí. Vlad sa nahnevá pri bezpraví.
 - **Čo je bezprávie, si určuje Vlad sám, podľa svojej pravdy.** Zora mu to neurčuje, lebo Vlad na jednu všeobecnú Pravdu neverí.
 - **Zora pre Vlada:** motivuje ho hľadať svoju pravdu, stále o nej uvažovať a meniť ju, aby bola tá najpravdivejšia, aká pre neho môže byť. Len keď koná podľa nej, má pocit, že koná správne.
 - **Vlad pre Zoru:** je dôkazom, že všeobecná Pravda je veľmi ťažký pojem. V niektorých veciach asi existuje, ale jej hľadanie môže byť nebezpečné a je v podstate idealizmom: keď jednu Pravdu definuje niekto iný, ovláda ňou ľudí, a pre ľudskú povahu sa to vždy zvrtne.
