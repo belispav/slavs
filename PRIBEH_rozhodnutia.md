@@ -5,7 +5,7 @@ Claude sem zapisuje každé rozhodnutie Pavla k príbehu; otvorené veci sú na 
 
 ## Postup (Pavel 2026-10-15)
 
-Pred zložením finálneho príbehu prechádzame postavy po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Každá postava dostane kartu v tomto súbore. Pavel pri tom mení aj dej (zatiaľ hlavne Akt I); Akt II, L5, L6 a Akt III sa riešia až po Akte I. Jedna otázka naraz.
+Pred zložením finálneho príbehu prechádzame postavy po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Každá postava dostane kartu v tomto súbore. Pavel pri tom mení aj dej (zatiaľ hlavne Akt I); Akt II, L5, L6 a Akt III sa riešia až po Akte I. Jedna otázka naraz. **Keď nová karta zmení niečo na staršej, staršiu kartu upraviť hneď tiež** (Pavel 2026-10-16), v md aj v dashboarde `POSTAVY_karty.html`.
 - **Hotové:** Zora (2026-10-15), Vlad (2026-10-16).
 - **Ďalšia:** podľa Pavla.
 - **Mená:** platia mená v6 (handoff §5). HTML dashboard v5 používa ešte staré mená: **Radko = Vojtek, Mstislav = Jarek, Bohuš = Bohdan.** Keď Pavel povie staré meno, myslí túto postavu. Mená sa môžu meniť pri kartách (Jarek/Radim sú otvorené v handoffe §12.6).
@@ -45,7 +45,7 @@ Kde sa líši od handoffu (§5, §7), platí táto karta.
 - Hranica sily (koniec hry): cíti, či je odpoveď pravdivá, nie či položila správnu otázku.
 
 **Motivácie**
-1. Hľadanie Pravdy. Hlavná, je kladnou silou, ktorá posúva dej.
+1. Hľadanie Pravdy. Hlavná, je kladnou silou, ktorá posúva dej. Spočiatku je čiernobiela a verí, že existuje jedna všeobecná Pravda. Vlad jej ukazuje, že je to veľmi ťažký pojem a jej hľadanie môže byť nebezpečný idealizmus; ona to odmieta a pochopí až na konci (alebo v DLC), keď ju sila sklame pri „Si nažive?“ (Vladova karta, Pravda a hnev).
 2. Rovnosť a práva žien, primerane 15. storočiu. Feminizmus ešte neexistoval, ženy mali menej práv. Čítať nevedel takmer nikto z bežných ľudí, mužov aj žien, ale rovnosť medzi nimi nebola.
 3. Milostné oblúky (viď Vzťahy).
 Inú osobnú motiváciu nemá.
@@ -60,7 +60,7 @@ Inú osobnú motiváciu nemá.
 **Úloha v dedine (hub):** otvorená. Vyplynie z príbehu, ostatných postáv a hernej mechaniky (mena, záchrana zajatcov, čo to spôsobí, koniec levelu: T09).
 
 **Vzťahy**
-- **Vlad:** nie láska, nie otec a dcéra, aspoň nie výslovne. Obaja sú magické bytosti. Cítia (prípadne počujú cez jeleňa, hlasy alebo Jagine veštby), že sa majú držať pri sebe. Prečo sa on o ňu stará, sa rieši na Vladovej karte.
+- **Vlad:** nie láska, nie otec a dcéra, aspoň nie výslovne. Obaja sú magické bytosti. Cítia (prípadne počujú cez jeleňa, hlasy alebo Jagine veštby), že sa majú držať pri sebe; prečo, sa nevysvetľuje. **Dopĺňajú sa:** ona ho ženie stále hľadať a preverovať jeho vlastnú pravdu, on jej ukazuje, že jedna všeobecná Pravda je nebezpečný idealizmus (Vladova karta, Pravda a hnev).
 - **Vojtek:** zaľúbi sa prvý on, už v L1; ona sa do neho zaľúbi niekedy neskôr. Láska je vzájomná. Vojtek dostane úlohu v Akte II, možno už v L2 a L3. Jej zaľúbenie sa dá použiť na udalosť alebo zvrat (zatiaľ nič). Zabijú ho; kto a ako, je otvorené.
 - **Dvojča Vojteka:** až v DLC, ako v tabuľke vyššie.
 - **Majster:** chce ju, lebo vidí Pravdu.
@@ -99,10 +99,13 @@ Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
 - Človek má byť slobodný, a to znamená, že musí konať, keď vidí niečo, čo sa mu nepáči. Kto čaká, že bude konať niekto iný, púšťa opraty svojho osudu z rúk.
 - **Jeho misia v hre:** neustále tlačí ľudí, aby vzali osud do vlastných rúk. Keď to nespravia, bezprávie vyrieši, ale je zatrpknutý a pripomína im, že ich nemôže ani nechce zachraňovať: tým, že to čakajú od neho, dávajú svoje životy do cudzích rúk.
 
-**Zora a Vlad: Pravda a hnev**
-- Zora vidí pravdu, Vlad sa pri bezpraví nahnevá. Čo je bezprávie, mu pomáha určiť Zora. Rozvíjať minimálne v rozhovoroch.
-- Zora je čiernobiela, verí, že existuje jedna Pravda. Vlad je skúsenejší a ukazuje jej, že jedna pravá Pravda neexistuje, okrem tej, že človek je zodpovedný sám za seba a za to, čo on sám považuje za pravdu. Hľadanie jednej Pravdy vedie do záhuby: znamená ovládanie ľudí niečím vonkajším, čo definoval niekto iný, a to sa pre ľudskú povahu vždy zvrtne.
-- Zora to odmieta. Pochopí to až na konci (alebo v DLC), keď ju sila sklame pri otázke „Si nažive?“.
+**Zora a Vlad: Pravda a hnev, dopĺňajú sa** (opravené 2026-10-16)
+- Zora cíti, či je povedané alebo napísané pravdivé. Vlad sa nahnevá pri bezpraví.
+- **Čo je bezprávie, si určuje Vlad sám, podľa svojej pravdy.** Zora mu to neurčuje, lebo Vlad na jednu všeobecnú Pravdu neverí.
+- **Zora pre Vlada:** motivuje ho hľadať svoju pravdu, stále o nej uvažovať a meniť ju, aby bola tá najpravdivejšia, aká pre neho môže byť. Len keď koná podľa nej, má pocit, že koná správne.
+- **Vlad pre Zoru:** je dôkazom, že všeobecná Pravda je veľmi ťažký pojem. V niektorých veciach asi existuje, ale jej hľadanie môže byť nebezpečné a je v podstate idealizmom: keď jednu Pravdu definuje niekto iný, ovláda ňou ľudí, a pre ľudskú povahu sa to vždy zvrtne.
+- Zora je spočiatku čiernobiela a odmieta to. Pochopí to až na konci (alebo v DLC), keď ju sila sklame pri otázke „Si nažive?“.
+- Rozvíjať minimálne v rozhovoroch.
 
 **Zúrivosť (rage) ako jadro hry** (Pavlov nápad 2026-10-16, rieši sa v T09)
 - Emócia hry: **„Pomstím bezprávie“ / „vybijem si hnev“.**
@@ -124,7 +127,7 @@ Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
 ## Nápady (nie rozhodnuté)
 
 - **Panteón** (ak bude pokračovanie s viac mágiou, Pavel 2026-10-16): Vlad a Zora sú súčasťou panteónu bytostí-bohov. Varianty: (a) spolu jeden celok **Spravodlivosť**: ona súdi (vidí pravdu), on vykonáva (Hnev), preto ich to k sebe ťahá; (b) ona Spravodlivosť, on **Perun**, hlavný vládca panteónu.
-- **Runy na Vladovi:** vymyslené znaky, inšpirované staroslovanskými. **Nikdy kolovrat** (8-ramenný „slnečný kolovrat“ šíria neonacistické skupiny, Bellingcat). Hromový znak (šesťlistá ružica, historicky „Perunov znak“) extrémistickú stopu nemá, ale je to živý symbol slovanskej rodnej viery → štylizovať, nekopírovať (pravidlo §2: žiadne skutočné náboženské symboly).
+- **Znaky na Vladovi (pracovný návrh 2026-10-16, Pavel chce vidieť obrázok):** nie runy (staroslovanské runy historicky neexistujú, dnešné „slovanské runy“ sú pseudohistória; severské runy nie sú slovanské a niektoré používajú neonacisti: Othala, SS blesky). Namiesto toho vlastné znaky v štýle **„čŕt a rezov“** (mních Chrabr, 9. stor.: Slovania pred kresťanstvom počítali a veštili „črtami a rezmi“): pásy rovných zárezov a uhlov na predlaktiach, pleciach a chrbte, bez oblúkov a kolies; na hrudi jeden ústredný znak = šesť rovných lúčov z jedného stredu (zjednodušený Perunov hromový znak, šesťlistá ružica). **Nikdy** kolovrat, svastika ani severské runy.
 - **Jaga** sa na konci hry premení na jeleňa (zo Zorinej karty).
 
 ## Otvorené
