@@ -6,8 +6,8 @@ Claude sem zapisuje každé rozhodnutie Pavla k príbehu; otvorené veci sú na 
 ## Postup (Pavel 2026-10-15)
 
 Pred zložením finálneho príbehu prechádzame postavy po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Každá postava dostane kartu v tomto súbore. Pavel pri tom mení aj dej (zatiaľ hlavne Akt I); Akt II, L5, L6 a Akt III sa riešia až po Akte I. Jedna otázka naraz.
-- **Hotové:** Zora (2026-10-15).
-- **Ďalšia:** Vlad (jeho motivácia, prečo sa stará o Zoru, vzťah k nej). Potom postavy podľa Pavla.
+- **Hotové:** Zora (2026-10-15), Vlad (2026-10-16).
+- **Ďalšia:** podľa Pavla.
 - **Mená:** platia mená v6 (handoff §5). HTML dashboard v5 používa ešte staré mená: **Radko = Vojtek, Mstislav = Jarek, Bohuš = Bohdan.** Keď Pavel povie staré meno, myslí túto postavu. Mená sa môžu meniť pri kartách (Jarek/Radim sú otvorené v handoffe §12.6).
 
 ## Rozhodnuté
@@ -19,7 +19,7 @@ Názov: postava nad Teodorom, ktorú nikdy neukážeme a ktorá chce Zoru, sa za
 | 2026-10-15 | **Zaprisahaní = Ordanovi agenti, definovaní vernosťou, nie pôvodom** | Ordan ich posiela zámerne, sú to v podstate špehovia. Prichádzajú postupne počas Aktu II pod rúškom obchodu a v L6 sa dajú naverbovať, keď Rada verbuje za peniaze. Žiadne kultúrne ani etnické znaky, žiadny migračný rámec (pravidlá §2 príbehu, Google Play: nenávistný obsah chráni aj národnosť a imigračný status). |
 | 2026-10-15 | **Znak zaprisahaných = uzol** | Prímerie po L3 sa spečatí zviazaním dvoch povrazov týmto uzlom („zviažeme sa s vami“); Ordanovi ľudia ho nosia na šatke na ramene ako znak mieru. Druhý význam: je to uzol, ktorým nájazdníci v L1 viazali zajatcov („zviažeme vás“). Odhalí to Zora (v L1 bola zviazaná). V hre: šatka jednej vyhradenej farby, ktorú nikto iný nenosí (rieši sa s paletou T17); uzol sa vysvetľuje v cutscénach a textom. |
 | 2026-10-15 | **Semienko zrady v Akte I: výmena rukojemníkov po L3** | Pri prímerí si strany vymenia rukojemníkov (v stredoveku bežné, synovia vládcov ako rukojemníci). Ordan zámerne pošle svojho syna **Mirana** — vážená osoba, obratný politik, ľudia rýchlo zabudnú, že je synom nepriateľa. Je to Ordanov úskok od začiatku. |
-| 2026-10-15 | **Vlad je proti rukojemníkom — osobne aj politicky** | Nechce zabiť zajatcov; je proti výmene. Osobne: nemá rád nové veci, je hlasom tradície, Miranov vzostup mu je proti srsti. Politicky: chápe, že Ordanov syn pri stole náčelníkov získa vplyv a je to nebezpečné. Náčelníci ho prehlasujú, Jarek vetou v duchu „aj ty si tu cudzí, a predsa ti veríme“. |
+| 2026-10-15 | **Vlad je proti rukojemníkom — osobne aj politicky** | Nechce zabiť zajatcov; je proti výmene. Osobne: Miranov vzostup mu je proti srsti (dôvod „hlas tradície, nemá rád nové veci“ Pavel 2026-10-16 vzal späť). Politicky: chápe, že Ordanov syn pri stole náčelníkov získa vplyv a je to nebezpečné. Náčelníci ho prehlasujú, Jarek vetou v duchu „aj ty si tu cudzí, a predsa ti veríme“. |
 | 2026-10-15 | **K Ordanovi ide syn Dobravy** | Dobrava je vdova po náčelníkovi (inej dediny, padol pri nájazde). Jej syn je „férová“ výmena za Ordanovho syna. Háčik na DLC: Dobrava tlačí na Vlada, aby išiel k Ordanovi — pre pomstu aj pre syna. |
 | 2026-10-15 | **Vojtek a rukojemník sú dvojčatá** | Vojtekovi dať v hre viac priestoru. Zora sa do Vojteka zamiluje; v L7 Vojteka zabijú. Dvojča u Ordana sa stane tajným učňom čarodejníka (toho, kto stojí nad Ordanom a Miranom, využíva ich a zároveň chce Ordana ovládať a dohliadať naňho; Ordan a Miran to možno chápu, ale hodí sa im to). Vo finále DLC ukáže mágiu, možno Ordana zabije sám. Oblúk: dvojča = zlo, Vojtek = dobro; v pokračovaní jeden z prvých nepriateľov. Zora v DLC stojí proti človeku, ktorý vyzerá ako jej mŕtvy milý. |
 | 2026-10-15 | **Koniec hry: Zora vkročí do portálu sama** | Nie je unesená. Čarodejník vyčaruje portál, z neho na ňu máva dvojča; Zora si myslí, že Vojtek zázrakom ožil, a vkročí sama. Spomalený záber na Vlada, ktorý kričí „nie“. (Mení §8.4 handoffu „bez spomalenia“ — to sa týkalo násilia na necivilistoch, tu ide o emóciu, pravidlá to neporušuje.) |
@@ -78,6 +78,55 @@ Inú osobnú motiváciu nemá.
 - **Akt II (zápisník), L5, L6, celý Akt III:** otvorené. Najprv Akt I.
 - **Koniec hry:** do portálu vkročí sama, lebo verí, že Vojtek žije. Sklame ju jej vlastná sila: spýta sa „Si nažive?“, dvojča povie „Áno“ a je to pravda. Mala sa spýtať „Si to ty, Vojtek?“.
 
+## Karta postavy: Vlad (Pavel 2026-10-16)
+
+Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
+
+**Základ**
+- **Meno:** Vlad (Kódex: Vladan „Búrka“). Kto presne je, sa zatiaľ nerieši.
+- **Vzhľad:** husté čierne vlasy po plecia, svalnatý (veľmi široké ramená, krátky hrubý krk), beloch. Zvažuje sa ochlpenie na hrudi. **V rage sa mu na tele rozsvietia runy**, akoby ich mal vytetované neviditeľným atramentom (staroslovanské motívy, možno Perunovo znamenie; pozri Nápady).
+- **Povaha:** vážny, efektívny, priamočiary, málovravný, radšej koná, než hovorí. Občas veľmi suchý vtip. **Všetky hlášky: ikonické, krátke, úderné.**
+- **Samotár, nie vodca.** Ak vedie, tak len kým mu to pomáha napraviť to, čo chce (napr. vyhnať Ordana). Či mu vládu vôbec ponúknu a či po ňom ostane „prázdne miesto po moci“, sa rozhodne pri aktoch.
+- **Mágia:** hojí sa rýchlo, po smrti ožíva (platí).
+- **Kto ho poslal:** nerieši sa. Pavel ho vidí skôr ako samostatnú bytosť (jednu z bytostí-bohov, ak bude panteón), nie ako poslanca.
+
+**Čo ho ženie**
+- Viditeľnú motiváciu nemá. Keď vidí bezprávie, má nutkanie ho napraviť; **čím väčšia krivda, tým väčší hnev** (ako Hulk).
+- Vie, že aj jeho náprava je bezprávím, len z jeho pohľadu, a prijíma to.
+
+**Čo má ukázať (posolstvo hry cez neho)**
+- Čím viac zodpovednosti a rozhodnutí nechajú bežní ľudia na niekoho iného (náčelník, sused, vojaci), tým menej slobody majú a tým viac bezprávia sa im deje.
+- Človek má byť slobodný, a to znamená, že musí konať, keď vidí niečo, čo sa mu nepáči. Kto čaká, že bude konať niekto iný, púšťa opraty svojho osudu z rúk.
+- **Jeho misia v hre:** neustále tlačí ľudí, aby vzali osud do vlastných rúk. Keď to nespravia, bezprávie vyrieši, ale je zatrpknutý a pripomína im, že ich nemôže ani nechce zachraňovať: tým, že to čakajú od neho, dávajú svoje životy do cudzích rúk.
+
+**Zora a Vlad: Pravda a hnev**
+- Zora vidí pravdu, Vlad sa pri bezpraví nahnevá. Čo je bezprávie, mu pomáha určiť Zora. Rozvíjať minimálne v rozhovoroch.
+- Zora je čiernobiela, verí, že existuje jedna Pravda. Vlad je skúsenejší a ukazuje jej, že jedna pravá Pravda neexistuje, okrem tej, že človek je zodpovedný sám za seba a za to, čo on sám považuje za pravdu. Hľadanie jednej Pravdy vedie do záhuby: znamená ovládanie ľudí niečím vonkajším, čo definoval niekto iný, a to sa pre ľudskú povahu vždy zvrtne.
+- Zora to odmieta. Pochopí to až na konci (alebo v DLC), keď ju sila sklame pri otázke „Si nažive?“.
+
+**Zúrivosť (rage) ako jadro hry** (Pavlov nápad 2026-10-16, rieši sa v T09)
+- Emócia hry: **„Pomstím bezprávie“ / „vybijem si hnev“.**
+- Striedanie: v leveloch malé epizódy bezprávia (buď naskriptované v čase, alebo miesta v leveli, kde Vlad pri priblížení niečo uvidí), ktoré nahnevajú Vlada aj hráča → plní sa rage bar → fáza masakru, kde sa nahromadený hnev vybije na nepriateľoch.
+- Mimo rage je hra depresívna, pomaly eskalujúca, vyvoláva nepokoj a diskomfort. Počas rage čisté šialenstvo.
+- Nie je isté, že sa rage bude plniť iba oslobodzovaním zajatcov.
+- Znaky: blesk a víchor (ako to animovať, uvidíme) + svietiace runy na tele.
+
+**Vzťahy**
+- **Zora:** pozri jej kartu a časť Pravda a hnev.
+- **Dobrava:** z jej strany asi mix lásky a hľadania ochrany; z jeho strany ochrana, či aj láska, sa rozhodne na jej karte.
+- **Miran:** na jeho karte.
+
+**Vzaté späť / zatiaľ nedané**
+- „Hlas tradície, nemá rád nové veci“ (rozhodnutie 15. 10.) **neplatí.**
+- Cesta hrou z handoffu (L1 až L9, epilóg) nie je daná, upraví sa pri aktoch. Platí: v L1 zasiahne pri Zore.
+- **Zbrane budú všelijaké.** Sekera je iba prototyp, na ktorom sa stavala hra; nevie sa, či ostane.
+
+## Nápady (nie rozhodnuté)
+
+- **Panteón** (ak bude pokračovanie s viac mágiou, Pavel 2026-10-16): Vlad a Zora sú súčasťou panteónu bytostí-bohov. Varianty: (a) spolu jeden celok **Spravodlivosť**: ona súdi (vidí pravdu), on vykonáva (Hnev), preto ich to k sebe ťahá; (b) ona Spravodlivosť, on **Perun**, hlavný vládca panteónu.
+- **Runy na Vladovi:** vymyslené znaky, inšpirované staroslovanskými. **Nikdy kolovrat** (8-ramenný „slnečný kolovrat“ šíria neonacistické skupiny, Bellingcat). Hromový znak (šesťlistá ružica, historicky „Perunov znak“) extrémistickú stopu nemá, ale je to živý symbol slovanskej rodnej viery → štylizovať, nekopírovať (pravidlo §2: žiadne skutočné náboženské symboly).
+- **Jaga** sa na konci hry premení na jeleňa (zo Zorinej karty).
+
 ## Otvorené
 
 1. **Koniec:** že vkročí sama, je rozhodnuté (karta Zory). Otvorené: má pred tým niečo nahlas povedať alebo odhaliť (napr. komu Rada slúži)? Pôvodný návrh stál na sile „číta vymazané mená“, tá padla.
@@ -87,3 +136,4 @@ Inú osobnú motiváciu nemá.
 5. **Miran v L1:** handoff ho má ako chlapca z klietky v L1; ako oficiálny rukojemník od L3 to nesedí. Návrh: Miran prichádza až v L3; odhalenie v L7 je „čo vybudoval“ (sieť zaprisahaných s uzlom), nie „kto je“.
 6. Herná mena, dôvod opakovať, klietky, koniec levelu (T09) — Pavel premýšľa.
 7. **Zora:** kto ju naučí čítať; či sa do nej zaľúbi Miran alebo Teodor; kto a ako zabije Vojteka; jej úloha v dedine.
+8. **Vlad:** ponúknu mu vládu? ostane po ňom prázdne miesto po moci? vzťah s Dobravou (láska alebo len ochrana)? Rieši sa pri aktoch a na Dobravinej karte.

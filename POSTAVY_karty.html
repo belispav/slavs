@@ -58,6 +58,8 @@ section{display:flex;flex-direction:column;gap:12px}
 .card .who{color:var(--muted);font-size:.9rem}
 .zora{border-color:var(--zora);box-shadow:inset 4px 0 0 var(--zora)}
 .zora h2{color:var(--zora)}
+.vlad{border-color:var(--next);box-shadow:inset 4px 0 0 var(--next)}
+.vlad h2{color:var(--next)}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
 .block{background:var(--bg);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .block h3{color:var(--accent)}
@@ -80,16 +82,16 @@ code{font-family:var(--font-mono);font-size:.85em}
 <div class="wrap">
 
 <header>
-  <span class="eyebrow">Slavs fight back · príbeh · stav 16. 10. 2026</span>
+  <span class="eyebrow">Slavs fight back · príbeh · stav 16. 10. 2026, 11:30</span>
   <h1>Karty postáv</h1>
-  <p class="lede">Postavy prechádzame po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Hotová je zatiaľ Zora, ďalší na rade je Vlad. Pri ostatných postavách je uvedené len to, čo hovorí handoff a čo sme už rozhodli inde.</p>
+  <p class="lede">Postavy prechádzame po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Hotoví sú Zora a Vlad, ďalšiu postavu vyberáš ty. Pri ostatných postavách je uvedené len to, čo hovorí handoff a čo sme už rozhodli inde.</p>
 </header>
 
 <div class="tiles">
-  <div class="tile t-done"><div class="n">1</div><div class="l">Hotová karta</div><div class="d">Zora</div></div>
-  <div class="tile t-next"><div class="n">1</div><div class="l">Na rade</div><div class="d">Vlad</div></div>
+  <div class="tile t-done"><div class="n">2</div><div class="l">Hotové karty</div><div class="d">Zora, Vlad</div></div>
+  <div class="tile t-next"><div class="n">?</div><div class="l">Na rade</div><div class="d">vyberáš ty</div></div>
   <div class="tile t-todo"><div class="n">15</div><div class="l">Neprejdené</div><div class="d">podľa handoffu</div></div>
-  <div class="tile t-open"><div class="n">7</div><div class="l">Otvorené otázky</div><div class="d">dole na stránke</div></div>
+  <div class="tile t-open"><div class="n">8</div><div class="l">Otvorené otázky</div><div class="d">dole na stránke</div></div>
 </div>
 
 <!-- ZORA -->
@@ -149,7 +151,7 @@ code{font-family:var(--font-mono);font-size:.85em}
     <h3>Vzťahy</h3>
     <div class="grid2" style="gap:8px 20px">
       <ul>
-        <li><b>Vlad:</b> nie láska, nie otec a dcéra (aspoň nie výslovne). Obaja sú magické bytosti a cítia, že sa majú držať pri sebe. Dozvedia sa to aj cez jeleňa, hlasy a Jagine veštby. Prečo sa o ňu stará on, vyrieši jeho karta.</li>
+        <li><b>Vlad:</b> nie láska, nie otec a dcéra (aspoň nie výslovne). Obaja sú magické bytosti a cítia, že sa majú držať pri sebe. Dozvedia sa to aj cez jeleňa, hlasy a Jagine veštby. Viac na Vladovej karte (Pravda a hnev).</li>
         <li><b>Vojtek:</b> zaľúbi sa prvý on, už v L1; ona neskôr. Láska je vzájomná. V L7 ho zabijú, kto a ako, je otvorené.</li>
         <li><b>Dvojča Vojteka:</b> až v DLC. V 1. hre na ňu máva z portálu.</li>
         <li><b>Majster:</b> chce ju, lebo ona je Pravda, ultimátna zbraň proti klamu.</li>
@@ -179,19 +181,84 @@ code{font-family:var(--font-mono);font-size:.85em}
   </div>
 </article>
 
+<!-- VLAD -->
+<article class="card vlad">
+  <div class="card-head">
+    <div><h2>Vlad</h2><span class="who">Kódex: Vladan „Búrka“ · hrdina</span></div>
+    <span class="badge b-done">karta hotová 16. 10.</span>
+  </div>
+  <div class="grid2">
+    <div class="block">
+      <h3>Kto je</h3>
+      <ul>
+        <li><span class="key">Vzhľad:</span> husté čierne vlasy po plecia, svalnatý, veľmi široké ramená, krátky hrubý krk, beloch. Možno ochlpenie na hrudi.</li>
+        <li><span class="key">V rage:</span> na tele sa mu rozsvietia runy, akoby boli vytetované neviditeľným atramentom.</li>
+        <li><span class="key">Povaha:</span> vážny, efektívny, priamočiary, málovravný. Radšej koná, než hovorí. Občas veľmi suchý vtip.</li>
+        <li><span class="key">Hlášky:</span> ikonické, krátke, úderné.</li>
+        <li><span class="key">Samotár, nie vodca.</span> Vedie len dovtedy, kým mu to pomáha napraviť, čo chce (napr. vyhnať Ordana).</li>
+        <li><span class="key">Mágia:</span> hojí sa rýchlo, po smrti ožíva.</li>
+        <li><span class="key">Kto ho poslal:</span> nerieši sa. Je to skôr samostatná bytosť, nie poslanec.</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3>Čo ho ženie</h3>
+      <ul>
+        <li>Viditeľnú motiváciu nemá. Keď vidí bezprávie, musí ho napraviť.</li>
+        <li><b>Čím väčšia krivda, tým väčší hnev</b> (ako Hulk).</li>
+        <li>Vie, že aj jeho náprava je bezprávím, len z jeho pohľadu, a prijíma to.</li>
+      </ul>
+      <h3 style="margin-top:6px">Čo cez neho hra ukazuje</h3>
+      <ul>
+        <li>Čím viac zodpovednosti nechajú ľudia na iných (náčelník, sused, vojaci), tým menej majú slobody a tým viac sa im deje bezprávia.</li>
+        <li>Slobodný človek musí konať, keď sa mu niečo nepáči. Kto čaká na iných, púšťa opraty svojho osudu z rúk.</li>
+        <li><b>Jeho misia:</b> tlačí ľudí, aby vzali osud do vlastných rúk. Keď to neurobia, bezprávie vyrieši, ale zatrpknuto im pripomína, že ich nemôže ani nechce zachraňovať.</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3>Zora a Vlad: Pravda a hnev</h3>
+      <ul>
+        <li>Zora vidí pravdu, Vlad sa pri bezpraví nahnevá. Čo je bezprávie, mu pomáha určiť Zora.</li>
+        <li>Zora je čiernobiela: verí v jednu Pravdu.</li>
+        <li>Vlad jej ukazuje, že jedna Pravda neexistuje, okrem tej, že každý je zodpovedný sám za seba a za to, čo považuje za pravdu.</li>
+        <li>Hľadanie jednej Pravdy vedie do záhuby, lebo ľudí potom ovláda niečo, čo definoval niekto iný.</li>
+        <li>Zora to odmieta. Pochopí to až na konci (alebo v DLC), keď ju sila sklame pri otázke „Si nažive?“.</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3>Rage ako jadro hry <span class="badge b-open">nápad · T09</span></h3>
+      <ul>
+        <li>Emócia hry: <b>„Pomstím bezprávie“, „vybijem si hnev“.</b></li>
+        <li>V leveloch sú malé epizódy bezprávia, buď naskriptované, alebo miesta, kde Vlad niečo uvidí. Nahnevajú Vlada aj hráča a plní sa rage bar.</li>
+        <li>Plný bar spustí fázu masakru, v ktorej sa hnev vybije.</li>
+        <li>Mimo rage je hra depresívna, pomaly eskaluje a vyvoláva nepokoj. Počas rage je čisté šialenstvo.</li>
+        <li>Znaky: blesk, víchor, svietiace runy.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="block">
+    <h3>Vzťahy a čo ešte nie je dané</h3>
+    <ul>
+      <li><b>Zora:</b> pozri jej kartu a časť Pravda a hnev.</li>
+      <li><b>Dobrava:</b> od nej asi láska aj hľadanie ochrany. Od neho ochrana, či aj láska, rozhodne jej karta.</li>
+      <li><b>Miran:</b> na jeho karte.</li>
+      <li><b>Neplatí:</b> „hlas tradície, nemá rád nové veci“.</li>
+      <li><b>Nie je dané:</b> cesta hrou L1 až L9 a epilóg (pri aktoch), či mu ponúknu vládu, zbrane (budú všelijaké, sekera je len prototyp).</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>Nápady na pokračovanie</h3>
+    <ul>
+      <li><b>Panteón:</b> Vlad a Zora ako (a) jeden celok Spravodlivosť (ona súdi, on vykonáva = Hnev), alebo (b) ona Spravodlivosť a on Perun, vládca panteónu.</li>
+      <li><b>Runy:</b> vymyslené, inšpirované staroslovanskými. Nikdy kolovrat (šíria ho neonacisti). Perunov hromový znak (šesťlistá ružica) iba štylizovaný, nie kopírovaný.</li>
+    </ul>
+  </div>
+</article>
+
 <!-- OSTATNÉ -->
 <section>
   <h2>Ostatné postavy (zatiaľ neprejdené)</h2>
   <p class="note">„Handoff“ = <code>20261015 - Handoff Slavs fight back.md</code>. Oranžový pruh = čo sme už rozhodli inde a mení handoff. Mená sú v6 (v starom dashboarde v5: Radko = Vojtek, Mstislav = Jarek, Bohuš = Bohdan).</p>
   <div class="cards">
-
-    <div class="card small"><div class="card-head"><h3>Vlad</h3><span class="badge b-next">na rade</span></div>
-      <div class="lbl">Handoff</div>
-      <p>Hrdina, Kódex Vladan „Búrka“. Objaví sa z ničoho, nevie, kto je. Nechce viesť. Chce, aby ľudia žili, a nevie, prečo mu na tom tak záleží. Bol poslaný chrániť Zoru, dozvie sa to v epilógu. Vážny, bez vtipkovania.</p>
-      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
-        <li>Je proti výmene rukojemníkov, osobne (hlas tradície, nemá rád nové veci) aj politicky (Ordanov syn získa vplyv). Náčelníci ho prehlasujú.</li>
-        <li>Vzťah so Zorou: pozri jej kartu. Prečo sa o ňu stará, vyrieši jeho karta.</li>
-        <li>Pri portáli spomalený záber, kričí „nie“.</li></ul></div></div>
 
     <div class="card small"><div class="card-head"><h3>Vojtek</h3><span class="badge b-todo">neprejdená</span></div>
       <div class="lbl">Handoff</div>
@@ -292,6 +359,7 @@ code{font-family:var(--font-mono);font-size:.85em}
       <li><b>Miran v L1:</b> návrh je, že príde až v L3.</li>
       <li><b>Herná mena, dôvod hrať znova, klietky, koniec levelu (T09):</b> premýšľaš.</li>
       <li><b>Zora:</b> kto ju naučí čítať, či sa do nej zaľúbi Miran alebo Teodor, kto a ako zabije Vojteka, jej úloha v dedine.</li>
+      <li><b>Vlad:</b> ponúknu mu vládu? Ostane po ňom prázdne miesto po moci? Láska s Dobravou, alebo len ochrana? Rieši sa pri aktoch a na Dobravinej karte.</li>
     </ol>
     <p class="note">Ďalšie otvorené body sú v §12 handoffu: meno Vojtek, bossovia L5 a L6, L8, mená Jarek a Radim, 9 alebo 7 až 8 levelov, finálna forma hry a meno rage VOLYA.</p>
   </div>
