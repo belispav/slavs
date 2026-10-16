@@ -141,6 +141,10 @@ Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
 **Čarodejník nad ním** (Pavel 2026-10-16, variant B)
 - Ordan o ňom vie a trpí ho z nutnosti: bez jeho pomoci by Slovanov neporazil. Neverí mu a čaká na chvíľu, keď sa ho zbaví. Napätie medzi nimi je háčik na DLC (napr. dvojča zabije Ordana na čarodejníkov rozkaz).
 
+**Ordan a Vlad** (Pavel 2026-10-16)
+- Stretnú sa krátko v L3 pri rokovaní o prímerí a výmene rukojemníkov. Ordan si Vlada premeria, uvidí v ňom jedinú skutočnú hrozbu, a preto pošle Mirana: aby mal oči pri Vladovi. Vlad je proti výmene.
+- Nápad, zatiaľ nie: Ordan ponúkne Vladovi spojenectvo, Vlad odmietne. Možno sa spoja niekde počas hry, podľa zvyšku príbehu.
+
 **Prečo chce túto zem** (Pavel 2026-10-16)
 - Chamtivosť spojená s realitou: slovanská zem v strede Európy je a vždy bola úrodná, jeho zem je neúrodná.
 - Chce lepší život pre svoj ľud. To je jeho kladná stránka a jeho vlastná pravda (Zora ho svojou silou neodhalí, lebo tomu verí).
