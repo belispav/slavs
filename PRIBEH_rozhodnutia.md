@@ -135,6 +135,7 @@ Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
 **Prečo chce túto zem** (Pavel 2026-10-16)
 - Chamtivosť spojená s realitou: slovanská zem v strede Európy je a vždy bola úrodná, jeho zem je neúrodná.
 - Chce lepší život pre svoj ľud. To je jeho kladná stránka a jeho vlastná pravda (Zora ho svojou silou neodhalí, lebo tomu verí).
+- Jeho ľud sa sem chce dostať (Pavel 2026-10-16). Motivácia je vnútorná, pre tvorbu príbehu; v 15. storočí národy bojovali a zaberali územia. Pavel nechce pri návrhu postáv našľapovať opatrne kvôli možnému čítaniu cez optiku 21. storočia; súlad s pravidlami (žiadny migračný rámec, Google Play) sa kontroluje pri výrobe na texty v hre a v obchode, nie na vnútorné motivácie. Ordanovi sa to aj tak nepodarí.
 
 ## Nápady (nie rozhodnuté)
 
