@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Postavy Slavs</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600&display=swap">
+<style>
+/* Dashboard kariet postáv. Zdroj pravdy: PRIBEH_rozhodnutia.md (pre AI). Tento súbor je len na čítanie pre Pavla. */
+:root{
+  --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --font-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --bg:#f2f4f1; --surface:#ffffff; --ink:#18211e; --muted:#58665f; --line:#d8ded9;
+  --accent:#1c6b58; --accent-soft:#dcebe5;
+  --done:#1f6b3a; --done-bg:#dcefe2;
+  --next:#1f5fa8; --next-bg:#e1ecf8;
+  --todo:#5c6460; --todo-bg:#e6e9e6;
+  --open:#8a5a00; --open-bg:#f7ecd2;
+  --zora:#b33a1f; --zora-bg:#f8e3dc;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111715; --surface:#192220; --ink:#e4ebe8; --muted:#92a39c; --line:#2a3733;
+  --accent:#5cc2a3; --accent-soft:#1f3b33;
+  --done:#7fd29c; --done-bg:#1d3a28; --next:#8fbdf0; --next-bg:#1d3047;
+  --todo:#a3aeaa; --todo-bg:#27302d; --open:#e2bb6a; --open-bg:#3d3319;
+  --zora:#f0906f; --zora-bg:#3d241c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111715; --surface:#192220; --ink:#e4ebe8; --muted:#92a39c; --line:#2a3733;
+  --accent:#5cc2a3; --accent-soft:#1f3b33;
+  --done:#7fd29c; --done-bg:#1d3a28; --next:#8fbdf0; --next-bg:#1d3047;
+  --todo:#a3aeaa; --todo-bg:#27302d; --open:#e2bb6a; --open-bg:#3d3319;
+  --zora:#f0906f; --zora-bg:#3d241c; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 16px 56px;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;text-wrap:balance}
+h1{font-size:clamp(2rem,6vw,2.9rem);line-height:1.05}
+h2{font-size:1.5rem;line-height:1.1}
+h3{font-size:1.15rem;line-height:1.15;letter-spacing:.01em}
+p{margin:0}
+ul{margin:0;padding-left:1.15em}
+li{margin:2px 0}
+.eyebrow{font-family:var(--font-mono);font-size:.78rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.lede{color:var(--muted);max-width:66ch;margin-top:8px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.tile .n{font-family:var(--font-display);font-size:2rem;font-weight:700;line-height:1}
+.tile .l{font-size:.9rem;font-weight:600}
+.tile .d{font-size:.8rem;color:var(--muted)}
+.t-done .n{color:var(--done)} .t-next .n{color:var(--next)} .t-todo .n{color:var(--todo)} .t-open .n{color:var(--open)}
+.badge{display:inline-block;font-family:var(--font-mono);font-size:.72rem;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.b-done{background:var(--done-bg);color:var(--done)} .b-next{background:var(--next-bg);color:var(--next)}
+.b-todo{background:var(--todo-bg);color:var(--todo)} .b-open{background:var(--open-bg);color:var(--open)}
+section{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card .who{color:var(--muted);font-size:.9rem}
+.zora{border-color:var(--zora);box-shadow:inset 4px 0 0 var(--zora)}
+.zora h2{color:var(--zora)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.block{background:var(--bg);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.block h3{color:var(--accent)}
+.quote{font-style:italic;color:var(--muted)}
+.key{font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.small h3{font-size:1.25rem}
+.lbl{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.chg{border-left:3px solid var(--open);padding-left:10px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font-family:var(--font-mono);font-size:.75rem;color:var(--muted);text-transform:uppercase;font-weight:500}
+.tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow-x:auto}
+ol.open li{margin:6px 0}
+.note{color:var(--muted);font-size:.9rem}
+code{font-family:var(--font-mono);font-size:.85em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">Slavs fight back · príbeh · stav 16. 10. 2026</span>
+  <h1>Karty postáv</h1>
+  <p class="lede">Postavy prechádzame po jednej: motivácia, o čo jej ide, úloha v príbehu, vzťahy k ostatným. Hotová je zatiaľ Zora, ďalší na rade je Vlad. Pri ostatných postavách je uvedené len to, čo hovorí handoff a čo sme už rozhodli inde.</p>
+</header>
+
+<div class="tiles">
+  <div class="tile t-done"><div class="n">1</div><div class="l">Hotová karta</div><div class="d">Zora</div></div>
+  <div class="tile t-next"><div class="n">1</div><div class="l">Na rade</div><div class="d">Vlad</div></div>
+  <div class="tile t-todo"><div class="n">15</div><div class="l">Neprejdené</div><div class="d">podľa handoffu</div></div>
+  <div class="tile t-open"><div class="n">7</div><div class="l">Otvorené otázky</div><div class="d">dole na stránke</div></div>
+</div>
+
+<!-- ZORA -->
+<article class="card zora">
+  <div class="card-head">
+    <div><h2>Zora</h2><span class="who">Kódex: Zorica, „úsvit“ · prvá postava hry</span></div>
+    <span class="badge b-done">karta hotová 15. 10.</span>
+  </div>
+
+  <div class="grid2">
+    <div class="block">
+      <h3>Kto je</h3>
+      <ul>
+        <li><span class="key">Vzhľad:</span> červené ohnivé vlasy, biela pleť, priemerná výška, pekná žena.</li>
+        <li><span class="key">Povaha:</span> vzdorovitá, tvrdohlavá, nedá sa ľahko oklamať.</li>
+        <li><span class="key">Ako hovorí:</span> drzo a provokatívne.</li>
+        <li><span class="key">Minulosť:</span> žiadna, zámerne tajomná ako Vlad. Mystiku na tom postavíme neskôr.</li>
+        <li><span class="key">Hrateľná:</span> v 1. hre nie. Možno jeden špeciálny level alebo medzihra (napr. les). Hrateľná možno v DLC alebo v 2. diele.</li>
+        <li><span class="key">Úloha v dedine:</span> otvorená, vyplynie z príbehu a hernej mechaniky (T09).</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Jej sila: cíti Pravdu</h3>
+      <ul>
+        <li>Cíti, či to, čo bolo <b>povedané alebo napísané</b>, je pravda. Necíti, čo niekto zamlčal.</li>
+        <li>Silu nepozná a neovláda. Má len pocity a niečo, čo ju niekam smeruje. Vidieť pravdu možno bude neskôr, najskôr v DLC.</li>
+        <li><b>Priamu lož</b> odhalí hneď (napr. Jarek).</li>
+        <li><b>Šikovní manipulátori</b> neklamú, iba zavádzajú. Z nich má len zlý pocit.</li>
+        <li><b>Pravda je pre každého trochu iná.</b> Miran a zaprisahaní veria svojej pravde, preto ich ako „nepravdu“ neodhalí.</li>
+        <li><b>Hlavné využitie:</b> vycíti, keď Rada prekrúca veci, a trefnými otázkami na ľudí, ktorí nevedia uhýbať, ukáže, aký slabý je základ toho, čo Rada robí.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Čo ju ženie</h3>
+      <ul>
+        <li><b>Hľadanie Pravdy.</b> Hlavný motor, je kladnou silou, ktorá posúva dej.</li>
+        <li><b>Rovnosť a práva žien</b> po stredovekom spôsobe (15. storočie, feminizmus ešte neexistoval). Čítať nevedel skoro nikto z bežných ľudí, rovnosť však nebola.</li>
+        <li><b>Milostné oblúky</b> (Vojtek, možno Teodor alebo Miran).</li>
+        <li>Inú osobnú motiváciu nemá.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Prečo sa chce naučiť čítať</h3>
+      <ul>
+        <li>Na začiatku čítať nevie.</li>
+        <li>Keď prídu pisári, vycíti, že čo sa napíše, stáva sa pre ľudí pravdou.</li>
+        <li>Chce čítať, aby mohla kontrolovať, čo sa stáva pravdou.</li>
+        <li><span class="key">Kto ju naučí:</span> otvorené. Prikláňaš sa k Teodorovi.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Vzťahy</h3>
+    <div class="grid2" style="gap:8px 20px">
+      <ul>
+        <li><b>Vlad:</b> nie láska, nie otec a dcéra (aspoň nie výslovne). Obaja sú magické bytosti a cítia, že sa majú držať pri sebe. Dozvedia sa to aj cez jeleňa, hlasy a Jagine veštby. Prečo sa o ňu stará on, vyrieši jeho karta.</li>
+        <li><b>Vojtek:</b> zaľúbi sa prvý on, už v L1; ona neskôr. Láska je vzájomná. V L7 ho zabijú, kto a ako, je otvorené.</li>
+        <li><b>Dvojča Vojteka:</b> až v DLC. V 1. hre na ňu máva z portálu.</li>
+        <li><b>Majster:</b> chce ju, lebo ona je Pravda, ultimátna zbraň proti klamu.</li>
+      </ul>
+      <ul>
+        <li><b>Miran alebo Teodor</b> sa do nej možno zaľúbi (otvorené):
+          <ul>
+            <li>Miran: zo žiarlivosti zabije Vojteka, Zora pomôže Vladovi zabiť Mirana, a tak sa do toho osobne zaplietne Ordan.</li>
+            <li>Teodor: naučí ju čítať (k tomu sa prikláňaš).</li>
+          </ul></li>
+        <li><b>Dobrava:</b> chce si ju ako náhradnú dcéru, Zora odmieta. <span class="quote">„Ty nie si moja matka.“</span></li>
+        <li><b>Jaga:</b> tuší alebo vie o jej sile. Sprevádza Vlada aj Zoru, nápad je, že sa na konci premení na jeleňa.</li>
+        <li><b>Ordan:</b> nezaujíma ho, jedine cez Mirana.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Cesta hrou</h3>
+    <ul>
+      <li><b>L1:</b> vlečú ju za dedinu, Vlad zasiahne. S Vladom ostane, lebo jej sila našepká, že sa má pri ňom držať.</li>
+      <li><b>L2:</b> „všimne si, že Radim odíde z porady skôr“ zatiaľ neplatí, Rada a Radim sa riešia neskôr.</li>
+      <li><b>Akt I:</b> vycíti, že písmo je moc (od pisárov sa to nenaučí).</li>
+      <li><b>Akt II, L5, L6, Akt III:</b> otvorené, najprv dokončujeme Akt I.</li>
+      <li><b>Koniec:</b> do portálu vkročí sama, lebo verí, že Vojtek žije. Opýta sa „Si nažive?“, dvojča povie „Áno“ a je to pravda. Mala sa opýtať „Si to ty, Vojtek?“. Nasleduje spomalený záber na Vlada, ktorý kričí „nie“.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- OSTATNÉ -->
+<section>
+  <h2>Ostatné postavy (zatiaľ neprejdené)</h2>
+  <p class="note">„Handoff“ = <code>20261015 - Handoff Slavs fight back.md</code>. Oranžový pruh = čo sme už rozhodli inde a mení handoff. Mená sú v6 (v starom dashboarde v5: Radko = Vojtek, Mstislav = Jarek, Bohuš = Bohdan).</p>
+  <div class="cards">
+
+    <div class="card small"><div class="card-head"><h3>Vlad</h3><span class="badge b-next">na rade</span></div>
+      <div class="lbl">Handoff</div>
+      <p>Hrdina, Kódex Vladan „Búrka“. Objaví sa z ničoho, nevie, kto je. Nechce viesť. Chce, aby ľudia žili, a nevie, prečo mu na tom tak záleží. Bol poslaný chrániť Zoru, dozvie sa to v epilógu. Vážny, bez vtipkovania.</p>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Je proti výmene rukojemníkov, osobne (hlas tradície, nemá rád nové veci) aj politicky (Ordanov syn získa vplyv). Náčelníci ho prehlasujú.</li>
+        <li>Vzťah so Zorou: pozri jej kartu. Prečo sa o ňu stará, vyrieši jeho karta.</li>
+        <li>Pri portáli spomalený záber, kričí „nie“.</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Vojtek</h3><span class="badge b-todo">neprejdená</span></div>
+      <div class="lbl">Handoff</div>
+      <p>Dobravin syn (Vojtěch). Keď v L1 vidí Zoru bojovať, zaľúbi sa. Zverbuje sa, aby si ho všimla. V L7 zomrie, lebo odmietne rozkaz, a to spustí finále.</p>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Má dvojča (rukojemník u Ordana). Dostane viac priestoru, možno už v L2 a L3.</li>
+        <li>Zora sa doňho neskôr zaľúbi, láska je vzájomná.</li>
+        <li>Kto a ako ho zabije, je otvorené (možno Miran zo žiarlivosti).</li>
+        <li>Meno Vojtek je otvorené (handoff §12.2).</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Dvojča Vojteka</h3><span class="badge b-todo">neprejdená · bez mena</span></div>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Po L3 ide k Ordanovi ako rukojemník, výmenou za Mirana.</li>
+        <li>Stane sa tajným učňom čarodejníka (Majstra alebo Teodora, otvorené). Je zlé dvojča, Vojtek dobré.</li>
+        <li>Na konci hry máva Zore z portálu. V DLC ukáže mágiu a možno sám zabije Ordana. V pokračovaní je jedným z prvých nepriateľov.</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Dobrava</h3><span class="badge b-todo">neprejdená</span></div>
+      <div class="lbl">Handoff</div>
+      <p>Vdova s deťmi z L1. Nezachráni ju nikto, zachráni sa sama tým, že chráni deti. Chce, aby jej deti žili, nič iné. Jediná postava, ktorá od Vlada nič nechce.</p>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Je vdovou po náčelníkovi inej dediny, ktorý padol pri nájazde. Má dvoch synov, dvojčatá.</li>
+        <li>Jeden syn ide k Ordanovi ako rukojemník. V DLC tlačí Vlada, aby išiel k Ordanovi (pre pomstu aj pre syna). Tým sa mení handoffové „nič od Vlada nechce“.</li>
+        <li>Bude pri Vladovi. Chce si zo Zory urobiť náhradnú dcéru, Zora to odmieta.</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Miran</h3><span class="badge b-todo">neprejdená</span></div>
+      <div class="lbl">Handoff</div>
+      <p>Ordanov syn, boss L7. Chlapec, ktorého Vlad v L1 vytiahne z klietky. Trpezlivý, čakal celý Akt I a II. Velí garde.</p>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Po L3 ho Ordan zámerne pošle ako rukojemníka. Je vážený a obratný politik, ľudia rýchlo zabudnú, čí je syn.</li>
+        <li>Či je v L1 v klietke, je otvorené. Návrh: príde až v L3.</li>
+        <li>Možno sa zaľúbi do Zory (pozri jej kartu).</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Ordan</h3><span class="badge b-todo">neprejdená</span></div>
+      <div class="lbl">Handoff</div>
+      <p>Veliteľ nájazdu z juhu. V Akte I ustúpi, nie je porazený. Chce krajinu. Politický, bez mágie. Vráti sa v epilógu, DLC alebo 2. diel.</p>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Zámerne pošle Mirana ako rukojemníka, je to jeho úskok od začiatku.</li>
+        <li>Zaprisahaní sú jeho agenti, v Akte II prichádzajú pod rúškom obchodu. Ich znak je uzol na šatke.</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Teodor</h3><span class="badge b-todo">neprejdená</span></div>
+      <div class="lbl">Handoff</div>
+      <p>Majster pisárov, postavil celý stroj Rady. Boss L9, jediný s mágiou. Rozkazy dostáva cez guľu.</p>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Možno sa zaľúbi do Zory a naučí ju čítať (prikláňaš sa k tomu).</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Majster</h3><span class="badge b-todo">neprejdená</span></div>
+      <p>Stojí nad Teodorom, nikdy ho neukážeme. Chce Zoru, lebo ona je Pravda. Je hlavnou linkou pokračovania. Meno „Majster“ zatiaľ platí.</p></div>
+
+    <div class="card small"><div class="card-head"><h3>Jaga</h3><span class="badge b-todo">neprejdená</span></div>
+      <div class="lbl">Handoff</div>
+      <p>Bylinkárka v dedine. Chce liečiť. Ako prvá si všimne, že Vlad sa hojí podivne rýchlo. Hovorí v hádankách.</p>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Tuší alebo vie o Zorinej sile. Je kladná magická postava, sprievodkyňa Vlada a Zory.</li>
+        <li>Nápad: na konci hry sa premení na jeleňa.</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Jarek</h3><span class="badge b-todo">neprejdená · meno otvorené</span></div>
+      <div class="lbl">Handoff</div>
+      <p>Vo v5 sa volal Mstislav. Náčelník Hradiska, v L1 sa schová v pivnici, Vlad ho zatieni. Boss L4. Chce byť konečne niekým. Nie je zloduch, je to sused, ktorého zožrala závisť.</p>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Prehlasuje Vlada pri rukojemníkoch: <span class="quote">„aj ty si tu cudzí, a predsa ti veríme“</span>.</li>
+        <li>Je priamy klamár, Zora ho hneď odhalí.</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Radim</h3><span class="badge b-todo">neprejdená · meno otvorené</span></div>
+      <div class="lbl">Handoff</div>
+      <p>Náčelník, ktorý v L2 zradí radu náčelníkov a privedie Ordanove sily. Boss L2. Koná zo strachu, Ordan mu sľúbil, že ušetrí jeho dedinu.</p>
+      <div class="chg"><div class="lbl">Už rozhodnuté</div><ul>
+        <li>Rada a Radimova úloha ti ešte nesedia, vyriešime ich neskôr.</li></ul></div></div>
+
+    <div class="card small"><div class="card-head"><h3>Bohdan</h3><span class="badge b-todo">neprejdená</span></div>
+      <p>Vo v5 sa volal Bohuš. Obchodník z L1, v dedine vedie obchod. Chce zbohatnúť, zbohatol na vojne. Všetko komentuje cynicky, ale nie kruto.</p></div>
+
+    <div class="card small"><div class="card-head"><h3>Kamen</h3><span class="badge b-todo">neprejdená</span></div>
+      <p>Hrubiar v L4. Muž, ktorého vlastná dedina nikdy nepočúvala, teraz môže. Chce si vybiť zlosť. Pred dedinou obesí človeka pre dlh. Menom sa viaže na Kamennú radu.</p></div>
+
+    <div class="card small"><div class="card-head"><h3>Prokop</h3><span class="badge b-todo">neprejdená</span></div>
+      <p>Pisár Rady, úradník, nie bojovník. Úprimne verí, že zachraňuje krajinu pred chaosom. Najnebezpečnejší druh zla.</p></div>
+
+    <div class="card small"><div class="card-head"><h3>Bor</h3><span class="badge b-todo">neprejdená · boss L5 otvorený</span></div>
+      <p>Lesník Rady, ktorý „vlastní“ les. Boss L5. Celý život sadil ten les, a niekto ho prepísal na majetok. Zlomený, nie zlý.</p></div>
+
+    <div class="card small"><div class="card-head"><h3>Milo</h3><span class="badge b-todo">neprejdená · boss L6 otvorený</span></div>
+      <p>Náborár, ktorý chodí po dedinách a prehovára susedov, aby sa dali naverbovať. Boss L6. Vrúcny a presvedčivý, dáva ľuďom prácu. Nebojuje s tebou priamo.</p></div>
+
+    <div class="card small"><div class="card-head"><h3>Zaprisahaní</h3><span class="badge b-todo">skupina</span></div>
+      <p>Ordanovi agenti, definovaní vernosťou, nikdy pôvodom ani vzhľadom. Znak: uzol na šatke na ramene, jednou vyhradenou farbou. Je to ten istý uzol, ktorým nájazdníci v L1 viazali zajatcov, a odhalí to Zora. Velí im Miran.</p></div>
+
+  </div>
+</section>
+
+<section>
+  <h2>Otvorené otázky</h2>
+  <div class="card">
+    <ol class="open">
+      <li><b>Koniec:</b> má Zora pred vstupom do portálu ešte niečo nahlas odhaliť (napr. komu Rada slúži)?</li>
+      <li><b>Kto je učiteľ dvojčaťa:</b> Majster alebo Teodor? Návrh: Majster (Teodor v L9 padne, Majster ostáva na DLC).</li>
+      <li><b>Meno dvojčaťa:</b> bez diakritiky, najviac 3 slabiky, slovanský koreň.</li>
+      <li><b>Koho Vlad vytiahne z klietky v L1:</b> bezmenného chlapca, niekoho iného, alebo Dobravu s deťmi?</li>
+      <li><b>Miran v L1:</b> návrh je, že príde až v L3.</li>
+      <li><b>Herná mena, dôvod hrať znova, klietky, koniec levelu (T09):</b> premýšľaš.</li>
+      <li><b>Zora:</b> kto ju naučí čítať, či sa do nej zaľúbi Miran alebo Teodor, kto a ako zabije Vojteka, jej úloha v dedine.</li>
+    </ol>
+    <p class="note">Ďalšie otvorené body sú v §12 handoffu: meno Vojtek, bossovia L5 a L6, L8, mená Jarek a Radim, 9 alebo 7 až 8 levelov, finálna forma hry a meno rage VOLYA.</p>
+  </div>
+</section>
+
+<p class="note">Zdroj pre AI: <code>PRIBEH_rozhodnutia.md</code>. Tento dashboard sa aktualizuje po každej karte.</p>
+</div>
+</body>
+</html>

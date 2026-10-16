@@ -225,6 +225,7 @@ Príbeh v5 (Pavel s inou AI, ešte ho upravuje) prepisuje všetko staršie:
 | `20261015 - Handoff Slavs fight back.md` | Claude | **Platný príbeh** (v5): svet, postavy, mená, levely, vizuálne scény, prvá dávka scén S01–S10, otvorené body §12 |
 | `Slavs fight back — príbeh, aktéri a motivácie (v5).html` | Pavel | Dashboard príbehu (nemeniť, kým Pavel nepovie) |
 | `Slavs fight back — mená pre globálnu anglickú verziu (v6).html` | Pavel | Dashboard mien postáv (nemeniť, kým Pavel nepovie) |
+| `POSTAVY_karty.html` | Pavel | Dashboard kariet postáv (Zora hotová, ostatné zo handoffu); aktualizuje sa po každej karte |
 | `PRIBEH_rozhodnutia.md` | obaja | Priebežné rozhodnutia k príbehu po handoffe (platia pred handoffom) + otvorené otázky |
 | `PLAN_hry.md` | obaja | Plán hry, business case, fázy; kap. 1–3 prepísané 2026-10-15 podľa príbehu |
 | `PLAN_vydanie_NextFest_2027.md` | obaja | Návrh plánu vydania a monetizácie (12. 10. 2026): Next Fest február 2027, míľniky PL01–PL15, otvorené body (T53) |
