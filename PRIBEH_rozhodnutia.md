@@ -138,6 +138,9 @@ Kde sa líši od handoffu (§5, §6, §8.1), platí táto karta.
 - **Miran:** je naňho naviazaný. Jeho úlohu u Slovanov berie ako misiu, ktorá ukáže, že z Mirana bude budúci vodca ich ľudu.
 - **Vzhľad:** okolo 40 rokov, vysoký, štíhly. Nemá rád luxus, chodí stále vo vojenskom.
 
+**Čarodejník nad ním** (Pavel 2026-10-16, variant B)
+- Ordan o ňom vie a trpí ho z nutnosti: bez jeho pomoci by Slovanov neporazil. Neverí mu a čaká na chvíľu, keď sa ho zbaví. Napätie medzi nimi je háčik na DLC (napr. dvojča zabije Ordana na čarodejníkov rozkaz).
+
 **Prečo chce túto zem** (Pavel 2026-10-16)
 - Chamtivosť spojená s realitou: slovanská zem v strede Európy je a vždy bola úrodná, jeho zem je neúrodná.
 - Chce lepší život pre svoj ľud. To je jeho kladná stránka a jeho vlastná pravda (Zora ho svojou silou neodhalí, lebo tomu verí).
